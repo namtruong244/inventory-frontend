@@ -6,6 +6,9 @@ import '../providers/inventory_provider.dart';
 import '../screens/box_details_screen.dart';
 
 import 'home_sections.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 extension HomeStorageSection on HomeSections {
 
@@ -21,34 +24,34 @@ extension HomeStorageSection on HomeSections {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              const Text(
-                'Storage Spaces',
+              Text(
+                context.l10n.storageSpaces,
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                   letterSpacing: -0.5,
                 ),
               ),
-              GestureDetector(
+              Tappable(
                 onTap: () => selectTab(1), // Go to Box tab
                 behavior: HitTestBehavior.opaque,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'View all',
+                      context.l10n.viewAll,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade600,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                     const SizedBox(width: 3),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 11,
-                      color: Colors.grey.shade600,
+                      color: context.colors.textSecondary,
                     ),
                   ],
                 ),
@@ -69,7 +72,7 @@ extension HomeStorageSection on HomeSections {
                   margin: const EdgeInsets.symmetric(horizontal: 24),
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F4F6),
+                    color: context.colors.fill,
                     borderRadius: BorderRadius.circular(24),
                   ),
                   child: Center(
@@ -79,15 +82,15 @@ extension HomeStorageSection on HomeSections {
                         Icon(
                           Icons.inventory_2_outlined,
                           size: 36,
-                          color: Colors.grey.shade400,
+                          color: context.colors.textMuted,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'No storage spaces yet',
+                          context.l10n.noStorageSpacesYet,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ],
@@ -151,16 +154,16 @@ extension HomeStorageSection on HomeSections {
       boxIcon = box.type.icon;
     }
 
-    return GestureDetector(
+    return Tappable(
       onTap: () => navigate(BoxDetailsScreen(boxId: box.id)),
       child: Container(
         width: 215,
         margin: const EdgeInsets.only(right: 16),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: const Color(0xFFE4E4E7), width: 1),
+          border: Border.all(color: context.colors.border, width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -179,13 +182,13 @@ extension HomeStorageSection on HomeSections {
                 Container(
                   width: 44,
                   height: 44,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF4F4F6),
+                  decoration: BoxDecoration(
+                    color: context.colors.fill,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     boxIcon,
-                    color: const Color(0xFF18181B),
+                    color: context.colors.textPrimary,
                     size: 20,
                   ),
                 ),
@@ -197,18 +200,18 @@ extension HomeStorageSection on HomeSections {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F4F6),
+                      color: context.colors.fill,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       box.type.displayName.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 0.5,
-                        color: Color(0xFF52525B),
+                        color: context.colors.textSecondary,
                       ),
                     ),
                   ),
@@ -220,8 +223,8 @@ extension HomeStorageSection on HomeSections {
             // Title
             Text(
               box.name,
-              style: const TextStyle(
-                color: Color(0xFF18181B),
+              style: TextStyle(
+                color: context.colors.textPrimary,
                 fontSize: 17,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.3,
@@ -236,10 +239,10 @@ extension HomeStorageSection on HomeSections {
               box.description.isNotEmpty
                   ? box.description
                   : (box.parentId != null
-                        ? 'Sub-container in location'
-                        : 'Primary storage space'),
-              style: const TextStyle(
-                color: Color(0xFF71717A),
+                        ? context.l10n.subContainerInLocation
+                        : context.l10n.primaryStorageSpace),
+              style: TextStyle(
+                color: context.colors.textSecondary,
                 fontSize: 12,
                 height: 1.35,
               ),
@@ -259,17 +262,17 @@ extension HomeStorageSection on HomeSections {
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F4F6),
+                      color: context.colors.fill,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFE4E4E7)),
+                      border: Border.all(color: context.colors.border),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.inventory_2_outlined,
                           size: 13,
-                          color: Color(0xFF18181B),
+                          color: context.colors.textPrimary,
                         ),
                         const SizedBox(width: 5),
                         Flexible(
@@ -277,10 +280,10 @@ extension HomeStorageSection on HomeSections {
                             '$itemCount ${itemCount == 1 ? "item" : "items"}${subBoxCount > 0 ? " • $subBoxCount ${subBoxCount == 1 ? (box.type == StorageType.room ? "box" : "container") : (box.type == StorageType.room ? "boxes" : "containers")}" : ""}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF18181B),
+                              color: context.colors.textPrimary,
                             ),
                           ),
                         ),
@@ -292,8 +295,8 @@ extension HomeStorageSection on HomeSections {
                 Container(
                   width: 36,
                   height: 36,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF18181B),
+                  decoration: BoxDecoration(
+                    color: context.colors.primary,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

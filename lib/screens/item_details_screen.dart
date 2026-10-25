@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../widgets/trash_actions.dart';
 import '../widgets/app_image_view.dart';
 import '../widgets/move_item_sheet.dart';
 import '../widgets/stock_history_sheet.dart';
@@ -13,6 +14,9 @@ import '../widgets/item_detail_cards.dart';
 import '../widgets/item_stock_sheets.dart';
 import 'item_create_screen.dart';
 import 'lending_tracker_screen.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
   final String itemId;
@@ -45,7 +49,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
   ) async {
     if (item.status == ItemStatus.lent && activeLoan != null) {
       provider.returnItem(activeLoan.id);
-      AppFeedback.showSuccess(context, 'Returned "${item.name}" to storage');
+      AppFeedback.showSuccess(context, context.l10n.returnedToStorage(item.name));
       return;
     }
 
@@ -61,13 +65,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       if (success && context.mounted) {
         final parentBox = provider.getBoxById(item.boxId);
         final boxName = parentBox != null ? ' "${parentBox.name}"' : '';
-        AppFeedback.showSuccess(context, 'Returned "${item.name}" to storage$boxName');
+        AppFeedback.showSuccess(context, context.l10n.returnedToStorage2(item.name, boxName));
       }
     } else {
       final updated = item.copyWith(status: ItemStatus.stored);
       final success = await provider.updateItem(updated);
       if (success && context.mounted) {
-        AppFeedback.showSuccess(context, 'Moved "${item.name}" back to storage');
+        AppFeedback.showSuccess(context, context.l10n.movedBackToStorage(item.name));
       }
     }
   }
@@ -84,13 +88,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey.shade400),
+                  Icon(Icons.inventory_2_outlined, size: 64, color: context.colors.textMuted),
                   const SizedBox(height: 16),
-                  const Text('Item not found or has been deleted', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  Text(context.l10n.itemNotFoundOrHas, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Go Back'),
+                    child: Text(context.l10n.goBack),
                   ),
                 ],
               ),
@@ -103,30 +107,31 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
         final activeLoan = provider.getActiveLoanForItem(item.id);
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF8F9FA),
+          backgroundColor: context.colors.background,
           body: CustomScrollView(
             slivers: [
               // Custom Silver App Bar with Hero Image Carousel
               SliverAppBar(
                 expandedHeight: item.photos.isNotEmpty ? 340 : 160,
                 pinned: true,
-                backgroundColor: const Color(0xFF18181B),
+                backgroundColor: context.colors.primary,
                 systemOverlayStyle: SystemUiOverlayStyle.light,
                 leading: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: CircleAvatar(
-                    backgroundColor: Colors.white.withValues(alpha: 0.85),
+                    backgroundColor: context.colors.surface.withValues(alpha: 0.85),
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Color(0xFF18181B)),
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                      icon: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
                 ),
                 actions: [
                   CircleAvatar(
-                    backgroundColor: Colors.white.withValues(alpha: 0.85),
+                    backgroundColor: context.colors.surface.withValues(alpha: 0.85),
                     child: PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert_rounded, size: 20, color: Color(0xFF18181B)),
+                      icon: Icon(Icons.more_vert_rounded, size: 20, color: context.colors.textPrimary),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       onSelected: (val) async {
                         if (val == 'edit') {
@@ -144,61 +149,59 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             MaterialPageRoute(builder: (_) => const LendingTrackerScreen()),
                           );
                         } else if (val == 'delete') {
-                          final confirm = await AppFeedback.showConfirmDialog(
-                            context,
-                            title: 'Delete Item',
-                            message: 'Are you sure you want to permanently delete "${item.name}"?',
-                            confirmLabel: 'Delete',
-                            isDestructive: true,
-                            icon: Icons.delete_outline,
-                          );
+                          final confirm = await TrashActions.confirm(context, name: item.name);
                           if (confirm && context.mounted) {
-                            provider.deleteItem(item.id);
-                            Navigator.pop(context);
-                            AppFeedback.showSuccess(context, 'Item deleted');
+                            final ok = await provider.deleteItem(item.id);
+                            if (!context.mounted) return;
+                            if (ok) {
+                              Navigator.pop(context);
+                              TrashActions.showMoved(context, provider, name: item.name, itemId: item.id);
+                            } else {
+                              AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(item.name));
+                            }
                           }
                         }
                       },
                       itemBuilder: (ctx) => [
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'edit',
                           child: Row(
                             children: [
                               Icon(Icons.edit_outlined, size: 20),
                               SizedBox(width: 12),
-                              Text('Edit Item Details'),
+                              Text(context.l10n.editItemDetails),
                             ],
                           ),
                         ),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'move',
                           child: Row(
                             children: [
                               Icon(Icons.drive_file_move_outlined, size: 20),
                               SizedBox(width: 12),
-                              Text('Move Location'),
+                              Text(context.l10n.moveLocation),
                             ],
                           ),
                         ),
                         if (item.status != ItemStatus.lent)
-                          const PopupMenuItem(
+                          PopupMenuItem(
                             value: 'lend',
                             child: Row(
                               children: [
                                 Icon(Icons.handshake_outlined, size: 20),
                                 SizedBox(width: 12),
-                                Text('Lend Item'),
+                                Text(context.l10n.lendItem),
                               ],
                             ),
                           ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem(
+                        PopupMenuItem(
                           value: 'delete',
                           child: Row(
                             children: [
                               Icon(Icons.delete_outline, color: Colors.red, size: 20),
                               SizedBox(width: 12),
-                              Text('Delete Item', style: TextStyle(color: Colors.red)),
+                              Text(context.l10n.deleteItem, style: TextStyle(color: Colors.red)),
                             ],
                           ),
                         ),
@@ -218,13 +221,13 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               onPageChanged: (idx) => setState(() => _currentPhotoIndex = idx),
                               itemBuilder: (context, idx) {
                                 final photoUrl = item.photos[idx];
-                                return GestureDetector(
+                                return Tappable(
                                   onTap: () => showFullScreenImage(context, photoUrl),
                                   child: AppImageView(
                                     imageUrlOrPath: photoUrl,
                                     fit: BoxFit.cover,
                                     errorWidget: Container(
-                                      color: const Color(0xFF27272A),
+                                      color: context.colors.primary,
                                       child: const Center(
                                         child: Icon(Icons.broken_image_outlined, color: Colors.white54, size: 48),
                                       ),
@@ -269,8 +272,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                       height: 6,
                                       decoration: BoxDecoration(
                                         color: _currentPhotoIndex == idx
-                                            ? Colors.white
-                                            : Colors.white.withValues(alpha: 0.4),
+                                            ? context.colors.surface
+                                            : context.colors.surface.withValues(alpha: 0.4),
                                         borderRadius: BorderRadius.circular(3),
                                       ),
                                     ),
@@ -280,7 +283,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           ],
                         )
                       : Container(
-                          color: const Color(0xFF18181B),
+                          color: context.colors.primary,
                           child: const Center(
                             child: Icon(Icons.image_outlined, size: 64, color: Colors.white24),
                           ),
@@ -329,7 +332,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF4F4F6),
+                              color: context.colors.fill,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Row(
@@ -338,15 +341,15 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                 Icon(
                                   CategoryHelper.getCategoryIcon(item.categoryId),
                                   size: 13,
-                                  color: const Color(0xFF18181B),
+                                  color: context.colors.textPrimary,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
                                   item.categoryId,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF18181B),
+                                    color: context.colors.textPrimary,
                                   ),
                                 ),
                               ],
@@ -357,17 +360,17 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEFF6FF),
+                                color: context.colors.infoSoft,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: const Color(0xFFBFDBFE)),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(Icons.shopping_basket_outlined, size: 13, color: Color(0xFF2563EB)),
                                   SizedBox(width: 4),
                                   Text(
-                                    'Consumable',
+                                    context.l10n.commonConsumable,
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -382,19 +385,19 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFEF3C7),
+                                color: context.colors.warningSoft,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: const Color(0xFFFCD34D)),
                               ),
-                              child: const Row(
+                              child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(Icons.warning_amber_rounded, size: 14, color: Color(0xFFD97706)),
                                   SizedBox(width: 4),
                                   Text(
-                                    'Low Stock',
+                                    context.l10n.settingsLowStock,
                                     style: TextStyle(
-                                      color: Color(0xFFB45309),
+                                      color: context.colors.warningStrong,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 11,
                                     ),
@@ -408,19 +411,19 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                tooltip: 'Stock history',
+                                tooltip: context.l10n.stockHistory,
                                 visualDensity: VisualDensity.compact,
                                 icon: const Icon(Icons.history, size: 20),
                                 onPressed: () => StockHistorySheet.show(context, item),
                               ),
-                          GestureDetector(
+                          Tappable(
                             onTap: item.isConsumable
                                 ? () => showConsumeSheet(context, item, provider)
                                 : null,
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF18181B),
+                                color: context.colors.primary,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
@@ -451,10 +454,10 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                       // Product Title
                       Text(
                         item.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF18181B),
+                          color: context.colors.textPrimary,
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -466,7 +469,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           item.description,
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: context.colors.textSecondary,
                             height: 1.4,
                           ),
                         ),
@@ -475,8 +478,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                         const SizedBox(height: 14),
 
                       // If currently Lent: Show Prominent Loan Details Card (Module 6)
-                      if (item.status == ItemStatus.lent && activeLoan != null) ...[
-                        buildActiveLoanCard(context, provider, activeLoan),
+                      for (final loan in provider.getActiveLoansForItem(item.id)) ...[
+                        buildActiveLoanCard(context, provider, loan),
                         const SizedBox(height: 20),
                       ],
 
@@ -519,7 +522,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
           bottomSheet: Container(
             padding: EdgeInsets.fromLTRB(20, 12, 20, MediaQuery.of(context).padding.bottom + 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.06),
@@ -535,12 +538,12 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   child: OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      side: const BorderSide(color: Color(0xFF18181B), width: 1.5),
+                      side: BorderSide(color: context.colors.primary, width: 1.5),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
                     onPressed: () => _showMoveItemDialog(context, item),
-                    icon: const Icon(Icons.drive_file_move_outlined, size: 18, color: Color(0xFF18181B)),
-                    label: const Text('Move', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF18181B))),
+                    icon: Icon(Icons.drive_file_move_outlined, size: 18, color: context.colors.textPrimary),
+                    label: Text(context.l10n.commonMove, style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.textPrimary)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -553,7 +556,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: item.quantity <= 0
                                 ? const Color(0xFFD97706)
-                                : const Color(0xFF18181B),
+                                : context.colors.primary,
                             foregroundColor: Colors.white,
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(vertical: 14),
@@ -574,8 +577,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           ),
                           label: Text(
                             item.quantity <= 0
-                                ? 'Out of Stock (Restock)'
-                                : 'Consume (${item.unit})',
+                                ? context.l10n.outOfStockRestock
+                                : context.l10n.commonConsume(item.unit),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         )
@@ -602,10 +605,10 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           ),
                           label: Text(
                             item.status == ItemStatus.lent
-                                ? 'Return to Storage'
+                                ? context.l10n.returnToStorage
                                 : item.status == ItemStatus.stored
-                                    ? 'Take Out to Use'
-                                    : 'Return to Storage',
+                                    ? context.l10n.takeOutToUse
+                                    : context.l10n.returnToStorage,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),

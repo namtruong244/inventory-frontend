@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Specialized QR Scanner bottom sheet to scan box labels directly
 class BoxQRScanSheet extends StatefulWidget {
@@ -58,7 +60,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
       setState(() => _isProcessing = false);
       AppFeedback.showError(
         context,
-        'No storage box found with code "$code". Please scan a valid box QR label.',
+        context.l10n.noStorageBoxFoundWith(code),
       );
     }
   }
@@ -66,7 +68,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
   void _showTestPresetsModal(InventoryProvider provider) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -77,14 +79,14 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Select Test Box QR Code',
+              Text(
+                context.l10n.selectTestBoxQrCode,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 6),
               Text(
-                'Simulate scanning a physical box QR sticker:',
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                context.l10n.simulateScanningAPhysicalBox,
+                style: TextStyle(color: context.colors.textSecondary, fontSize: 13),
               ),
               const SizedBox(height: 14),
               ConstrainedBox(
@@ -99,7 +101,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                     final breadcrumb = provider.getBreadcrumbString(b.id);
                     return ListTile(
                       dense: true,
-                      leading: Icon(b.type.icon, size: 20, color: const Color(0xFF18181B)),
+                      leading: Icon(b.type.icon, size: 20, color: context.colors.textPrimary),
                       title: Text(b.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text('$breadcrumb (${b.label})', style: const TextStyle(fontSize: 11)),
                       trailing: const Icon(Icons.qr_code_2_rounded, size: 20),
@@ -124,23 +126,23 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
       builder: (ctx) {
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text('Enter Box Label / QR', style: TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(context.l10n.enterBoxLabelQr, style: TextStyle(fontWeight: FontWeight.bold)),
           content: TextField(
             controller: _manualInputController,
             autofocus: true,
-            decoration: const InputDecoration(
-              hintText: 'e.g. loc_electronics_box',
+            decoration: InputDecoration(
+              hintText: context.l10n.eGLocElectronicsBox,
               border: OutlineInputBorder(),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: Text(context.l10n.commonCancel),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF18181B),
+                backgroundColor: context.colors.primary,
                 foregroundColor: Colors.white,
               ),
               onPressed: () {
@@ -150,7 +152,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                   _processScannedCode(text);
                 }
               },
-              child: const Text('Submit'),
+              child: Text(context.l10n.commonSubmit),
             ),
           ],
         );
@@ -177,15 +179,16 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                 child: Row(
                   children: [
                     IconButton(
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                       icon: const Icon(Icons.close_rounded, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Scan Box QR Code',
+                            context.l10n.scanBoxQrCode,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -193,7 +196,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                             ),
                           ),
                           Text(
-                            'Point camera at target box sticker',
+                            context.l10n.pointCameraAtTargetBox,
                             style: TextStyle(color: Colors.white70, fontSize: 12),
                           ),
                         ],
@@ -201,6 +204,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                     ),
                     // Torch toggle
                     IconButton(
+ tooltip: context.l10n.toggleFlash,
                       icon: const Icon(Icons.flash_on_rounded, color: Colors.white),
                       onPressed: () => _controller.toggleTorch(),
                     ),
@@ -305,7 +309,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
 
               // Bottom control & result panel
               Container(
-                color: const Color(0xFF18181B),
+                color: context.colors.primary,
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -315,7 +319,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF27272A),
+                          color: context.colors.primary,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(color: const Color(0xFF10B981), width: 1.5),
                         ),
@@ -373,7 +377,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
                               onPressed: () => setState(() => _detectedBox = null),
-                              child: const Text('Scan Again'),
+                              child: Text(context.l10n.scanAgain),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -387,7 +391,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                               ),
                               onPressed: () => Navigator.pop(context, _detectedBox),
-                              child: const Text('Move to this Box', style: TextStyle(fontWeight: FontWeight.bold)),
+                              child: Text(context.l10n.moveToThisBox, style: TextStyle(fontWeight: FontWeight.bold)),
                             ),
                           ),
                         ],
@@ -402,13 +406,13 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                             style: TextButton.styleFrom(foregroundColor: Colors.white70),
                             onPressed: () => _showTestPresetsModal(provider),
                             icon: const Icon(Icons.science_outlined, size: 16),
-                            label: const Text('Test with Presets', style: TextStyle(fontSize: 12)),
+                            label: Text(context.l10n.testWithPresets, style: TextStyle(fontSize: 12)),
                           ),
                           TextButton.icon(
                             style: TextButton.styleFrom(foregroundColor: Colors.white70),
                             onPressed: _showManualInputDialog,
                             icon: const Icon(Icons.keyboard_outlined, size: 16),
-                            label: const Text('Enter Code', style: TextStyle(fontSize: 12)),
+                            label: Text(context.l10n.enterCode, style: TextStyle(fontSize: 12)),
                           ),
                         ],
                       ),

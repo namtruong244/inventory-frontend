@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,9 +38,19 @@ class ApiService {
   static const String _prefKeyAuthToken = 'inventory_auth_token';
   static const String _prefKeyUser = 'inventory_auth_user';
 
+  // Token and user live in the Keychain/Keystore; SharedPreferences keeps only
+  // the server URL (and the legacy session keys, migrated on first launch).
+  static const FlutterSecureStorage _secure = FlutterSecureStorage();
+
   String _baseUrl = _defaultLocalhost;
   String? _token;
   User? _currentUser;
+
+  final _unauthorized = StreamController<String>.broadcast();
+
+  /// Fires (with the error code) when the server rejects the stored token, after the
+  /// session has been cleared. The offline queue is left alone.
+  Stream<String> get onUnauthorized => _unauthorized.stream;
 
   String get baseUrl => _baseUrl;
   String? get token => _token;
@@ -77,8 +89,9 @@ class ApiService {
         }
       }
 
-      _token = prefs.getString(_prefKeyAuthToken);
-      final savedUserJson = prefs.getString(_prefKeyUser);
+      await _migrateLegacySession(prefs);
+      _token = await _secure.read(key: _prefKeyAuthToken);
+      final savedUserJson = await _secure.read(key: _prefKeyUser);
       if (savedUserJson != null) {
         try {
           _currentUser = User.fromJson(jsonDecode(savedUserJson));
@@ -87,6 +100,22 @@ class ApiService {
     } catch (e) {
       debugPrint('ApiService init error: $e');
     }
+  }
+
+  /// One-time move of a plaintext session from SharedPreferences to secure storage.
+  Future<void> _migrateLegacySession(SharedPreferences prefs) async {
+    final legacyToken = prefs.getString(_prefKeyAuthToken);
+    final legacyUser = prefs.getString(_prefKeyUser);
+    if (legacyToken == null && legacyUser == null) return;
+    if (legacyToken != null &&
+        await _secure.read(key: _prefKeyAuthToken) == null) {
+      await _secure.write(key: _prefKeyAuthToken, value: legacyToken);
+      if (legacyUser != null) {
+        await _secure.write(key: _prefKeyUser, value: legacyUser);
+      }
+    }
+    await prefs.remove(_prefKeyAuthToken);
+    await prefs.remove(_prefKeyUser);
   }
 
   /// Update the backend base URL (e.g., from settings)
@@ -100,18 +129,16 @@ class ApiService {
   Future<void> setSession(String token, User user) async {
     _token = token;
     _currentUser = user;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKeyAuthToken, token);
-    await prefs.setString(_prefKeyUser, jsonEncode(user.toJson()));
+    await _secure.write(key: _prefKeyAuthToken, value: token);
+    await _secure.write(key: _prefKeyUser, value: jsonEncode(user.toJson()));
   }
 
   /// Clear authentication session
   Future<void> clearSession() async {
     _token = null;
     _currentUser = null;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_prefKeyAuthToken);
-    await prefs.remove(_prefKeyUser);
+    await _secure.delete(key: _prefKeyAuthToken);
+    await _secure.delete(key: _prefKeyUser);
   }
 
   // -------------------------------------------------------------
@@ -144,6 +171,16 @@ class ApiService {
     return uri;
   }
 
+  /// A 401 on a request that carried our token means the session is over.
+  void _onAuthFailure(http.Response response, String code) {
+    if (response.statusCode != 401) return;
+    if (response.request?.headers.containsKey('Authorization') != true) return;
+    if (!isAuthenticated) return;
+    _token = null;
+    unawaited(_secure.delete(key: _prefKeyAuthToken));
+    _unauthorized.add(code);
+  }
+
   dynamic _handleResponse(http.Response response) {
     dynamic body;
     try {
@@ -169,6 +206,7 @@ class ApiService {
     // Handle API error envelope
     if (body is Map<String, dynamic> && body['error'] is Map<String, dynamic>) {
       final err = body['error'];
+      _onAuthFailure(response, err['code']?.toString() ?? 'UNAUTHORIZED');
       throw ApiException(
         statusCode: response.statusCode,
         code: err['code']?.toString() ?? 'API_ERROR',
@@ -177,6 +215,7 @@ class ApiService {
       );
     }
 
+    _onAuthFailure(response, 'UNAUTHORIZED');
     throw ApiException(
       statusCode: response.statusCode,
       code: 'HTTP_${response.statusCode}',
@@ -262,6 +301,25 @@ class ApiService {
     final user = User.fromJson(data['user'] as Map<String, dynamic>);
     await setSession(token, user);
     return {'token': token, 'user': user};
+  }
+
+  /// Permanently deletes the account and all of its data on the server.
+  Future<void> deleteAccount() async {
+    await delete('/api/v1/auth/me');
+  }
+
+  /// Swaps the stored token for a fresh one (same user). Best effort.
+  Future<void> refreshToken() async {
+    final data = await post('/api/v1/auth/refresh', {});
+    await setSession(
+      data['token'] as String,
+      User.fromJson(data['user'] as Map<String, dynamic>),
+    );
+  }
+
+  /// Revokes every token issued to this account (all devices).
+  Future<void> logoutAll() async {
+    await post('/api/v1/auth/logout-all', {});
   }
 
   Future<User> getMe() async {
@@ -409,8 +467,12 @@ class ApiService {
     return Box.fromJson(data as Map<String, dynamic>);
   }
 
-  Future<Box> updateBox(Box box) async {
+  /// With [checkVersion], sends [Box.updatedAt] as the version the edit is based on and
+  /// the server answers 409 when the box changed since (used when replaying offline edits).
+  Future<Box> updateBox(Box box, {bool checkVersion = false}) async {
     final body = {
+      if (checkVersion && box.updatedAt != null)
+        'updatedAt': box.updatedAt!.toUtc().toIso8601String(),
       'name': box.name,
       'type': box.type.name,
       'description': box.description,
@@ -519,8 +581,12 @@ class ApiService {
     return Item.fromJson(data as Map<String, dynamic>);
   }
 
-  Future<Item> updateItem(Item item) async {
+  /// With [checkVersion], sends [Item.updatedAt] as the version the edit is based on and
+  /// the server answers 409 when the item changed since (used when replaying offline edits).
+  Future<Item> updateItem(Item item, {bool checkVersion = false}) async {
     final body = <String, dynamic>{
+      if (checkVersion && item.updatedAt != null)
+        'updatedAt': item.updatedAt!.toUtc().toIso8601String(),
       'name': item.name,
       'description': item.description,
       'boxId': item.boxId,
@@ -573,6 +639,21 @@ class ApiService {
       'reason': ?reason,
       if (note != null && note.isNotEmpty) 'note': note,
     });
+  }
+
+  /// Adds [delta] (negative to consume) atomically on the server; returns the new quantity.
+  Future<double?> adjustItemQuantity(
+    String itemId,
+    double delta, {
+    String? reason,
+    String? note,
+  }) async {
+    final data = await patch('/api/v1/items/$itemId/quantity', {
+      'delta': delta,
+      'reason': ?reason,
+      if (note != null && note.isNotEmpty) 'note': note,
+    });
+    return data is Map ? (data['quantity'] as num?)?.toDouble() : null;
   }
 
   Future<StockHistory> getItemMovements(String itemId) async {
@@ -641,7 +722,12 @@ class ApiService {
       'borrowerContact': borrowerContact,
       'lentDate': lentDate.toUtc().toIso8601String(),
       if (expectedReturnDate != null)
-        'expectedReturnDate': expectedReturnDate.toUtc().toIso8601String(),
+        // A calendar day, sent as UTC midnight so the server reads the same day.
+        'expectedReturnDate': DateTime.utc(
+          expectedReturnDate.year,
+          expectedReturnDate.month,
+          expectedReturnDate.day,
+        ).toIso8601String(),
       'notes': notes,
       'quantity': ?quantity,
     };

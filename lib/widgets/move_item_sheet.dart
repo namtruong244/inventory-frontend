@@ -6,6 +6,8 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import 'box_qr_scan_sheet.dart';
 import 'location_picker_sheet.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Modal bottom sheet to move an item to another storage location.
 /// Features:
@@ -24,9 +26,9 @@ class MoveItemSheet extends StatefulWidget {
       context,
       initialBoxId: item.boxId,
       currentBoxId: item.boxId,
-      title: 'Move Item Location',
-      subtitle: 'Select new storage destination for "${item.name}"',
-      confirmButtonText: 'Confirm Move',
+      title: context.l10n.moveItemLocation,
+      subtitle: context.l10n.selectNewStorageDestinationFor(item.name),
+      confirmButtonText: context.l10n.confirmMove,
     );
 
     if (pickedBox != null && pickedBox.id != item.boxId && context.mounted) {
@@ -34,7 +36,7 @@ class MoveItemSheet extends StatefulWidget {
       provider.moveItem(item.id, pickedBox.id);
       AppFeedback.showSuccess(
         context,
-        'Moved "${item.name}" to "${pickedBox.name}"',
+        context.l10n.movedTo(item.name, pickedBox.name),
       );
       return true;
     }
@@ -120,7 +122,7 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
       Navigator.pop(context, true);
       AppFeedback.showSuccess(
         context,
-        'Moved "${widget.item.name}" to "${targetBox.name}"',
+        context.l10n.movedTo(widget.item.name, targetBox.name),
       );
     }
   }
@@ -148,7 +150,7 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
     final canConfirm = _selectedBoxId != null && !isSelectedSameAsCurrent && !_isMoving;
 
     return Material(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
@@ -167,7 +169,7 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: context.colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -181,8 +183,8 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Move Item Location',
+                      Text(
+                        context.l10n.moveItemLocation,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -191,15 +193,15 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        'Select new storage destination for item',
-                        style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                        context.l10n.selectNewStorageDestinationFor2,
+                        style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
                       ),
                     ],
                   ),
                 ),
                 // Quick Scan QR Button
                 Material(
-                  color: const Color(0xFF18181B),
+                  color: context.colors.primary,
                   borderRadius: BorderRadius.circular(14),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(14),
@@ -208,11 +210,11 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 18),
                           SizedBox(width: 6),
                           Text(
-                            'Scan QR',
+                            context.l10n.scanQr,
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -232,22 +234,22 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFFF4F4F6),
+                color: context.colors.fill,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: context.colors.border),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.colors.surface,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       currentBox?.type.icon ?? Icons.inventory_2_outlined,
                       size: 16,
-                      color: const Color(0xFF18181B),
+                      color: context.colors.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -255,20 +257,20 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Current Location',
+                        Text(
+                          context.l10n.currentLocation,
                           style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF71717A),
+                            color: context.colors.textSecondary,
                           ),
                         ),
                         Text(
                           currentBreadcrumb,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF18181B),
+                            color: context.colors.textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -300,11 +302,11 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                     Row(
                       children: [
                         Text(
-                          'Sub-containers inside (${visibleBoxes.length})',
+                          context.l10n.subContainersInside(visibleBoxes.length),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade600,
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ],
@@ -316,22 +318,22 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF9FAFB),
+                        color: context.colors.fill,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey.shade200, style: BorderStyle.solid),
+                        border: Border.all(color: context.colors.border, style: BorderStyle.solid),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.inventory_2_outlined, size: 36, color: Colors.grey.shade400),
+                          Icon(Icons.inventory_2_outlined, size: 36, color: context.colors.textMuted),
                           const SizedBox(height: 8),
                           Text(
                             currentParentBox != null
-                                ? 'No sub-containers inside "${currentParentBox.name}"'
-                                : 'No locations available',
+                                ? context.l10n.noSubContainersInside(currentParentBox.name)
+                                : context.l10n.noLocationsAvailable,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: Colors.grey.shade600,
+                              color: context.colors.textSecondary,
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
                             ),
@@ -339,9 +341,9 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                           if (currentParentBox != null) ...[
                             const SizedBox(height: 10),
                             Text(
-                              'You can store "${widget.item.name}" directly in this container.',
+                              context.l10n.youCanStoreDirectlyIn(widget.item.name),
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                              style: TextStyle(color: context.colors.textMuted, fontSize: 12),
                             ),
                           ],
                         ],
@@ -362,8 +364,8 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
                   color: isSelectedSameAsCurrent
-                      ? const Color(0xFFFEF3C7).withValues(alpha: 0.6)
-                      : const Color(0xFFECFDF5),
+                      ? context.colors.warningSoft.withValues(alpha: 0.6)
+                      : context.colors.successSoft,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSelectedSameAsCurrent
@@ -380,8 +382,8 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                           : Icons.check_circle_rounded,
                       size: 20,
                       color: isSelectedSameAsCurrent
-                          ? const Color(0xFFB45309)
-                          : const Color(0xFF047857),
+                          ? context.colors.warningStrong
+                          : context.colors.successStrong,
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -390,14 +392,14 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                         children: [
                           Text(
                             isSelectedSameAsCurrent
-                                ? 'Item is already in this location'
-                                : 'Target Destination',
+                                ? context.l10n.itemIsAlreadyInThis
+                                : context.l10n.targetDestination,
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: isSelectedSameAsCurrent
-                                  ? const Color(0xFFB45309)
-                                  : const Color(0xFF047857),
+                                  ? context.colors.warningStrong
+                                  : context.colors.successStrong,
                             ),
                           ),
                           Text(
@@ -406,7 +408,7 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                               color: isSelectedSameAsCurrent
-                                  ? const Color(0xFF92400E)
+                                  ? context.colors.warningStrong
                                   : const Color(0xFF065F46),
                             ),
                             maxLines: 1,
@@ -427,10 +429,10 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
               height: 52,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF18181B),
+                  backgroundColor: context.colors.primary,
                   foregroundColor: Colors.white,
-                  disabledBackgroundColor: Colors.grey.shade300,
-                  disabledForegroundColor: Colors.grey.shade600,
+                  disabledBackgroundColor: context.colors.border,
+                  disabledForegroundColor: context.colors.textSecondary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -445,11 +447,11 @@ class _MoveItemSheetState extends State<MoveItemSheet> {
                       )
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Icon(Icons.drive_file_move_outlined, size: 20),
                           SizedBox(width: 8),
                           Text(
-                            'Confirm Move',
+                            context.l10n.confirmMove,
                             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ],

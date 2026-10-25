@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:inventory/l10n/app_localizations.dart';
 import 'package:inventory/providers/inventory_provider.dart';
 import 'package:inventory/screens/settings_screen.dart';
 
@@ -12,6 +13,8 @@ void main() {
       ChangeNotifierProvider<InventoryProvider>.value(
         value: provider,
         child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
           home: SettingsScreen(),
         ),
       ),

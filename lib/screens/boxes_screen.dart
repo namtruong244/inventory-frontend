@@ -6,10 +6,15 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../widgets/trash_actions.dart';
 import '../widgets/export_barcodes_sheet.dart';
 import '../widgets/move_location_dialog.dart';
 import 'box_create_screen.dart';
 import 'box_details_screen.dart';
+import '../widgets/app_refresh.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 part 'boxes_screen_parts.dart';
 
@@ -71,7 +76,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       body: SafeArea(
         bottom: false,
         child: Consumer<InventoryProvider>(
@@ -101,7 +106,8 @@ class _BoxesScreenState extends State<BoxesScreen> {
 
             final showTree = _isTreeView && _filterIndex == 0 && _searchQuery.isEmpty;
 
-            return ListView(
+            return AppRefresh(child: ListView(
+ physics: const AlwaysScrollableScrollPhysics(),
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
               children: [
@@ -114,12 +120,12 @@ class _BoxesScreenState extends State<BoxesScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Storage Hierarchy',
+                            context.l10n.storageHierarchy,
                             style: GoogleFonts.inter(
                               fontSize: 24,
                               fontWeight: FontWeight.w700,
                               letterSpacing: -0.5,
-                              color: const Color(0xFF18181B),
+                              color: context.colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -127,7 +133,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             '${provider.boxes.length} locations & containers',
                             style: GoogleFonts.inter(
                               fontSize: 14,
-                              color: const Color(0xFF71717A),
+                              color: context.colors.textSecondary,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -139,14 +145,14 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton.outlined(
-                          tooltip: 'Export all QR codes',
+                          tooltip: context.l10n.exportAllQrCodes,
                           onPressed: provider.boxes.isEmpty
                               ? null
                               : () => ExportBarcodesSheet.showAll(context),
                           icon: const Icon(Icons.qr_code_2_rounded, size: 20),
                           style: IconButton.styleFrom(
-                            foregroundColor: const Color(0xFF18181B),
-                            side: const BorderSide(color: Color(0xFFE4E4E7)),
+                            foregroundColor: context.colors.textPrimary,
+                            side: BorderSide(color: context.colors.border),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                             ),
@@ -164,9 +170,9 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             );
                           },
                           icon: const Icon(Icons.add, size: 18),
-                          label: const Text('New Location'),
+                          label: Text(context.l10n.newLocation),
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF18181B),
+                            backgroundColor: context.colors.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -184,28 +190,29 @@ class _BoxesScreenState extends State<BoxesScreen> {
                   onChanged: (val) => setState(() => _searchQuery = val.trim()),
                   style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
                   decoration: InputDecoration(
-                    hintText: 'Search locations, rooms, containers...',
-                    prefixIcon: const Icon(Icons.search, size: 20, color: Color(0xFF71717A)),
+                    hintText: context.l10n.searchLocationsRoomsContainers,
+                    prefixIcon: Icon(Icons.search, size: 20, color: context.colors.textSecondary),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
+ tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
                             icon: const Icon(Icons.clear, size: 18),
                             onPressed: () => setState(() => _searchQuery = ''),
                           )
                         : null,
-                    fillColor: Colors.white,
+                    fillColor: context.colors.surface,
                     filled: true,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                      borderSide: BorderSide(color: context.colors.border),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                      borderSide: BorderSide(color: context.colors.border),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Color(0xFF18181B), width: 1.5),
+                      borderSide: BorderSide(color: context.colors.primary, width: 1.5),
                     ),
                   ),
                 ),
@@ -219,13 +226,13 @@ class _BoxesScreenState extends State<BoxesScreen> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            _buildFilterChip(0, 'All (${provider.boxes.length})'),
+                            _buildFilterChip(0, context.l10n.commonAll(provider.boxes.length)),
                             const SizedBox(width: 8),
-                            _buildFilterChip(1, 'Rooms (${provider.boxes.where((b) => b.type == StorageType.room || b.parentId == null).length})'),
+                            _buildFilterChip(1, context.l10n.commonRooms(provider.boxes.where((b) => b.type == StorageType.room || b.parentId == null).length)),
                             const SizedBox(width: 8),
-                            _buildFilterChip(2, 'Cabinets & Shelves (${provider.boxes.where((b) => b.type == StorageType.cabinet || b.type == StorageType.shelf).length})'),
+                            _buildFilterChip(2, context.l10n.cabinetsShelves(provider.boxes.where((b) => b.type == StorageType.cabinet || b.type == StorageType.shelf).length)),
                             const SizedBox(width: 8),
-                            _buildFilterChip(3, 'Boxes & Drawers (${provider.boxes.where((b) => b.type == StorageType.box || b.type == StorageType.drawer).length})'),
+                            _buildFilterChip(3, context.l10n.boxesDrawers(provider.boxes.where((b) => b.type == StorageType.box || b.type == StorageType.drawer).length)),
                           ],
                         ),
                       ),
@@ -234,20 +241,20 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       const SizedBox(width: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.colors.surface,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFFE4E4E7)),
+                          border: Border.all(color: context.colors.border),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               visualDensity: VisualDensity.compact,
-                              tooltip: _isTreeView ? 'Switch to Flat List' : 'Switch to Tree View',
+                              tooltip: _isTreeView ? context.l10n.switchToFlatList : context.l10n.switchToTreeView,
                               icon: Icon(
                                 _isTreeView ? Icons.account_tree_rounded : Icons.view_agenda_outlined,
                                 size: 18,
-                                color: const Color(0xFF18181B),
+                                color: context.colors.textPrimary,
                               ),
                               onPressed: () {
                                 setState(() => _isTreeView = !_isTreeView);
@@ -256,11 +263,11 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             if (_isTreeView)
                               IconButton(
                                 visualDensity: VisualDensity.compact,
-                                tooltip: _expandedBoxIds.isEmpty ? 'Expand all' : 'Collapse all',
+                                tooltip: _expandedBoxIds.isEmpty ? context.l10n.expandAll : context.l10n.collapseAll,
                                 icon: Icon(
                                   _expandedBoxIds.isEmpty ? Icons.unfold_more_rounded : Icons.unfold_less_rounded,
                                   size: 18,
-                                  color: const Color(0xFF71717A),
+                                  color: context.colors.textSecondary,
                                 ),
                                 onPressed: () {
                                   if (_expandedBoxIds.isEmpty) {
@@ -281,20 +288,20 @@ class _BoxesScreenState extends State<BoxesScreen> {
                 // Boxes Display (Tree View or Flat List)
                 if (provider.boxes.isEmpty)
                   _buildEmptyState(
-                    title: 'No locations yet',
-                    subtitle: 'Tap "New Location" above to create your first room or box',
+                    title: context.l10n.noLocationsYet,
+                    subtitle: context.l10n.tapNewLocationAboveTo,
                   )
                 else if (displayedBoxes.isEmpty)
                   _buildEmptyState(
-                    title: 'No matching locations found',
-                    subtitle: 'Try searching with a different name or label',
+                    title: context.l10n.noMatchingLocationsFound,
+                    subtitle: context.l10n.trySearchingWithADifferent,
                   )
                 else if (showTree)
                   ..._buildHierarchyTree(provider)
                 else
                   ...displayedBoxes.map((box) => _buildFlatBoxCard(box, provider)),
               ],
-            );
+            ));
           },
         ),
       ),
@@ -344,7 +351,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                   backgroundColor: const Color(0xFF64748B),
                   foregroundColor: Colors.white,
                   icon: Icons.drive_file_move_outlined,
-                  label: 'Move',
+                  label: context.l10n.commonMove,
                 ),
                 SlidableAction(
                   onPressed: (_) {
@@ -355,44 +362,42 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       ),
                     );
                   },
-                  backgroundColor: const Color(0xFF18181B),
+                  backgroundColor: context.colors.primary,
                   foregroundColor: Colors.white,
                   icon: Icons.edit_outlined,
-                  label: 'Edit',
+                  label: context.l10n.commonEdit,
                 ),
                 SlidableAction(
                   onPressed: (_) async {
-                    final confirmed = await AppFeedback.showConfirmDialog(
+                    final confirmed = await TrashActions.confirm(
                       context,
-                      title: 'Delete Location',
-                      message: 'Are you sure you want to delete "${box.name}"? All nested containers and items inside will also be deleted.',
-                      confirmLabel: 'Delete Box',
-                      isDestructive: true,
-                      icon: Icons.delete_outline,
+                      name: box.name,
+                      isBox: true,
+                      hasContents: true,
                     );
                     if (confirmed && mounted) {
                       final ok = await provider.deleteBox(box.id, cascade: true);
                       if (!mounted) return;
                       if (ok) {
-                        AppFeedback.showSuccess(context, 'Location "${box.name}" deleted successfully');
+                        TrashActions.showMoved(context, provider, name: box.name, boxId: box.id);
                       } else {
-                        AppFeedback.showError(context, 'Could not delete "${box.name}". Please try again.');
+                        AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(box.name));
                       }
                     }
                   },
                   backgroundColor: Colors.red.shade400,
                   foregroundColor: Colors.white,
                   icon: Icons.delete_outline,
-                  label: 'Delete',
+                  label: context.l10n.commonDelete,
                 ),
               ],
             ),
             child: Material(
-              color: Colors.white,
+              color: context.colors.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
                 side: BorderSide(
-                  color: depth == 0 ? const Color(0xFFE4E4E7) : const Color(0xFFE2E8F0),
+                  color: depth == 0 ? context.colors.border : context.colors.border,
                   width: depth == 0 ? 1.2 : 1.0,
                 ),
               ),
@@ -420,21 +425,21 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             child: AnimatedRotation(
                               turns: isExpanded ? 0.25 : 0.0,
                               duration: const Duration(milliseconds: 200),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.chevron_right_rounded,
                                 size: 22,
-                                color: Color(0xFF71717A),
+                                color: context.colors.textSecondary,
                               ),
                             ),
                           ),
                         )
                       else if (depth > 0)
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10),
                           child: Icon(
                             Icons.subdirectory_arrow_right_rounded,
                             size: 16,
-                            color: Color(0xFFA1A1AA),
+                            color: context.colors.textMuted,
                           ),
                         )
                       else
@@ -445,12 +450,12 @@ class _BoxesScreenState extends State<BoxesScreen> {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: depth == 0 ? const Color(0xFFF4F4F5) : const Color(0xFFF1F5F9),
+                          color: depth == 0 ? context.colors.fill : context.colors.fill,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
                           box.type.icon,
-                          color: const Color(0xFF18181B),
+                          color: context.colors.textPrimary,
                           size: 22,
                         ),
                       ),
@@ -466,7 +471,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                               style: GoogleFonts.inter(
                                 fontWeight: depth == 0 ? FontWeight.w700 : FontWeight.w600,
                                 fontSize: depth == 0 ? 15 : 14,
-                                color: const Color(0xFF18181B),
+                                color: context.colors.textPrimary,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -476,7 +481,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                               '${box.type.displayName} • $itemCount ${itemCount == 1 ? 'item' : 'items'}${children.isNotEmpty ? ' • ${children.length} sub-containers' : ''}',
                               style: GoogleFonts.inter(
                                 fontSize: 12,
-                                color: const Color(0xFF71717A),
+                                color: context.colors.textSecondary,
                               ),
                             ),
                           ],
@@ -485,9 +490,9 @@ class _BoxesScreenState extends State<BoxesScreen> {
 
                       // Quick add container button
                       IconButton(
-                        tooltip: 'Add sub-container',
+                        tooltip: context.l10n.addSubContainer,
                         visualDensity: VisualDensity.compact,
-                        icon: const Icon(Icons.add_rounded, size: 20, color: Color(0xFF71717A)),
+                        icon: Icon(Icons.add_rounded, size: 20, color: context.colors.textSecondary),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -499,10 +504,10 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       ),
 
                       // Forward arrow
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_ios_rounded,
                         size: 14,
-                        color: Color(0xFFA1A1AA),
+                        color: context.colors.textMuted,
                       ),
                     ],
                   ),

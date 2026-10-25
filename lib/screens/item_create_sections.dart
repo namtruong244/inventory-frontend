@@ -9,37 +9,37 @@ extension _ItemCreateSections on _ItemCreateScreenState {
   ) {
     return [
       // Section 2: Basic Info
-      _buildSectionTitle('Basic Information'),
+      _buildSectionTitle(context.l10n.basicInformation),
       const SizedBox(height: 12),
 
       AppFormField(
-        label: 'Item Name',
-        hintText: 'e.g. MacBook Pro, First Aid Kit, USB Cable',
+        label: context.l10n.itemName,
+        hintText: context.l10n.eGMacbookProFirst,
         controller: _nameController,
         validator: (value) => value == null || value.trim().isEmpty
-            ? 'Please enter item name'
+            ? context.l10n.pleaseEnterItemName
             : null,
       ),
       const SizedBox(height: 16),
 
       // Category Section with Bottom Sheet Picker
-      const Text(
-        'Category',
+      Text(
+        context.l10n.commonCategory,
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF18181B),
+          color: context.colors.textPrimary,
         ),
       ),
       const SizedBox(height: 8),
-      GestureDetector(
+      Tappable(
         onTap: () => _openCategoryPicker(provider),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE4E4E7)),
+            border: Border.all(color: context.colors.border),
           ),
           child: Row(
             children: [
@@ -47,13 +47,13 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F4F5),
+                  color: context.colors.fill,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   CategoryHelper.getCategoryIcon(_selectedCategory),
                   size: 20,
-                  color: const Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                 ),
               ),
               const SizedBox(width: 12),
@@ -64,29 +64,29 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                     Text(
                       _selectedCategory.isNotEmpty
                           ? _selectedCategory
-                          : 'Select Category',
+                          : context.l10n.selectCategory,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                         color: _selectedCategory.isNotEmpty
-                            ? const Color(0xFF18181B)
-                            : Colors.grey.shade500,
+                            ? context.colors.textPrimary
+                            : context.colors.textMuted,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Tap to change category',
+                      context.l10n.tapToChangeCategory,
                       style: TextStyle(
-                        color: Colors.grey.shade500,
+                        color: context.colors.textMuted,
                         fontSize: 11,
                       ),
                     ),
                   ],
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.keyboard_arrow_down_rounded,
-                color: Color(0xFF71717A),
+                color: context.colors.textSecondary,
                 size: 22,
               ),
             ],
@@ -101,7 +101,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           Expanded(
             flex: 3,
             child: AppFormField(
-              label: 'Quantity',
+              label: context.l10n.commonQuantity,
               hintText: '1',
               controller: _quantityController,
               keyboardType: const TextInputType.numberWithOptions(
@@ -113,17 +113,17 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           Expanded(
             flex: 3,
             child: AppFormField(
-              label: 'Unit',
+              label: context.l10n.commonUnit,
               hintText: provider.defaultUnit.isNotEmpty
                   ? provider.defaultUnit
                   : 'pcs',
               controller: _unitController,
               suffixIcon: PopupMenuButton<String>(
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_drop_down_rounded,
-                  color: Color(0xFF71717A),
+                  color: context.colors.textSecondary,
                 ),
-                tooltip: 'Select Unit',
+                tooltip: context.l10n.selectUnit,
                 onSelected: (val) {
                   _update(() {
                     _unitController.text = val;
@@ -151,31 +151,31 @@ extension _ItemCreateSections on _ItemCreateScreenState {
 
       // Low Stock Threshold per item
       AppFormField(
-        label: 'Low Stock Alert Threshold (Optional)',
-        hintText: 'e.g. 2 (Alert when quantity ≤ this number)',
+        label: context.l10n.lowStockAlertThresholdOptional,
+        hintText: context.l10n.eG2AlertWhen,
         controller: _minQuantityController,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
       ),
       const SizedBox(height: 16),
 
       // Storage Location Selector
-      const Text(
-        'Storage Location',
+      Text(
+        context.l10n.storageLocation,
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF18181B),
+          color: context.colors.textPrimary,
         ),
       ),
       const SizedBox(height: 8),
-      GestureDetector(
+      Tappable(
         onTap: _pickStorageLocation,
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFE4E4E7)),
+            border: Border.all(color: context.colors.border),
           ),
           child: Row(
             children: [
@@ -183,12 +183,12 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F4F5),
+                  color: context.colors.fill,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   currentBox?.type.icon ?? Icons.location_on_outlined,
-                  color: const Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                   size: 20,
                 ),
               ),
@@ -198,27 +198,27 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      currentBox?.name ?? 'Select Storage Container',
-                      style: const TextStyle(
+                      currentBox?.name ?? context.l10n.selectStorageContainer,
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
-                        color: Color(0xFF18181B),
+                        color: context.colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.route_outlined,
                           size: 12,
-                          color: Color(0xFF71717A),
+                          color: context.colors.textSecondary,
                         ),
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            breadcrumb.isNotEmpty ? breadcrumb : 'Unassigned',
-                            style: const TextStyle(
-                              color: Color(0xFF71717A),
+                            breadcrumb.isNotEmpty ? breadcrumb : context.l10n.commonUnassigned,
+                            style: TextStyle(
+                              color: context.colors.textSecondary,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
                             ),
@@ -234,13 +234,13 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.all(6),
-                decoration: const BoxDecoration(
-                  color: Color(0xFFF4F4F5),
+                decoration: BoxDecoration(
+                  color: context.colors.fill,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.chevron_right_rounded,
-                  color: Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                   size: 18,
                 ),
               ),
@@ -251,8 +251,8 @@ extension _ItemCreateSections on _ItemCreateScreenState {
       const SizedBox(height: 16),
 
       AppFormField(
-        label: 'Description',
-        hintText: 'Color, condition, accessories (Optional)',
+        label: context.l10n.commonDescription,
+        hintText: context.l10n.colorConditionAccessoriesOptional,
         controller: _descriptionController,
         maxLines: 2,
       ),
@@ -262,9 +262,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
       Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.grey.shade200, width: 1),
+          border: Border.all(color: context.colors.border, width: 1),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.02),
@@ -279,13 +279,13 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: _isConsumable
-                    ? const Color(0xFF18181B)
-                    : const Color(0xFFF4F4F6),
+                    ? context.colors.primary
+                    : context.colors.fill,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 Icons.shopping_basket_outlined,
-                color: _isConsumable ? Colors.white : const Color(0xFF71717A),
+                color: _isConsumable ? Colors.white : context.colors.textSecondary,
                 size: 22,
               ),
             ),
@@ -294,21 +294,21 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Consumable Item',
+                  Text(
+                    context.l10n.consumableItem,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Consumable items (batteries, masks, food, medicine...)',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 11),
+                    context.l10n.consumableItemsBatteriesMasksFood,
+                    style: TextStyle(color: context.colors.textSecondary, fontSize: 11),
                   ),
                 ],
               ),
             ),
             Switch.adaptive(
               value: _isConsumable,
-              activeTrackColor: const Color(0xFF18181B),
+              activeTrackColor: context.colors.primary,
               activeThumbColor: Colors.white,
               onChanged: (val) => _update(() => _isConsumable = val),
             ),
@@ -326,14 +326,14 @@ extension _ItemCreateSections on _ItemCreateScreenState {
   ) {
     return [
       // Section 3: Asset Status
-      _buildSectionTitle('Asset Status'),
+      _buildSectionTitle(context.l10n.assetStatus),
       const SizedBox(height: 12),
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           children: ItemStatus.values.map((status) {
             final isSelected = _selectedStatus == status;
-            return GestureDetector(
+            return Tappable(
               onTap: () => _update(() => _selectedStatus = status),
               child: Container(
                 margin: const EdgeInsets.only(right: 8),
@@ -342,12 +342,12 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF18181B) : Colors.white,
+                  color: isSelected ? context.colors.primary : context.colors.surface,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSelected
-                        ? const Color(0xFF18181B)
-                        : Colors.grey.shade300,
+                        ? context.colors.primary
+                        : context.colors.border,
                   ),
                 ),
                 child: Row(
@@ -367,7 +367,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                             : FontWeight.w500,
                         color: isSelected
                             ? Colors.white
-                            : const Color(0xFF18181B),
+                            : context.colors.textPrimary,
                       ),
                     ),
                   ],
@@ -388,14 +388,14 @@ extension _ItemCreateSections on _ItemCreateScreenState {
   ) {
     return [
       // Section 4: Asset, Price & Serial
-      _buildSectionTitle('Asset & Warranty Details'),
+      _buildSectionTitle(context.l10n.assetWarrantyDetails),
       const SizedBox(height: 12),
 
       Row(
         children: [
           Expanded(
             child: AppFormField(
-              label: 'Purchase Price (${provider.currency})',
+              label: context.l10n.purchasePrice(provider.currency),
               hintText: '0.00',
               prefixText: '${provider.currency} ',
               controller: _priceController,
@@ -407,7 +407,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           const SizedBox(width: 12),
           Expanded(
             child: AppFormField(
-              label: 'Serial Number',
+              label: context.l10n.serialNumber,
               hintText: 'SN-XXXX-XXXX',
               controller: _serialController,
             ),
@@ -418,8 +418,8 @@ extension _ItemCreateSections on _ItemCreateScreenState {
 
       // Barcode (UPC/EAN)
       AppFormField(
-        label: 'Product Barcode (UPC / EAN)',
-        hintText: 'Scan or enter product barcode',
+        label: context.l10n.productBarcodeUpcEan,
+        hintText: context.l10n.scanOrEnterProductBarcode,
         controller: _barcodeController,
       ),
       const SizedBox(height: 16),
@@ -429,7 +429,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         children: [
           Expanded(
             child: _buildDatePickerTile(
-              label: 'Warranty Expiry',
+              label: context.l10n.warrantyExpiry,
               date: _warrantyExpiryDate,
               onSelected: (d) => _update(() => _warrantyExpiryDate = d),
             ),
@@ -437,7 +437,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           const SizedBox(width: 12),
           Expanded(
             child: _buildDatePickerTile(
-              label: 'Perishable Expiry',
+              label: context.l10n.perishableExpiry,
               date: _expiryDate,
               onSelected: (d) => _update(() => _expiryDate = d),
             ),
@@ -501,13 +501,14 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         if (mounted) {
           AppFeedback.showSuccess(
             context,
-            isReceipt ? 'Receipt captured' : 'Photo captured',
+            isReceipt ? context.l10n.receiptCaptured : context.l10n.photoCaptured,
           );
         }
       }
     } catch (e) {
+      debugPrint('item_create_sections.dart error: $e');
       if (mounted) {
-        AppFeedback.showError(context, 'Camera unavailable: $e');
+        AppFeedback.showError(context, context.l10n.cameraIsnTAvailableCheck);
       }
     }
   }
@@ -545,13 +546,14 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         if (mounted) {
           AppFeedback.showSuccess(
             context,
-            isReceipt ? 'Receipt selected' : 'Photo selected',
+            isReceipt ? context.l10n.receiptSelected : context.l10n.photoSelected,
           );
         }
       }
     } catch (e) {
+      debugPrint('item_create_sections.dart error: $e');
       if (mounted) {
-        AppFeedback.showError(context, 'Gallery unavailable: $e');
+        AppFeedback.showError(context, context.l10n.couldnTOpenYourPhotos);
       }
     }
   }
@@ -565,15 +567,15 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         scrollDirection: Axis.horizontal,
         children: [
           // Add Photo button card
-          GestureDetector(
+          Tappable(
             onTap: () => _openPhotoModal(isReceipt),
             child: Container(
               width: 90,
               decoration: BoxDecoration(
-                color: const Color(0xFFF4F4F6),
+                color: context.colors.fill,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.grey.shade300,
+                  color: context.colors.border,
                   style: BorderStyle.solid,
                 ),
               ),
@@ -584,16 +586,16 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                     isReceipt
                         ? Icons.receipt_long_outlined
                         : Icons.add_a_photo_outlined,
-                    color: const Color(0xFF18181B),
+                    color: context.colors.textPrimary,
                     size: 26,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     isReceipt ? '+ Receipt' : '+ Photo',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF18181B),
+                      color: context.colors.textPrimary,
                     ),
                   ),
                 ],
@@ -630,11 +632,11 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF18181B),
+                          color: context.colors.primary,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Text(
-                          'Cover',
+                        child: Text(
+                          context.l10n.commonCover,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 9,
@@ -647,7 +649,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   Positioned(
                     top: 4,
                     right: 4,
-                    child: GestureDetector(
+                    child: Tappable(
                       onTap: () {
                         _update(() {
                           list.removeAt(idx);
@@ -679,10 +681,10 @@ extension _ItemCreateSections on _ItemCreateScreenState {
   Widget _buildSectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF18181B),
+        color: context.colors.textPrimary,
         letterSpacing: -0.3,
       ),
     );
@@ -700,14 +702,14 @@ extension _ItemCreateSections on _ItemCreateScreenState {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF18181B),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
-        GestureDetector(
+        Tappable(
           onTap: () async {
             final picked = await showDatePicker(
               context: context,
@@ -721,7 +723,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F4F6),
+              color: context.colors.fill,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -729,34 +731,34 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               children: [
                 Expanded(
                   child: Text(
-                    date != null ? dateFormat.format(date) : 'Not set',
+                    date != null ? dateFormat.format(date) : context.l10n.notSet,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: date != null
                           ? FontWeight.bold
                           : FontWeight.normal,
                       color: date != null
-                          ? const Color(0xFF18181B)
-                          : Colors.grey.shade500,
+                          ? context.colors.textPrimary
+                          : context.colors.textMuted,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 if (date != null)
-                  GestureDetector(
+                  Tappable(
                     onTap: () => onSelected(null),
-                    child: const Icon(
+                    child: Icon(
                       Icons.clear,
                       size: 16,
-                      color: Colors.grey,
+                      color: context.colors.textSecondary,
                     ),
                   )
                 else
-                  const Icon(
+                  Icon(
                     Icons.event_outlined,
                     size: 16,
-                    color: Colors.grey,
+                    color: context.colors.textSecondary,
                   ),
               ],
             ),
@@ -770,9 +772,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
     final selectedBox = await LocationPickerSheet.show(
       context,
       initialBoxId: _currentBoxId,
-      title: 'Select Storage Location',
-      subtitle: 'Choose container or scan QR to assign',
-      confirmButtonText: 'Set Location',
+      title: context.l10n.selectStorageLocation,
+      subtitle: context.l10n.chooseContainerOrScanQr,
+      confirmButtonText: context.l10n.setLocation,
     );
     if (!mounted || selectedBox == null) return;
     _update(() {

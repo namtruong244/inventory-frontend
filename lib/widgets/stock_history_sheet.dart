@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Bottom sheet listing an item's stock movements and consumption estimate.
 class StockHistorySheet extends StatelessWidget {
@@ -23,24 +24,24 @@ class StockHistorySheet extends StatelessWidget {
     );
   }
 
-  static String _reasonLabel(String reason) {
+  static String _reasonLabel(BuildContext context, String reason) {
     switch (reason) {
       case 'initial':
-        return 'Initial stock';
+        return context.l10n.initialStock;
       case 'restock':
-        return 'Restocked';
+        return context.l10n.commonRestocked;
       case 'consume':
-        return 'Used';
+        return context.l10n.commonUsed;
       case 'damaged':
-        return 'Damaged';
+        return context.l10n.commonDamaged;
       case 'lost':
-        return 'Lost';
+        return context.l10n.commonLost;
       case 'correction':
-        return 'Correction';
+        return context.l10n.commonCorrection;
       case 'move':
-        return 'Moved';
+        return context.l10n.commonMoved;
       default:
-        return 'Adjusted';
+        return context.l10n.commonAdjusted;
     }
   }
 
@@ -58,30 +59,30 @@ class StockHistorySheet extends StatelessWidget {
           }
           final history = snap.data;
           if (history == null) {
-            return const Center(child: Text('Could not load stock history'));
+            return Center(child: Text(context.l10n.couldNotLoadStockHistory));
           }
           final days = history.estimatedDaysLeft;
           return ListView(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
             children: [
-              Text('Stock history', style: Theme.of(context).textTheme.titleLarge),
+              Text(context.l10n.stockHistory, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 4),
               Text(
                 days == null
-                    ? 'No consumption data yet'
-                    : 'Avg ${provider.formatQty(history.avgDailyConsumption30d, item.unit)}/day · about ${days.round()} days left',
+                    ? context.l10n.noConsumptionDataYet
+                    : context.l10n.avgDayAboutDaysLeft(provider.formatQty(history.avgDailyConsumption30d, item.unit), days.round()),
                 style: const TextStyle(color: Colors.black54),
               ),
               const SizedBox(height: 12),
               if (history.movements.isEmpty)
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(vertical: 24),
-                  child: Center(child: Text('No movements recorded')),
+                  child: Center(child: Text(context.l10n.noMovementsRecorded)),
                 ),
               for (final m in history.movements)
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text(_reasonLabel(m.reason)),
+                  title: Text(_reasonLabel(context, m.reason)),
                   subtitle: Text(DateFormat.yMMMd().add_jm().format(m.createdAt) +
                       (m.note.isEmpty ? '' : ' · ${m.note}')),
                   trailing: Column(

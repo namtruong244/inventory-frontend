@@ -14,6 +14,9 @@ import 'qr_scanner_tab.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
 import 'login_screen.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class HomeScreen extends StatefulWidget {
   final int initialIndex;
@@ -151,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: _currentOverlayStyle,
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F9FA),
+        backgroundColor: context.colors.background,
         body: Stack(
           children: [
             Positioned.fill(
@@ -177,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     duration: const Duration(milliseconds: 200),
                     opacity: _isHeaderScrolledPast ? 1.0 : 0.0,
                     child: Container(
-                      color: const Color(0xFFF8F9FA).withValues(alpha: 0.95),
+                      color: context.colors.fill.withValues(alpha: 0.95),
                     ),
                   ),
                 ),
@@ -200,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     return RefreshIndicator(
       onRefresh: () => provider.fetchAllData(),
-      color: const Color(0xFF18181B),
+      color: context.colors.textPrimary,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         controller: _homeScrollController,
@@ -233,8 +236,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         Container(
           width: double.infinity,
           padding: EdgeInsets.fromLTRB(24, topPadding + 14, 24, 38),
-          decoration: const BoxDecoration(
-            color: Color(0xFF18181B), // Dark Charcoal
+          decoration: BoxDecoration(
+            color: context.colors.primary, // Dark Charcoal
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
           ),
           child: Stack(
@@ -258,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           builder: (context, provider, _) {
                             final firstName = provider.userName.trim().split(' ').first;
                             return Text(
-                              'Hey ${firstName.isNotEmpty ? firstName : "there"} !',
+                              context.l10n.heyName(firstName.isNotEmpty ? firstName : context.l10n.heyFallbackName),
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.8),
                                 fontSize: 13,
@@ -269,8 +272,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           },
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          "Track & manage\nyour inventory!",
+                        Text(
+                          context.l10n.trackManageYourInventory,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 21,
@@ -289,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       Consumer<InventoryProvider>(
                         builder: (context, provider, _) {
                           final alertCount = provider.totalAlertCount;
-                          return GestureDetector(
+                          return Tappable(
                             onTap: () => _navigateWithOverlayRestore(const AlertsScreen()),
                             child: Stack(
                               clipBehavior: Clip.none,
@@ -298,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                                   width: 44,
                                   height: 44,
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.12),
+                                    color: context.colors.surface.withValues(alpha: 0.12),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
@@ -341,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           final initial = provider.userName.trim().isNotEmpty
                               ? provider.userName.trim()[0].toUpperCase()
                               : 'U';
-                          return GestureDetector(
+                          return Tappable(
                             onTap: () => _navigateWithOverlayRestore(const LoginScreen()),
                             child: Container(
                               padding: const EdgeInsets.all(2.5),
@@ -354,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                               ),
                               child: CircleAvatar(
                                 radius: 22,
-                                backgroundColor: const Color(0xFF27272A),
+                                backgroundColor: context.colors.primary,
                                 child: Text(
                                   initial,
                                   style: const TextStyle(
@@ -381,13 +384,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           bottom: -26,
           left: 24,
           right: 24,
-          child: GestureDetector(
+          child: Tappable(
             onTap: () => _navigateWithOverlayRestore(const SearchScreen()),
             child: Container(
               height: 56,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -399,13 +402,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
               child: Row(
                 children: [
-                  Icon(Icons.search, color: Colors.grey.shade400, size: 24),
+                  Icon(Icons.search, color: context.colors.textMuted, size: 24),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Search',
+                      context.l10n.commonSearch,
                       style: TextStyle(
-                        color: Colors.grey.shade400,
+                        color: context.colors.textMuted,
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
                       ),
@@ -414,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF18181B),
+                      color: context.colors.primary,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -441,7 +444,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         height: 68,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(36),
           boxShadow: [
             BoxShadow(
@@ -459,14 +462,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               index: 0,
               icon: Icons.home_outlined,
               activeIcon: Icons.home_rounded,
-              tooltip: 'Home',
+              tooltip: context.l10n.commonHome,
             ),
             // 1: Box
             _buildNavItem(
               index: 1,
               icon: Icons.inventory_2_outlined,
               activeIcon: Icons.inventory_2_rounded,
-              tooltip: 'Box',
+              tooltip: context.l10n.commonBox,
             ),
             // QR Scan Action Button (opens camera fullscreen, no navbar)
             _buildCenterQRButton(),
@@ -475,14 +478,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               index: 2,
               icon: Icons.category_outlined,
               activeIcon: Icons.category_rounded,
-              tooltip: 'Item',
+              tooltip: context.l10n.commonItem,
             ),
             // 3: Setting
             _buildNavItem(
               index: 3,
               icon: Icons.settings_outlined,
               activeIcon: Icons.settings_rounded,
-              tooltip: 'Setting',
+              tooltip: context.l10n.commonSetting,
             ),
           ],
         ),
@@ -500,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     return Tooltip(
       message: tooltip,
-      child: GestureDetector(
+      child: Tappable(
         onTap: () => _onTabSelected(index),
         behavior: HitTestBehavior.opaque,
         child: SizedBox(
@@ -513,8 +516,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 isSelected ? activeIcon : icon,
                 size: 24,
                 color: isSelected
-                    ? const Color(0xFF18181B)
-                    : Colors.grey.shade400,
+                    ? context.colors.textPrimary
+                    : context.colors.textMuted,
               ),
               const SizedBox(height: 4),
               // Small active indicator dot - close and snug to the icon
@@ -524,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 height: 4,
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? const Color(0xFF18181B)
+                      ? context.colors.primary
                       : Colors.transparent,
                   shape: BoxShape.circle,
                 ),
@@ -538,8 +541,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildCenterQRButton() {
     return Tooltip(
-      message: 'Scan QR Code',
-      child: GestureDetector(
+      message: context.l10n.scanQrCode,
+      child: Tappable(
         onTap: () => _navigateWithOverlayRestore(const QRScannerTab(isFullScreen: true)),
         behavior: HitTestBehavior.opaque,
         child: Container(
@@ -554,7 +557,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               width: 41,
               height: 41,
               decoration: BoxDecoration(
-                color: const Color(0xFF18181B), // Inner dark charcoal circle
+                color: context.colors.primary, // Inner dark charcoal circle
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(

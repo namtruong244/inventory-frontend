@@ -1,20 +1,29 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:inventory/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventory/providers/inventory_provider.dart';
 import 'package:inventory/screens/home_screen.dart';
 import 'package:inventory/screens/login_screen.dart';
+import 'package:inventory/services/offline_store.dart';
 
 void main() {
   setUp(() {
+    // No platform channels in widget tests: keep the snapshot in SharedPreferences.
+    OfflineStore.directoryProvider = () async => null;
     SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({});
   });
 
   Widget buildTestLoginApp() {
     return ChangeNotifierProvider(
       create: (_) => InventoryProvider(),
-      child: const MaterialApp(
+      child: MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
         home: LoginScreen(),
       ),
     );

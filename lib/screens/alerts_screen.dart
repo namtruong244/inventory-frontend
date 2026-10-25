@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'item_details_screen.dart';
+import '../widgets/app_refresh.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class AlertsScreen extends StatelessWidget {
   const AlertsScreen({super.key});
@@ -25,28 +28,29 @@ class AlertsScreen extends StatelessWidget {
         lowStockItems.length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: IconButton(
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: Container(
               padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Color(0xFF18181B)),
+              child: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
             ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
-        title: const Text(
-          'Lifecycle & Alerts',
+        title: Text(
+          context.l10n.lifecycleAlerts,
           style: TextStyle(
-            color: Color(0xFF18181B),
+            color: context.colors.textPrimary,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -62,34 +66,36 @@ class AlertsScreen extends StatelessWidget {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(20),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFD1FAE5),
+                      decoration: BoxDecoration(
+                        color: context.colors.successSoft,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.verified_rounded, size: 56, color: Color(0xFF059669)),
                     ),
                     const SizedBox(height: 20),
-                    const Text(
-                      'All Good!',
+                    Text(
+                      context.l10n.allGood,
                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'No items are expired, expiring soon, or overdue.',
+                      context.l10n.noItemsAreExpiredExpiring,
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                      style: TextStyle(color: context.colors.textSecondary, fontSize: 14),
                     ),
                   ],
                 ),
               ),
             )
-          : ListView(
+          : AppRefresh(child: ListView(
+ physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 120),
               children: [
                 // 1. Expired Items Section
                 if (expiredItems.isNotEmpty) ...[
                   _buildSectionHeader(
-                    title: 'Expired Items',
+                    context,
+                    title: context.l10n.expiredItems,
                     count: expiredItems.length,
                     color: const Color(0xFFEF4444),
                   ),
@@ -101,7 +107,8 @@ class AlertsScreen extends StatelessWidget {
                 // 2. Expiring Soon Section (within 30 days)
                 if (expiringSoon.isNotEmpty) ...[
                   _buildSectionHeader(
-                    title: 'Expiring Soon (Perishables)',
+                    context,
+                    title: context.l10n.expiringSoonPerishables,
                     count: expiringSoon.length,
                     color: const Color(0xFFF59E0B),
                   ),
@@ -113,7 +120,8 @@ class AlertsScreen extends StatelessWidget {
                 // 3. Warranty Expiring Section
                 if (expiringWarranties.isNotEmpty) ...[
                   _buildSectionHeader(
-                    title: 'Warranties Ending Soon',
+                    context,
+                    title: context.l10n.warrantiesEndingSoon,
                     count: expiringWarranties.length,
                     color: const Color(0xFF3B82F6),
                   ),
@@ -125,7 +133,8 @@ class AlertsScreen extends StatelessWidget {
                 // 4. Overdue Loans Section
                 if (overdueLoans.isNotEmpty) ...[
                   _buildSectionHeader(
-                    title: 'Overdue Borrowed Items',
+                    context,
+                    title: context.l10n.overdueBorrowedItems,
                     count: overdueLoans.length,
                     color: const Color(0xFF9333EA),
                   ),
@@ -140,7 +149,8 @@ class AlertsScreen extends StatelessWidget {
                 // 5. Low Stock Warnings Section
                 if (lowStockItems.isNotEmpty) ...[
                   _buildSectionHeader(
-                    title: 'Low Stock Warnings',
+                    context,
+                    title: context.l10n.lowStockWarnings,
                     count: lowStockItems.length,
                     color: const Color(0xFFD97706),
                   ),
@@ -148,13 +158,13 @@ class AlertsScreen extends StatelessWidget {
                   ...lowStockItems.map((item) => _buildLowStockAlertCard(context, item, provider)),
                 ],
               ],
-            ),
+            )),
     );
   }
 
   Widget _buildLowStockAlertCard(BuildContext context, Item item, InventoryProvider provider) {
     final parentBox = provider.getBoxById(item.boxId);
-    final breadcrumb = parentBox != null ? provider.getBreadcrumbString(parentBox.id) : 'Storage';
+    final breadcrumb = parentBox != null ? provider.getBreadcrumbString(parentBox.id) : context.l10n.commonStorage;
     final qty = item.quantity % 1 == 0 ? item.quantity.toInt() : item.quantity;
     final minQty = item.minQuantity! % 1 == 0 ? item.minQuantity!.toInt() : item.minQuantity;
 
@@ -162,7 +172,7 @@ class AlertsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFFCD34D)),
       ),
@@ -170,8 +180,8 @@ class AlertsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFEF3C7),
+            decoration: BoxDecoration(
+              color: context.colors.warningSoft,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.production_quantity_limits_rounded, color: Color(0xFFD97706), size: 22),
@@ -188,19 +198,20 @@ class AlertsScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   breadcrumb,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  style: TextStyle(color: context.colors.textMuted, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Only $qty ${item.unit} remaining (Threshold: ≤ $minQty ${item.unit})',
+                  context.l10n.onlyRemainingThreshold(qty, item.unit, minQty ?? 0, item.unit),
                   style: const TextStyle(color: Color(0xFFD97706), fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
           ),
           IconButton(
+ tooltip: context.l10n.viewDetails,
             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
             onPressed: () {
               Navigator.push(
@@ -216,7 +227,7 @@ class AlertsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeader({required String title, required int count, required Color color}) {
+  Widget _buildSectionHeader(BuildContext context, {required String title, required int count, required Color color}) {
     return Row(
       children: [
         Container(
@@ -230,10 +241,10 @@ class AlertsScreen extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF18181B),
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(width: 8),
@@ -264,7 +275,7 @@ class AlertsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFFCA5A5)),
       ),
@@ -272,8 +283,8 @@ class AlertsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFFEE2E2),
+            decoration: BoxDecoration(
+              color: context.colors.dangerSoft,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.dangerous_outlined, color: Color(0xFFDC2626), size: 22),
@@ -290,7 +301,7 @@ class AlertsScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   breadcrumb,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  style: TextStyle(color: context.colors.textMuted, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -303,6 +314,7 @@ class AlertsScreen extends StatelessWidget {
             ),
           ),
           IconButton(
+ tooltip: context.l10n.viewDetails,
             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
             onPressed: () {
               Navigator.push(
@@ -327,10 +339,10 @@ class AlertsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isUrgent ? const Color(0xFFFCD34D) : Colors.grey.shade200,
+          color: isUrgent ? const Color(0xFFFCD34D) : context.colors.border,
         ),
       ),
       child: Row(
@@ -338,12 +350,12 @@ class AlertsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isUrgent ? const Color(0xFFFEF3C7) : const Color(0xFFF3F4F6),
+              color: isUrgent ? context.colors.warningSoft : const Color(0xFFF3F4F6),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.hourglass_top_rounded,
-              color: isUrgent ? const Color(0xFFD97706) : Colors.grey.shade700,
+              color: isUrgent ? const Color(0xFFD97706) : context.colors.textSecondary,
               size: 22,
             ),
           ),
@@ -359,7 +371,7 @@ class AlertsScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   breadcrumb,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  style: TextStyle(color: context.colors.textMuted, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -367,7 +379,7 @@ class AlertsScreen extends StatelessWidget {
                 Text(
                   'Expires in $daysLeft days (${DateFormat('MMM dd, yyyy').format(item.expiryDate!)})',
                   style: TextStyle(
-                    color: isUrgent ? const Color(0xFFD97706) : Colors.grey.shade700,
+                    color: isUrgent ? const Color(0xFFD97706) : context.colors.textSecondary,
                     fontSize: 12,
                     fontWeight: isUrgent ? FontWeight.bold : FontWeight.w500,
                   ),
@@ -376,6 +388,7 @@ class AlertsScreen extends StatelessWidget {
             ),
           ),
           IconButton(
+ tooltip: context.l10n.viewDetails,
             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
             onPressed: () {
               Navigator.push(
@@ -399,7 +412,7 @@ class AlertsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Colors.blue.shade100),
       ),
@@ -407,8 +420,8 @@ class AlertsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFDBEAFE),
+            decoration: BoxDecoration(
+              color: context.colors.infoSoft,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.security_outlined, color: Color(0xFF2563EB), size: 22),
@@ -425,19 +438,20 @@ class AlertsScreen extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   breadcrumb,
-                  style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                  style: TextStyle(color: context.colors.textMuted, fontSize: 11),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Warranty ends in $daysLeft days',
+                  context.l10n.warrantyEndsInDays(daysLeft),
                   style: const TextStyle(color: Color(0xFF2563EB), fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ],
             ),
           ),
           IconButton(
+ tooltip: context.l10n.viewDetails,
             icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
             onPressed: () {
               Navigator.push(
@@ -460,7 +474,7 @@ class AlertsScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFE9D5FF)),
       ),
@@ -468,8 +482,8 @@ class AlertsScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF3E8FF),
+            decoration: BoxDecoration(
+              color: context.colors.infoSoft,
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.assignment_late_outlined, color: Color(0xFF9333EA), size: 22),
@@ -480,13 +494,13 @@ class AlertsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item?.name ?? 'Borrowed Item',
+                  item?.name ?? context.l10n.borrowedItem,
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Borrower: ${loan.borrowerName} • ${loan.borrowerContact}',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                  context.l10n.commonBorrower(loan.borrowerName, loan.borrowerContact),
+                  style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
                 ),
                 const SizedBox(height: 4),
                 Text(

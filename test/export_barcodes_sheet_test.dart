@@ -1,5 +1,7 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:inventory/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +12,7 @@ import 'package:inventory/widgets/export_barcodes_sheet.dart';
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({});
   });
 
   testWidgets('ExportBarcodesSheet renders box barcodes only without ID and without items', (tester) async {
@@ -29,6 +32,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
         home: ChangeNotifierProvider<InventoryProvider>.value(
           value: provider,
           child: const ExportBarcodesSheet(boxId: 'box-test-1'),
@@ -79,6 +85,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
         home: ChangeNotifierProvider<InventoryProvider>.value(
           value: provider,
           child: const ExportBarcodesSheet(boxId: null),

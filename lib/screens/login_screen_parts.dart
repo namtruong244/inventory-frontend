@@ -5,7 +5,7 @@ extension _LoginScreenParts on _LoginScreenState {
 
   Widget _buildGoogleAccountSelectorSheet(BuildContext sheetContext, {String? notice}) {
     return Material(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
@@ -24,7 +24,7 @@ extension _LoginScreenParts on _LoginScreenState {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: context.colors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -37,21 +37,21 @@ extension _LoginScreenParts on _LoginScreenState {
               const GoogleLogoWidget(size: 26),
               const SizedBox(width: 12),
               Text(
-                'Sign in with Google',
+                context.l10n.signInWithGoogle,
                 style: GoogleFonts.inter(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
-            'Choose an account to continue to Personal Inventory',
+            context.l10n.chooseAnAccountToContinue,
             style: GoogleFonts.inter(
               fontSize: 13,
-              color: const Color(0xFF71717A),
+              color: context.colors.textSecondary,
             ),
           ),
           if (notice != null) ...[
@@ -59,21 +59,21 @@ extension _LoginScreenParts on _LoginScreenState {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF4F4F5),
+                color: context.colors.fill,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE4E4E7)),
+                border: Border.all(color: context.colors.border),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.info_outline_rounded, size: 18, color: Color(0xFF71717A)),
+                  Icon(Icons.info_outline_rounded, size: 18, color: context.colors.textSecondary),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       notice,
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: const Color(0xFF52525B),
+                        color: context.colors.textSecondary,
                         height: 1.3,
                       ),
                     ),
@@ -111,23 +111,23 @@ extension _LoginScreenParts on _LoginScreenState {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: const Color(0xFFF4F4F6),
+                color: context.colors.fill,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: context.colors.border),
               ),
-              child: const Icon(Icons.person_add_alt_1_rounded, size: 20, color: Color(0xFF18181B)),
+              child: Icon(Icons.person_add_alt_1_rounded, size: 20, color: context.colors.textPrimary),
             ),
             title: Text(
-              'Use another Gmail account',
+              context.l10n.useAnotherGmailAccount,
               style: GoogleFonts.inter(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF18181B),
+                color: context.colors.textPrimary,
               ),
             ),
             subtitle: Text(
-              'Enter custom @gmail.com address',
-              style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF71717A)),
+              context.l10n.enterCustomGmailComAddress,
+              style: GoogleFonts.inter(fontSize: 12, color: context.colors.textSecondary),
             ),
             onTap: () {
               Navigator.pop(sheetContext);
@@ -167,14 +167,14 @@ extension _LoginScreenParts on _LoginScreenState {
         style: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF18181B),
+          color: context.colors.textPrimary,
         ),
       ),
       subtitle: Text(
         email,
-        style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF71717A)),
+        style: GoogleFonts.inter(fontSize: 12, color: context.colors.textSecondary),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Color(0xFFA1A1AA)),
+      trailing: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: context.colors.textMuted),
       onTap: () async {
         Navigator.pop(sheetContext);
         await _executeGoogleLogin(
@@ -201,7 +201,7 @@ extension _LoginScreenParts on _LoginScreenState {
             const GoogleLogoWidget(size: 22),
             const SizedBox(width: 10),
             Text(
-              'Enter Gmail Account',
+              context.l10n.enterGmailAccount,
               style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.bold),
             ),
           ],
@@ -211,16 +211,16 @@ extension _LoginScreenParts on _LoginScreenState {
           children: [
             TextField(
               controller: customNameCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Your Name',
-                hintText: 'e.g. John Doe',
+              decoration: InputDecoration(
+                labelText: context.l10n.yourName,
+                hintText: context.l10n.eGJohnDoe,
               ),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: customEmailCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Gmail Address',
+              decoration: InputDecoration(
+                labelText: context.l10n.gmailAddress,
                 hintText: 'username@gmail.com',
               ),
               keyboardType: TextInputType.emailAddress,
@@ -230,7 +230,7 @@ extension _LoginScreenParts on _LoginScreenState {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () {
@@ -252,9 +252,9 @@ extension _LoginScreenParts on _LoginScreenState {
               );
             },
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF18181B),
+              backgroundColor: context.colors.primary,
             ),
-            child: const Text('Continue'),
+            child: Text(context.l10n.commonContinue),
           ),
         ],
       ),
@@ -321,26 +321,26 @@ extension _LoginScreenParts on _LoginScreenState {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          'Reset Password',
+          context.l10n.resetPassword,
           style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 18),
         ),
         content: Text(
           email.isNotEmpty
-              ? 'A password reset link will be sent to $email.'
-              : 'Please enter your email address on the sign in form to receive password reset instructions.',
-          style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF52525B)),
+              ? context.l10n.aPasswordResetLinkWill(email)
+              : context.l10n.pleaseEnterYourEmailAddress,
+          style: GoogleFonts.inter(fontSize: 14, color: context.colors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
-              'Cancel',
-              style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: const Color(0xFF71717A)),
+              context.l10n.commonCancel,
+              style: GoogleFonts.inter(fontWeight: FontWeight.w600, color: context.colors.textSecondary),
             ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF18181B),
+              backgroundColor: context.colors.primary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () {
@@ -348,12 +348,12 @@ extension _LoginScreenParts on _LoginScreenState {
               AppFeedback.showSuccess(
                 context,
                 email.isNotEmpty
-                    ? 'Password reset email sent to $email'
-                    : 'Password reset instructions sent',
+                    ? context.l10n.passwordResetEmailSentTo(email)
+                    : context.l10n.passwordResetInstructionsSent,
               );
             },
             child: Text(
-              'Send Link',
+              context.l10n.sendLink,
               style: GoogleFonts.inter(fontWeight: FontWeight.w600),
             ),
           ),

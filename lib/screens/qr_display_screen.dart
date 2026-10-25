@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../models/inventory_models.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class QRDisplayScreen extends StatelessWidget {
   final Box box;
@@ -12,7 +14,7 @@ class QRDisplayScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Box QR Code'),
+        title: Text(context.l10n.boxQrCode),
       ),
       body: Center(
         child: Column(
@@ -24,7 +26,7 @@ class QRDisplayScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Label: ${box.label}',
+              context.l10n.commonLabel(box.label),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontFamily: 'monospace',
@@ -34,7 +36,7 @@ class QRDisplayScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
@@ -48,7 +50,7 @@ class QRDisplayScreen extends StatelessWidget {
                 data: box.label,
                 version: QrVersions.auto,
                 size: 250.0,
-                backgroundColor: Colors.white,
+                backgroundColor: context.colors.surface,
               ),
             ),
             const SizedBox(height: 48),
@@ -57,7 +59,7 @@ class QRDisplayScreen extends StatelessWidget {
                 // TODO: Implement printing or sharing
               },
               icon: const Icon(Icons.print),
-              label: const Text('Print Label'),
+              label: Text(context.l10n.printLabel),
             ),
           ],
         ),

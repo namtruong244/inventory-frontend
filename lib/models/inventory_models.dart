@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+import '../l10n/l10n_ext.dart';
+
 /// Storage hierarchy type (Room -> Cabinet -> Shelf -> Box -> Drawer -> Other)
 enum StorageType {
   room,
@@ -13,17 +15,17 @@ enum StorageType {
   String get displayName {
     switch (this) {
       case StorageType.room:
-        return 'Room';
+        return AppL10n.current.storageTypeRoom;
       case StorageType.cabinet:
-        return 'Cabinet / Wardrobe';
+        return AppL10n.current.storageTypeCabinet;
       case StorageType.shelf:
-        return 'Shelf / Rack';
+        return AppL10n.current.storageTypeShelf;
       case StorageType.box:
-        return 'Box / Bin';
+        return AppL10n.current.storageTypeBox;
       case StorageType.drawer:
-        return 'Drawer';
+        return AppL10n.current.storageTypeDrawer;
       case StorageType.other:
-        return 'Container';
+        return AppL10n.current.storageTypeOther;
     }
   }
 
@@ -57,17 +59,17 @@ enum ItemStatus {
   String get displayName {
     switch (this) {
       case ItemStatus.stored:
-        return 'Stored';
+        return AppL10n.current.statusStored;
       case ItemStatus.inUse:
-        return 'In Use';
+        return AppL10n.current.statusInUse;
       case ItemStatus.lent:
-        return 'Lent';
+        return AppL10n.current.statusLent;
       case ItemStatus.broken:
-        return 'Broken';
+        return AppL10n.current.statusBroken;
       case ItemStatus.disposed:
-        return 'Disposed';
+        return AppL10n.current.statusDisposed;
       case ItemStatus.lost:
-        return 'Lost';
+        return AppL10n.current.statusLost;
     }
   }
 
@@ -107,6 +109,23 @@ enum ItemStatus {
 }
 
 /// Storage Location / Container Node in hierarchical tree
+/// Whole calendar days from today (local) to [date]; negative when in the past.
+int daysBetweenToday(DateTime date, {DateTime? now}) {
+  final n = now ?? DateTime.now();
+  final today = DateTime.utc(n.year, n.month, n.day);
+  final target = DateTime.utc(date.year, date.month, date.day);
+  return target.difference(today).inDays;
+}
+
+/// Parses a due date as a calendar day: the server stores it as UTC midnight, so
+/// read the UTC fields instead of shifting into the device time zone.
+DateTime? _calendarDay(dynamic raw) {
+  if (raw is! String) return null;
+  final d = DateTime.tryParse(raw);
+  if (d == null) return null;
+  return DateTime(d.year, d.month, d.day);
+}
+
 class Box {
   final String id;
   final String name;
@@ -152,7 +171,7 @@ class Box {
       parentId: clearParent ? null : (parentId ?? this.parentId),
       icon: icon ?? this.icon,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? DateTime.now(),
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -214,6 +233,9 @@ class Item {
   final double? minQuantity; // Minimum stock threshold before triggering low stock alert
   final Map<String, dynamic> customAttributes; // Flexible metadata (color, specs, size)
   
+  /// Quantity currently out on partial loans (still owned, so it counts for stock).
+  final double lentQuantity;
+
   final DateTime createdAt;
   final DateTime? updatedAt;
 
@@ -238,6 +260,7 @@ class Item {
     double? minQuantity,
     double? lowStockThreshold,
     Map<String, dynamic>? customAttributes,
+    this.lentQuantity = 0,
     DateTime? createdAt,
     this.updatedAt,
     String? imageUrl,
@@ -254,23 +277,24 @@ class Item {
   double? get lowStockThreshold => minQuantity;
 
   /// Low stock calculation per item
-  bool get isLowStock => minQuantity != null && quantity <= minQuantity!;
+  /// Mirrors the backend: stock lent out on partial loans still counts.
+  bool get isLowStock =>
+      minQuantity != null && quantity + lentQuantity <= minQuantity!;
 
-  /// Expiry calculations
-  bool get isExpired => expiryDate != null && expiryDate!.isBefore(DateTime.now());
-  
-  int? get daysUntilExpiry {
-    if (expiryDate == null) return null;
-    return expiryDate!.difference(DateTime.now()).inDays;
-  }
+  /// Expiry calculations work on calendar days: an item expiring today is
+  /// not expired yet and has 0 days left.
+  bool get isExpired =>
+      expiryDate != null && daysBetweenToday(expiryDate!) < 0;
+
+  int? get daysUntilExpiry =>
+      expiryDate == null ? null : daysBetweenToday(expiryDate!);
 
   bool get isWarrantyExpired =>
-      warrantyExpiryDate != null && warrantyExpiryDate!.isBefore(DateTime.now());
+      warrantyExpiryDate != null && daysBetweenToday(warrantyExpiryDate!) < 0;
 
-  int? get daysUntilWarrantyExpiry {
-    if (warrantyExpiryDate == null) return null;
-    return warrantyExpiryDate!.difference(DateTime.now()).inDays;
-  }
+  int? get daysUntilWarrantyExpiry => warrantyExpiryDate == null
+      ? null
+      : daysBetweenToday(warrantyExpiryDate!);
 
   Item copyWith({
     String? id,
@@ -317,8 +341,9 @@ class Item {
       expiryDate: expiryDate ?? this.expiryDate,
       minQuantity: clearMinQuantity ? null : (minQuantity ?? lowStockThreshold ?? this.minQuantity),
       customAttributes: customAttributes ?? this.customAttributes,
+      lentQuantity: lentQuantity,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? DateTime.now(),
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -342,6 +367,7 @@ class Item {
         'expiryDate': expiryDate?.toIso8601String(),
         'minQuantity': minQuantity,
         'customAttributes': customAttributes,
+        'lentQuantity': lentQuantity,
         'createdAt': createdAt.toIso8601String(),
         'updatedAt': updatedAt?.toIso8601String(),
         'imageUrl': imageUrl,
@@ -383,6 +409,7 @@ class Item {
         customAttributes: json['customAttributes'] is Map
             ? Map<String, dynamic>.from(json['customAttributes'])
             : {},
+        lentQuantity: (json['lentQuantity'] as num?)?.toDouble() ?? 0,
         createdAt: json['createdAt'] != null
             ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
             : DateTime.now(),
@@ -423,7 +450,7 @@ class LendingRecord {
   bool get isOverdue =>
       isActive &&
       expectedReturnDate != null &&
-      expectedReturnDate!.isBefore(DateTime.now());
+      daysBetweenToday(expectedReturnDate!) < 0;
 
   LendingRecord copyWith({
     String? id,
@@ -472,9 +499,7 @@ class LendingRecord {
         lentDate: json['lentDate'] != null
             ? DateTime.tryParse(json['lentDate']) ?? DateTime.now()
             : DateTime.now(),
-        expectedReturnDate: json['expectedReturnDate'] != null
-            ? DateTime.tryParse(json['expectedReturnDate'])
-            : null,
+        expectedReturnDate: _calendarDay(json['expectedReturnDate']),
         actualReturnDate: json['actualReturnDate'] != null
             ? DateTime.tryParse(json['actualReturnDate'])
             : null,

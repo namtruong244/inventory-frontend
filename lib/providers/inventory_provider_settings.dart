@@ -87,9 +87,39 @@ extension InventorySettings on InventoryProvider {
     }
   }
 
-  void setBeepOnScan(bool val) {
+  /// The backend has no field for this, so it is a per-device preference.
+  Future<void> setBeepOnScan(bool val) async {
     _beepOnScan = val;
     _notify();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(InventoryProvider.beepPrefKey, val);
+    } catch (e) {
+      debugPrint('save beepOnScan error: $e');
+    }
+  }
+
+  Future<void> loadDevicePreferences() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _beepOnScan = prefs.getBool(InventoryProvider.beepPrefKey) ?? _beepOnScan;
+      final themeName = prefs.getString(InventoryProvider.themePrefKey);
+      _themeMode = ThemeMode.values.firstWhere(
+        (m) => m.name == themeName,
+        orElse: () => _themeMode,
+      );
+      final lang = prefs.getString(InventoryProvider.localePrefKey);
+      _locale = lang == null ? null : Locale(lang);
+      _notify();
+    } catch (e) {
+      debugPrint('load device preferences error: $e');
+    }
+  }
+
+  /// Haptic + sound feedback for a successful scan, per the user's settings.
+  void playScanFeedback() {
+    if (_vibrateOnScan) HapticFeedback.mediumImpact();
+    if (_beepOnScan) SystemSound.play(SystemSoundType.click);
   }
 
   Future<void> setAutoOpenOnScan(bool val) async {
@@ -129,6 +159,33 @@ extension InventorySettings on InventoryProvider {
       await _apiService.updateSettings({'notifyLowStock': val});
     } catch (e) {
       debugPrint('updateSettings error: $e');
+    }
+  }
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
+    _notify();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(InventoryProvider.themePrefKey, mode.name);
+    } catch (e) {
+      debugPrint('save themeMode error: $e');
+    }
+  }
+
+  /// [languageCode] `null` follows the system language.
+  Future<void> setLocale(String? languageCode) async {
+    _locale = languageCode == null ? null : Locale(languageCode);
+    _notify();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (languageCode == null) {
+        await prefs.remove(InventoryProvider.localePrefKey);
+      } else {
+        await prefs.setString(InventoryProvider.localePrefKey, languageCode);
+      }
+    } catch (e) {
+      debugPrint('save locale error: $e');
     }
   }
 }

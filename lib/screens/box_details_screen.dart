@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../widgets/trash_actions.dart';
 import '../widgets/box_card.dart';
 import '../widgets/breadcrumb_bar.dart';
 import '../widgets/export_barcodes_sheet.dart';
@@ -15,6 +16,10 @@ import 'box_create_screen.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
 import 'qr_display_screen.dart';
+import '../widgets/app_refresh.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class BoxDetailsScreen extends StatelessWidget {
   final String boxId;
@@ -30,7 +35,7 @@ class BoxDetailsScreen extends StatelessWidget {
         if (box == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: const Center(child: Text('Location not found')),
+            body: Center(child: Text(context.l10n.locationNotFound)),
           );
         }
 
@@ -40,23 +45,25 @@ class BoxDetailsScreen extends StatelessWidget {
         final theme = Theme.of(context);
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF8F9FA),
-          body: CustomScrollView(
+          backgroundColor: context.colors.background,
+          body: AppRefresh(child: CustomScrollView(
+ physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
               SliverAppBar.large(
-                backgroundColor: const Color(0xFFF8F9FA),
+                backgroundColor: context.colors.fill,
                 surfaceTintColor: Colors.transparent,
                 elevation: 0,
                 centerTitle: false,
                 leading: Padding(
                   padding: const EdgeInsets.only(left: 8.0),
                   child: IconButton(
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                     icon: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: context.colors.surface,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: context.colors.border),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.03),
@@ -75,13 +82,13 @@ class BoxDetailsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 4.0),
                     child: IconButton(
-                      tooltip: 'Export Barcodes',
+                      tooltip: context.l10n.exportBarcodes,
                       icon: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.colors.surface,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.shade200),
+                          border: Border.all(color: context.colors.border),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.03),
@@ -90,7 +97,7 @@ class BoxDetailsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: const Icon(Icons.qr_code_2_rounded, size: 20, color: Color(0xFF18181B)),
+                        child: Icon(Icons.qr_code_2_rounded, size: 20, color: context.colors.textPrimary),
                       ),
                       onPressed: () => ExportBarcodesSheet.show(context, box.id),
                     ),
@@ -99,13 +106,13 @@ class BoxDetailsScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: IconButton(
-                      tooltip: 'More Options',
+                      tooltip: context.l10n.moreOptions,
                       icon: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.colors.surface,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.shade200),
+                          border: Border.all(color: context.colors.border),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.03),
@@ -114,7 +121,7 @@ class BoxDetailsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: const Icon(Icons.more_horiz_rounded, size: 20, color: Color(0xFF18181B)),
+                        child: Icon(Icons.more_horiz_rounded, size: 20, color: context.colors.textPrimary),
                       ),
                       onPressed: () => _showBoxOptionsMenu(context, box, provider),
                     ),
@@ -145,7 +152,7 @@ class BoxDetailsScreen extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.colors.surface,
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
@@ -162,7 +169,7 @@ class BoxDetailsScreen extends StatelessWidget {
                               width: 48,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF18181B),
+                                color: context.colors.primary,
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Icon(box.type.icon, color: Colors.white, size: 24),
@@ -177,10 +184,10 @@ class BoxDetailsScreen extends StatelessWidget {
                                       Flexible(
                                         child: Text(
                                           box.type.displayName,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
-                                            color: Color(0xFF18181B),
+                                            color: context.colors.textPrimary,
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -191,7 +198,7 @@ class BoxDetailsScreen extends StatelessWidget {
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                           decoration: BoxDecoration(
-                                            color: const Color(0xFFF4F4F6),
+                                            color: context.colors.fill,
                                             borderRadius: BorderRadius.circular(8),
                                           ),
                                           child: Text(
@@ -209,12 +216,13 @@ class BoxDetailsScreen extends StatelessWidget {
                                   const SizedBox(height: 4),
                                   Text(
                                     '$totalItemsRecursive ${totalItemsRecursive == 1 ? 'total item' : 'total items'} • ${subBoxes.length} nested',
-                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                                    style: TextStyle(color: context.colors.textSecondary, fontSize: 13),
                                   ),
                                 ],
                               ),
                             ),
                             IconButton(
+ tooltip: context.l10n.showQrCode,
                               onPressed: () {
                                 Navigator.push(
                                   context,
@@ -232,7 +240,7 @@ class BoxDetailsScreen extends StatelessWidget {
 
                       if (box.description.isNotEmpty) ...[
                         Text(
-                          'Overview',
+                          context.l10n.commonOverview,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -253,12 +261,12 @@ class BoxDetailsScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Nested Containers (${subBoxes.length})',
+                            context.l10n.nestedContainers(subBoxes.length),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          GestureDetector(
+                          Tappable(
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -272,7 +280,7 @@ class BoxDetailsScreen extends StatelessWidget {
                                 Icon(Icons.add_rounded, size: 18, color: theme.colorScheme.primary),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Add Container',
+                                  context.l10n.addContainer,
                                   style: theme.textTheme.labelLarge?.copyWith(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.bold,
@@ -302,21 +310,21 @@ class BoxDetailsScreen extends StatelessWidget {
                               width: double.infinity,
                               padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: context.colors.surface,
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: const Color(0xFFE4E4E7)),
+                                border: Border.all(color: context.colors.border),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.add_circle_outline_rounded, size: 18, color: Color(0xFF71717A)),
+                                  Icon(Icons.add_circle_outline_rounded, size: 18, color: context.colors.textSecondary),
                                   const SizedBox(width: 8),
                                   Text(
-                                    'Add Container Inside',
+                                    context.l10n.addContainerInside,
                                     style: GoogleFonts.inter(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
-                                      color: const Color(0xFF27272A),
+                                      color: context.colors.textPrimary,
                                     ),
                                   ),
                                 ],
@@ -335,21 +343,19 @@ class BoxDetailsScreen extends StatelessWidget {
                               label: subBox.label,
                               type: subBox.type,
                               onDelete: () async {
-                                final confirmed = await AppFeedback.showConfirmDialog(
+                                final confirmed = await TrashActions.confirm(
                                   context,
-                                  title: 'Delete Nested Box',
-                                  message: 'Are you sure you want to delete box "${subBox.name}"? All items inside will also be deleted.',
-                                  confirmLabel: 'Delete',
-                                  isDestructive: true,
-                                  icon: Icons.delete_outline,
+                                  name: subBox.name,
+                                  isBox: true,
+                                  hasContents: true,
                                 );
                                 if (confirmed && context.mounted) {
                                   final ok = await provider.deleteBox(subBox.id, cascade: true);
                                   if (!context.mounted) return;
                                   if (ok) {
-                                    AppFeedback.showSuccess(context, 'Box "${subBox.name}" deleted successfully');
+                                    TrashActions.showMoved(context, provider, name: subBox.name, boxId: subBox.id);
                                   } else {
-                                    AppFeedback.showError(context, 'Could not delete "${subBox.name}". Please try again.');
+                                    AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(subBox.name));
                                   }
                                 }
                               },
@@ -380,12 +386,12 @@ class BoxDetailsScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Items in this container (${items.length})',
+                            context.l10n.itemsInThisContainer(items.length),
                             style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          GestureDetector(
+                          Tappable(
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -399,7 +405,7 @@ class BoxDetailsScreen extends StatelessWidget {
                                 Icon(Icons.add, size: 16, color: theme.colorScheme.primary),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'Add Item',
+                                  context.l10n.addItem,
                                   style: theme.textTheme.labelLarge?.copyWith(
                                     color: theme.colorScheme.primary,
                                     fontWeight: FontWeight.bold,
@@ -418,10 +424,10 @@ class BoxDetailsScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 32.0),
                             child: Column(
                               children: [
-                                Icon(Icons.inbox_outlined, size: 48, color: Colors.grey.shade400),
+                                Icon(Icons.inbox_outlined, size: 48, color: context.colors.textMuted),
                                 const SizedBox(height: 12),
                                 Text(
-                                  'No direct items stored here',
+                                  context.l10n.noDirectItemsStoredHere,
                                   style: TextStyle(
                                     color: theme.colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w500,
@@ -461,17 +467,15 @@ class BoxDetailsScreen extends StatelessWidget {
                                 );
                               },
                               onDelete: () async {
-                                final confirmed = await AppFeedback.showConfirmDialog(
-                                  context,
-                                  title: 'Delete Item',
-                                  message: 'Are you sure you want to delete item "${item.name}"? This action cannot be undone.',
-                                  confirmLabel: 'Delete',
-                                  isDestructive: true,
-                                  icon: Icons.delete_outline,
-                                );
+                                final confirmed = await TrashActions.confirm(context, name: item.name);
                                 if (confirmed && context.mounted) {
-                                  provider.deleteItem(item.id);
-                                  AppFeedback.showSuccess(context, 'Item "${item.name}" deleted successfully');
+                                  final ok = await provider.deleteItem(item.id);
+                                  if (!context.mounted) return;
+                                  if (ok) {
+                                    TrashActions.showMoved(context, provider, name: item.name, itemId: item.id);
+                                  } else {
+                                    AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(item.name));
+                                  }
                                 }
                               },
                               onTap: () {
@@ -492,7 +496,7 @@ class BoxDetailsScreen extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+          )),
         );
       },
     );
@@ -504,7 +508,7 @@ class BoxDetailsScreen extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: context.colors.surface,
       builder: (bottomSheetContext) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
@@ -516,7 +520,7 @@ class BoxDetailsScreen extends StatelessWidget {
                   width: 36,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE4E4E7),
+                    color: context.colors.border,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -530,10 +534,10 @@ class BoxDetailsScreen extends StatelessWidget {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F4F5),
+                        color: context.colors.fill,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(box.type.icon, size: 22, color: const Color(0xFF18181B)),
+                      child: Icon(box.type.icon, size: 22, color: context.colors.textPrimary),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -542,13 +546,13 @@ class BoxDetailsScreen extends StatelessWidget {
                         children: [
                           Text(
                             box.name,
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 16, color: const Color(0xFF18181B)),
+                            style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 16, color: context.colors.textPrimary),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             box.type.displayName,
-                            style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF71717A)),
+                            style: GoogleFonts.inter(fontSize: 13, color: context.colors.textSecondary),
                           ),
                         ],
                       ),
@@ -557,10 +561,10 @@ class BoxDetailsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-              const Divider(color: Color(0xFFF4F4F5)),
+              Divider(color: context.colors.border),
               ListTile(
-                leading: const Icon(Icons.edit_outlined, color: Color(0xFF18181B)),
-                title: Text('Edit Location', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: Icon(Icons.edit_outlined, color: context.colors.textPrimary),
+                title: Text(context.l10n.editLocation, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   Navigator.push(
@@ -572,24 +576,24 @@ class BoxDetailsScreen extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.drive_file_move_outlined, color: Color(0xFF18181B)),
-                title: Text('Move Location', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: Icon(Icons.drive_file_move_outlined, color: context.colors.textPrimary),
+                title: Text(context.l10n.moveLocation, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   MoveLocationDialog.show(context, box);
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.print_outlined, color: Color(0xFF18181B)),
-                title: Text('Print Thermal Label', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: Icon(Icons.print_outlined, color: context.colors.textPrimary),
+                title: Text(context.l10n.printThermalLabel, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   ThermalLabelSheet.show(context, box);
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.qr_code_rounded, color: Color(0xFF18181B)),
-                title: Text('View Full QR Code', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: Icon(Icons.qr_code_rounded, color: context.colors.textPrimary),
+                title: Text(context.l10n.viewFullQrCode, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   Navigator.push(
@@ -600,22 +604,20 @@ class BoxDetailsScreen extends StatelessWidget {
                   );
                 },
               ),
-              const Divider(color: Color(0xFFF4F4F5)),
+              Divider(color: context.colors.border),
               ListTile(
                 leading: const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626)),
                 title: Text(
-                  'Delete Location',
+                  context.l10n.deleteLocation,
                   style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14, color: const Color(0xFFDC2626)),
                 ),
                 onTap: () async {
                   Navigator.pop(bottomSheetContext);
-                  final confirmed = await AppFeedback.showConfirmDialog(
+                  final confirmed = await TrashActions.confirm(
                     context,
-                    title: 'Delete Location',
-                    message: 'Are you sure you want to delete "${box.name}"? All nested containers and items inside will also be deleted.',
-                    confirmLabel: 'Delete Box',
-                    isDestructive: true,
-                    icon: Icons.delete_forever_outlined,
+                    name: box.name,
+                    isBox: true,
+                    hasContents: true,
                   );
                   if (confirmed && context.mounted) {
                     final boxName = box.name;
@@ -623,9 +625,9 @@ class BoxDetailsScreen extends StatelessWidget {
                     if (!context.mounted) return;
                     if (ok) {
                       Navigator.pop(context);
-                      AppFeedback.showSuccess(context, 'Box "$boxName" deleted successfully');
+                      TrashActions.showMoved(context, provider, name: boxName, boxId: box.id);
                     } else {
-                      AppFeedback.showError(context, 'Could not delete "$boxName". Please try again.');
+                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry(boxName));
                     }
                   }
                 },

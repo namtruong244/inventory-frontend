@@ -33,9 +33,11 @@ extension InventoryAlerts on InventoryProvider {
   }
 
   int get totalAlertCount {
-    return getExpiredItems().length +
-        getExpiringItems(withinDays: _expiryWarningDays).length +
-        getOverdueLoans().length +
+    return (_notifyExpiring
+            ? getExpiredItems().length +
+                getExpiringItems(withinDays: _expiryWarningDays).length
+            : 0) +
+        (_notifyOverdue ? getOverdueLoans().length : 0) +
         (_notifyLowStock ? getLowStockItems().length : 0);
   }
 }

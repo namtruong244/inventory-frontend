@@ -10,16 +10,16 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
     required IconData icon,
   }) {
     final isSelected = _selectedPrintFormat == index;
-    return GestureDetector(
+    return Tappable(
       onTap: () => _update(() => _selectedPrintFormat = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF18181B) : const Color(0xFFF4F4F5),
+          color: isSelected ? context.colors.primary : context.colors.fill,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? const Color(0xFF18181B) : const Color(0xFFE4E4E7),
+            color: isSelected ? context.colors.primary : context.colors.border,
           ),
         ),
         child: Row(
@@ -27,7 +27,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
             Icon(
               icon,
               size: 20,
-              color: isSelected ? Colors.white : const Color(0xFF18181B),
+              color: isSelected ? Colors.white : context.colors.textPrimary,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -39,14 +39,14 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : const Color(0xFF18181B),
+                      color: isSelected ? Colors.white : context.colors.textPrimary,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: TextStyle(
                       fontSize: 10,
-                      color: isSelected ? Colors.white70 : const Color(0xFF71717A),
+                      color: isSelected ? Colors.white70 : context.colors.textSecondary,
                     ),
                   ),
                 ],
@@ -64,10 +64,10 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
       width: 162,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFD4D4D8),
+          color: context.colors.border,
           width: 1.2,
         ),
         boxShadow: [
@@ -85,15 +85,15 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.content_cut_rounded, size: 10, color: Colors.grey.shade400),
+              Icon(Icons.content_cut_rounded, size: 10, color: context.colors.textMuted),
               const SizedBox(width: 4),
               Text(
-                'CUT GUIDE',
+                context.l10n.cutGuide,
                 style: TextStyle(
                   fontSize: 8.5,
                   letterSpacing: 0.8,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey.shade400,
+                  color: context.colors.textMuted,
                 ),
               ),
             ],
@@ -104,7 +104,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(10),
             ),
             child: QrImageView(
@@ -119,10 +119,10 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
           // Box Name ONLY (No ID)
           Text(
             entry.name,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF18181B),
+              color: context.colors.textPrimary,
               height: 1.25,
             ),
             maxLines: 2,
@@ -145,18 +145,18 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Barcode Image Ready',
+              Text(
+                context.l10n.barcodeImageReady,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                'High-resolution PNG image of the box QR codes.',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                context.l10n.highResolutionPngImageOf,
+                style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
@@ -174,12 +174,12 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
                 child: FilledButton.icon(
                   onPressed: () {
                     Navigator.pop(ctx);
-                    AppFeedback.showSuccess(context, 'Barcode image captured');
+                    AppFeedback.showSuccess(context, context.l10n.barcodeImageCaptured);
                   },
                   icon: const Icon(Icons.check_rounded, size: 18),
-                  label: const Text('Done'),
+                  label: Text(context.l10n.commonDone),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF18181B),
+                    backgroundColor: context.colors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                   ),
@@ -200,7 +200,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
       final boundary = _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) {
         if (mounted) {
-          AppFeedback.showError(context, 'Failed to capture barcode grid');
+          AppFeedback.showError(context, context.l10n.failedToCaptureBarcodeGrid);
         }
         return;
       }
@@ -210,7 +210,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
 
       if (byteData == null) {
         if (mounted) {
-          AppFeedback.showError(context, 'Failed to generate image');
+          AppFeedback.showError(context, context.l10n.failedToGenerateImage);
         }
         return;
       }
@@ -221,8 +221,9 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
         _showExportedImagePreview(pngBytes);
       }
     } catch (e) {
+      debugPrint('export_barcodes_parts.dart error: $e');
       if (mounted) {
-        AppFeedback.showError(context, 'Export failed: $e');
+        AppFeedback.showError(context, context.l10n.couldnTExportTheLabels);
       }
     } finally {
       if (mounted) {

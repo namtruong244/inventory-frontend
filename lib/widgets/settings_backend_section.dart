@@ -4,6 +4,8 @@ import 'settings_common.dart';
 
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
   final isOnline = provider.isConnected;
@@ -16,19 +18,19 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
       leading: buildIconBox(
         Icons.dns_rounded,
         isOnline ? const Color(0xFF10B981) : const Color(0xFFEF4444),
-        isOnline ? const Color(0xFFECFDF5) : const Color(0xFFFEF2F2),
+        isOnline ? context.colors.successSoft : context.colors.dangerSoft,
       ),
       title: Row(
         children: [
-          const Text(
-            'Server Endpoint',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Color(0xFF18181B)),
+          Text(
+            context.l10n.serverEndpoint,
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
           ),
           const SizedBox(width: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: isOnline ? const Color(0xFFDCFCE7) : const Color(0xFFFEE2E2),
+              color: isOnline ? const Color(0xFFDCFCE7) : context.colors.dangerSoft,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -36,7 +38,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: isOnline ? const Color(0xFF15803D) : const Color(0xFFB91C1C),
+                color: isOnline ? const Color(0xFF15803D) : context.colors.dangerStrong,
               ),
             ),
           ),
@@ -44,9 +46,9 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
       ),
       subtitle: Text(
         serverUrl,
-        style: TextStyle(fontSize: 12, color: Colors.grey.shade600, fontFamily: 'monospace'),
+        style: TextStyle(fontSize: 12, color: context.colors.textSecondary, fontFamily: 'monospace'),
       ),
-      trailing: const Icon(Icons.edit_outlined, color: Colors.grey, size: 20),
+      trailing: Icon(Icons.edit_outlined, color: context.colors.textSecondary, size: 20),
       onTap: () => showChangeServerUrlDialog(context, provider),
     ),
     const Divider(height: 1),
@@ -56,17 +58,17 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
       leading: buildIconBox(
         Icons.verified_user_outlined,
         const Color(0xFF6366F1),
-        const Color(0xFFEEF2FF),
+        context.colors.infoSoft,
       ),
-      title: const Text(
-        'API Authentication',
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Color(0xFF18181B)),
+      title: Text(
+        context.l10n.apiAuthentication,
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
       ),
       subtitle: Text(
         currentUser != null
             ? '${currentUser.email} (${currentUser.role})'
-            : 'Authenticated as ${provider.userName}',
-        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            : context.l10n.authenticatedAs(provider.userName),
+        style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
       ),
       trailing: TextButton(
         onPressed: () {
@@ -79,7 +81,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
-        child: const Text('Login / Switch', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        child: Text(context.l10n.loginSwitch, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
       ),
     ),
     const Divider(height: 1),
@@ -91,32 +93,32 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
         const Color(0xFF0284C7),
         const Color(0xFFE0F2FE),
       ),
-      title: const Text(
-        'Sync With Server',
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Color(0xFF18181B)),
+      title: Text(
+        context.l10n.syncWithServer,
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
       ),
       subtitle: Text(
         provider.isSyncing
-            ? 'Synchronizing boxes, items & alerts...'
-            : 'Pull latest inventory & lending records',
-        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            ? context.l10n.synchronizingBoxesItemsAlerts
+            : context.l10n.pullLatestInventoryLendingRecords,
+        style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
       ),
       trailing: provider.isSyncing
-          ? const SizedBox(
+          ? SizedBox(
               width: 20,
               height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF18181B)),
+              child: CircularProgressIndicator(strokeWidth: 2, color: context.colors.textPrimary),
             )
-          : const Icon(Icons.refresh_rounded, color: Colors.grey, size: 20),
+          : Icon(Icons.refresh_rounded, color: context.colors.textSecondary, size: 20),
       onTap: provider.isSyncing
           ? null
           : () async {
               await provider.fetchAllData();
               if (context.mounted) {
                 if (provider.isConnected) {
-                  AppFeedback.showSuccess(context, 'Successfully synchronized with backend server');
+                  AppFeedback.showSuccess(context, context.l10n.successfullySynchronizedWithBackendServer);
                 } else {
-                  AppFeedback.showError(context, provider.errorMessage ?? 'Sync failed');
+                  AppFeedback.showError(context, provider.errorMessage ?? context.l10n.syncFailed);
                 }
               }
             },
@@ -128,17 +130,17 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
       leading: buildIconBox(
         Icons.cloud_upload_outlined,
         const Color(0xFF8B5CF6),
-        const Color(0xFFF3E8FF),
+        context.colors.infoSoft,
       ),
-      title: const Text(
-        'Seed Demo Data to Server',
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Color(0xFF18181B)),
+      title: Text(
+        context.l10n.seedDemoDataToServer,
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
       ),
       subtitle: Text(
-        'Populate backend with rooms, items, alerts & loans',
-        style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+        context.l10n.populateBackendWithRoomsItems,
+        style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios_rounded, color: Colors.grey, size: 14),
+      trailing: Icon(Icons.arrow_forward_ios_rounded, color: context.colors.textSecondary, size: 14),
       onTap: () => confirmSeedData(context, provider),
     ),
   ]);
@@ -151,14 +153,14 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Text('Backend API URL', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      title: Text(context.l10n.backendApiUrl, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Enter the backend base URL (default: http://localhost:8080):',
-            style: TextStyle(fontSize: 13, color: Colors.grey),
+          Text(
+            context.l10n.enterTheBackendBaseUrl,
+            style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
           ),
           const SizedBox(height: 12),
           TextField(
@@ -189,7 +191,7 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancel'),
+          child: Text(context.l10n.commonCancel),
         ),
         FilledButton(
           onPressed: () async {
@@ -198,11 +200,11 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
               Navigator.pop(ctx);
               await provider.setServerUrl(newUrl);
               if (context.mounted) {
-                AppFeedback.showSuccess(context, 'Server URL updated to $newUrl');
+                AppFeedback.showSuccess(context, context.l10n.serverUrlUpdatedTo(newUrl));
               }
             }
           },
-          child: const Text('Save & Connect'),
+          child: Text(context.l10n.saveConnect),
         ),
       ],
     ),

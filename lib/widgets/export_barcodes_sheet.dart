@@ -12,6 +12,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Full-screen sheet that exports QR codes for storage containers / boxes (no items, no IDs).
 part 'export_barcodes_parts.dart';
@@ -79,11 +82,12 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
       );
 
       if (mounted) {
-        AppFeedback.showSuccess(context, 'PDF generated. Choose "Save to Files" or share.');
+        AppFeedback.showSuccess(context, context.l10n.pdfGeneratedChooseSaveTo);
       }
     } catch (e) {
+      debugPrint('export_barcodes_sheet.dart error: $e');
       if (mounted) {
-        AppFeedback.showError(context, 'Failed to export PDF: $e');
+        AppFeedback.showError(context, context.l10n.couldnTExportThePdf);
       }
     } finally {
       if (mounted) {
@@ -104,8 +108,9 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
         onLayout: (PdfPageFormat format) async => await generateBarcodePdf(title: title, printFormat: _selectedPrintFormat, entries: entries),
       );
     } catch (e) {
+      debugPrint('export_barcodes_sheet.dart error: $e');
       if (mounted) {
-        AppFeedback.showError(context, 'Print preview failed: $e');
+        AppFeedback.showError(context, context.l10n.couldnTOpenThePrint);
       }
     } finally {
       if (mounted) {
@@ -129,8 +134,8 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
 
     if (_exportAllBoxes || widget.boxId == null) {
       // Export ALL boxes
-      screenTitle = 'Export All Box Barcodes';
-      headerTitle = 'All Storage Locations';
+      screenTitle = context.l10n.exportAllBoxBarcodes;
+      headerTitle = context.l10n.allStorageLocations;
       headerSubtitle = '${provider.boxes.length} container QR codes';
       headerIcon = Icons.inventory_2_outlined;
 
@@ -143,13 +148,13 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
       final targetBox = provider.getBoxById(widget.boxId!);
       if (targetBox == null) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Export Barcodes')),
-          body: const Center(child: Text('Box not found')),
+          appBar: AppBar(title: Text(context.l10n.exportBarcodes)),
+          body: Center(child: Text(context.l10n.boxNotFound)),
         );
       }
 
       final subBoxes = provider.getBoxesIn(targetBox.id);
-      screenTitle = 'Export Box Barcodes';
+      screenTitle = context.l10n.exportBoxBarcodes;
       headerTitle = targetBox.name;
       headerSubtitle = '${subBoxes.length + 1} container QR codes';
       headerIcon = targetBox.type.icon;
@@ -170,20 +175,21 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F9FA),
+        backgroundColor: context.colors.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: IconButton(
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: context.colors.border),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.03),
@@ -202,15 +208,15 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
           children: [
             Text(
               screenTitle,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
-                color: Color(0xFF18181B),
+                color: context.colors.textPrimary,
               ),
             ),
             Text(
               '${entries.length} box labels',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
             ),
           ],
         ),
@@ -218,27 +224,27 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: Tooltip(
-              message: 'Capture and save barcode sheet as image',
+              message: context.l10n.captureAndSaveBarcodeSheet,
               child: OutlinedButton.icon(
                 onPressed: _isExportingImage ? null : _exportAsImage,
                 icon: _isExportingImage
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 14,
                         height: 14,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF18181B)),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: context.colors.textPrimary),
                       )
-                    : const Icon(Icons.image_outlined, size: 16, color: Color(0xFF18181B)),
-                label: const Text(
-                  'Save Image',
+                    : Icon(Icons.image_outlined, size: 16, color: context.colors.textPrimary),
+                label: Text(
+                  context.l10n.saveImage,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF18181B),
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  side: const BorderSide(color: Color(0xFFE4E4E7)),
+                  backgroundColor: context.colors.surface,
+                  side: BorderSide(color: context.colors.border),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   minimumSize: Size.zero,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -258,19 +264,19 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE4E4E7),
+                  color: context.colors.border,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
                   children: [
                     Expanded(
-                      child: GestureDetector(
+                      child: Tappable(
                         onTap: () => setState(() => _exportAllBoxes = false),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 180),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
-                            color: !_exportAllBoxes ? Colors.white : Colors.transparent,
+                            color: !_exportAllBoxes ? context.colors.surface : Colors.transparent,
                             borderRadius: BorderRadius.circular(11),
                             boxShadow: !_exportAllBoxes
                                 ? [
@@ -284,11 +290,11 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                           ),
                           child: Center(
                             child: Text(
-                              'This Container',
+                              context.l10n.thisContainer,
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: !_exportAllBoxes ? FontWeight.bold : FontWeight.w500,
-                                color: !_exportAllBoxes ? const Color(0xFF18181B) : const Color(0xFF71717A),
+                                color: !_exportAllBoxes ? context.colors.textPrimary : context.colors.textSecondary,
                               ),
                             ),
                           ),
@@ -296,13 +302,13 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                       ),
                     ),
                     Expanded(
-                      child: GestureDetector(
+                      child: Tappable(
                         onTap: () => setState(() => _exportAllBoxes = true),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 180),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
-                            color: _exportAllBoxes ? Colors.white : Colors.transparent,
+                            color: _exportAllBoxes ? context.colors.surface : Colors.transparent,
                             borderRadius: BorderRadius.circular(11),
                             boxShadow: _exportAllBoxes
                                 ? [
@@ -316,11 +322,11 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                           ),
                           child: Center(
                             child: Text(
-                              'All Containers (${provider.boxes.length})',
+                              context.l10n.allContainers(provider.boxes.length),
                               style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: _exportAllBoxes ? FontWeight.bold : FontWeight.w500,
-                                color: _exportAllBoxes ? const Color(0xFF18181B) : const Color(0xFF71717A),
+                                color: _exportAllBoxes ? context.colors.textPrimary : context.colors.textSecondary,
                               ),
                             ),
                           ),
@@ -344,24 +350,24 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.colors.surface,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFFE4E4E7)),
+                      border: Border.all(color: context.colors.border),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.tune_rounded, size: 16, color: Color(0xFF71717A)),
+                            Icon(Icons.tune_rounded, size: 16, color: context.colors.textSecondary),
                             const SizedBox(width: 6),
                             Text(
-                              'PRINT SPECS / FORMAT',
+                              context.l10n.printSpecsFormat,
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 0.5,
-                                color: Colors.grey.shade600,
+                                color: context.colors.textSecondary,
                               ),
                             ),
                           ],
@@ -372,8 +378,8 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                             Expanded(
                               child: _buildPrintFormatOption(
                                 index: 0,
-                                title: 'A4 Tomy Decal',
-                                subtitle: 'Standard grid sheet',
+                                title: context.l10n.a4TomyDecal,
+                                subtitle: context.l10n.standardGridSheet,
                                 icon: Icons.grid_view_rounded,
                               ),
                             ),
@@ -381,8 +387,8 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                             Expanded(
                               child: _buildPrintFormatOption(
                                 index: 1,
-                                title: 'Thermal 50x30mm',
-                                subtitle: 'Single roll label',
+                                title: context.l10n.thermal50x30mm,
+                                subtitle: context.l10n.singleRollLabel,
                                 icon: Icons.receipt_long_rounded,
                               ),
                             ),
@@ -396,9 +402,9 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.colors.surface,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFE4E4E7)),
+                      border: Border.all(color: context.colors.border),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.03),
@@ -413,10 +419,10 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                           width: 46,
                           height: 46,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF4F4F5),
+                            color: context.colors.fill,
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: Icon(headerIcon, color: const Color(0xFF18181B), size: 24),
+                          child: Icon(headerIcon, color: context.colors.textPrimary, size: 24),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
@@ -425,8 +431,8 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                             children: [
                               Text(
                                 headerTitle,
-                                style: const TextStyle(
-                                  color: Color(0xFF18181B),
+                                style: TextStyle(
+                                  color: context.colors.textPrimary,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -434,8 +440,8 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                               const SizedBox(height: 3),
                               Text(
                                 headerSubtitle,
-                                style: const TextStyle(
-                                  color: Color(0xFF71717A),
+                                style: TextStyle(
+                                  color: context.colors.textSecondary,
                                   fontSize: 12,
                                 ),
                               ),
@@ -468,7 +474,7 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
           Container(
             padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
@@ -485,10 +491,10 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                   child: OutlinedButton.icon(
                     onPressed: _isGeneratingPdf ? null : () => _previewAndPrint(headerTitle, entries),
                     icon: const Icon(Icons.print_outlined, size: 18),
-                    label: const Text('Print Preview'),
+                    label: Text(context.l10n.printPreview),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF18181B),
-                      side: BorderSide(color: Colors.grey.shade300),
+                      foregroundColor: context.colors.textPrimary,
+                      side: BorderSide(color: context.colors.border),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
@@ -509,9 +515,9 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
                         : const Icon(Icons.picture_as_pdf_rounded, size: 18),
-                    label: Text(_isGeneratingPdf ? 'Generating PDF...' : 'Export PDF (Save/Share)'),
+                    label: Text(_isGeneratingPdf ? context.l10n.generatingPdf : context.l10n.exportPdfSaveShare),
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF18181B),
+                      backgroundColor: context.colors.primary,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),

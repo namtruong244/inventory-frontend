@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 
 Widget buildCustomAttributesCard(BuildContext context, Item item) {
@@ -13,7 +15,7 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
   return Container(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -31,12 +33,12 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
             Expanded(
               child: Row(
                 children: [
-                  const Icon(Icons.tune_rounded, size: 20, color: Color(0xFF18181B)),
+                  Icon(Icons.tune_rounded, size: 20, color: context.colors.textPrimary),
                   const SizedBox(width: 8),
-                  const Flexible(
+                  Flexible(
                     child: Text(
-                      'Specifications & Attributes',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                      context.l10n.specificationsAttributes,
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -45,7 +47,7 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF18181B),
+                        color: context.colors.primary,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
@@ -64,7 +66,7 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
             TextButton.icon(
               onPressed: () => showManageAttributesSheet(context, item),
               icon: Icon(hasAttributes ? Icons.edit_outlined : Icons.add_rounded, size: 15),
-              label: Text(hasAttributes ? 'Manage' : 'Add'),
+              label: Text(hasAttributes ? context.l10n.commonManage : context.l10n.commonAdd),
               style: TextButton.styleFrom(
                 foregroundColor: const Color(0xFF3B82F6),
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -91,7 +93,7 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F4F6),
+                    color: context.colors.fill,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -100,12 +102,12 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
                     children: [
                       Text(
                         entry.key.toUpperCase(),
-                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey.shade600),
+                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: context.colors.textSecondary),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         entry.value.toString(),
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                       ),
                     ],
                   ),
@@ -118,36 +120,36 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFAFAFA),
+              color: context.colors.fill,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE4E4E7)),
+              border: Border.all(color: context.colors.border),
             ),
             child: Column(
               children: [
-                const Text(
-                  'No specifications added yet',
+                Text(
+                  context.l10n.noSpecificationsAddedYet,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF3F3F46),
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'Add custom details like Color, Size, Brand, or Specs.',
+                Text(
+                  context.l10n.addCustomDetailsLikeColor,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF71717A),
+                    color: context.colors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
                   onPressed: () => showManageAttributesSheet(context, item),
                   icon: const Icon(Icons.add, size: 15),
-                  label: const Text('Add Specification'),
+                  label: Text(context.l10n.addSpecification),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFF18181B),
-                    side: const BorderSide(color: Color(0xFFD4D4D8)),
+                    foregroundColor: context.colors.textPrimary,
+                    side: BorderSide(color: context.colors.border),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -190,7 +192,7 @@ void showManageAttributesSheet(
             'Material',
             'Weight',
             'RAM',
-            'Storage',
+            context.l10n.commonStorage,
             'Dimensions',
             'Voltage',
           ].where((attr) => !currentAttributes.containsKey(attr)).toList();
@@ -200,8 +202,8 @@ void showManageAttributesSheet(
               bottom: MediaQuery.of(ctx).viewInsets.bottom,
             ),
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -215,7 +217,7 @@ void showManageAttributesSheet(
                         width: 36,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE4E4E7),
+                          color: context.colors.border,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -223,47 +225,48 @@ void showManageAttributesSheet(
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        const Icon(Icons.tune_rounded, size: 22, color: Color(0xFF18181B)),
+                        Icon(Icons.tune_rounded, size: 22, color: context.colors.textPrimary),
                         const SizedBox(width: 8),
-                        const Text(
-                          'Specifications & Attributes',
+                        Text(
+                          context.l10n.specificationsAttributes,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xFF18181B),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                         const Spacer(),
                         IconButton(
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                           icon: const Icon(Icons.close, size: 20),
                           onPressed: () => Navigator.pop(ctx),
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Customize attributes and metadata for this item.',
-                      style: TextStyle(fontSize: 13, color: Color(0xFF71717A)),
+                    Text(
+                      context.l10n.customizeAttributesAndMetadataFor,
+                      style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
                     ),
                     const SizedBox(height: 16),
 
                     // Existing attributes list in sheet
                     if (currentAttributes.isNotEmpty) ...[
-                      const Text(
-                        'CURRENT SPECIFICATIONS',
+                      Text(
+                        context.l10n.currentSpecifications,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF71717A),
+                          color: context.colors.textSecondary,
                           letterSpacing: 0.5,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFAFAFA),
+                          color: context.colors.fill,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE4E4E7)),
+                          border: Border.all(color: context.colors.border),
                         ),
                         child: Column(
                           children: currentAttributes.entries.map((entry) {
@@ -274,22 +277,23 @@ void showManageAttributesSheet(
                                 style: TextStyle(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
-                                  color: Colors.grey.shade600,
+                                  color: context.colors.textSecondary,
                                 ),
                               ),
                               subtitle: Text(
                                 entry.value.toString(),
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
-                                  color: Color(0xFF18181B),
+                                  color: context.colors.textPrimary,
                                 ),
                               ),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit_outlined, size: 18, color: Color(0xFF71717A)),
+ tooltip: context.l10n.commonEdit,
+                                    icon: Icon(Icons.edit_outlined, size: 18, color: context.colors.textSecondary),
                                     onPressed: () {
                                       setSheetState(() {
                                         keyController.text = entry.key;
@@ -298,6 +302,7 @@ void showManageAttributesSheet(
                                     },
                                   ),
                                   IconButton(
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                                     icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFFEF4444)),
                                     onPressed: () async {
                                       final newAttrs = Map<String, dynamic>.from(latestItem.customAttributes)
@@ -306,7 +311,7 @@ void showManageAttributesSheet(
                                       await provider.updateItem(updated);
                                       setSheetState(() {});
                                       if (context.mounted) {
-                                        AppFeedback.showSuccess(context, 'Removed "${entry.key}"');
+                                        AppFeedback.showSuccess(context, context.l10n.commonRemoved(entry.key));
                                       }
                                     },
                                   ),
@@ -321,12 +326,12 @@ void showManageAttributesSheet(
 
                     // Quick suggestion chips
                     if (suggestedAttributes.isNotEmpty) ...[
-                      const Text(
-                        'SUGGESTED ATTRIBUTES',
+                      Text(
+                        context.l10n.suggestedAttributes,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF71717A),
+                          color: context.colors.textSecondary,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -339,18 +344,18 @@ void showManageAttributesSheet(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: ActionChip(
                                 visualDensity: VisualDensity.compact,
-                                backgroundColor: const Color(0xFFF4F4F6),
+                                backgroundColor: context.colors.fill,
                                 side: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                avatar: const Icon(Icons.add, size: 14, color: Color(0xFF71717A)),
+                                avatar: Icon(Icons.add, size: 14, color: context.colors.textSecondary),
                                 label: Text(
                                   attr,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
-                                    color: Color(0xFF3F3F46),
+                                    color: context.colors.textSecondary,
                                   ),
                                 ),
                                 onPressed: () {
@@ -369,12 +374,12 @@ void showManageAttributesSheet(
                     // Input section for adding/editing an attribute
                     Text(
                       keyController.text.isNotEmpty && currentAttributes.containsKey(keyController.text)
-                          ? 'EDIT ATTRIBUTE'
-                          : 'ADD ATTRIBUTE',
-                      style: const TextStyle(
+                          ? context.l10n.editAttribute
+                          : context.l10n.addAttribute,
+                      style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF71717A),
+                        color: context.colors.textSecondary,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -382,10 +387,10 @@ void showManageAttributesSheet(
                     TextField(
                       controller: keyController,
                       decoration: InputDecoration(
-                        labelText: 'Attribute Name',
-                        hintText: 'e.g. Color, RAM, Size, Material',
+                        labelText: context.l10n.attributeName,
+                        hintText: context.l10n.eGColorRamSize,
                         filled: true,
-                        fillColor: const Color(0xFFF4F4F6),
+                        fillColor: context.colors.fill,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide.none,
@@ -397,10 +402,10 @@ void showManageAttributesSheet(
                     TextField(
                       controller: valueController,
                       decoration: InputDecoration(
-                        labelText: 'Attribute Value',
-                        hintText: 'e.g. Space Black, 16GB, XL',
+                        labelText: context.l10n.attributeValue,
+                        hintText: context.l10n.eGSpaceBlack16gb,
                         filled: true,
-                        fillColor: const Color(0xFFF4F4F6),
+                        fillColor: context.colors.fill,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
                           borderSide: BorderSide.none,
@@ -417,11 +422,11 @@ void showManageAttributesSheet(
                           final k = keyController.text.trim();
                           final v = valueController.text.trim();
                           if (k.isEmpty) {
-                            AppFeedback.showError(ctx, 'Please enter an attribute name');
+                            AppFeedback.showError(ctx, context.l10n.pleaseEnterAnAttributeName);
                             return;
                           }
                           if (v.isEmpty) {
-                            AppFeedback.showError(ctx, 'Please enter an attribute value');
+                            AppFeedback.showError(ctx, context.l10n.pleaseEnterAnAttributeValue);
                             return;
                           }
 
@@ -436,17 +441,17 @@ void showManageAttributesSheet(
                           });
 
                           if (context.mounted) {
-                            AppFeedback.showSuccess(context, 'Saved attribute "$k"');
+                            AppFeedback.showSuccess(context, context.l10n.savedAttribute(k));
                           }
                         },
                         style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF18181B),
+                          backgroundColor: context.colors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
-                        child: const Text('Save Attribute', style: TextStyle(fontWeight: FontWeight.bold)),
+                        child: Text(context.l10n.saveAttribute, style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ),
                   ],

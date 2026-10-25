@@ -5,12 +5,17 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../widgets/trash_actions.dart';
 import '../widgets/item_card.dart';
 import '../widgets/location_picker_sheet.dart';
 import '../widgets/move_item_sheet.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
 import 'lending_tracker_screen.dart';
+import '../widgets/app_refresh.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class ItemsScreen extends StatefulWidget {
   const ItemsScreen({super.key});
@@ -60,7 +65,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       body: SafeArea(
         bottom: false,
         child: Consumer<InventoryProvider>(
@@ -96,7 +101,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
               ).toList();
             }
 
-            return ListView(
+            return AppRefresh(child: ListView(
+ physics: const AlwaysScrollableScrollPhysics(),
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
               children: [
@@ -108,7 +114,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Item Catalog',
+                          context.l10n.itemCatalog,
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.bold,
                             letterSpacing: -0.5,
@@ -118,7 +124,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         Text(
                           '${provider.items.length} assets tracked',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey.shade600,
+                            color: context.colors.textSecondary,
                           ),
                         ),
                       ],
@@ -127,9 +133,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       FilledButton.icon(
                         onPressed: () => _showSelectBoxToAddItem(provider),
                         icon: const Icon(Icons.add, size: 18),
-                        label: const Text('Add Item'),
+                        label: Text(context.l10n.addItem),
                         style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF18181B),
+                          backgroundColor: context.colors.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -145,10 +151,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   onChanged: (val) => setState(() { _searchQuery = val.trim(); _visibleCount = _pageSize; }),
                   style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                   decoration: InputDecoration(
-                    hintText: 'Search items, barcodes, serials...',
+                    hintText: context.l10n.searchItemsBarcodesSerials,
                     prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
+ tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
                             icon: const Icon(Icons.clear, size: 18),
                             onPressed: () => setState(() => _searchQuery = ''),
                           )
@@ -162,17 +169,17 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildStatusFilterChip(0, 'All (${provider.items.length})'),
+                      _buildStatusFilterChip(0, context.l10n.commonAll(provider.items.length)),
                       const SizedBox(width: 8),
-                      _buildStatusFilterChip(1, 'Stored (${provider.items.where((i) => i.status == ItemStatus.stored).length})'),
+                      _buildStatusFilterChip(1, context.l10n.commonStored(provider.items.where((i) => i.status == ItemStatus.stored).length)),
                       const SizedBox(width: 8),
-                      _buildStatusFilterChip(2, 'In Use (${provider.items.where((i) => i.status == ItemStatus.inUse).length})'),
+                      _buildStatusFilterChip(2, context.l10n.inUse(provider.items.where((i) => i.status == ItemStatus.inUse).length)),
                       const SizedBox(width: 8),
-                      _buildStatusFilterChip(3, 'Lent (${provider.items.where((i) => i.status == ItemStatus.lent).length})'),
+                      _buildStatusFilterChip(3, context.l10n.commonLent(provider.items.where((i) => i.status == ItemStatus.lent).length)),
                       const SizedBox(width: 8),
-                      _buildStatusFilterChip(4, 'Alerts / Expiring (${provider.getExpiredItems().length + provider.getExpiringItems(withinDays: provider.expiryWarningDays).length})'),
+                      _buildStatusFilterChip(4, context.l10n.alertsExpiring(provider.getExpiredItems().length + provider.getExpiringItems(withinDays: provider.expiryWarningDays).length)),
                       const SizedBox(width: 8),
-                      _buildStatusFilterChip(5, 'Low Stock (${provider.getLowStockItems().length})'),
+                      _buildStatusFilterChip(5, context.l10n.lowStock(provider.getLowStockItems().length)),
                     ],
                   ),
                 ),
@@ -182,20 +189,20 @@ class _ItemsScreenState extends State<ItemsScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: context.colors.border),
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String?>(
                       value: _selectedBoxFilter,
                       isExpanded: true,
                       icon: const Icon(Icons.keyboard_arrow_down_rounded),
-                      hint: const Text('All Storage Locations'),
+                      hint: Text(context.l10n.allStorageLocations),
                       items: [
-                        const DropdownMenuItem<String?>(
+                        DropdownMenuItem<String?>(
                           value: null,
-                          child: Text('All Storage Locations', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(context.l10n.allStorageLocations, style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                         ...provider.boxes.map((b) => DropdownMenuItem<String?>(
                           value: b.id,
@@ -216,15 +223,15 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     margin: const EdgeInsets.only(top: 40),
                     padding: const EdgeInsets.all(32),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.colors.surface,
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: Column(
                       children: [
-                        Icon(Icons.category_outlined, size: 56, color: Colors.grey.shade400),
+                        Icon(Icons.category_outlined, size: 56, color: context.colors.textMuted),
                         const SizedBox(height: 16),
                         Text(
-                          _searchQuery.isNotEmpty ? 'No matching items found' : 'No items found',
+                          _searchQuery.isNotEmpty ? context.l10n.noMatchingItemsFound : context.l10n.noItemsFound,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -232,10 +239,10 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         const SizedBox(height: 8),
                         Text(
                           _searchQuery.isNotEmpty
-                              ? 'Try searching with another name or clearing filters'
-                              : 'Tap "Add Item" above to catalogue your first asset',
+                              ? context.l10n.trySearchingWithAnotherName
+                              : context.l10n.tapAddItemAboveTo,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey.shade600),
+                          style: TextStyle(color: context.colors.textSecondary),
                         ),
                       ],
                     ),
@@ -273,7 +280,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                 backgroundColor: const Color(0xFF6366F1),
                                 foregroundColor: Colors.white,
                                 icon: Icons.drive_file_move_outlined,
-                                label: 'Move',
+                                label: context.l10n.commonMove,
                               ),
                               // Lend or Return action
                               if (item.status == ItemStatus.lent)
@@ -282,13 +289,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                     final loan = provider.getActiveLoanForItem(item.id);
                                     if (loan != null) {
                                       provider.returnItem(loan.id);
-                                      AppFeedback.showSuccess(context, 'Item marked as returned');
+                                      AppFeedback.showSuccess(context, context.l10n.itemMarkedAsReturned);
                                     }
                                   },
                                   backgroundColor: const Color(0xFF10B981),
                                   foregroundColor: Colors.white,
                                   icon: Icons.assignment_turned_in_outlined,
-                                  label: 'Return',
+                                  label: context.l10n.commonReturn,
                                 )
                               else
                                 SlidableAction(
@@ -303,7 +310,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                   backgroundColor: const Color(0xFFF59E0B),
                                   foregroundColor: Colors.white,
                                   icon: Icons.assignment_ind_outlined,
-                                  label: 'Lend',
+                                  label: context.l10n.commonLend,
                                 ),
 
                               SlidableAction(
@@ -315,30 +322,28 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                     ),
                                   );
                                 },
-                                backgroundColor: const Color(0xFF18181B),
+                                backgroundColor: context.colors.primary,
                                 foregroundColor: Colors.white,
                                 icon: Icons.edit_outlined,
-                                label: 'Edit',
+                                label: context.l10n.commonEdit,
                               ),
                               SlidableAction(
                                 onPressed: (_) async {
-                                  final confirmed = await AppFeedback.showConfirmDialog(
-                                    context,
-                                    title: 'Delete Item',
-                                    message: 'Are you sure you want to delete item "${item.name}"?',
-                                    confirmLabel: 'Delete',
-                                    isDestructive: true,
-                                    icon: Icons.delete_outline,
-                                  );
+                                  final confirmed = await TrashActions.confirm(context, name: item.name);
                                   if (confirmed && context.mounted) {
-                                    provider.deleteItem(item.id);
-                                    AppFeedback.showSuccess(context, 'Item "${item.name}" deleted successfully');
+                                    final ok = await provider.deleteItem(item.id);
+                                    if (!context.mounted) return;
+                                    if (ok) {
+                                      TrashActions.showMoved(context, provider, name: item.name, itemId: item.id);
+                                    } else {
+                                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(item.name));
+                                    }
                                   }
                                 },
                                 backgroundColor: Colors.red.shade400,
                                 foregroundColor: Colors.white,
                                 icon: Icons.delete_outline,
-                                label: 'Delete',
+                                label: context.l10n.commonDelete,
                               ),
                             ],
                           ),
@@ -366,7 +371,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     child: Center(child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))),
                   ),
               ],
-            );
+            ));
           },
         ),
       ),
@@ -377,13 +382,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
     final isSelected = _statusFilterIndex == index;
     final theme = Theme.of(context);
 
-    return GestureDetector(
+    return Tappable(
       onTap: () => setState(() { _statusFilterIndex = index; _visibleCount = _pageSize; }),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF18181B) : Colors.white,
+          color: isSelected ? context.colors.primary : context.colors.surface,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
@@ -401,9 +406,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
   Future<void> _showSelectBoxToAddItem(InventoryProvider provider) async {
     final selectedBox = await LocationPickerSheet.show(
       context,
-      title: 'Select Destination Container',
-      subtitle: 'Choose container or scan its QR to add item',
-      confirmButtonText: 'Add Item Here',
+      title: context.l10n.selectDestinationContainer,
+      subtitle: context.l10n.chooseContainerOrScanIts,
+      confirmButtonText: context.l10n.addItemHere,
     );
     if (!mounted || selectedBox == null) return;
     Navigator.push(

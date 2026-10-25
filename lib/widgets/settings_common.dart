@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 Widget buildSectionHeader(String title) {
+  return Builder(builder: (context) {
   return Padding(
     padding: const EdgeInsets.only(left: 4.0),
     child: Text(
@@ -11,27 +14,30 @@ Widget buildSectionHeader(String title) {
       style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.bold,
-        color: Colors.grey.shade500,
+        color: context.colors.textMuted,
         letterSpacing: 0.6,
       ),
     ),
   );
+});
 }
 
 
 Widget buildCardContainer(List<Widget> children) {
+  return Builder(builder: (context) {
   return Material(
-    color: Colors.white,
+    color: context.colors.surface,
     borderRadius: BorderRadius.circular(20),
     clipBehavior: Clip.antiAlias,
     child: Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: context.colors.border),
       ),
       child: Column(children: children),
     ),
   );
+});
 }
 
 
@@ -56,30 +62,32 @@ Widget buildPreferenceTile({
   required String valueText,
   required VoidCallback onTap,
 }) {
+  return Builder(builder: (context) {
   return ListTile(
     leading: buildIconBox(icon, iconColor, iconBg),
     title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-    subtitle: Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+    subtitle: Text(subtitle, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
     trailing: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
-            color: const Color(0xFFF4F4F6),
+            color: context.colors.fill,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Text(
             valueText,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Color(0xFF18181B)),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: context.colors.textPrimary),
           ),
         ),
         const SizedBox(width: 4),
-        const Icon(Icons.chevron_right_rounded, color: Colors.grey, size: 20),
+        Icon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
       ],
     ),
     onTap: onTap,
   );
+});
 }
 
 
@@ -89,6 +97,7 @@ Widget buildInfoRow(
   VoidCallback? onTap,
   Widget? trailingBadge,
 }) {
+  return Builder(builder: (context) {
   final rowContent = Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -100,7 +109,7 @@ Widget buildInfoRow(
             trailingBadge,
             const SizedBox(width: 6),
           ],
-          Text(value, style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),
+          Text(value, style: TextStyle(color: context.colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500)),
         ],
       ),
     ],
@@ -117,6 +126,7 @@ Widget buildInfoRow(
     );
   }
   return rowContent;
+});
 }
 
 
@@ -125,15 +135,15 @@ void confirmSeedData(BuildContext context, InventoryProvider provider) {
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Text('Seed Demo Inventory?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      content: const Text(
-        'This will upload sample multi-level rooms, cabinets, boxes, tech gear, medicine, low-stock items, and lending records directly into your backend database at http://localhost:8080.\n\nExisting items will be preserved.',
+      title: Text(context.l10n.seedDemoInventory, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      content: Text(
+        context.l10n.thisWillUploadSampleMulti,
         style: TextStyle(fontSize: 13, height: 1.4),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancel'),
+          child: Text(context.l10n.commonCancel),
         ),
         FilledButton(
           onPressed: () async {
@@ -141,13 +151,13 @@ void confirmSeedData(BuildContext context, InventoryProvider provider) {
             final success = await provider.seedBackendWithSampleData();
             if (context.mounted) {
               if (success) {
-                AppFeedback.showSuccess(context, 'Successfully seeded sample inventory to backend server!');
+                AppFeedback.showSuccess(context, context.l10n.successfullySeededSampleInventoryTo);
               } else {
-                AppFeedback.showError(context, 'Failed to seed sample data: ${provider.errorMessage}');
+                AppFeedback.showError(context, context.l10n.failedToSeedSampleData(provider.errorMessage ?? ''));
               }
             }
           },
-          child: const Text('Seed Data'),
+          child: Text(context.l10n.seedData),
         ),
       ],
     ),

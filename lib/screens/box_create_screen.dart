@@ -5,7 +5,11 @@ import 'package:uuid/uuid.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../widgets/trash_actions.dart';
 import '../widgets/app_form_field.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class BoxCreateScreen extends StatefulWidget {
   final String? parentId;
@@ -70,10 +74,10 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
       Navigator.pop(context);
       AppFeedback.showSuccess(
         context,
-        isEditing ? 'Location "$boxName" updated successfully' : 'Location "$boxName" created successfully',
+        isEditing ? context.l10n.locationUpdatedSuccessfully(boxName) : context.l10n.locationCreatedSuccessfully(boxName),
       );
     } else {
-      AppFeedback.showError(context, 'Please enter a valid location name');
+      AppFeedback.showError(context, context.l10n.pleaseEnterAValidLocation);
     }
   }
 
@@ -84,30 +88,31 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
     final parentBox = widget.parentId != null ? provider.getBoxById(widget.parentId!) : null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: IconButton(
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: Container(
               padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: Color(0xFF18181B)),
+              child: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
             ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
         title: Text(
           isEditing
-              ? 'Edit Location'
-              : (widget.parentId == null ? 'Create Root Location' : 'Create Nested Container'),
-          style: const TextStyle(
-            color: Color(0xFF18181B),
+              ? context.l10n.editLocation
+              : (widget.parentId == null ? context.l10n.createRootLocation : context.l10n.createNestedContainer),
+          style: TextStyle(
+            color: context.colors.textPrimary,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -118,32 +123,32 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: IconButton(
+ tooltip: context.l10n.commonDelete,
                 icon: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: context.colors.surface,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.delete_outline, size: 20, color: Color(0xFFDC2626)),
                 ),
                 onPressed: () async {
-                  final confirmed = await AppFeedback.showConfirmDialog(
+                  final confirmed = await TrashActions.confirm(
                     context,
-                    title: 'Delete this location',
-                    message: 'Are you sure you want to delete "${widget.existingBox!.name}"?',
-                    confirmLabel: 'Delete',
-                    isDestructive: true,
-                    icon: Icons.delete_outline,
+                    name: widget.existingBox!.name,
+                    isBox: true,
+                    hasContents: true,
                   );
                   if (confirmed && context.mounted) {
                     final boxName = widget.existingBox!.name;
+                    final boxId = widget.existingBox!.id;
                     final ok = await provider.deleteBox(widget.existingBox!.id, cascade: true);
                     if (!context.mounted) return;
                     if (ok) {
                       Navigator.pop(context);
-                      AppFeedback.showSuccess(context, 'Location "$boxName" deleted successfully');
+                      TrashActions.showMoved(context, provider, name: boxName, boxId: boxId);
                     } else {
-                      AppFeedback.showError(context, 'Could not delete "$boxName". Please try again.');
+                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry(boxName));
                     }
                   }
                 },
@@ -161,12 +166,12 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
           children: [
             // Storage Type Selector
-            const Text(
-              'Storage Type',
+            Text(
+              context.l10n.storageType,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF18181B),
+                color: context.colors.textPrimary,
                 letterSpacing: -0.2,
               ),
             ),
@@ -176,16 +181,16 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
               child: Row(
                 children: StorageType.values.map((type) {
                   final isSelected = _selectedType == type;
-                  return GestureDetector(
+                  return Tappable(
                     onTap: () => setState(() => _selectedType = type),
                     child: Container(
                       margin: const EdgeInsets.only(right: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF18181B) : Colors.white,
+                        color: isSelected ? context.colors.primary : context.colors.surface,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: isSelected ? const Color(0xFF18181B) : Colors.grey.shade300,
+                          color: isSelected ? context.colors.primary : context.colors.border,
                         ),
                       ),
                       child: Row(
@@ -193,7 +198,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                           Icon(
                             type.icon,
                             size: 16,
-                            color: isSelected ? Colors.white : const Color(0xFF18181B),
+                            color: isSelected ? Colors.white : context.colors.textPrimary,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -201,7 +206,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              color: isSelected ? Colors.white : const Color(0xFF18181B),
+                              color: isSelected ? Colors.white : context.colors.textPrimary,
                             ),
                           ),
                         ],
@@ -215,18 +220,18 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
 
             // Location Name
             AppFormField(
-              label: 'Name',
-              hintText: 'e.g. Living Room, Oak Bookshelf, Electronics Box',
+              label: context.l10n.commonName,
+              hintText: context.l10n.eGLivingRoomOak,
               controller: _nameController,
               validator: (value) =>
-                  value == null || value.trim().isEmpty ? 'Please enter a name' : null,
+                  value == null || value.trim().isEmpty ? context.l10n.pleaseEnterAName : null,
             ),
             const SizedBox(height: 20),
 
             // Description
             AppFormField(
-              label: 'Description',
-              hintText: 'e.g. Upper shelf, left side near window (Optional)',
+              label: context.l10n.commonDescription,
+              hintText: context.l10n.eGUpperShelfLeft,
               controller: _descriptionController,
               maxLines: 3,
             ),
@@ -237,12 +242,12 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Parent Container',
+                  Text(
+                    context.l10n.parentContainer,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF18181B),
+                      color: context.colors.textPrimary,
                       letterSpacing: -0.2,
                     ),
                   ),
@@ -250,20 +255,20 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF4F4F6),
+                      color: context.colors.fill,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
                       children: [
-                        Icon(parentBox.type.icon, size: 20, color: const Color(0xFF18181B)),
+                        Icon(parentBox.type.icon, size: 20, color: context.colors.textPrimary),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
                             parentBox.name,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
-                              color: Color(0xFF18181B),
+                              color: context.colors.textPrimary,
                             ),
                           ),
                         ),
@@ -279,12 +284,12 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'QR Label ID',
+                Text(
+                  context.l10n.qrLabelId,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF18181B),
+                    color: context.colors.textPrimary,
                     letterSpacing: -0.2,
                   ),
                 ),
@@ -292,25 +297,25 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF4F4F6),
+                    color: context.colors.fill,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.qr_code_2_rounded,
                         size: 24,
-                        color: Color(0xFF18181B),
+                        color: context.colors.textPrimary,
                       ),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Text(
                           _label,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'monospace',
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
-                            color: Color(0xFF18181B),
+                            color: context.colors.textPrimary,
                           ),
                         ),
                       ),
@@ -328,7 +333,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
               child: FilledButton(
                 onPressed: _saveBox,
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF18181B),
+                  backgroundColor: context.colors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -336,7 +341,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                   elevation: 0,
                 ),
                 child: Text(
-                  isEditing ? 'Save Changes' : 'Save Location',
+                  isEditing ? context.l10n.saveChanges : context.l10n.saveLocation,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

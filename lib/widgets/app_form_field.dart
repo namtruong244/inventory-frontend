@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 class AppFormField extends StatelessWidget {
   final String label;
@@ -41,10 +42,10 @@ class AppFormField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF18181B),
+            color: context.colors.textPrimary,
             letterSpacing: -0.2,
           ),
         ),
@@ -58,26 +59,26 @@ class AppFormField extends StatelessWidget {
           readOnly: readOnly,
           onTap: onTap,
           onChanged: onChanged,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF18181B),
+            color: context.colors.textPrimary,
           ),
           decoration: InputDecoration(
             hintText: hintText,
-            hintStyle: const TextStyle(
-              color: Color(0xFFA1A1AA),
+            hintStyle: TextStyle(
+              color: context.colors.textMuted,
               fontSize: 15,
               fontWeight: FontWeight.w400,
             ),
             filled: true,
-            fillColor: const Color(0xFFF4F4F6),
+            fillColor: context.colors.fill,
             contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
             prefixText: prefixText,
-            prefixStyle: prefixStyle ?? const TextStyle(
+            prefixStyle: prefixStyle ?? TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF18181B),
+              color: context.colors.textPrimary,
             ),
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
@@ -91,7 +92,7 @@ class AppFormField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFF18181B), width: 1.5),
+              borderSide: BorderSide(color: context.colors.primary, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),

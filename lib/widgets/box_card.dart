@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../models/inventory_models.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class BoxCard extends StatelessWidget {
   final String name;
@@ -30,12 +33,12 @@ class BoxCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    final card = GestureDetector(
+    final card = Tappable(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
         ),
         child: Row(
           children: [
@@ -113,10 +116,10 @@ class BoxCard extends StatelessWidget {
             if (onEdit != null)
               SlidableAction(
                 onPressed: (_) => onEdit!(),
-                backgroundColor: const Color(0xFF18181B),
+                backgroundColor: context.colors.primary,
                 foregroundColor: Colors.white,
                 icon: Icons.edit_outlined,
-                label: 'Edit',
+                label: context.l10n.commonEdit,
               ),
             if (onDelete != null)
               SlidableAction(
@@ -124,7 +127,7 @@ class BoxCard extends StatelessWidget {
                 backgroundColor: Colors.red.shade400,
                 foregroundColor: Colors.white,
                 icon: Icons.delete_outline,
-                label: 'Delete',
+                label: context.l10n.commonDelete,
               ),
           ],
         ),

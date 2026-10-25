@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_form_field.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 
 Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider provider) async {
@@ -24,8 +26,8 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
               bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
             ),
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
@@ -38,7 +40,7 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: context.colors.border,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -50,28 +52,28 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF4F4F6),
+                          color: context.colors.fill,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Icon(previewIcon, color: const Color(0xFF18181B), size: 24),
+                        child: Icon(previewIcon, color: context.colors.textPrimary, size: 24),
                       ),
                       const SizedBox(width: 14),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'New Category',
+                              context.l10n.newCategory,
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xFF18181B),
+                                color: context.colors.textPrimary,
                               ),
                             ),
                             SizedBox(height: 2),
                             Text(
-                              'Create a custom category for your assets',
-                              style: TextStyle(fontSize: 12, color: Color(0xFF71717A)),
+                              context.l10n.createACustomCategoryFor,
+                              style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                             ),
                           ],
                         ),
@@ -80,8 +82,8 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                   ),
                   const SizedBox(height: 24),
                   AppFormField(
-                    label: 'Category Name',
-                    hintText: 'e.g. Photography, Watches, Board Games',
+                    label: context.l10n.categoryName,
+                    hintText: context.l10n.eGPhotographyWatchesBoard,
                     controller: textController,
                     onChanged: (_) {
                       setSheetState(() {
@@ -103,14 +105,14 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                         child: OutlinedButton(
                           onPressed: () => Navigator.pop(sheetContext),
                           style: OutlinedButton.styleFrom(
-                            foregroundColor: const Color(0xFF18181B),
-                            side: BorderSide(color: Colors.grey.shade300),
+                            foregroundColor: context.colors.textPrimary,
+                            side: BorderSide(color: context.colors.border),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w600)),
+                          child: Text(context.l10n.commonCancel, style: TextStyle(fontWeight: FontWeight.w600)),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -121,13 +123,13 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                             final name = textController.text.trim();
                             if (name.isEmpty) {
                               setSheetState(() {
-                                errorText = 'Please enter a category name';
+                                errorText = context.l10n.pleaseEnterACategoryName;
                               });
                               return;
                             }
                             if (provider.categories.any((c) => c.toLowerCase() == name.toLowerCase())) {
                               setSheetState(() {
-                                errorText = 'Category already exists';
+                                errorText = context.l10n.categoryAlreadyExists;
                               });
                               return;
                             }
@@ -135,13 +137,13 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                             Navigator.pop(sheetContext, name);
                           },
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF18181B),
+                            backgroundColor: context.colors.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: const Text('Add & Select', style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(context.l10n.addSelect, style: TextStyle(fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ],
@@ -172,7 +174,7 @@ void showCategoryPickerSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
-    backgroundColor: Colors.white,
+    backgroundColor: context.colors.surface,
     builder: (ctx) {
       return StatefulBuilder(
         builder: (sheetContext, setSheetState) {
@@ -187,7 +189,7 @@ void showCategoryPickerSheet(
                       width: 36,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE4E4E7),
+                        color: context.colors.border,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -196,19 +198,19 @@ void showCategoryPickerSheet(
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Select Category',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                      Text(
+                        context.l10n.selectCategory,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                       ),
                       TextButton.icon(
                         onPressed: () {
                           Navigator.pop(ctx);
                           onAddNew();
                         },
-                        icon: const Icon(Icons.add, size: 16, color: Color(0xFF18181B)),
-                        label: const Text(
-                          'New Category',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF18181B), fontSize: 13),
+                        icon: Icon(Icons.add, size: 16, color: context.colors.textPrimary),
+                        label: Text(
+                          context.l10n.newCategory,
+                          style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.textPrimary, fontSize: 13),
                         ),
                       ),
                     ],
@@ -219,7 +221,7 @@ void showCategoryPickerSheet(
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: provider.categories.length,
-                      separatorBuilder: (_, _) => const Divider(height: 1, color: Color(0xFFF4F4F6)),
+                      separatorBuilder: (_, _) => Divider(height: 1, color: context.colors.border),
                       itemBuilder: (context, idx) {
                         final cat = provider.categories[idx];
                         final isSelected = selected == cat;
@@ -229,13 +231,13 @@ void showCategoryPickerSheet(
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: isSelected ? const Color(0xFF18181B) : const Color(0xFFF4F4F5),
+                              color: isSelected ? context.colors.primary : context.colors.fill,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(
                               CategoryHelper.getCategoryIcon(cat),
                               size: 18,
-                              color: isSelected ? Colors.white : const Color(0xFF18181B),
+                              color: isSelected ? Colors.white : context.colors.textPrimary,
                             ),
                           ),
                           title: Text(
@@ -243,11 +245,11 @@ void showCategoryPickerSheet(
                             style: TextStyle(
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                               fontSize: 14,
-                              color: const Color(0xFF18181B),
+                              color: context.colors.textPrimary,
                             ),
                           ),
                           trailing: isSelected
-                              ? const Icon(Icons.check_circle_rounded, color: Color(0xFF18181B), size: 20)
+                              ? Icon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
                               : null,
                           onTap: () {
                             onSelected(cat);

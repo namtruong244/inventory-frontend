@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../widgets/location_picker_sheet.dart';
 import 'box_details_screen.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
+import '../widgets/tappable.dart';
 
 class QRScannerTab extends StatefulWidget {
   final bool isFullScreen;
@@ -32,16 +34,38 @@ class _QRScannerTabState extends State<QRScannerTab> {
     super.dispose();
   }
 
-  void _onDetect(BarcodeCapture capture) {
-    if (_isProcessing) return;
+  /// A code that is still in front of the camera is ignored until the camera
+  /// has not seen it for this long (or sees a different code).
+  static const _rescanGap = Duration(seconds: 3);
 
-    final List<Barcode> barcodes = capture.barcodes;
-    if (barcodes.isNotEmpty) {
-      final String? label = barcodes.first.rawValue;
-      if (label != null) {
-        _processCode(label);
-      }
-    }
+  /// Last location the user scanned or picked; suggested for unknown codes.
+  static String? _lastBoxId;
+
+  String? _lastCode;
+  DateTime _lastSeenAt = DateTime.fromMillisecondsSinceEpoch(0);
+
+  void _onDetect(BarcodeCapture capture) {
+    final now = DateTime.now();
+    final codes = capture.barcodes
+        .map((b) => b.rawValue?.trim())
+        .whereType<String>()
+        .where((c) => c.isNotEmpty)
+        .toList();
+    if (codes.isEmpty) return;
+
+    final fresh = codes
+        .where((c) => c != _lastCode || now.difference(_lastSeenAt) >= _rescanGap)
+        .toList();
+    if (codes.contains(_lastCode)) _lastSeenAt = now;
+    if (_isProcessing || fresh.isEmpty) return;
+
+    _lastCode = fresh.first;
+    _lastSeenAt = now;
+    _processCode(fresh.first);
+  }
+
+  void _resume() {
+    if (mounted) setState(() => _isProcessing = false);
   }
 
   Future<void> _processCode(String rawCode) async {
@@ -58,112 +82,98 @@ class _QRScannerTabState extends State<QRScannerTab> {
         final box = provider.getBoxById(lookup.id) ??
             provider.getBoxByLabel(code) ??
             Box.fromJson(lookup.payload);
-        if (provider.vibrateOnScan) HapticFeedback.mediumImpact();
-        AppFeedback.showSuccess(context, 'Container found: "${box.name}"');
-        _navigateToBox(box);
-        return;
+        return _openResult(provider, box: box);
       } else if (lookup.isItem) {
         final item = provider.getItemById(lookup.id) ??
             provider.getItemByBarcode(code) ??
             Item.fromJson(lookup.payload);
-        if (provider.vibrateOnScan) HapticFeedback.mediumImpact();
-        AppFeedback.showSuccess(context, 'Item found: "${item.name}"');
-        _navigateToItem(item);
-        return;
+        return _openResult(provider, item: item);
       }
     }
 
     // 2. Local fallback check
     final box = provider.getBoxByLabel(code);
-    if (box != null) {
-      if (provider.vibrateOnScan) HapticFeedback.mediumImpact();
-      AppFeedback.showSuccess(context, 'Container found: "${box.name}"');
-      _navigateToBox(box);
-      return;
-    }
+    if (box != null) return _openResult(provider, box: box);
 
     final item = provider.getItemByBarcode(code) ?? provider.getItemById(code);
-    if (item != null) {
-      if (provider.vibrateOnScan) HapticFeedback.mediumImpact();
-      AppFeedback.showSuccess(context, 'Item found: "${item.name}"');
-      _navigateToItem(item);
-      return;
-    }
+    if (item != null) return _openResult(provider, item: item);
 
     // 3. Not found: Offer to create item with this barcode
-    _handleUnrecognizedCode(code, provider);
+    await _handleUnrecognizedCode(code, provider);
   }
 
-  void _navigateToBox(Box box) {
-    if (widget.isFullScreen || Navigator.canPop(context)) {
-      Navigator.pushReplacement(
+  /// Shows a matched box/item, honouring the "Auto-Open Details" setting.
+  Future<void> _openResult(InventoryProvider provider, {Box? box, Item? item}) async {
+    final l10n = AppLocalizations.of(context);
+    final name = box?.name ?? item!.name;
+    provider.playScanFeedback();
+    _lastBoxId = box?.id ?? item!.boxId;
+
+    if (provider.autoOpenOnScan) {
+      AppFeedback.showSuccess(
         context,
-        MaterialPageRoute(
-          builder: (_) => BoxDetailsScreen(boxId: box.id),
-        ),
+        box != null ? l10n.scanFoundContainer(name) : l10n.scanFoundItem(name),
       );
     } else {
-      Navigator.push(
+      final open = await AppFeedback.showConfirmDialog(
         context,
-        MaterialPageRoute(
-          builder: (_) => BoxDetailsScreen(boxId: box.id),
-        ),
-      ).then((_) {
-        if (mounted) setState(() => _isProcessing = false);
-      });
+        title: box != null ? l10n.scanFoundContainer(name) : l10n.scanFoundItem(name),
+        message: l10n.scanOpenDetailsPrompt,
+        confirmLabel: l10n.scanOpen,
+        cancelLabel: l10n.scanKeepScanning,
+        icon: Icons.qr_code_scanner_rounded,
+      );
+      if (!open || !mounted) return _resume();
+    }
+    if (box != null) {
+      _navigate(BoxDetailsScreen(boxId: box.id));
+    } else {
+      _navigate(ItemDetailsScreen(itemId: item!.id));
     }
   }
 
-  void _navigateToItem(Item item) {
+  void _navigate(Widget screen) {
+    final route = MaterialPageRoute(builder: (_) => screen);
     if (widget.isFullScreen || Navigator.canPop(context)) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ItemDetailsScreen(itemId: item.id),
-        ),
-      );
+      Navigator.pushReplacement(context, route);
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ItemDetailsScreen(itemId: item.id),
-        ),
-      ).then((_) {
-        if (mounted) setState(() => _isProcessing = false);
-      });
+      Navigator.push(context, route).then((_) => _resume());
     }
   }
 
-  void _handleUnrecognizedCode(String code, InventoryProvider provider) async {
-    final rootBoxes = provider.boxes;
-    final defaultBoxId = rootBoxes.isNotEmpty ? rootBoxes.first.id : '';
-
+  Future<void> _handleUnrecognizedCode(String code, InventoryProvider provider) async {
+    final l10n = AppLocalizations.of(context);
     final shouldCreate = await AppFeedback.showConfirmDialog(
       context,
-      title: 'Scanned Code: $code',
-      message: 'No storage box or item currently matches this code. Would you like to create a new item with this barcode?',
-      confirmLabel: 'Add New Item',
-      cancelLabel: 'Keep Scanning',
+      title: l10n.scanUnknownTitle(code),
+      message: l10n.scanUnknownMessage,
+      confirmLabel: l10n.scanAddNewItem,
+      cancelLabel: l10n.scanKeepScanning,
       icon: Icons.qr_code_scanner_rounded,
     );
+    if (!shouldCreate || !mounted) return _resume();
 
-    if (shouldCreate && mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ItemCreateScreen(
-            boxId: defaultBoxId,
-            initialBarcode: code,
-          ),
-        ),
-      ).then((_) {
-        if (mounted) setState(() => _isProcessing = false);
-      });
-    } else {
-      Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) setState(() => _isProcessing = false);
-      });
-    }
+    // Never guess a location: the user picks it, starting from the last one used.
+    final suggested = _lastBoxId != null && provider.getBoxById(_lastBoxId!) != null
+        ? _lastBoxId
+        : null;
+    final box = await LocationPickerSheet.show(
+      context,
+      initialBoxId: suggested,
+      title: l10n.scanPickLocationTitle,
+      subtitle: l10n.scanPickLocationSubtitle,
+      confirmButtonText: l10n.scanPickLocationConfirm,
+    );
+    if (box == null || !mounted) return _resume();
+    _lastBoxId = box.id;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ItemCreateScreen(boxId: box.id, initialBarcode: code),
+      ),
+    );
+    _resume();
   }
 
   @override
@@ -178,11 +188,12 @@ class _QRScannerTabState extends State<QRScannerTab> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF18181B)),
                 onPressed: () => Navigator.pop(context),
               ),
-              title: const Text(
-                'Scan QR & Barcode',
+              title: Text(
+                AppLocalizations.of(context).scanTitle,
                 style: TextStyle(
                   color: Color(0xFF18181B),
                   fontWeight: FontWeight.bold,
@@ -199,7 +210,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
           children: [
             if (!canPop) ...[
               Text(
-                'Scan QR & Barcode',
+                AppLocalizations.of(context).scanTitle,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   letterSpacing: -0.5,
@@ -221,14 +232,14 @@ class _QRScannerTabState extends State<QRScannerTab> {
                     child: _buildModeTab(
                       isBarcode: false,
                       icon: Icons.qr_code_2_rounded,
-                      label: 'Location QR',
+                      label: AppLocalizations.of(context).scanModeLocation,
                     ),
                   ),
                   Expanded(
                     child: _buildModeTab(
                       isBarcode: true,
                       icon: Icons.barcode_reader,
-                      label: 'Product Barcode',
+                      label: AppLocalizations.of(context).scanModeProduct,
                     ),
                   ),
                 ],
@@ -238,8 +249,8 @@ class _QRScannerTabState extends State<QRScannerTab> {
 
             Text(
               _isBarcodeMode
-                  ? 'Scan product barcode (UPC/EAN) to auto-fill or search in inventory'
-                  : 'Point camera at container QR code to open details and view all contents',
+                  ? AppLocalizations.of(context).scanHintProduct
+                  : AppLocalizations.of(context).scanHintLocation,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: Colors.grey.shade600,
                 fontSize: 13,
@@ -302,7 +313,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
                       Icon(Icons.keyboard_outlined, size: 20, color: theme.colorScheme.primary),
                       const SizedBox(width: 8),
                       Text(
-                        'Enter Code Manually',
+                        AppLocalizations.of(context).scanManualTitle,
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -310,8 +321,8 @@ class _QRScannerTabState extends State<QRScannerTab> {
                     ],
                   ),
                   const SizedBox(height: 14),
-                  const Text(
-                    'Label ID or Barcode',
+                  Text(
+                    AppLocalizations.of(context).scanManualLabel,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -416,7 +427,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
   Widget _buildModeTab({required bool isBarcode, required IconData icon, required String label}) {
     final isSelected = _isBarcodeMode == isBarcode;
 
-    return GestureDetector(
+    return Tappable(
       onTap: () => setState(() => _isBarcodeMode = isBarcode),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),

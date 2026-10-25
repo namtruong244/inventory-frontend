@@ -9,6 +9,9 @@ import 'app_feedback.dart';
 import 'app_image_view.dart';
 import 'move_item_sheet.dart';
 import '../screens/box_details_screen.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 
 Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, LendingRecord loan) {
@@ -17,7 +20,7 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
   return Container(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
-      color: isOverdue ? const Color(0xFFFEF2F2) : const Color(0xFFEFF6FF),
+      color: isOverdue ? context.colors.dangerSoft : context.colors.infoSoft,
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
         color: isOverdue ? const Color(0xFFFCA5A5) : const Color(0xFFBFDBFE),
@@ -38,11 +41,11 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  isOverdue ? 'Overdue Loan' : 'Currently Lent Out',
+                  isOverdue ? context.l10n.overdueLoan : context.l10n.currentlyLentOut,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: isOverdue ? const Color(0xFF991B1B) : const Color(0xFF1E40AF),
+                    color: isOverdue ? context.colors.dangerStrong : const Color(0xFF1E40AF),
                   ),
                 ),
               ],
@@ -63,24 +66,24 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
         ),
         const SizedBox(height: 12),
         Text(
-          'Borrower: ${loan.borrowerName}',
+          context.l10n.commonBorrower2(loan.borrowerName),
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         if (loan.borrowerContact.isNotEmpty)
           Text(
-            'Contact: ${loan.borrowerContact}',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+            context.l10n.commonContact(loan.borrowerContact),
+            style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
           ),
         const SizedBox(height: 6),
         Text(
           'Lent on: ${DateFormat('MMM dd, yyyy').format(loan.lentDate)}',
-          style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+          style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
         ),
         if (loan.expectedReturnDate != null)
           Text(
             'Expected Return: ${DateFormat('MMM dd, yyyy').format(loan.expectedReturnDate!)}',
             style: TextStyle(
-              color: isOverdue ? const Color(0xFFDC2626) : Colors.grey.shade700,
+              color: isOverdue ? const Color(0xFFDC2626) : context.colors.textSecondary,
               fontSize: 12,
               fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
             ),
@@ -101,7 +104,7 @@ Widget buildStorageLocationCard(
   return Container(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -117,20 +120,20 @@ Widget buildStorageLocationCard(
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.location_on_outlined, size: 20, color: Color(0xFF18181B)),
+                Icon(Icons.location_on_outlined, size: 20, color: context.colors.textPrimary),
                 SizedBox(width: 8),
                 Text(
-                  'Storage Location',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                  context.l10n.storageLocation,
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                 ),
               ],
             ),
-            GestureDetector(
+            Tappable(
               onTap: () => MoveItemSheet.show(context, item),
-              child: const Text(
-                'Change',
+              child: Text(
+                context.l10n.commonChange,
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
               ),
             ),
@@ -146,7 +149,7 @@ Widget buildStorageLocationCard(
             child: Row(
               children: [
                 for (int i = 0; i < breadcrumbs.length; i++) ...[
-                  GestureDetector(
+                  Tappable(
                     onTap: () {
                       Navigator.push(
                         context,
@@ -159,8 +162,8 @@ Widget buildStorageLocationCard(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       decoration: BoxDecoration(
                         color: i == breadcrumbs.length - 1
-                            ? const Color(0xFF18181B)
-                            : const Color(0xFFF4F4F6),
+                            ? context.colors.primary
+                            : context.colors.fill,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
@@ -169,7 +172,7 @@ Widget buildStorageLocationCard(
                           Icon(
                             breadcrumbs[i].type.icon,
                             size: 14,
-                            color: i == breadcrumbs.length - 1 ? Colors.white : const Color(0xFF18181B),
+                            color: i == breadcrumbs.length - 1 ? Colors.white : context.colors.textPrimary,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -177,7 +180,7 @@ Widget buildStorageLocationCard(
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: i == breadcrumbs.length - 1 ? Colors.white : const Color(0xFF18181B),
+                              color: i == breadcrumbs.length - 1 ? Colors.white : context.colors.textPrimary,
                             ),
                           ),
                         ],
@@ -187,7 +190,7 @@ Widget buildStorageLocationCard(
                   if (i < breadcrumbs.length - 1)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Icon(Icons.chevron_right_rounded, size: 16, color: Colors.grey.shade400),
+                      child: Icon(Icons.chevron_right_rounded, size: 16, color: context.colors.textMuted),
                     ),
                 ],
               ],
@@ -195,7 +198,7 @@ Widget buildStorageLocationCard(
           )
         else
           Text(
-            parentBox != null ? parentBox.name : 'Unknown Location',
+            parentBox != null ? parentBox.name : context.l10n.unknownLocation,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
           ),
       ],
@@ -214,20 +217,20 @@ Widget buildExpiryCard(BuildContext context, Item item) {
   String statusTitle;
 
   if (isExpired) {
-    bgColor = const Color(0xFFFEF2F2);
+    bgColor = context.colors.dangerSoft;
     textColor = const Color(0xFFDC2626);
     borderColor = const Color(0xFFFCA5A5);
-    statusTitle = 'Product has Expired!';
+    statusTitle = context.l10n.productHasExpired;
   } else if (daysLeft != null && daysLeft <= 15) {
-    bgColor = const Color(0xFFFFFBEB);
+    bgColor = context.colors.warningSoft;
     textColor = const Color(0xFFD97706);
     borderColor = const Color(0xFFFDE68A);
-    statusTitle = 'Expires soon in $daysLeft days';
+    statusTitle = context.l10n.expiresSoonInDays(daysLeft);
   } else {
     bgColor = const Color(0xFFF0FDF4);
     textColor = const Color(0xFF16A34A);
     borderColor = const Color(0xFFBBF7D0);
-    statusTitle = 'Fresh • $daysLeft days remaining';
+    statusTitle = context.l10n.freshDaysRemaining(daysLeft ?? 0);
   }
 
   return Container(
@@ -270,7 +273,7 @@ Widget buildLowStockCard(BuildContext context, Item item) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
-      color: const Color(0xFFFFFBEB),
+      color: context.colors.warningSoft,
       borderRadius: BorderRadius.circular(20),
       border: Border.all(color: const Color(0xFFFDE68A)),
     ),
@@ -279,7 +282,7 @@ Widget buildLowStockCard(BuildContext context, Item item) {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: const Color(0xFFFEF3C7),
+            color: context.colors.warningSoft,
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(Icons.production_quantity_limits_rounded, color: Color(0xFFD97706), size: 24),
@@ -289,14 +292,14 @@ Widget buildLowStockCard(BuildContext context, Item item) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Low Stock Warning',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFB45309), fontSize: 14),
+              Text(
+                context.l10n.lowStockWarning,
+                style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.warningStrong, fontSize: 14),
               ),
               const SizedBox(height: 2),
               Text(
-                'Current: $qty ${item.unit} • Threshold: ≤ $minQty ${item.unit}',
-                style: const TextStyle(color: Color(0xFF92400E), fontSize: 12),
+                context.l10n.currentThreshold(qty, item.unit, minQty ?? 0, item.unit),
+                style: TextStyle(color: context.colors.warningStrong, fontSize: 12),
               ),
             ],
           ),
@@ -311,7 +314,7 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
   return Container(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -324,13 +327,13 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
-            Icon(Icons.receipt_long_outlined, size: 20, color: Color(0xFF18181B)),
+            Icon(Icons.receipt_long_outlined, size: 20, color: context.colors.textPrimary),
             SizedBox(width: 8),
             Text(
-              'Asset & Purchase Information',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+              context.l10n.assetPurchaseInformation,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
             ),
           ],
         ),
@@ -341,14 +344,14 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
           children: [
             Expanded(
               child: buildDetailTile(
-                label: 'Purchase Price',
-                value: item.purchasePrice != null ? Provider.of<InventoryProvider>(context).formatPrice(item.purchasePrice) : 'Not recorded',
+                label: context.l10n.purchasePrice2,
+                value: item.purchasePrice != null ? Provider.of<InventoryProvider>(context).formatPrice(item.purchasePrice) : context.l10n.notRecorded,
                 icon: Icons.attach_money_rounded,
               ),
             ),
             Expanded(
               child: buildDetailTile(
-                label: 'Purchase Date',
+                label: context.l10n.purchaseDate,
                 value: item.purchaseDate != null ? DateFormat('MMM dd, yyyy').format(item.purchaseDate!) : 'Not recorded',
                 icon: Icons.calendar_today_outlined,
               ),
@@ -362,10 +365,10 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
           children: [
             Expanded(
               child: buildDetailTile(
-                label: 'Low Stock Alert Threshold',
+                label: context.l10n.lowStockAlertThreshold,
                 value: item.minQuantity != null
                     ? '≤ ${item.minQuantity! % 1 == 0 ? item.minQuantity!.toInt() : item.minQuantity} ${item.unit}'
-                    : 'Not tracked',
+                    : context.l10n.notTracked,
                 icon: Icons.production_quantity_limits_rounded,
               ),
             ),
@@ -375,11 +378,11 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
 
         // Barcode & Serial Number
         if (item.barcode != null && item.barcode!.isNotEmpty) ...[
-          buildCopyableRow(context, 'Barcode (UPC/EAN)', item.barcode!, Icons.qr_code_2_rounded),
+          buildCopyableRow(context, context.l10n.barcodeUpcEan, item.barcode!, Icons.qr_code_2_rounded),
           const SizedBox(height: 12),
         ],
         if (item.serialNumber != null && item.serialNumber!.isNotEmpty) ...[
-          buildCopyableRow(context, 'Serial Number', item.serialNumber!, Icons.tag_rounded),
+          buildCopyableRow(context, context.l10n.serialNumber, item.serialNumber!, Icons.tag_rounded),
           const SizedBox(height: 12),
         ],
 
@@ -399,7 +402,7 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.isWarrantyExpired ? 'Warranty Expired' : 'Warranty Active',
+                      item.isWarrantyExpired ? context.l10n.warrantyExpired : context.l10n.warrantyActive,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
@@ -408,7 +411,7 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
                     ),
                     Text(
                       'Valid until: ${DateFormat('MMM dd, yyyy').format(item.warrantyExpiryDate!)}${item.daysUntilWarrantyExpiry != null && item.daysUntilWarrantyExpiry! > 0 ? ' (${item.daysUntilWarrantyExpiry} days left)' : ''}',
-                      style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                      style: TextStyle(fontSize: 11, color: context.colors.textSecondary),
                     ),
                   ],
                 ),
@@ -423,42 +426,45 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
 
 
 Widget buildDetailTile({required String label, required String value, required IconData icon}) {
+  return Builder(builder: (context) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
         children: [
-          Icon(icon, size: 14, color: Colors.grey.shade500),
+          Icon(icon, size: 14, color: context.colors.textMuted),
           const SizedBox(width: 4),
-          Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+          Text(label, style: TextStyle(fontSize: 12, color: context.colors.textMuted)),
         ],
       ),
       const SizedBox(height: 4),
       Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
     ],
   );
+});
 }
 
 
 Widget buildCopyableRow(BuildContext context, String label, String value, IconData icon) {
   return Row(
     children: [
-      Icon(icon, size: 18, color: Colors.grey.shade600),
+      Icon(icon, size: 18, color: context.colors.textSecondary),
       const SizedBox(width: 8),
       Expanded(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+            Text(label, style: TextStyle(fontSize: 11, color: context.colors.textMuted)),
             Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'monospace')),
           ],
         ),
       ),
       IconButton(
+ tooltip: context.l10n.commonCopy,
         icon: const Icon(Icons.copy_rounded, size: 16),
         onPressed: () {
           Clipboard.setData(ClipboardData(text: value));
-          AppFeedback.showSuccess(context, 'Copied $label to clipboard');
+          AppFeedback.showSuccess(context, context.l10n.copiedToClipboard(label));
         },
       ),
     ],
@@ -470,7 +476,7 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
   return Container(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: BorderRadius.circular(20),
       boxShadow: [
         BoxShadow(
@@ -483,13 +489,13 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
-            Icon(Icons.document_scanner_outlined, size: 20, color: Color(0xFF18181B)),
+            Icon(Icons.document_scanner_outlined, size: 20, color: context.colors.textPrimary),
             SizedBox(width: 8),
             Text(
-              'Receipts & Warranty Proof',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+              context.l10n.receiptsWarrantyProof,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
             ),
           ],
         ),
@@ -501,14 +507,14 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
             itemCount: receiptPhotos.length,
             itemBuilder: (context, idx) {
               final photoUrl = receiptPhotos[idx];
-              return GestureDetector(
+              return Tappable(
                 onTap: () => showFullScreenImage(context, photoUrl),
                 child: Container(
                   width: 90,
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: context.colors.border),
                   ),
                   child: AppImageView(
                     imageUrlOrPath: photoUrl,
@@ -550,6 +556,7 @@ void showFullScreenImage(BuildContext context, String imageUrl) {
             child: CircleAvatar(
               backgroundColor: Colors.black.withValues(alpha: 0.6),
               child: IconButton(
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 icon: const Icon(Icons.close, color: Colors.white),
                 onPressed: () => Navigator.pop(ctx),
               ),

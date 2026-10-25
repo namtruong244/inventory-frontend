@@ -2,20 +2,22 @@ import 'package:flutter/material.dart';
 
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 void showCurrencyPicker(BuildContext context, InventoryProvider provider) {
   final currencies = [
-    {'code': 'USD', 'symbol': '\$', 'name': 'US Dollar'},
-    {'code': 'VND', 'symbol': '₫', 'name': 'Vietnamese Dong'},
-    {'code': 'EUR', 'symbol': '€', 'name': 'Euro'},
-    {'code': 'GBP', 'symbol': '£', 'name': 'British Pound'},
-    {'code': 'JPY', 'symbol': '¥', 'name': 'Japanese Yen'},
+    {'code': 'USD', 'symbol': '\$', 'name': context.l10n.usDollar},
+    {'code': 'VND', 'symbol': '₫', 'name': context.l10n.vietnameseDong},
+    {'code': 'EUR', 'symbol': '€', 'name': context.l10n.commonEuro},
+    {'code': 'GBP', 'symbol': '£', 'name': context.l10n.britishPound},
+    {'code': 'JPY', 'symbol': '¥', 'name': context.l10n.japaneseYen},
   ];
 
   showSelectionSheet(
     context: context,
-    title: 'Select Currency',
-    subtitle: 'Applied to price calculations & asset valuation',
+    title: context.l10n.selectCurrency,
+    subtitle: context.l10n.appliedToPriceCalculationsAsset,
     items: currencies.map((c) => c['symbol']!).toList(),
     currentValue: provider.currency,
     displayBuilder: (sym) {
@@ -24,7 +26,7 @@ void showCurrencyPicker(BuildContext context, InventoryProvider provider) {
     },
     onSelected: (sym) {
       provider.setCurrency(sym);
-      AppFeedback.showSuccess(context, 'Currency changed to $sym');
+      AppFeedback.showSuccess(context, context.l10n.currencyChangedTo(sym));
     },
   );
 }
@@ -43,8 +45,8 @@ void showDefaultUnitPicker(BuildContext context, InventoryProvider provider) {
 
   showSelectionSheet(
     context: context,
-    title: 'Default Item Unit',
-    subtitle: 'Default measuring unit when creating new items',
+    title: context.l10n.defaultItemUnit,
+    subtitle: context.l10n.defaultMeasuringUnitWhenCreating,
     items: units.map((u) => u['code']!).toList(),
     currentValue: provider.defaultUnit,
     displayBuilder: (code) {
@@ -53,7 +55,7 @@ void showDefaultUnitPicker(BuildContext context, InventoryProvider provider) {
     },
     onSelected: (unit) {
       provider.setDefaultUnit(unit);
-      AppFeedback.showSuccess(context, 'Default unit set to "$unit"');
+      AppFeedback.showSuccess(context, context.l10n.defaultUnitSetTo(unit));
     },
   );
 }
@@ -63,14 +65,14 @@ void showExpiryDaysPicker(BuildContext context, InventoryProvider provider) {
 
   showSelectionSheet<int>(
     context: context,
-    title: 'Expiry Warning Window',
-    subtitle: 'How many days before expiration to alert you',
+    title: context.l10n.expiryWarningWindow,
+    subtitle: context.l10n.howManyDaysBeforeExpiration,
     items: daysOptions,
     currentValue: provider.expiryWarningDays,
     displayBuilder: (days) => '$days days before expiration / warranty ends',
     onSelected: (days) {
       provider.setExpiryWarningDays(days);
-      AppFeedback.showSuccess(context, 'Alert window set to $days days');
+      AppFeedback.showSuccess(context, context.l10n.alertWindowSetToDays(days));
     },
   );
 }
@@ -79,14 +81,14 @@ void showExpiryDaysPicker(BuildContext context, InventoryProvider provider) {
 void showWarrantyDaysPicker(BuildContext context, InventoryProvider provider) {
   showSelectionSheet<int>(
     context: context,
-    title: 'Warranty Warning Window',
-    subtitle: 'How many days before warranty ends to alert you',
+    title: context.l10n.warrantyWarningWindow,
+    subtitle: context.l10n.howManyDaysBeforeWarranty,
     items: const [7, 14, 30, 60, 90],
     currentValue: provider.warrantyWarningDays,
     displayBuilder: (days) => '$days days before warranty ends',
     onSelected: (days) {
       provider.setWarrantyWarningDays(days);
-      AppFeedback.showSuccess(context, 'Warranty window set to $days days');
+      AppFeedback.showSuccess(context, context.l10n.warrantyWindowSetToDays(days));
     },
   );
 }
@@ -108,14 +110,14 @@ void showTimezonePicker(BuildContext context, InventoryProvider provider) {
   ];
   showSelectionSheet<String>(
     context: context,
-    title: 'Time Zone',
-    subtitle: 'Alerts treat "today" in this time zone',
+    title: context.l10n.timeZone,
+    subtitle: context.l10n.alertsTreatTodayInThis,
     items: zones,
     currentValue: zones.contains(provider.timezone) ? provider.timezone : zones.first,
     displayBuilder: (tz) => tz,
     onSelected: (tz) {
       provider.setTimezone(tz);
-      AppFeedback.showSuccess(context, 'Time zone set to $tz');
+      AppFeedback.showSuccess(context, context.l10n.timeZoneSetTo(tz));
     },
   );
 }
@@ -139,8 +141,8 @@ void showSelectionSheet<T>({
 
       return Container(
         constraints: BoxConstraints(maxHeight: maxHeight),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: SafeArea(
@@ -156,7 +158,7 @@ void showSelectionSheet<T>({
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: context.colors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -164,12 +166,12 @@ void showSelectionSheet<T>({
                 const SizedBox(height: 18),
                 Text(
                   title,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                 ),
                 const SizedBox(height: 16),
                 Flexible(
@@ -182,11 +184,11 @@ void showSelectionSheet<T>({
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: Material(
-                            color: isSelected ? const Color(0xFFF4F4F6) : Colors.white,
+                            color: isSelected ? context.colors.fill : context.colors.surface,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                               side: BorderSide(
-                                color: isSelected ? const Color(0xFF18181B) : Colors.grey.shade200,
+                                color: isSelected ? context.colors.primary : context.colors.border,
                               ),
                             ),
                             child: ListTile(
@@ -196,12 +198,12 @@ void showSelectionSheet<T>({
                                 displayBuilder(item),
                                 style: TextStyle(
                                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                  color: const Color(0xFF18181B),
+                                  color: context.colors.textPrimary,
                                   fontSize: 14,
                                 ),
                               ),
                               trailing: isSelected
-                                  ? const Icon(Icons.check_circle_rounded, color: Color(0xFF18181B), size: 20)
+                                  ? Icon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
                                   : null,
                               onTap: () {
                                 Navigator.pop(sheetContext);

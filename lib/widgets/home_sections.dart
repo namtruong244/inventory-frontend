@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import '../providers/inventory_provider.dart';
 import '../screens/alerts_screen.dart';
 import '../screens/lending_tracker_screen.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Home tab sections. Navigation and tab switching stay owned by the home
 /// screen and are passed in as callbacks.
@@ -17,13 +20,14 @@ class HomeSections {
   Widget buildConnectionBanner() {
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
-        if (provider.isConnected) return const SizedBox.shrink();
+        // Offline mode is covered by the app-wide SyncStatusBar.
+        if (provider.isConnected || provider.isOffline) return const SizedBox.shrink();
 
         return Container(
           margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: const Color(0xFFFEF2F2),
+            color: context.colors.dangerSoft,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFFCA5A5)),
           ),
@@ -37,13 +41,10 @@ class HomeSections {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  provider.isOffline
-                      ? 'Offline: showing saved data'
-                          '${provider.pendingChanges > 0 ? ' · ${provider.pendingChanges} change(s) waiting to sync' : ''}'
-                      : 'Cannot connect to backend (${provider.serverUrl})',
-                  style: const TextStyle(
+                  context.l10n.cannotConnectToBackend(provider.serverUrl),
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF991B1B),
+                    color: context.colors.dangerStrong,
                   ),
                 ),
               ),
@@ -57,8 +58,8 @@ class HomeSections {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  'Retry',
+                child: Text(
+                  context.l10n.commonRetry,
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ),
@@ -91,7 +92,7 @@ class HomeSections {
           margin: const EdgeInsets.fromLTRB(24, 0, 24, 20),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            color: const Color(0xFFFEF2F2),
+            color: context.colors.dangerSoft,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: const Color(0xFFFCA5A5).withValues(alpha: 0.6),
@@ -125,28 +126,28 @@ class HomeSections {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      'Action Required',
+                    Text(
+                      context.l10n.actionRequired,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF991B1B),
+                        color: context.colors.dangerStrong,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       alertMessage,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         height: 1.25,
-                        color: Color(0xFFB91C1C),
+                        color: context.colors.dangerStrong,
                       ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 12),
-              GestureDetector(
+              Tappable(
                 onTap: () => navigate(const AlertsScreen()),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
@@ -154,11 +155,11 @@ class HomeSections {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF18181B),
+                    color: context.colors.primary,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    'Review',
+                  child: Text(
+                    context.l10n.commonReview,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -185,12 +186,12 @@ class HomeSections {
         children: [
           // Lending Tracker Quick Card
           Expanded(
-            child: GestureDetector(
+            child: Tappable(
               onTap: () => navigate(const LendingTrackerScreen()),
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -220,24 +221,24 @@ class HomeSections {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Lending',
+                          Text(
+                            context.l10n.commonLending,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF18181B),
+                              color: context.colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             activeLoans > 0
                                 ? '$activeLoans Active'
-                                : 'No Loans',
+                                : context.l10n.noLoans,
                             style: TextStyle(
                               fontSize: 12,
                               color: activeLoans > 0
                                   ? const Color(0xFF2563EB)
-                                  : Colors.grey.shade500,
+                                  : context.colors.textMuted,
                               fontWeight: activeLoans > 0
                                   ? FontWeight.w600
                                   : FontWeight.normal,
@@ -254,12 +255,12 @@ class HomeSections {
           const SizedBox(width: 12),
           // Expiration & Alerts Quick Card
           Expanded(
-            child: GestureDetector(
+            child: Tappable(
               onTap: () => navigate(const AlertsScreen()),
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -297,19 +298,19 @@ class HomeSections {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Alerts',
+                          Text(
+                            context.l10n.commonAlerts,
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF18181B),
+                              color: context.colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 2),
                           Text(
                             totalAlerts > 0
                                 ? '$totalAlerts Issues'
-                                : 'All Clear',
+                                : context.l10n.allClear,
                             style: TextStyle(
                               fontSize: 12,
                               color: totalAlerts > 0

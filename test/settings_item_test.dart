@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:inventory/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:inventory/models/inventory_models.dart';
 import 'package:inventory/providers/inventory_provider.dart';
@@ -15,7 +16,10 @@ void main() {
     await tester.pumpWidget(
       ChangeNotifierProvider<InventoryProvider>.value(
         value: provider,
-        child: const MaterialApp(
+        child: MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: Scaffold(
             body: ItemCreateScreen(boxId: 'box-1'),
           ),
@@ -51,7 +55,10 @@ void main() {
     await tester.pumpWidget(
       ChangeNotifierProvider<InventoryProvider>.value(
         value: provider,
-        child: const MaterialApp(
+        child: MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: Scaffold(
             body: ItemDetailsScreen(itemId: 'item-eur'),
           ),

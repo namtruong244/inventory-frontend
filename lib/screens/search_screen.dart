@@ -8,6 +8,10 @@ import '../widgets/box_card.dart';
 import 'box_details_screen.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
+import '../widgets/app_refresh.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -19,9 +23,18 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   String _query = '';
-  String _selectedFilter = 'All'; // 'All', 'Stored', 'In Use', 'Lent', 'Perishable'
+  // Stable ids; the label shown comes from [_filterLabel].
+  String _selectedFilter = 'all';
 
-  final List<String> _filters = ['All', 'Stored', 'In Use', 'Lent', 'Perishable'];
+  final List<String> _filters = ['all', 'stored', 'inUse', 'lent', 'perishable'];
+
+  String _filterLabel(BuildContext context, String id) => switch (id) {
+        'stored' => context.l10n.commonStored2,
+        'inUse' => context.l10n.inUse2,
+        'lent' => context.l10n.commonLent3,
+        'perishable' => context.l10n.commonPerishable,
+        _ => context.l10n.commonAll2,
+      };
 
   @override
   void dispose() {
@@ -32,22 +45,23 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F9FA),
+        backgroundColor: context.colors.background,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: IconButton(
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: Container(
               padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF18181B), size: 16),
+              child: Icon(Icons.arrow_back_ios_new_rounded, color: context.colors.textPrimary, size: 16),
             ),
             onPressed: () => Navigator.pop(context),
           ),
@@ -59,9 +73,9 @@ class _SearchScreenState extends State<SearchScreen> {
             height: 46,
             padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.colors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
+              border: Border.all(color: context.colors.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.03),
@@ -72,16 +86,16 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.search, size: 20, color: Color(0xFFA1A1AA)),
+                Icon(Icons.search, size: 20, color: context.colors.textMuted),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
                     controller: _searchController,
                     autofocus: true,
                     style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                    decoration: const InputDecoration(
-                      hintText: 'Search items, serial, barcode, boxes...',
-                      hintStyle: TextStyle(color: Color(0xFFA1A1AA), fontSize: 13, fontWeight: FontWeight.normal),
+                    decoration: InputDecoration(
+                      hintText: context.l10n.searchItemsSerialBarcodeBoxes,
+                      hintStyle: TextStyle(color: context.colors.textMuted, fontSize: 13, fontWeight: FontWeight.normal),
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -97,7 +111,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
                 if (_query.isNotEmpty)
-                  GestureDetector(
+                  Tappable(
                     onTap: () {
                       _searchController.clear();
                       setState(() {
@@ -106,11 +120,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                     child: Container(
                       padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFE2E8F0),
+                      decoration: BoxDecoration(
+                        color: context.colors.border,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.close_rounded, size: 16, color: Color(0xFF64748B)),
+                      child: Icon(Icons.close_rounded, size: 16, color: context.colors.textSecondary),
                     ),
                   ),
               ],
@@ -127,32 +141,32 @@ class _SearchScreenState extends State<SearchScreen> {
             return Column(
               children: [
                 Container(
-                  color: const Color(0xFFF8F9FA),
+                  color: context.colors.fill,
                   padding: const EdgeInsets.fromLTRB(20, 6, 20, 12),
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: _filters.map((filter) {
                         final isSelected = _selectedFilter == filter;
-                        return GestureDetector(
+                        return Tappable(
                           onTap: () => setState(() => _selectedFilter = filter),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 200),
                             margin: const EdgeInsets.only(right: 8),
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             decoration: BoxDecoration(
-                              color: isSelected ? const Color(0xFF18181B) : Colors.white,
+                              color: isSelected ? context.colors.primary : context.colors.surface,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: isSelected ? const Color(0xFF18181B) : const Color(0xFFE2E8F0),
+                                color: isSelected ? context.colors.primary : context.colors.border,
                               ),
                             ),
                             child: Text(
-                              filter,
+                              _filterLabel(context, filter),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                color: isSelected ? Colors.white : const Color(0xFF18181B),
+                                color: isSelected ? Colors.white : context.colors.textPrimary,
                               ),
                             ),
                           ),
@@ -179,16 +193,16 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_rounded, size: 56, color: Colors.grey.shade300),
+            Icon(Icons.search_rounded, size: 56, color: context.colors.border),
             const SizedBox(height: 12),
             Text(
-              'Search your entire inventory',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.grey.shade700),
+              context.l10n.searchYourEntireInventory,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: context.colors.textSecondary),
             ),
             const SizedBox(height: 4),
             Text(
-              'Find items by name, barcode, serial number, or storage location',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+              context.l10n.findItemsByNameBarcode,
+              style: TextStyle(fontSize: 13, color: context.colors.textMuted),
               textAlign: TextAlign.center,
             ),
           ],
@@ -217,10 +231,10 @@ class _SearchScreenState extends State<SearchScreen> {
       if (!matchesQuery) return false;
 
       // Status filters
-      if (_selectedFilter == 'Stored') return i.status == ItemStatus.stored;
-      if (_selectedFilter == 'In Use') return i.status == ItemStatus.inUse;
-      if (_selectedFilter == 'Lent') return i.status == ItemStatus.lent;
-      if (_selectedFilter == 'Perishable') return i.expiryDate != null;
+      if (_selectedFilter == 'stored') return i.status == ItemStatus.stored;
+      if (_selectedFilter == 'inUse') return i.status == ItemStatus.inUse;
+      if (_selectedFilter == 'lent') return i.status == ItemStatus.lent;
+      if (_selectedFilter == 'perishable') return i.expiryDate != null;
 
       return true;
     }).toList();
@@ -230,23 +244,24 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined, size: 56, color: Colors.grey.shade300),
+            Icon(Icons.inventory_2_outlined, size: 56, color: context.colors.border),
             const SizedBox(height: 12),
             Text(
-              'No results for "$_query"',
+              context.l10n.noResultsFor(_query),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 4),
             Text(
-              'Try a different name, serial number, or barcode',
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade500),
+              context.l10n.tryADifferentNameSerial,
+              style: TextStyle(fontSize: 13, color: context.colors.textMuted),
             ),
           ],
         ),
       );
     }
 
-    return ListView(
+    return AppRefresh(child: ListView(
+ physics: const AlwaysScrollableScrollPhysics(),
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
       children: [
@@ -257,7 +272,7 @@ class _SearchScreenState extends State<SearchScreen> {
               const Icon(Icons.meeting_room_outlined, size: 18),
               const SizedBox(width: 8),
               Text(
-                'Storage Locations (${matchingBoxes.length})',
+                context.l10n.storageLocations(matchingBoxes.length),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ],
@@ -295,7 +310,7 @@ class _SearchScreenState extends State<SearchScreen> {
               const Icon(Icons.category_outlined, size: 18),
               const SizedBox(width: 8),
               Text(
-                'Items (${matchingItems.length})',
+                context.l10n.commonItems(matchingItems.length),
                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ],
@@ -304,7 +319,7 @@ class _SearchScreenState extends State<SearchScreen> {
           ...matchingItems.map((item) {
             final breadcrumb = provider.getBreadcrumbString(item.boxId);
 
-            return GestureDetector(
+            return Tappable(
               onTap: () {
                 Navigator.push(
                   context,
@@ -317,7 +332,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 margin: const EdgeInsets.only(bottom: 12.0),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: context.colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -351,10 +366,10 @@ class _SearchScreenState extends State<SearchScreen> {
                               Expanded(
                                 child: Text(
                                   item.name,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF18181B),
+                                    color: context.colors.textPrimary,
                                   ),
                                 ),
                               ),
@@ -379,13 +394,13 @@ class _SearchScreenState extends State<SearchScreen> {
                             const SizedBox(height: 4),
                             Text(
                               item.description,
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                              style: TextStyle(color: context.colors.textSecondary, fontSize: 13),
                             ),
                           ],
                           const SizedBox(height: 10),
 
                           // Breadcrumb Path display
-                          GestureDetector(
+                          Tappable(
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -397,27 +412,27 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF4F4F6),
+                                color: context.colors.fill,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.location_on_outlined, size: 14, color: Color(0xFF18181B)),
+                                  Icon(Icons.location_on_outlined, size: 14, color: context.colors.textPrimary),
                                   const SizedBox(width: 6),
                                   Flexible(
                                     child: Text(
                                       breadcrumb,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 11,
                                         fontWeight: FontWeight.bold,
-                                        color: Color(0xFF18181B),
+                                        color: context.colors.textPrimary,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  const Icon(Icons.chevron_right, size: 14, color: Colors.grey),
+                                  Icon(Icons.chevron_right, size: 14, color: context.colors.textSecondary),
                                 ],
                               ),
                             ),
@@ -429,10 +444,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Qty: ${provider.formatQty(item.quantity, item.unit)}${item.purchasePrice != null ? ' • ${provider.formatPrice(item.purchasePrice)}' : ''}${item.barcode != null ? ' • UPC: ${item.barcode}' : ''}',
-                                style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                                '${context.l10n.qtyValue(provider.formatQty(item.quantity, item.unit))}${item.purchasePrice != null ? ' • ${provider.formatPrice(item.purchasePrice)}' : ''}${item.barcode != null ? ' • UPC: ${item.barcode}' : ''}',
+                                style: TextStyle(color: context.colors.textMuted, fontSize: 11),
                               ),
-                              GestureDetector(
+                              Tappable(
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -441,12 +456,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                     ),
                                   );
                                 },
-                                child: const Text(
-                                  'Edit',
+                                child: Text(
+                                  context.l10n.commonEdit,
                                   style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF18181B),
+                                    color: context.colors.textPrimary,
                                   ),
                                 ),
                               ),
@@ -462,6 +477,6 @@ class _SearchScreenState extends State<SearchScreen> {
           }),
         ],
       ],
-    );
+    ));
   }
 }

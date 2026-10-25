@@ -23,7 +23,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                 backgroundColor: const Color(0xFF64748B),
                 foregroundColor: Colors.white,
                 icon: Icons.drive_file_move_outlined,
-                label: 'Move',
+                label: context.l10n.commonMove,
               ),
               SlidableAction(
                 onPressed: (_) {
@@ -34,43 +34,41 @@ extension _BoxesScreenParts on _BoxesScreenState {
                     ),
                   );
                 },
-                backgroundColor: const Color(0xFF18181B),
+                backgroundColor: context.colors.primary,
                 foregroundColor: Colors.white,
                 icon: Icons.edit_outlined,
-                label: 'Edit',
+                label: context.l10n.commonEdit,
               ),
               SlidableAction(
                 onPressed: (_) async {
-                  final confirmed = await AppFeedback.showConfirmDialog(
+                  final confirmed = await TrashActions.confirm(
                     context,
-                    title: 'Delete Location',
-                    message: 'Are you sure you want to delete "${box.name}"? All nested containers and items inside will also be deleted.',
-                    confirmLabel: 'Delete Box',
-                    isDestructive: true,
-                    icon: Icons.delete_outline,
+                    name: box.name,
+                    isBox: true,
+                    hasContents: true,
                   );
                   if (confirmed && mounted) {
                     final ok = await provider.deleteBox(box.id, cascade: true);
                     if (!mounted) return;
                     if (ok) {
-                      AppFeedback.showSuccess(context, 'Location "${box.name}" deleted successfully');
+                      TrashActions.showMoved(context, provider, name: box.name, boxId: box.id);
                     } else {
-                      AppFeedback.showError(context, 'Could not delete "${box.name}". Please try again.');
+                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(box.name));
                     }
                   }
                 },
                 backgroundColor: Colors.red.shade400,
                 foregroundColor: Colors.white,
                 icon: Icons.delete_outline,
-                label: 'Delete',
+                label: context.l10n.commonDelete,
               ),
             ],
           ),
           child: Material(
-            color: Colors.white,
+            color: context.colors.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
-              side: const BorderSide(color: Color(0xFFE4E4E7), width: 1.0),
+              side: BorderSide(color: context.colors.border, width: 1.0),
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
@@ -93,12 +91,12 @@ extension _BoxesScreenParts on _BoxesScreenState {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF4F4F5),
+                            color: context.colors.fill,
                             borderRadius: BorderRadius.circular(14),
                           ),
                           child: Icon(
                             box.type.icon,
-                            color: const Color(0xFF18181B),
+                            color: context.colors.textPrimary,
                             size: 24,
                           ),
                         ),
@@ -112,7 +110,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                 style: GoogleFonts.inter(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
-                                  color: const Color(0xFF18181B),
+                                  color: context.colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 3),
@@ -120,7 +118,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                 '${box.type.displayName} • $itemCount ${itemCount == 1 ? 'item' : 'items'}${subBoxCount > 0 ? ' • $subBoxCount nested' : ''}',
                                 style: GoogleFonts.inter(
                                   fontSize: 13,
-                                  color: const Color(0xFF71717A),
+                                  color: context.colors.textSecondary,
                                 ),
                               ),
                             ],
@@ -128,13 +126,13 @@ extension _BoxesScreenParts on _BoxesScreenState {
                         ),
                         Container(
                           padding: const EdgeInsets.all(8),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFF4F4F5),
+                          decoration: BoxDecoration(
+                            color: context.colors.fill,
                             shape: BoxShape.circle,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.arrow_forward_rounded,
-                            color: Color(0xFF18181B),
+                            color: context.colors.textPrimary,
                             size: 16,
                           ),
                         ),
@@ -147,32 +145,32 @@ extension _BoxesScreenParts on _BoxesScreenState {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF8F9FA),
+                          color: context.colors.fill,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0xFFE4E4E7)),
+                          border: Border.all(color: context.colors.border),
                         ),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              const Icon(Icons.route_outlined, size: 14, color: Color(0xFF71717A)),
+                              Icon(Icons.route_outlined, size: 14, color: context.colors.textSecondary),
                               const SizedBox(width: 6),
                               Text(
-                                'Path: ',
+                                context.l10n.commonPath,
                                 style: GoogleFonts.inter(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF71717A),
+                                  color: context.colors.textSecondary,
                                 ),
                               ),
                               for (int i = 0; i < breadcrumbList.length; i++) ...[
                                 if (i > 0)
-                                  const Padding(
+                                  Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 4.0),
                                     child: Icon(
                                       Icons.chevron_right_rounded,
                                       size: 14,
-                                      color: Color(0xFFA1A1AA),
+                                      color: context.colors.textMuted,
                                     ),
                                   ),
                                 Text(
@@ -180,7 +178,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                   style: GoogleFonts.inter(
                                     fontSize: 12,
                                     fontWeight: i == breadcrumbList.length - 1 ? FontWeight.w600 : FontWeight.w400,
-                                    color: i == breadcrumbList.length - 1 ? const Color(0xFF18181B) : const Color(0xFF52525B),
+                                    color: i == breadcrumbList.length - 1 ? context.colors.textPrimary : context.colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -205,27 +203,27 @@ extension _BoxesScreenParts on _BoxesScreenState {
       margin: const EdgeInsets.only(top: 40),
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFE4E4E7)),
+        border: Border.all(color: context.colors.border),
       ),
       child: Column(
         children: [
-          Icon(Icons.inventory_2_outlined, size: 56, color: Colors.grey.shade400),
+          Icon(Icons.inventory_2_outlined, size: 56, color: context.colors.textMuted),
           const SizedBox(height: 16),
           Text(
             title,
             style: GoogleFonts.inter(
               fontWeight: FontWeight.w700,
               fontSize: 16,
-              color: const Color(0xFF18181B),
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF71717A)),
+            style: GoogleFonts.inter(fontSize: 13, color: context.colors.textSecondary),
           ),
         ],
       ),
@@ -236,22 +234,22 @@ extension _BoxesScreenParts on _BoxesScreenState {
   Widget _buildFilterChip(int index, String label) {
     final isSelected = _filterIndex == index;
 
-    return GestureDetector(
+    return Tappable(
       onTap: () => _update(() => _filterIndex = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF18181B) : Colors.white,
+          color: isSelected ? context.colors.primary : context.colors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? const Color(0xFF18181B) : const Color(0xFFE4E4E7),
+            color: isSelected ? context.colors.primary : context.colors.border,
           ),
         ),
         child: Text(
           label,
           style: GoogleFonts.inter(
-            color: isSelected ? Colors.white : const Color(0xFF27272A),
+            color: isSelected ? Colors.white : context.colors.textPrimary,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             fontSize: 13,
           ),

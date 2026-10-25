@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'l10n/app_localizations.dart';
+import 'l10n/l10n_ext.dart';
 import 'providers/inventory_provider.dart';
 import 'screens/splash_screen.dart';
+import 'theme/app_theme.dart';
+import 'widgets/session_guard.dart';
+import 'widgets/sync_status_bar.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Inter ships in assets/google_fonts; never fetch it over the network.
+  GoogleFonts.config.allowRuntimeFetching = false;
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarBrightness: Brightness.dark, // light icons initially for dark top header
+      statusBarBrightness:
+          Brightness.dark, // light icons initially for dark top header
       statusBarIconBrightness: Brightness.light,
     ),
   );
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => InventoryProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => InventoryProvider())],
       child: const InventoryApp(),
     ),
   );
@@ -30,102 +37,44 @@ class InventoryApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryDark = Color(0xFF18181B);
-    const backgroundLight = Color(0xFFF8F9FA);
+    final themeMode = context.select<InventoryProvider, ThemeMode>(
+      (p) => p.themeMode,
+    );
+    final locale = context.select<InventoryProvider, Locale?>((p) => p.locale);
 
     return MaterialApp(
       title: 'Personal Inventory',
       debugShowCheckedModeBanner: false,
+      navigatorKey: appNavigatorKey,
+      locale: locale,
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       builder: (context, child) {
-        return GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: child,
+        return SessionGuard(
+          child: SyncStatusBar(
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+              // Below Localizations: lets context-free code (provider, models,
+              // error mapping) use the language currently shown.
+              child: Builder(
+                builder: (ctx) {
+                  AppL10n.sync(ctx);
+                  return child ?? const SizedBox.shrink();
+                },
+              ),
+            ),
+          ),
         );
       },
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.light, // dark icons on light appbars
-            statusBarIconBrightness: Brightness.dark,
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: primaryDark,
-          primary: primaryDark,
-          secondary: const Color(0xFFF1F5F9),
-          onSecondary: primaryDark,
-          surface: Colors.white,
-          onSurface: primaryDark,
-          surfaceContainerHighest: const Color(0xFFE2E8F0),
-        ),
-        scaffoldBackgroundColor: backgroundLight,
-        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme).apply(
-          bodyColor: primaryDark,
-          displayColor: primaryDark,
-        ),
-        cardTheme: CardThemeData(
-          color: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: const Color(0xFFF4F4F6),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-          hintStyle: const TextStyle(
-            color: Color(0xFFA1A1AA),
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: primaryDark, width: 1.5),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
-          ),
-        ),
-        switchTheme: SwitchThemeData(
-          thumbColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return Colors.white;
-            }
-            return null;
-          }),
-          trackColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return primaryDark;
-            }
-            return null;
-          }),
-          trackOutlineColor: WidgetStateProperty.resolveWith((states) {
-            if (states.contains(WidgetState.selected)) {
-              return Colors.transparent;
-            }
-            return null;
-          }),
-        ),
-        useMaterial3: true,
-      ),
+      theme: buildAppTheme(Brightness.light),
+      darkTheme: buildAppTheme(Brightness.dark),
+      themeMode: themeMode,
       home: const SplashScreen(),
     );
   }

@@ -9,9 +9,13 @@ import '../widgets/item_photo_modal.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../widgets/trash_actions.dart';
 import '../widgets/app_form_field.dart';
 import '../widgets/app_image_view.dart';
 import '../widgets/location_picker_sheet.dart';
+import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 part 'item_create_sections.dart';
 
@@ -157,7 +161,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
         final created = await showAddCategoryDialog(context, provider);
         if (created != null && mounted) {
           setState(() => _selectedCategory = created);
-          AppFeedback.showSuccess(context, 'Category "$created" created');
+          AppFeedback.showSuccess(context, context.l10n.categoryCreated(created));
         }
       },
     );
@@ -224,10 +228,10 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
       Navigator.pop(context);
       AppFeedback.showSuccess(
         context,
-        isEditing ? 'Item "$itemName" updated successfully' : 'Item "$itemName" added successfully',
+        isEditing ? context.l10n.itemUpdatedSuccessfully(itemName) : context.l10n.itemAddedSuccessfully(itemName),
       );
     } else {
-      AppFeedback.showError(context, 'Please enter an item name');
+      AppFeedback.showError(context, context.l10n.pleaseEnterAnItemName);
     }
   }
 
@@ -239,34 +243,35 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
     final breadcrumb = provider.getBreadcrumbString(_currentBoxId);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: IconButton(
+ tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: Container(
               padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 16,
-                color: Color(0xFF18181B),
+                color: context.colors.textPrimary,
               ),
             ),
             onPressed: () => Navigator.pop(context),
           ),
         ),
         title: Text(
-          isEditing ? 'Edit Item' : 'New Item',
-          style: const TextStyle(
+          isEditing ? context.l10n.editItem : context.l10n.newItem,
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF18181B),
+            color: context.colors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -275,28 +280,28 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 4.0),
               child: IconButton(
+ tooltip: context.l10n.commonDelete,
                 icon: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: context.colors.surface,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.delete_outline, size: 20, color: Color(0xFFDC2626)),
                 ),
                 onPressed: () async {
-                  final confirmed = await AppFeedback.showConfirmDialog(
-                    context,
-                    title: 'Delete this item',
-                    message: 'Are you sure you want to delete item "${widget.existingItem!.name}"?',
-                    confirmLabel: 'Delete',
-                    isDestructive: true,
-                    icon: Icons.delete_outline,
-                  );
+                  final name = widget.existingItem!.name;
+                  final itemId = widget.existingItem!.id;
+                  final confirmed = await TrashActions.confirm(context, name: name);
                   if (confirmed && context.mounted) {
-                    final name = widget.existingItem!.name;
-                    provider.deleteItem(widget.existingItem!.id);
-                    Navigator.pop(context);
-                    AppFeedback.showSuccess(context, 'Item "$name" deleted successfully');
+                    final ok = await provider.deleteItem(itemId);
+                    if (!context.mounted) return;
+                    if (ok) {
+                      Navigator.pop(context);
+                      TrashActions.showMoved(context, provider, name: name, itemId: itemId);
+                    } else {
+                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(name));
+                    }
                   }
                 },
               ),
@@ -306,7 +311,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
             child: FilledButton(
               onPressed: _isLoading ? null : _saveItem,
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF18181B),
+                backgroundColor: context.colors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 minimumSize: Size.zero,
@@ -319,7 +324,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
                   : Text(
-                      isEditing ? 'Save' : 'Create',
+                      isEditing ? context.l10n.commonSave : context.l10n.commonCreate,
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                     ),
             ),
@@ -336,7 +341,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
           children: [
             // Section 1: Photos & Media
-            _buildSectionTitle('Product Photos'),
+            _buildSectionTitle(context.l10n.productPhotos),
             const SizedBox(height: 12),
             _buildPhotosGallery(false),
             const SizedBox(height: 24),
@@ -350,7 +355,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
             ..._specificationsSection(provider, currentBox, breadcrumb),
 
             // Section 6: Receipts & Invoices
-            _buildSectionTitle('Receipts & Warranty Proof'),
+            _buildSectionTitle(context.l10n.receiptsWarrantyProof),
             const SizedBox(height: 12),
             _buildPhotosGallery(true),
             const SizedBox(height: 36),
@@ -362,7 +367,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
               child: FilledButton(
                 onPressed: _saveItem,
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF18181B),
+                  backgroundColor: context.colors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
@@ -370,7 +375,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                   elevation: 0,
                 ),
                 child: Text(
-                  isEditing ? 'Save Changes' : 'Save Item',
+                  isEditing ? context.l10n.saveChanges : context.l10n.saveItem,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

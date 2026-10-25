@@ -15,7 +15,7 @@ extension _MoveItemParts on _MoveItemSheetState {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: isAtRoot ? const Color(0xFF18181B) : const Color(0xFFF4F4F6),
+            color: isAtRoot ? context.colors.primary : context.colors.fill,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
@@ -24,15 +24,15 @@ extension _MoveItemParts on _MoveItemSheetState {
               Icon(
                 Icons.home_outlined,
                 size: 14,
-                color: isAtRoot ? Colors.white : const Color(0xFF71717A),
+                color: isAtRoot ? Colors.white : context.colors.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
-                'Root',
+                context.l10n.commonRoot,
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: isAtRoot ? Colors.white : const Color(0xFF71717A),
+                  color: isAtRoot ? Colors.white : context.colors.textSecondary,
                 ),
               ),
             ],
@@ -50,7 +50,7 @@ extension _MoveItemParts on _MoveItemSheetState {
         crumbs.add(
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Icon(Icons.chevron_right_rounded, size: 16, color: Colors.grey.shade400),
+            child: Icon(Icons.chevron_right_rounded, size: 16, color: context.colors.textMuted),
           ),
         );
 
@@ -61,7 +61,7 @@ extension _MoveItemParts on _MoveItemSheetState {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: isCurrent ? const Color(0xFF18181B) : const Color(0xFFF4F4F6),
+                color: isCurrent ? context.colors.primary : context.colors.fill,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -69,7 +69,7 @@ extension _MoveItemParts on _MoveItemSheetState {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
-                  color: isCurrent ? Colors.white : const Color(0xFF71717A),
+                  color: isCurrent ? Colors.white : context.colors.textSecondary,
                 ),
               ),
             ),
@@ -90,10 +90,10 @@ extension _MoveItemParts on _MoveItemSheetState {
               child: Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F4F6),
+                  color: context.colors.fill,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.arrow_upward_rounded, size: 14, color: Color(0xFF18181B)),
+                child: Icon(Icons.arrow_upward_rounded, size: 14, color: context.colors.textPrimary),
               ),
             ),
             const SizedBox(width: 8),
@@ -115,7 +115,7 @@ extension _MoveItemParts on _MoveItemSheetState {
     final isCurrent = widget.item.boxId == currentParentBox.id;
 
     return Material(
-      color: isSelected ? const Color(0xFFF4F4F6) : Colors.white,
+      color: isSelected ? context.colors.fill : context.colors.surface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () => _selectBox(currentParentBox.id),
@@ -125,7 +125,7 @@ extension _MoveItemParts on _MoveItemSheetState {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isSelected ? const Color(0xFF18181B) : Colors.grey.shade300,
+              color: isSelected ? context.colors.primary : context.colors.border,
               width: isSelected ? 1.5 : 1,
             ),
           ),
@@ -140,7 +140,7 @@ extension _MoveItemParts on _MoveItemSheetState {
                     Row(
                       children: [
                         Text(
-                          'Store directly in "${currentParentBox.name}"',
+                          context.l10n.storeDirectlyIn(currentParentBox.name),
                           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
                         ),
                         if (isCurrent) ...[
@@ -148,17 +148,17 @@ extension _MoveItemParts on _MoveItemSheetState {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
+                              color: context.colors.border,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Text('Current', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                            child: Text(context.l10n.commonCurrent, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ],
                     ),
                     Text(
-                      'Place item at this level without placing it into any sub-box',
-                      style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                      context.l10n.placeItemAtThisLevel,
+                      style: TextStyle(fontSize: 11, color: context.colors.textSecondary),
                     ),
                   ],
                 ),
@@ -179,14 +179,14 @@ extension _MoveItemParts on _MoveItemSheetState {
     final itemCount = provider.countTotalItemsIn(box.id);
 
     return Material(
-      color: isSelected ? const Color(0xFFF4F4F6) : Colors.white,
+      color: isSelected ? context.colors.fill : context.colors.surface,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         margin: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? const Color(0xFF18181B) : Colors.grey.shade200,
+            color: isSelected ? context.colors.primary : context.colors.border,
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -206,10 +206,10 @@ extension _MoveItemParts on _MoveItemSheetState {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF18181B).withValues(alpha: 0.06),
+                    color: context.colors.primary.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(box.type.icon, size: 18, color: const Color(0xFF18181B)),
+                  child: Icon(box.type.icon, size: 18, color: context.colors.textPrimary),
                 ),
                 const SizedBox(width: 10),
 
@@ -232,10 +232,10 @@ extension _MoveItemParts on _MoveItemSheetState {
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
+                                color: context.colors.border,
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Text('Current', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                              child: Text(context.l10n.commonCurrent, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ],
@@ -246,15 +246,15 @@ extension _MoveItemParts on _MoveItemSheetState {
                         children: [
                           Text(
                             box.type.displayName,
-                            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                            style: TextStyle(fontSize: 11, color: context.colors.textSecondary),
                           ),
-                          Text(' • ', style: TextStyle(color: Colors.grey.shade400)),
+                          Text(' • ', style: TextStyle(color: context.colors.textMuted)),
                           Text(
                             '$itemCount items',
-                            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                            style: TextStyle(fontSize: 11, color: context.colors.textSecondary),
                           ),
                           if (hasChildren) ...[
-                            Text(' • ', style: TextStyle(color: Colors.grey.shade400)),
+                            Text(' • ', style: TextStyle(color: context.colors.textMuted)),
                             Text(
                               '${childBoxes.length} sub-boxes',
                               style: const TextStyle(
@@ -278,14 +278,14 @@ extension _MoveItemParts on _MoveItemSheetState {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF4F4F6),
+                        color: context.colors.fill,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           Text(
-                            'Open',
+                            context.l10n.scanOpen,
                             style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(width: 2),
@@ -314,10 +314,10 @@ extension _MoveItemParts on _MoveItemSheetState {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: isSelected ? const Color(0xFF18181B) : Colors.grey.shade300,
+          color: isSelected ? context.colors.primary : context.colors.border,
           width: isSelected ? 6.5 : 2,
         ),
-        color: Colors.white,
+        color: context.colors.surface,
       ),
     );
   }

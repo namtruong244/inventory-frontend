@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class AppFeedback {
   /// Display action confirmation dialog (Delete, Cancel, Change...)
@@ -7,8 +9,8 @@ class AppFeedback {
     BuildContext context, {
     required String title,
     required String message,
-    String confirmLabel = 'Confirm',
-    String cancelLabel = 'Cancel',
+    String? confirmLabel,
+    String? cancelLabel,
     bool isDestructive = false,
     IconData icon = Icons.warning_amber_rounded,
   }) async {
@@ -16,7 +18,7 @@ class AppFeedback {
     final result = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: true,
-      barrierLabel: 'Dismiss',
+      barrierLabel: context.l10n.syncDismiss,
       barrierColor: Colors.black.withValues(alpha: 0.5),
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, anim1, anim2) => const SizedBox(),
@@ -27,7 +29,7 @@ class AppFeedback {
           child: Opacity(
             opacity: anim1.value.clamp(0.0, 1.0),
             child: Dialog(
-              backgroundColor: Colors.white,
+              backgroundColor: context.colors.surface,
               elevation: 10,
               insetPadding: const EdgeInsets.symmetric(horizontal: 24),
               shape: RoundedRectangleBorder(
@@ -44,8 +46,8 @@ class AppFeedback {
                       height: 64,
                       decoration: BoxDecoration(
                         color: isDestructive
-                            ? const Color(0xFFFEE2E2) // Light red
-                            : const Color(0xFFE2E8F0), // Light slate
+                            ? context.colors.dangerSoft // Light red
+                            : context.colors.border, // Light slate
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -73,7 +75,7 @@ class AppFeedback {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade600,
+                        color: context.colors.textSecondary,
                         height: 1.5,
                       ),
                     ),
@@ -86,14 +88,14 @@ class AppFeedback {
                             onPressed: () => Navigator.of(context).pop(false),
                             style: OutlinedButton.styleFrom(
                               foregroundColor: theme.colorScheme.primary,
-                              side: BorderSide(color: Colors.grey.shade300),
+                              side: BorderSide(color: context.colors.border),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
                             child: Text(
-                              cancelLabel,
+                              cancelLabel ?? context.l10n.commonCancel,
                               style: const TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
@@ -112,7 +114,7 @@ class AppFeedback {
                               ),
                             ),
                             child: Text(
-                              confirmLabel,
+                              confirmLabel ?? context.l10n.commonConfirm,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -141,16 +143,19 @@ class AppFeedback {
     required IconData icon,
     required Color color,
     required Color iconColor,
+    String? actionLabel,
+    VoidCallback? onAction,
   }) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.transparent,
         elevation: 0,
         margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         padding: EdgeInsets.zero,
-        duration: const Duration(seconds: 3),
+        duration: Duration(seconds: onAction == null ? 3 : 6),
         content: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: BackdropFilter(
@@ -177,7 +182,7 @@ class AppFeedback {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.95),
+                      color: context.colors.surface.withValues(alpha: 0.95),
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -204,6 +209,21 @@ class AppFeedback {
                       ),
                     ),
                   ),
+                  if (actionLabel != null && onAction != null)
+                    TextButton(
+                      onPressed: () {
+                        messenger.hideCurrentSnackBar();
+                        onAction();
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(48, 48),
+                      ),
+                      child: Text(
+                        actionLabel,
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -214,10 +234,17 @@ class AppFeedback {
   }
 
   /// Success notification toast
-  static void showSuccess(BuildContext context, String message) {
+  static void showSuccess(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onAction,
+  }) {
     _showToast(
       context,
       message: message,
+      actionLabel: actionLabel,
+      onAction: onAction,
       icon: Icons.check_rounded,
       color: const Color(0xFF059669), // Emerald
       iconColor: const Color(0xFF059669),

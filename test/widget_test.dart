@@ -1,5 +1,7 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:inventory/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventory/providers/inventory_provider.dart';
@@ -11,11 +13,15 @@ void main() {
   testWidgets('SplashScreen displays branding and navigates to LoginScreen when unauthenticated',
       (WidgetTester tester) async {
     SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({});
 
     await tester.pumpWidget(
       ChangeNotifierProvider(
         create: (_) => InventoryProvider(),
-        child: const MaterialApp(
+        child: MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: SplashScreen(),
         ),
       ),
@@ -50,7 +56,10 @@ void main() {
     await tester.pumpWidget(
       ChangeNotifierProvider(
         create: (_) => InventoryProvider(),
-        child: const MaterialApp(
+        child: MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: SplashScreen(),
         ),
       ),

@@ -1,5 +1,7 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:inventory/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventory/models/inventory_models.dart';
@@ -9,6 +11,7 @@ import 'package:inventory/screens/item_details_screen.dart';
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({});
   });
 
   group('Item isConsumable & Status Serialization', () {
@@ -75,6 +78,9 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: ChangeNotifierProvider<InventoryProvider>.value(
             value: provider,
             child: const ItemDetailsScreen(itemId: 'item-durable-1'),
@@ -105,6 +111,9 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: ChangeNotifierProvider<InventoryProvider>.value(
             value: provider,
             child: const ItemDetailsScreen(itemId: 'item-durable-2'),
@@ -134,6 +143,9 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: ChangeNotifierProvider<InventoryProvider>.value(
             value: provider,
             child: const ItemDetailsScreen(itemId: 'item-consumable-1'),
@@ -164,6 +176,9 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+localizationsDelegates: AppLocalizations.localizationsDelegates,
+supportedLocales: AppLocalizations.supportedLocales,
+
           home: ChangeNotifierProvider<InventoryProvider>.value(
             value: provider,
             child: const ItemDetailsScreen(itemId: 'item-consumable-2'),

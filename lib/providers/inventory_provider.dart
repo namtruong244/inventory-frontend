@@ -1,9 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' show Locale, ThemeMode;
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/inventory_models.dart';
 import '../services/api_service.dart';
 import '../services/offline_store.dart';
+import '../services/sync_policy.dart';
 import '../utils/formatters.dart';
+import '../utils/friendly_error.dart';
+import '../l10n/l10n_ext.dart';
 
 part 'inventory_provider_seed.dart';
 part 'inventory_provider_lending.dart';
@@ -16,7 +24,7 @@ part 'inventory_provider_trash.dart';
 part 'inventory_provider_offline.dart';
 
 class InventoryProvider extends ChangeNotifier {
-  final ApiService _apiService = ApiService();
+  final ApiService _apiService;
 
   final List<Box> _boxes = [];
   final List<Item> _items = [];
@@ -40,6 +48,15 @@ class InventoryProvider extends ChangeNotifier {
   /// Stock changes made offline that still wait for the next sync.
   int _pendingChanges = 0;
   int get pendingChanges => _pendingChanges;
+
+  /// Offline changes the user has to resolve (see [failedOps]).
+  List<PendingOp> _failedOps = [];
+
+  /// Human-readable reasons for offline changes the server rejected and dropped.
+  List<String> _syncNotices = [];
+
+  /// The replay of the offline queue that is running right now, if any.
+  Completer<void>? _flushing;
 
   /// Showing cached data because the server could not be reached.
   bool _isOffline = false;
@@ -71,6 +88,17 @@ class InventoryProvider extends ChangeNotifier {
   int _lowStockThreshold = 2;
   bool _vibrateOnScan = true;
   bool _beepOnScan = true;
+  static const beepPrefKey = 'pref_beep_on_scan';
+  static const themePrefKey = 'pref_theme_mode';
+  static const localePrefKey = 'pref_locale';
+
+  /// Per-device display preferences (not synced to the server).
+  ThemeMode _themeMode = ThemeMode.light;
+  ThemeMode get themeMode => _themeMode;
+
+  /// `null` follows the system language.
+  Locale? _locale;
+  Locale? get locale => _locale;
   bool _autoOpenOnScan = true;
   bool _notifyExpiring = true;
   bool _notifyOverdue = true;
@@ -100,14 +128,39 @@ class InventoryProvider extends ChangeNotifier {
   Future<void>? _initFuture;
   Future<void> get initializationFuture => _initFuture ?? Future.value();
 
-  String _initStatus = 'Initializing...';
+  String _initStatus = AppL10n.current.commonInitializing;
   String get initStatus => _initStatus;
 
   /// Lets the extension modules in the part files notify listeners.
   void _notify() => notifyListeners();
 
-  InventoryProvider() {
+  StreamSubscription<String>? _authSub;
+
+  /// [api] lets tests inject a fake server client.
+  InventoryProvider({ApiService? api}) : _apiService = api ?? ApiService() {
+    _authSub = _apiService.onUnauthorized.listen(_onSessionExpired);
     _initFuture = _initialize();
+    loadDevicePreferences();
+  }
+
+  @override
+  void dispose() {
+    _authSub?.cancel();
+    super.dispose();
+  }
+
+  /// Set when the server rejected our token; the UI shows the sign-in screen
+  /// (the session is already cleared) and the offline queue is kept for the next login.
+  bool _sessionExpired = false;
+  bool get sessionExpired => _sessionExpired;
+
+  void _onSessionExpired(String code) {
+    _sessionExpired = true;
+    _isConnected = false;
+    _errorMessage = code == 'TOKEN_REVOKED'
+        ? AppL10n.current.youWereSignedOutOn
+        : AppL10n.current.yourSessionHasExpiredPlease;
+    notifyListeners();
   }
 
   // ==========================================
@@ -116,34 +169,34 @@ class InventoryProvider extends ChangeNotifier {
 
   Future<void> _initialize() async {
     _isLoading = true;
-    _initStatus = 'Connecting to server...';
+    _initStatus = AppL10n.current.connectingToServer;
     notifyListeners();
 
     try {
       await _apiService.init();
 
-      _initStatus = 'Authenticating...';
+      _initStatus = AppL10n.current.commonAuthenticating;
       notifyListeners();
 
       // Check existing authenticated session
       await _ensureAuthenticated();
 
       if (_apiService.isAuthenticated) {
-        _initStatus = 'Syncing inventory...';
+        _initStatus = AppL10n.current.syncingInventory;
         notifyListeners();
 
         // Load all data from backend
         await fetchAllData();
-        _initStatus = 'Ready';
+        _initStatus = AppL10n.current.commonReady;
       } else {
-        _initStatus = 'Ready';
+        _initStatus = AppL10n.current.commonReady;
       }
       notifyListeners();
       // Brief pause for visual smoothness
       await Future.delayed(const Duration(milliseconds: 300));
     } catch (e) {
       debugPrint('Initialization error: $e');
-      _initStatus = 'Ready';
+      _initStatus = AppL10n.current.commonReady;
       notifyListeners();
     } finally {
       _isLoading = false;
@@ -159,11 +212,15 @@ class InventoryProvider extends ChangeNotifier {
         _userRole = me.role;
         _isConnected = true;
         _errorMessage = null;
+        // Keep the token fresh while online; failure here is harmless.
+        unawaited(_apiService.refreshToken().catchError((_) {}));
         return;
       } catch (e) {
         debugPrint(
           'Token check or getMe failed: $e. Using cached user if present...',
         );
+        // A rejected token is not a connectivity problem: do not fall back to the cache.
+        if (e is ApiException && e.statusCode == 401) return;
         if (_apiService.currentUser != null) {
           _userName = _apiService.currentUser!.name;
           _userRole = _apiService.currentUser!.role;
@@ -190,6 +247,7 @@ class InventoryProvider extends ChangeNotifier {
     try {
       final res = await _apiService.login(email, password);
       final user = res['user'] as User;
+      _sessionExpired = false;
       _userName = user.name;
       _userRole = user.role;
       _isConnected = true;
@@ -197,7 +255,8 @@ class InventoryProvider extends ChangeNotifier {
       await fetchAllData();
       return true;
     } catch (e) {
-      _errorMessage = 'Login failed: $e';
+      debugPrint('login error: $e');
+      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTSignInPlease);
       return false;
     } finally {
       _isSyncing = false;
@@ -225,6 +284,7 @@ class InventoryProvider extends ChangeNotifier {
         accessToken: accessToken,
       );
       final user = res['user'] as User;
+      _sessionExpired = false;
       _userName = user.name;
       _userRole = user.role;
       _isConnected = true;
@@ -232,7 +292,8 @@ class InventoryProvider extends ChangeNotifier {
       await fetchAllData();
       return true;
     } catch (e) {
-      _errorMessage = 'Google sign-in failed: $e';
+      debugPrint('google sign-in error: $e');
+      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTSignInWith);
       return false;
     } finally {
       _isSyncing = false;
@@ -247,6 +308,7 @@ class InventoryProvider extends ChangeNotifier {
     try {
       final res = await _apiService.register(name, email, password);
       final user = res['user'] as User;
+      _sessionExpired = false;
       _userName = user.name;
       _userRole = user.role;
       _isConnected = true;
@@ -254,7 +316,8 @@ class InventoryProvider extends ChangeNotifier {
       await fetchAllData();
       return true;
     } catch (e) {
-      _errorMessage = 'Registration failed: $e';
+      debugPrint('registration error: $e');
+      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTCreateYourAccount);
       return false;
     } finally {
       _isSyncing = false;
@@ -262,17 +325,51 @@ class InventoryProvider extends ChangeNotifier {
     }
   }
 
-  /// Logout and clear user session
-  Future<void> logout() async {
+  /// Permanently deletes the account on the server, then wipes local data.
+  /// Returns null on success or an error message to show the user.
+  Future<String?> deleteAccount() async {
+    try {
+      await _apiService.deleteAccount();
+    } on ApiException catch (e) {
+      // Only 404 means the account is already gone; a 401 (expired/revoked
+      // session) leaves it alive, so keep the local data and report it.
+      if (e.statusCode != 404) return e.message;
+    } catch (_) {
+      return AppL10n.current.couldNotReachTheServer;
+    }
+    await logout(force: true);
+    return null;
+  }
+
+  /// Signs out and wipes this user's cached data and queued changes.
+  /// Returns false (and stays signed in) when unsynced changes remain, unless [force]:
+  /// the UI asks the user first and then calls again with [force] to discard them.
+  Future<bool> logout({bool force = false}) async {
+    if (!force && _store != null) {
+      if (_pendingChanges > 0 && await _probeServerNow()) {
+        await _flushPending();
+      }
+      if (_pendingChanges > 0) return false;
+    }
+    await _store?.clear();
     await _apiService.clearSession();
     _boxes.clear();
     _items.clear();
     _lendingRecords.clear();
+    _categories
+      ..clear()
+      ..addAll(CategoryHelper.defaultCategories);
+    _failedOps = [];
+    _syncNotices = [];
+    _pendingChanges = 0;
+    _isOffline = false;
     _isConnected = false;
+    _sessionExpired = false;
     _userName = 'Guest';
     _userRole = 'Owner';
     _errorMessage = null;
     notifyListeners();
+    return true;
   }
 
   // ==========================================
@@ -363,8 +460,8 @@ class InventoryProvider extends ChangeNotifier {
         _isOffline = true;
         _isConnected = false;
         _errorMessage = hadCache
-            ? 'Offline: showing saved data'
-            : 'Cannot reach the server';
+            ? AppL10n.current.syncOffline
+            : AppL10n.current.cannotReachTheServer;
         return;
       }
 
@@ -424,7 +521,7 @@ class InventoryProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('fetchAllData error: $e');
       _isConnected = false;
-      _errorMessage = 'Sync failed: $e';
+      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTSyncYourData);
     } finally {
       _isSyncing = false;
       notifyListeners();

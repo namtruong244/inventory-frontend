@@ -88,7 +88,12 @@ extension InventoryItems on InventoryProvider {
 
     return _commit(
       PendingOp('updateItem', {'item': updatedItem.toJson()}),
-      () => _apiService.updateItem(updatedItem),
+      () async {
+        final saved = await _apiService.updateItem(updatedItem);
+        final i = _items.indexWhere((x) => x.id == saved.id);
+        if (i != -1) _items[i] = saved;
+        _notify();
+      },
     );
   }
 
@@ -143,18 +148,21 @@ extension InventoryItems on InventoryProvider {
     String? reason,
   }) async {
     final index = _items.indexWhere((i) => i.id == itemId);
-    if (index != -1) {
-      _items[index] = _items[index].copyWith(quantity: quantity);
-      _notify();
-    }
+    if (index == -1) return false;
+    // Queued as a delta so two devices consuming stock offline add up
+    // instead of the last absolute value winning.
+    final delta = quantity - _items[index].quantity;
+    _items[index] = _items[index].copyWith(quantity: quantity);
+    _notify();
+    if (delta == 0) return true;
 
     return _commit(
-      PendingOp('quantity', {
+      PendingOp('adjustQuantity', {
         'id': itemId,
-        'quantity': quantity,
+        'delta': delta,
         'reason': reason,
       }),
-      () => _apiService.updateItemQuantity(itemId, quantity, reason: reason),
+      () => _apiService.adjustItemQuantity(itemId, delta, reason: reason),
     );
   }
 

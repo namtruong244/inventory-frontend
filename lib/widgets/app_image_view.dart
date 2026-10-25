@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
 
 /// A universal image widget that renders both Remote Network URLs (http/https)
 /// and Local File Paths (e.g. photos captured from camera or chosen from gallery).
@@ -31,7 +32,7 @@ class AppImageView extends StatelessWidget {
     Widget imageWidget;
 
     if (imageUrlOrPath.isEmpty) {
-      imageWidget = _buildFallback();
+      imageWidget = _buildFallback(context);
     } else if (_isNetwork) {
       imageWidget = Image.network(
         imageUrlOrPath,
@@ -44,20 +45,20 @@ class AppImageView extends StatelessWidget {
               Container(
                 width: width,
                 height: height,
-                color: const Color(0xFFF4F4F6),
+                color: context.colors.fill,
                 child: Center(
                   child: SizedBox(
                     width: 22,
                     height: 22,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.grey.shade400,
+                      color: context.colors.textMuted,
                     ),
                   ),
                 ),
               );
         },
-        errorBuilder: (context, error, stackTrace) => _buildFallback(),
+        errorBuilder: (context, error, stackTrace) => _buildFallback(context),
       );
     } else {
       // Local file
@@ -67,7 +68,7 @@ class AppImageView extends StatelessWidget {
         width: width,
         height: height,
         fit: fit,
-        errorBuilder: (context, error, stackTrace) => _buildFallback(),
+        errorBuilder: (context, error, stackTrace) => _buildFallback(context),
       );
     }
 
@@ -81,17 +82,17 @@ class AppImageView extends StatelessWidget {
     return imageWidget;
   }
 
-  Widget _buildFallback() {
+  Widget _buildFallback(BuildContext context) {
     return errorWidget ??
         Container(
           width: width,
           height: height,
-          color: const Color(0xFFF4F4F6),
+          color: context.colors.fill,
           child: Center(
             child: Icon(
               Icons.image_outlined,
               size: (width != null && width! < 40) ? 18 : 28,
-              color: Colors.grey.shade400,
+              color: context.colors.textMuted,
             ),
           ),
         );

@@ -7,6 +7,9 @@ import 'app_image_view.dart';
 import '../screens/item_details_screen.dart';
 
 import 'home_sections.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 extension HomeRecentSection on HomeSections {
 
@@ -22,34 +25,34 @@ extension HomeRecentSection on HomeSections {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              const Text(
-                'Recent Items',
+              Text(
+                context.l10n.recentItems,
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                   letterSpacing: -0.5,
                 ),
               ),
-              GestureDetector(
+              Tappable(
                 onTap: () => selectTab(2), // Go to Item tab
                 behavior: HitTestBehavior.opaque,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'View all',
+                      context.l10n.viewAll,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade600,
+                        color: context.colors.textSecondary,
                       ),
                     ),
                     const SizedBox(width: 3),
                     Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 11,
-                      color: Colors.grey.shade600,
+                      color: context.colors.textSecondary,
                     ),
                   ],
                 ),
@@ -72,7 +75,7 @@ extension HomeRecentSection on HomeSections {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: const Color(0xFFF1F1F4)),
                   ),
@@ -82,23 +85,23 @@ extension HomeRecentSection on HomeSections {
                         Icon(
                           Icons.inventory_2_outlined,
                           size: 36,
-                          color: Colors.grey.shade400,
+                          color: context.colors.textMuted,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'No items in inventory yet',
+                          context.l10n.noItemsInInventoryYet,
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                            color: context.colors.textSecondary,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Tap + to add your first item',
+                          context.l10n.tapToAddYourFirst,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade400,
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ],
@@ -122,7 +125,7 @@ extension HomeRecentSection on HomeSections {
 
                 return buildRecentItemRowCard(
                   item: item,
-                  boxName: parentBox?.name ?? 'Storage Box',
+                  boxName: parentBox?.name ?? context.l10n.storageBox,
                 );
               },
             );
@@ -137,13 +140,13 @@ extension HomeRecentSection on HomeSections {
     final provider = Provider.of<InventoryProvider>(context, listen: false);
     final qtyText = provider.formatQty(item.quantity, item.unit);
 
-    return GestureDetector(
+    return Tappable(
       onTap: () => navigate(ItemDetailsScreen(itemId: item.id)),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.colors.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: const Color(0xFFF1F1F4)),
           boxShadow: [
@@ -170,12 +173,12 @@ extension HomeRecentSection on HomeSections {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF4F4F6),
+                  color: context.colors.fill,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
                   CategoryHelper.getCategoryIcon(item.categoryId),
-                  color: const Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                   size: 22,
                 ),
               ),
@@ -188,10 +191,10 @@ extension HomeRecentSection on HomeSections {
                 children: [
                   Text(
                     item.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF18181B),
+                      color: context.colors.textPrimary,
                       letterSpacing: -0.2,
                     ),
                     maxLines: 1,
@@ -203,7 +206,7 @@ extension HomeRecentSection on HomeSections {
                       Icon(
                         Icons.inventory_2_outlined,
                         size: 13,
-                        color: Colors.grey.shade500,
+                        color: context.colors.textMuted,
                       ),
                       const SizedBox(width: 4),
                       Flexible(
@@ -212,7 +215,7 @@ extension HomeRecentSection on HomeSections {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade600,
+                            color: context.colors.textSecondary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -224,7 +227,7 @@ extension HomeRecentSection on HomeSections {
                           '•',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade400,
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ),
@@ -233,7 +236,7 @@ extension HomeRecentSection on HomeSections {
                           item.categoryId,
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade500,
+                            color: context.colors.textMuted,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -253,10 +256,10 @@ extension HomeRecentSection on HomeSections {
               children: [
                 Text(
                   qtyText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF18181B),
+                    color: context.colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -274,7 +277,7 @@ extension HomeRecentSection on HomeSections {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    item.isLowStock ? 'Low Stock' : item.status.displayName,
+                    item.isLowStock ? context.l10n.settingsLowStock : item.status.displayName,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
@@ -290,7 +293,7 @@ extension HomeRecentSection on HomeSections {
             Icon(
               Icons.chevron_right_rounded,
               size: 20,
-              color: Colors.grey.shade400,
+              color: context.colors.textMuted,
             ),
           ],
         ),

@@ -6,43 +6,42 @@ extension InventoryReports on InventoryProvider {
     final buffer = StringBuffer();
     final now = DateTime.now();
     buffer.writeln('========================================');
-    buffer.writeln('       INVENTORY STATUS REPORT');
-    buffer.writeln(
-        'Generated: ${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}');
-    buffer.writeln('Manager: $_userName ($_userRole)');
-    buffer.writeln('Server Backend: ${_apiService.baseUrl}');
+    buffer.writeln('       ${AppL10n.current.reportTitle}');
+    buffer.writeln(AppL10n.current.reportGenerated(
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}'));
+    buffer.writeln(AppL10n.current.commonManager(_userName, _userRole));
+    buffer.writeln(AppL10n.current.serverBackend(_apiService.baseUrl));
     buffer.writeln('========================================\n');
 
-    buffer.writeln('1. OVERVIEW STATISTICS:');
-    buffer.writeln('- Total Storage Containers: ${_boxes.length}');
-    buffer.writeln('- Total Inventory Items: ${_items.length}');
+    buffer.writeln(AppL10n.current.reportOverview);
+    buffer.writeln(AppL10n.current.reportTotalContainers(_boxes.length));
+    buffer.writeln(AppL10n.current.reportTotalItems(_items.length));
+    buffer.writeln(AppL10n.current.reportTotalValue(formatPrice(totalInventoryValue)));
+    buffer.writeln(AppL10n.current.reportActiveLent(getActiveLoans().length));
+    buffer.writeln(AppL10n.current.reportOverdueLent(getOverdueLoans().length));
+    buffer.writeln(AppL10n.current.reportExpired(getExpiredItems().length));
     buffer.writeln(
-        '- Total Estimated Value: ${formatPrice(totalInventoryValue)}');
-    buffer.writeln('- Active Lent Items: ${getActiveLoans().length}');
-    buffer.writeln('- Overdue Lent Items: ${getOverdueLoans().length}');
-    buffer.writeln('- Expired Items: ${getExpiredItems().length}');
-    buffer.writeln(
-        '- Expiring Soon (within $_expiryWarningDays days): ${getExpiringItems(withinDays: _expiryWarningDays).length}\n');
+        '${AppL10n.current.reportExpiringSoon(_expiryWarningDays, getExpiringItems(withinDays: _expiryWarningDays).length)}\n');
 
-    buffer.writeln('2. CATEGORIES BREAKDOWN:');
+    buffer.writeln(AppL10n.current.reportCategories);
     for (final cat in _categories) {
       final count = getItemCountForCategory(cat);
-      buffer.writeln('- $cat: $count items');
+      buffer.writeln(AppL10n.current.reportCategoryLine(cat, count));
     }
     buffer.writeln('');
 
-    buffer.writeln('3. CURRENT INVENTORY ITEMS:');
+    buffer.writeln(AppL10n.current.reportCurrentItems);
     for (final item in _items) {
       final box = getBoxById(item.boxId);
       final priceStr = item.purchasePrice != null
-          ? ' | Price: ${formatPrice(item.purchasePrice)}'
+          ? AppL10n.current.reportPrice(formatPrice(item.purchasePrice))
           : '';
       buffer.writeln(
-          '- ${item.name} (${formatQty(item.quantity, item.unit)}$priceStr) -> [${box?.name ?? "No Location"}]');
+          '- ${item.name} (${formatQty(item.quantity, item.unit)}$priceStr) -> [${box?.name ?? AppL10n.current.reportNoLocation}]');
     }
 
     buffer.writeln('\n========================================');
-    buffer.writeln('End of report');
+    buffer.writeln(AppL10n.current.endOfReport);
     return buffer.toString();
   }
 }

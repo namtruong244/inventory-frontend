@@ -1,0 +1,1611 @@
+{
+  "@@locale": "vi",
+  "scanTitle": "Quét QR & mã vạch",
+  "scanFoundContainer": "Đã tìm thấy: \"{name}\"",
+  "@scanFoundContainer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scanFoundItem": "Đã tìm thấy vật phẩm: \"{name}\"",
+  "@scanFoundItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scanOpenDetailsPrompt": "Mở chi tiết ngay?",
+  "scanOpen": "Mở",
+  "scanKeepScanning": "Tiếp tục quét",
+  "scanUnknownTitle": "Mã đã quét: {code}",
+  "@scanUnknownTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanUnknownMessage": "Chưa có hộp hoặc vật phẩm nào khớp với mã này. Bạn có muốn tạo vật phẩm mới với mã này không?",
+  "scanAddNewItem": "Thêm vật phẩm",
+  "scanPickLocationTitle": "Vật phẩm được cất ở đâu?",
+  "scanPickLocationSubtitle": "Chọn vị trí cho vật phẩm mới",
+  "scanPickLocationConfirm": "Dùng vị trí này",
+  "scanModeLocation": "QR vị trí",
+  "scanModeProduct": "Mã vạch sản phẩm",
+  "scanHintProduct": "Quét mã vạch sản phẩm (UPC/EAN) để điền sẵn hoặc tìm trong kho",
+  "scanHintLocation": "Hướng camera vào mã QR của hộp để xem chi tiết và toàn bộ đồ bên trong",
+  "scanManualTitle": "Nhập mã thủ công",
+  "scanManualLabel": "Mã nhãn hoặc mã vạch",
+  "settingsAppearanceHeader": "GIAO DIỆN & NGÔN NGỮ",
+  "settingsTheme": "Giao diện",
+  "settingsThemeSubtitle": "Giao diện sáng hoặc tối",
+  "themeSystem": "Theo hệ thống",
+  "themeLight": "Sáng",
+  "themeDark": "Tối",
+  "settingsLanguage": "Ngôn ngữ",
+  "settingsLanguageSubtitle": "Các màn đã dịch sẽ đổi ngôn ngữ ngay",
+  "languageSystem": "Theo hệ thống",
+  "settingsScannerHeader": "MÁY QUÉT & NHẬN DIỆN",
+  "settingsAlertsHeader": "CẢNH BÁO",
+  "settingsVibrate": "Rung khi quét",
+  "settingsVibrateSubtitle": "Rung nhẹ khi nhận diện được QR/mã vạch",
+  "settingsSound": "Âm thanh khi quét",
+  "settingsSoundSubtitle": "Phát tiếng bíp khi quét thành công (chỉ trên máy này)",
+  "settingsAutoOpen": "Tự mở chi tiết",
+  "settingsAutoOpenSubtitle": "Tắt: hỏi trước khi mở hộp/vật phẩm vừa quét",
+  "settingsExpiring": "Vật phẩm sắp hết hạn",
+  "settingsExpiringSubtitle": "Tính vật phẩm hết hạn/sắp hết hạn vào số cảnh báo trong app (chưa có thông báo đẩy)",
+  "settingsOverdue": "Khoản mượn quá hạn",
+  "settingsOverdueSubtitle": "Tính khoản mượn quá hạn vào số cảnh báo trong app (chưa có thông báo đẩy)",
+  "settingsLowStock": "Sắp hết hàng",
+  "settingsLowStockSubtitle": "Tính vật phẩm dưới ngưỡng tối thiểu vào số cảnh báo trong app",
+  "trashConfirmItemTitle": "Chuyển vào thùng rác?",
+  "trashConfirmBoxTitle": "Chuyển vị trí vào thùng rác?",
+  "trashConfirmMessage": "\"{name}\" sẽ được chuyển vào thùng rác. Bạn có thể khôi phục trong {days} ngày.",
+  "@trashConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "trashConfirmBoxMessage": "\"{name}\" và mọi thứ bên trong sẽ được chuyển vào thùng rác. Bạn có thể khôi phục trong {days} ngày.",
+  "@trashConfirmBoxMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "trashMoveAction": "Chuyển vào thùng rác",
+  "trashMovedToast": "Đã chuyển \"{name}\" vào thùng rác",
+  "@trashMovedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashUndo": "Hoàn tác",
+  "trashRestoredToast": "Đã khôi phục \"{name}\"",
+  "@trashRestoredToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashRestoreFailed": "Không khôi phục được \"{name}\". Hãy thử từ Thùng rác trong Cài đặt.",
+  "@trashRestoreFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncOffline": "Ngoại tuyến: đang hiển thị dữ liệu đã lưu",
+  "syncUnsynced": "Có thay đổi chưa đồng bộ",
+  "syncPending": "{count, plural, =0{Không có thay đổi đang chờ} other{{count} thay đổi đang chờ đồng bộ}}",
+  "@syncPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncNeedsAttention": "{count, plural, other{{count} mục cần bạn xử lý}}",
+  "@syncNeedsAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncSheetTitle": "Trạng thái đồng bộ",
+  "syncOfflineBody": "Bạn đang ngoại tuyến. Thay đổi được lưu trên máy và sẽ tự tải lên khi kết nối được với máy chủ.",
+  "syncOnlineBody": "Một số thay đổi chưa lên được máy chủ.",
+  "syncRejectedTitle": "Máy chủ đã từ chối",
+  "syncDismiss": "Ẩn",
+  "syncNow": "Đồng bộ ngay",
+  "lifecycleAlerts": "Vòng đời & cảnh báo",
+  "allGood": "Mọi thứ ổn!",
+  "noItemsAreExpiredExpiring": "Không có vật phẩm nào hết hạn, sắp hết hạn hoặc quá hạn trả.",
+  "expiredItems": "Vật phẩm đã hết hạn",
+  "expiringSoonPerishables": "Sắp hết hạn (đồ dễ hỏng)",
+  "warrantiesEndingSoon": "Bảo hành sắp hết",
+  "overdueBorrowedItems": "Đồ cho mượn quá hạn",
+  "lowStockWarnings": "Cảnh báo sắp hết hàng",
+  "commonStorage": "Lưu trữ",
+  "onlyRemainingThreshold": "Chỉ còn {qty} {unit} (ngưỡng: ≤ {minQty} {unit2})",
+  "@onlyRemainingThreshold": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "minQty": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "viewDetails": "Xem chi tiết",
+  "warrantyEndsInDays": "Bảo hành hết hạn sau {daysLeft} ngày",
+  "@warrantyEndsInDays": {
+    "placeholders": {
+      "daysLeft": {
+        "type": "Object"
+      }
+    }
+  },
+  "borrowedItem": "Đồ đang cho mượn",
+  "commonBorrower": "Người mượn: {borrowerName} • {borrowerContact}",
+  "@commonBorrower": {
+    "placeholders": {
+      "borrowerName": {
+        "type": "Object"
+      },
+      "borrowerContact": {
+        "type": "Object"
+      }
+    }
+  },
+  "locationUpdatedSuccessfully": "Đã cập nhật vị trí \"{boxName}\"",
+  "@locationUpdatedSuccessfully": {
+    "placeholders": {
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "locationCreatedSuccessfully": "Đã tạo vị trí \"{boxName}\"",
+  "@locationCreatedSuccessfully": {
+    "placeholders": {
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "pleaseEnterAValidLocation": "Vui lòng nhập tên vị trí hợp lệ",
+  "editLocation": "Sửa vị trí",
+  "createRootLocation": "Tạo vị trí gốc",
+  "createNestedContainer": "Tạo ngăn chứa con",
+  "commonDelete": "Xóa",
+  "couldNotDeletePleaseTry": "Không thể xóa \"{boxName}\". Vui lòng thử lại.",
+  "@couldNotDeletePleaseTry": {
+    "placeholders": {
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "storageType": "Loại nơi lưu trữ",
+  "commonName": "Tên",
+  "eGLivingRoomOak": "VD: Phòng khách, Tủ sách gỗ sồi, Hộp đồ điện tử",
+  "pleaseEnterAName": "Vui lòng nhập tên",
+  "commonDescription": "Mô tả",
+  "eGUpperShelfLeft": "VD: Kệ trên, bên trái gần cửa sổ (không bắt buộc)",
+  "parentContainer": "Ngăn chứa cha",
+  "qrLabelId": "Mã nhãn QR",
+  "saveChanges": "Lưu thay đổi",
+  "saveLocation": "Lưu vị trí",
+  "locationNotFound": "Không tìm thấy vị trí",
+  "exportBarcodes": "Xuất mã vạch",
+  "moreOptions": "Thêm tùy chọn",
+  "showQrCode": "Hiện mã QR",
+  "commonOverview": "Tổng quan",
+  "nestedContainers": "Ngăn chứa con ({count})",
+  "@nestedContainers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "addContainer": "Thêm ngăn chứa",
+  "addContainerInside": "Thêm ngăn chứa bên trong",
+  "couldNotDeletePleaseTry2": "Không thể xóa \"{name}\". Vui lòng thử lại.",
+  "@couldNotDeletePleaseTry2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemsInThisContainer": "Vật phẩm trong ngăn này ({count})",
+  "@itemsInThisContainer": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "addItem": "Thêm vật phẩm",
+  "noDirectItemsStoredHere": "Chưa có vật phẩm nào được cất trực tiếp ở đây",
+  "moveLocation": "Di chuyển vị trí",
+  "printThermalLabel": "In tem nhiệt",
+  "viewFullQrCode": "Xem mã QR đầy đủ",
+  "deleteLocation": "Xóa vị trí",
+  "storageHierarchy": "Cây vị trí lưu trữ",
+  "exportAllQrCodes": "Xuất tất cả mã QR",
+  "newLocation": "Vị trí mới",
+  "searchLocationsRoomsContainers": "Tìm vị trí, phòng, ngăn chứa...",
+  "commonAll": "Tất cả ({count})",
+  "@commonAll": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonRooms": "Phòng ({count})",
+  "@commonRooms": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "cabinetsShelves": "Tủ & kệ ({count})",
+  "@cabinetsShelves": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "boxesDrawers": "Hộp & ngăn kéo ({count})",
+  "@boxesDrawers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "switchToFlatList": "Chuyển sang danh sách phẳng",
+  "switchToTreeView": "Chuyển sang dạng cây",
+  "expandAll": "Mở rộng tất cả",
+  "collapseAll": "Thu gọn tất cả",
+  "noLocationsYet": "Chưa có vị trí nào",
+  "tapNewLocationAboveTo": "Nhấn \"Vị trí mới\" ở trên để tạo phòng hoặc hộp đầu tiên",
+  "noMatchingLocationsFound": "Không tìm thấy vị trí phù hợp",
+  "trySearchingWithADifferent": "Thử tìm bằng tên hoặc nhãn khác",
+  "commonMove": "Di chuyển",
+  "commonEdit": "Sửa",
+  "addSubContainer": "Thêm ngăn chứa con",
+  "commonPath": "Đường dẫn: ",
+  "trackManageYourInventory": "Theo dõi & quản lý\nđồ đạc của bạn!",
+  "commonSearch": "Tìm kiếm",
+  "commonHome": "Trang chủ",
+  "commonBox": "Vị trí",
+  "commonItem": "Đồ đạc",
+  "commonSetting": "Cài đặt",
+  "scanQrCode": "Quét mã QR",
+  "categoryCreated": "Đã tạo danh mục \"{created}\"",
+  "@categoryCreated": {
+    "placeholders": {
+      "created": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemUpdatedSuccessfully": "Đã cập nhật vật phẩm \"{itemName}\"",
+  "@itemUpdatedSuccessfully": {
+    "placeholders": {
+      "itemName": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemAddedSuccessfully": "Đã thêm vật phẩm \"{itemName}\"",
+  "@itemAddedSuccessfully": {
+    "placeholders": {
+      "itemName": {
+        "type": "Object"
+      }
+    }
+  },
+  "pleaseEnterAnItemName": "Vui lòng nhập tên vật phẩm",
+  "editItem": "Sửa vật phẩm",
+  "newItem": "Vật phẩm mới",
+  "commonSave": "Lưu",
+  "commonCreate": "Tạo",
+  "productPhotos": "Ảnh sản phẩm",
+  "receiptsWarrantyProof": "Hóa đơn & bằng chứng bảo hành",
+  "saveItem": "Lưu vật phẩm",
+  "basicInformation": "Thông tin cơ bản",
+  "itemName": "Tên vật phẩm",
+  "eGMacbookProFirst": "VD: MacBook Pro, Hộp sơ cứu, Cáp USB",
+  "pleaseEnterItemName": "Vui lòng nhập tên vật phẩm",
+  "commonCategory": "Danh mục",
+  "selectCategory": "Chọn danh mục",
+  "tapToChangeCategory": "Chạm để đổi danh mục",
+  "commonQuantity": "Số lượng",
+  "commonUnit": "Đơn vị",
+  "selectUnit": "Chọn đơn vị",
+  "lowStockAlertThresholdOptional": "Ngưỡng cảnh báo sắp hết (không bắt buộc)",
+  "eG2AlertWhen": "VD: 2 (cảnh báo khi số lượng ≤ số này)",
+  "storageLocation": "Vị trí lưu trữ",
+  "selectStorageContainer": "Chọn ngăn chứa",
+  "commonUnassigned": "Chưa gán",
+  "colorConditionAccessoriesOptional": "Màu sắc, tình trạng, phụ kiện (không bắt buộc)",
+  "consumableItem": "Vật phẩm tiêu hao",
+  "consumableItemsBatteriesMasksFood": "Đồ tiêu hao (pin, khẩu trang, thực phẩm, thuốc...)",
+  "assetStatus": "Trạng thái tài sản",
+  "assetWarrantyDetails": "Tài sản & bảo hành",
+  "purchasePrice": "Giá mua ({currency})",
+  "@purchasePrice": {
+    "placeholders": {
+      "currency": {
+        "type": "Object"
+      }
+    }
+  },
+  "serialNumber": "Số sê-ri",
+  "productBarcodeUpcEan": "Mã vạch sản phẩm (UPC / EAN)",
+  "scanOrEnterProductBarcode": "Quét hoặc nhập mã vạch sản phẩm",
+  "warrantyExpiry": "Hạn bảo hành",
+  "perishableExpiry": "Hạn sử dụng",
+  "receiptCaptured": "Đã chụp hóa đơn",
+  "photoCaptured": "Đã chụp ảnh",
+  "cameraIsnTAvailableCheck": "Không dùng được camera. Hãy kiểm tra quyền camera của ứng dụng.",
+  "receiptSelected": "Đã chọn hóa đơn",
+  "photoSelected": "Đã chọn ảnh",
+  "couldnTOpenYourPhotos": "Không mở được thư viện ảnh. Hãy kiểm tra quyền truy cập ảnh của ứng dụng.",
+  "commonCover": "Ảnh bìa",
+  "notSet": "Chưa đặt",
+  "selectStorageLocation": "Chọn vị trí lưu trữ",
+  "chooseContainerOrScanQr": "Chọn ngăn chứa hoặc quét QR để gán",
+  "setLocation": "Đặt vị trí",
+  "returnedToStorage": "Đã cất \"{name}\" về nơi lưu trữ",
+  "@returnedToStorage": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnedToStorage2": "Đã cất \"{name}\" về nơi lưu trữ{boxName}",
+  "@returnedToStorage2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "movedBackToStorage": "Đã chuyển \"{name}\" về nơi lưu trữ",
+  "@movedBackToStorage": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemNotFoundOrHas": "Không tìm thấy vật phẩm hoặc đã bị xóa",
+  "goBack": "Quay lại",
+  "editItemDetails": "Sửa chi tiết vật phẩm",
+  "lendItem": "Cho mượn",
+  "deleteItem": "Xóa vật phẩm",
+  "commonConsumable": "Tiêu hao",
+  "stockHistory": "Lịch sử tồn kho",
+  "outOfStockRestock": "Hết hàng (nhập thêm)",
+  "commonConsume": "Sử dụng ({unit})",
+  "@commonConsume": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnToStorage": "Cất về nơi lưu trữ",
+  "takeOutToUse": "Lấy ra sử dụng",
+  "itemCatalog": "Danh mục vật phẩm",
+  "searchItemsBarcodesSerials": "Tìm vật phẩm, mã vạch, số sê-ri...",
+  "commonStored": "Đang cất ({count})",
+  "@commonStored": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "inUse": "Đang dùng ({count})",
+  "@inUse": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonLent": "Đã cho mượn ({count})",
+  "@commonLent": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "alertsExpiring": "Cảnh báo / Sắp hết hạn ({count})",
+  "@alertsExpiring": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "lowStock": "Sắp hết hàng ({count})",
+  "@lowStock": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "allStorageLocations": "Tất cả vị trí lưu trữ",
+  "noMatchingItemsFound": "Không tìm thấy vật phẩm phù hợp",
+  "noItemsFound": "Không có vật phẩm nào",
+  "trySearchingWithAnotherName": "Thử tìm bằng tên khác hoặc bỏ bộ lọc",
+  "tapAddItemAboveTo": "Nhấn \"Thêm vật phẩm\" ở trên để thêm tài sản đầu tiên",
+  "itemMarkedAsReturned": "Đã đánh dấu vật phẩm là đã trả",
+  "commonReturn": "Trả lại",
+  "commonLend": "Cho mượn",
+  "selectDestinationContainer": "Chọn ngăn chứa đích",
+  "chooseContainerOrScanIts": "Chọn ngăn chứa hoặc quét QR của nó để thêm vật phẩm",
+  "addItemHere": "Thêm vật phẩm vào đây",
+  "lendingTracker": "Theo dõi cho mượn",
+  "commonLoans": "Khoản mượn",
+  "itemsHavePassedTheirExpected": "Một số vật phẩm đã quá hạn trả dự kiến.",
+  "commonActive": "Đang mượn ({count})",
+  "@commonActive": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonHistory": "Lịch sử ({count})",
+  "@commonHistory": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "noActiveLoans": "Không có khoản mượn nào đang diễn ra",
+  "allYourItemsAreSafely": "Tất cả vật phẩm của bạn đều đang được cất an toàn.",
+  "noLendingHistory": "Chưa có lịch sử cho mượn",
+  "returnedItemsWillAppearHere": "Các vật phẩm đã trả sẽ hiện ở đây.",
+  "unknownItem": "Vật phẩm không xác định",
+  "lentTo": "Cho {borrowerName} mượn",
+  "@lentTo": {
+    "placeholders": {
+      "borrowerName": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonLent2": "Ngày mượn: {count}",
+  "@commonLent2": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonDue": "Hạn trả: {count}",
+  "@commonDue": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "markAsReturned": "Đánh dấu đã trả",
+  "confirmItemReturn": "Xác nhận trả vật phẩm",
+  "confirmReturn": "Xác nhận đã trả",
+  "itemMarkedAsReturnedSuccessfully": "Đã đánh dấu vật phẩm là đã trả",
+  "lendAnItem": "Cho mượn vật phẩm",
+  "selectItemToLend": "Chọn vật phẩm cho mượn",
+  "chooseAnAvailableItem": "Chọn một vật phẩm có sẵn...",
+  "quantityToLend": "Số lượng cho mượn",
+  "enterAQuantityGreaterThan": "Nhập số lượng lớn hơn 0",
+  "onlyInStock": "Chỉ còn {quantity} trong kho",
+  "@onlyInStock": {
+    "placeholders": {
+      "quantity": {
+        "type": "Object"
+      }
+    }
+  },
+  "borrowerName": "Tên người mượn",
+  "eGJohnDoe": "VD: Nguyễn Văn A",
+  "pleaseEnterBorrowerName": "Vui lòng nhập tên người mượn",
+  "borrowerContact": "Liên hệ người mượn",
+  "phoneNumberOrEmailOptional": "Số điện thoại hoặc email (không bắt buộc)",
+  "expectedReturnDate": "Ngày hẹn trả",
+  "selectDueDateOptional": "Chọn ngày hẹn trả (không bắt buộc)",
+  "commonNotes": "Ghi chú",
+  "eGBorrowedForPhotography": "VD: Mượn để chụp ảnh dự án",
+  "pleaseSelectAnItem": "Vui lòng chọn một vật phẩm",
+  "itemMarkedAsLentSuccessfully": "Đã ghi nhận cho mượn",
+  "saveLoan": "Lưu khoản mượn",
+  "googleSignInYouCan": "Đăng nhập Google: {count}. Bạn cũng có thể chọn tài khoản demo bên dưới.",
+  "@googleSignInYouCan": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "googleSignInConfigureGidclientid": "Đăng nhập Google: cần cấu hình GIDClientID trong Info.plist để dùng tài khoản Google thật. Bạn cũng có thể chọn tài khoản demo bên dưới.",
+  "signedInAs": "Đã đăng nhập với {email}",
+  "@signedInAs": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "googleAuthenticationFailed": "Xác thực Google thất bại",
+  "welcomeBack": "Chào mừng trở lại, {userName}!",
+  "@welcomeBack": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      }
+    }
+  },
+  "authenticationFailed": "Xác thực thất bại",
+  "signInToSyncYour": "Đăng nhập để đồng bộ đồ đạc & tài sản trên mọi thiết bị",
+  "continueWithGoogle": "Tiếp tục với Google",
+  "fullName": "Họ và tên",
+  "pleaseEnterYourName": "Vui lòng nhập tên của bạn",
+  "emailAddress": "Địa chỉ email",
+  "pleaseEnterYourEmail": "Vui lòng nhập email",
+  "pleaseEnterAValidEmail": "Vui lòng nhập email hợp lệ",
+  "commonPassword": "Mật khẩu",
+  "showOrHidePassword": "Hiện hoặc ẩn mật khẩu",
+  "passwordIsRequired": "Vui lòng nhập mật khẩu",
+  "passwordMustBeAtLeast": "Mật khẩu phải có ít nhất 8 ký tự",
+  "forgotPassword": "Quên mật khẩu?",
+  "createAccount": "Tạo tài khoản",
+  "signIn": "Đăng nhập",
+  "alreadyHaveAnAccountSign": "Đã có tài khoản? Đăng nhập",
+  "donTHaveAnAccount": "Chưa có tài khoản? Đăng ký",
+  "byContinuingYouAgreeTo": "Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ & Chính sách quyền riêng tư",
+  "signInWithGoogle": "Đăng nhập với Google",
+  "chooseAnAccountToContinue": "Chọn một tài khoản để tiếp tục vào Personal Inventory",
+  "useAnotherGmailAccount": "Dùng tài khoản Gmail khác",
+  "enterCustomGmailComAddress": "Nhập địa chỉ @gmail.com tùy chọn",
+  "enterGmailAccount": "Nhập tài khoản Gmail",
+  "yourName": "Tên của bạn",
+  "gmailAddress": "Địa chỉ Gmail",
+  "commonCancel": "Hủy",
+  "commonContinue": "Tiếp tục",
+  "resetPassword": "Đặt lại mật khẩu",
+  "aPasswordResetLinkWill": "Liên kết đặt lại mật khẩu sẽ được gửi tới {email}.",
+  "@aPasswordResetLinkWill": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "pleaseEnterYourEmailAddress": "Vui lòng nhập email vào biểu mẫu đăng nhập để nhận hướng dẫn đặt lại mật khẩu.",
+  "passwordResetEmailSentTo": "Đã gửi email đặt lại mật khẩu tới {email}",
+  "@passwordResetEmailSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "passwordResetInstructionsSent": "Đã gửi hướng dẫn đặt lại mật khẩu",
+  "sendLink": "Gửi liên kết",
+  "boxQrCode": "Mã QR của hộp",
+  "commonLabel": "Nhãn: {label}",
+  "@commonLabel": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "printLabel": "In nhãn",
+  "commonAll2": "Tất cả",
+  "commonStored2": "Đang cất",
+  "inUse2": "Đang dùng",
+  "commonLent3": "Đã cho mượn",
+  "commonPerishable": "Dễ hỏng",
+  "searchItemsSerialBarcodeBoxes": "Tìm vật phẩm, số sê-ri, mã vạch, hộp...",
+  "searchYourEntireInventory": "Tìm trong toàn bộ kho đồ",
+  "findItemsByNameBarcode": "Tìm vật phẩm theo tên, mã vạch, số sê-ri hoặc vị trí lưu trữ",
+  "noResultsFor": "Không có kết quả cho \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "tryADifferentNameSerial": "Thử tên, số sê-ri hoặc mã vạch khác",
+  "storageLocations": "Vị trí lưu trữ ({count})",
+  "@storageLocations": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonItems": "Vật phẩm ({count})",
+  "@commonItems": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "developerOptionsActivated": "Đã bật tùy chọn nhà phát triển!",
+  "tapMoreTimesToUnlock": "Nhấn thêm {remaining} lần nữa để mở công cụ nhà phát triển",
+  "@tapMoreTimesToUnlock": {
+    "placeholders": {
+      "remaining": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonSettings": "Cài đặt",
+  "preferencesTaxonomyInventoryTools": "Tùy chọn, phân loại & công cụ kho đồ",
+  "taxonomyCategories": "PHÂN LOẠI & DANH MỤC",
+  "manageCategories": "Quản lý danh mục",
+  "inventoryPreferences": "TÙY CHỌN KHO ĐỒ",
+  "currencySymbol": "Ký hiệu tiền tệ",
+  "usedForPurchasePricesValuation": "Dùng cho giá mua & định giá",
+  "defaultItemUnit": "Đơn vị mặc định",
+  "preFilledUnitForNewly": "Đơn vị điền sẵn cho vật phẩm mới",
+  "expiryWarningWindow": "Cảnh báo hết hạn trước",
+  "daysBeforeExpirationToTrigger": "Số ngày trước hạn sử dụng để cảnh báo",
+  "warrantyWarningWindow": "Cảnh báo bảo hành trước",
+  "daysBeforeWarrantyEndsTo": "Số ngày trước khi hết bảo hành để cảnh báo",
+  "timeZone": "Múi giờ",
+  "usedToDecideWhatToday": "Dùng để xác định \"hôm nay\" khi tính cảnh báo",
+  "reportsInventoryAudit": "BÁO CÁO & KIỂM KÊ",
+  "exportAllBoxBarcodesPdf": "Xuất mã vạch tất cả hộp (PDF)",
+  "generatePrintablePdfStickerSheet": "Tạo tệp PDF tem dán có mã QR và tên của các hộp để in",
+  "exportInventoryReport": "Xuất báo cáo kho đồ",
+  "generateCopyFormattedSummaryOf": "Tạo và sao chép bản tóm tắt toàn bộ tài sản",
+  "commonTrash": "Thùng rác",
+  "restoreOrPermanentlyDeleteRemoved": "Khôi phục hoặc xóa vĩnh viễn vật phẩm & vị trí đã xóa",
+  "inventoryHealthBreakdown": "Tình trạng kho đồ",
+  "statusDistributionInStockLent": "Phân bố trạng thái: Còn hàng, Đã cho mượn, Sắp hết, Hết hạn",
+  "developerOptionsBackendApi": "TÙY CHỌN NHÀ PHÁT TRIỂN & API BACKEND",
+  "developerModeDeactivated": "Đã tắt chế độ nhà phát triển",
+  "commonHide": "Ẩn",
+  "applicationInfo": "THÔNG TIN ỨNG DỤNG",
+  "applicationVersion": "Phiên bản ứng dụng",
+  "designSystem": "Hệ thống thiết kế",
+  "minimalCharcoalIosStyle": "Charcoal tối giản (kiểu iOS)",
+  "qrBarcodeEngine": "Bộ quét QR & mã vạch",
+  "storageArchitecture": "Cấu trúc lưu trữ",
+  "hierarchicalMultiLevelTree": "Cây phân cấp nhiều tầng",
+  "logOutSwitchAccount": "Đăng xuất / Đổi tài khoản",
+  "deleteAccount": "Xóa tài khoản",
+  "switchAccountLogin": "Đổi tài khoản / Đăng nhập",
+  "editProfile": "Sửa hồ sơ",
+  "logOut": "Đăng xuất?",
+  "areYouSureYouWant": "Bạn có chắc muốn đăng xuất? Bạn có thể đăng nhập lại bất cứ lúc nào bằng Google hoặc email.",
+  "unsyncedChanges": "Thay đổi chưa đồng bộ",
+  "discardLogOut": "Bỏ & đăng xuất",
+  "logOut2": "Đăng xuất",
+  "deleteAccount2": "Xóa tài khoản?",
+  "thisPermanentlyDeletesYourAccount": "Thao tác này xóa vĩnh viễn tài khoản cùng toàn bộ hộp, vật phẩm, khoản mượn và ảnh của bạn. Không thể hoàn tác.",
+  "confirmDeletion": "Xác nhận xóa",
+  "typeDeleteToConfirm": "Nhập DELETE để xác nhận",
+  "deleteForever": "Xóa vĩnh viễn",
+  "inventoryQuickMetrics": "Số liệu nhanh",
+  "commonContainers": "Ngăn chứa",
+  "totalAssets": "Tổng tài sản",
+  "onLoan": "Đang cho mượn",
+  "estValue": "Giá trị ước tính",
+  "couldNotRestore": "Không thể khôi phục \"{name}\"",
+  "@couldNotRestore": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "deletePermanently": "Xóa vĩnh viễn?",
+  "couldNotDelete": "Không thể xóa \"{name}\"",
+  "@couldNotDelete": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "emptyTrash": "Dọn thùng rác?",
+  "everythingInTheTrashWill": "Mọi thứ trong thùng rác sẽ bị xóa vĩnh viễn.",
+  "commonEmpty": "Dọn sạch",
+  "couldNotEmptyTheTrash": "Không thể dọn thùng rác",
+  "couldNotLoadTheTrash": "Không thể tải thùng rác",
+  "commonRetry": "Thử lại",
+  "trashIsEmpty": "Thùng rác trống",
+  "commonLocation": "Vị trí · {name}",
+  "@commonLocation": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonItem2": "Vật phẩm · {quantity} {unit}",
+  "@commonItem2": {
+    "placeholders": {
+      "quantity": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonRestore": "Khôi phục",
+  "deletePermanently2": "Xóa vĩnh viễn",
+  "commonConfirm": "Xác nhận",
+  "noStorageBoxFoundWith": "Không tìm thấy hộp nào có mã \"{code}\". Vui lòng quét nhãn QR hợp lệ của hộp.",
+  "@noStorageBoxFoundWith": {
+    "placeholders": {
+      "code": {
+        "type": "Object"
+      }
+    }
+  },
+  "selectTestBoxQrCode": "Chọn mã QR hộp để thử",
+  "simulateScanningAPhysicalBox": "Giả lập quét tem QR của hộp thật:",
+  "enterBoxLabelQr": "Nhập nhãn hộp / QR",
+  "eGLocElectronicsBox": "VD: loc_electronics_box",
+  "commonSubmit": "Gửi",
+  "scanBoxQrCode": "Quét mã QR của hộp",
+  "pointCameraAtTargetBox": "Hướng camera vào tem của hộp cần quét",
+  "toggleFlash": "Bật/tắt đèn flash",
+  "scanAgain": "Quét lại",
+  "moveToThisBox": "Chuyển vào hộp này",
+  "testWithPresets": "Thử với mẫu có sẵn",
+  "enterCode": "Nhập mã",
+  "cutGuide": "ĐƯỜNG CẮT",
+  "barcodeImageReady": "Ảnh mã vạch đã sẵn sàng",
+  "highResolutionPngImageOf": "Ảnh PNG độ phân giải cao của các mã QR hộp.",
+  "barcodeImageCaptured": "Đã lưu ảnh mã vạch",
+  "commonDone": "Xong",
+  "failedToCaptureBarcodeGrid": "Không thể chụp bảng mã vạch",
+  "failedToGenerateImage": "Không thể tạo ảnh",
+  "couldnTExportTheLabels": "Không thể xuất nhãn. Vui lòng thử lại.",
+  "pdfGeneratedChooseSaveTo": "Đã tạo PDF. Chọn \"Lưu vào Tệp\" hoặc chia sẻ.",
+  "couldnTExportThePdf": "Không thể xuất PDF. Vui lòng thử lại.",
+  "couldnTOpenThePrint": "Không thể mở bản xem trước khi in. Vui lòng thử lại.",
+  "exportAllBoxBarcodes": "Xuất mã vạch tất cả hộp",
+  "boxNotFound": "Không tìm thấy hộp",
+  "exportBoxBarcodes": "Xuất mã vạch hộp",
+  "captureAndSaveBarcodeSheet": "Chụp và lưu bảng mã vạch dưới dạng ảnh",
+  "saveImage": "Lưu ảnh",
+  "thisContainer": "Ngăn chứa này",
+  "allContainers": "Tất cả ngăn chứa ({count})",
+  "@allContainers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "printSpecsFormat": "THÔNG SỐ / KHỔ IN",
+  "a4TomyDecal": "Decal A4 Tomy",
+  "standardGridSheet": "Tờ lưới tiêu chuẩn",
+  "thermal50x30mm": "Tem nhiệt 50x30mm",
+  "singleRollLabel": "Nhãn cuộn đơn",
+  "printPreview": "Xem trước khi in",
+  "generatingPdf": "Đang tạo PDF...",
+  "exportPdfSaveShare": "Xuất PDF (Lưu/Chia sẻ)",
+  "tapToKeepYourVersion": "Chạm để giữ bản của bạn hoặc bỏ đi",
+  "unresolvedChanges": "Thay đổi chưa xử lý",
+  "nothingLeftToResolve": "Không còn gì cần xử lý.",
+  "commonDiscard": "Bỏ",
+  "keepMine": "Giữ bản của tôi",
+  "commonClose": "Đóng",
+  "recentItems": "Vật phẩm gần đây",
+  "viewAll": "Xem tất cả",
+  "noItemsInInventoryYet": "Chưa có vật phẩm nào",
+  "tapToAddYourFirst": "Nhấn + để thêm vật phẩm đầu tiên",
+  "storageBox": "Hộp lưu trữ",
+  "cannotConnectToBackend": "Không thể kết nối backend ({serverUrl})",
+  "@cannotConnectToBackend": {
+    "placeholders": {
+      "serverUrl": {
+        "type": "Object"
+      }
+    }
+  },
+  "actionRequired": "Cần xử lý",
+  "commonReview": "Xem lại",
+  "commonLending": "Cho mượn",
+  "noLoans": "Không có khoản mượn",
+  "commonAlerts": "Cảnh báo",
+  "allClear": "Mọi thứ ổn",
+  "storageSpaces": "Nơi lưu trữ",
+  "noStorageSpacesYet": "Chưa có nơi lưu trữ nào",
+  "subContainerInLocation": "Ngăn chứa con trong vị trí",
+  "primaryStorageSpace": "Nơi lưu trữ chính",
+  "specificationsAttributes": "Thông số & thuộc tính",
+  "commonManage": "Quản lý",
+  "commonAdd": "Thêm",
+  "noSpecificationsAddedYet": "Chưa có thông số nào",
+  "addCustomDetailsLikeColor": "Thêm chi tiết như Màu sắc, Kích thước, Thương hiệu hoặc Thông số.",
+  "addSpecification": "Thêm thông số",
+  "customizeAttributesAndMetadataFor": "Tùy chỉnh thuộc tính và thông tin của vật phẩm này.",
+  "currentSpecifications": "THÔNG SỐ HIỆN TẠI",
+  "commonRemoved": "Đã xóa \"{key}\"",
+  "@commonRemoved": {
+    "placeholders": {
+      "key": {
+        "type": "Object"
+      }
+    }
+  },
+  "suggestedAttributes": "THUỘC TÍNH GỢI Ý",
+  "editAttribute": "SỬA THUỘC TÍNH",
+  "addAttribute": "THÊM THUỘC TÍNH",
+  "attributeName": "Tên thuộc tính",
+  "eGColorRamSize": "VD: Màu sắc, RAM, Kích thước, Chất liệu",
+  "attributeValue": "Giá trị thuộc tính",
+  "eGSpaceBlack16gb": "VD: Đen không gian, 16GB, XL",
+  "pleaseEnterAnAttributeName": "Vui lòng nhập tên thuộc tính",
+  "pleaseEnterAnAttributeValue": "Vui lòng nhập giá trị thuộc tính",
+  "savedAttribute": "Đã lưu thuộc tính \"{k}\"",
+  "@savedAttribute": {
+    "placeholders": {
+      "k": {
+        "type": "Object"
+      }
+    }
+  },
+  "saveAttribute": "Lưu thuộc tính",
+  "newCategory": "Danh mục mới",
+  "createACustomCategoryFor": "Tạo danh mục riêng cho tài sản của bạn",
+  "categoryName": "Tên danh mục",
+  "eGPhotographyWatchesBoard": "VD: Nhiếp ảnh, Đồng hồ, Board game",
+  "pleaseEnterACategoryName": "Vui lòng nhập tên danh mục",
+  "categoryAlreadyExists": "Danh mục đã tồn tại",
+  "addSelect": "Thêm & chọn",
+  "overdueLoan": "Khoản mượn quá hạn",
+  "currentlyLentOut": "Đang cho mượn",
+  "commonBorrower2": "Người mượn: {borrowerName}",
+  "@commonBorrower2": {
+    "placeholders": {
+      "borrowerName": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonContact": "Liên hệ: {borrowerContact}",
+  "@commonContact": {
+    "placeholders": {
+      "borrowerContact": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonChange": "Đổi",
+  "unknownLocation": "Vị trí không xác định",
+  "productHasExpired": "Sản phẩm đã hết hạn!",
+  "expiresSoonInDays": "Sắp hết hạn sau {daysLeft} ngày",
+  "@expiresSoonInDays": {
+    "placeholders": {
+      "daysLeft": {
+        "type": "Object"
+      }
+    }
+  },
+  "freshDaysRemaining": "Còn tốt • còn {daysLeft} ngày",
+  "@freshDaysRemaining": {
+    "placeholders": {
+      "daysLeft": {
+        "type": "Object"
+      }
+    }
+  },
+  "lowStockWarning": "Cảnh báo sắp hết hàng",
+  "currentThreshold": "Hiện có: {qty} {unit} • Ngưỡng: ≤ {minQty} {unit2}",
+  "@currentThreshold": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "minQty": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "assetPurchaseInformation": "Thông tin tài sản & mua hàng",
+  "purchasePrice2": "Giá mua",
+  "notRecorded": "Chưa ghi nhận",
+  "purchaseDate": "Ngày mua",
+  "lowStockAlertThreshold": "Ngưỡng cảnh báo sắp hết",
+  "notTracked": "Không theo dõi",
+  "barcodeUpcEan": "Mã vạch (UPC/EAN)",
+  "warrantyExpired": "Hết bảo hành",
+  "warrantyActive": "Còn bảo hành",
+  "commonCopy": "Sao chép",
+  "copiedToClipboard": "Đã sao chép {label} vào bộ nhớ tạm",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "addAttribute2": "Thêm thuộc tính",
+  "addCustomAttributesLikeColor": "Thêm thuộc tính như Màu sắc, Kích thước, RAM hoặc Thương hiệu",
+  "commonRemove": "Xóa",
+  "editSpecification": "Sửa thông số",
+  "eGColorRamSize2": "VD: Màu sắc, RAM, Kích thước, Chất liệu, Cân nặng",
+  "eGSpaceBlack16gb2": "VD: Đen không gian, 16GB, XL, Da",
+  "saveSpecification": "Lưu thông số",
+  "paperReceipt": "Hóa đơn giấy",
+  "storeInvoice": "Hóa đơn cửa hàng",
+  "warrantyCard": "Phiếu bảo hành",
+  "addReceiptPhoto": "Thêm ảnh hóa đơn",
+  "addProductPhoto": "Thêm ảnh sản phẩm",
+  "commonCamera": "Camera",
+  "commonGallery": "Thư viện",
+  "orViaUrl": "HOẶC QUA URL",
+  "imageUrl": "URL ảnh",
+  "photoAdded": "Đã thêm ảnh",
+  "addViaUrl": "Thêm qua URL",
+  "orChooseSamplePhoto": "Hoặc chọn ảnh mẫu",
+  "samplePhotoSelected": "Đã chọn ảnh mẫu",
+  "commonConsume2": "Sử dụng: {name}",
+  "@commonConsume2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "currentStock": "Tồn kho hiện tại: {formattedCurrent} {unit}",
+  "@currentStock": {
+    "placeholders": {
+      "formattedCurrent": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "quantityToUse": "Số lượng dùng:",
+  "use1": "Dùng 1 {unit}",
+  "@use1": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "use2": "Dùng 2 {unit}",
+  "@use2": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "use5": "Dùng 5 {unit}",
+  "@use5": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "useAll": "Dùng hết",
+  "willBeOutOfStock": "Sẽ hết hàng sau khi dùng",
+  "remainingAfterUse": "Còn lại sau khi dùng: {formattedRemain} {unit}",
+  "@remainingAfterUse": {
+    "placeholders": {
+      "formattedRemain": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonRestock": "Nhập thêm",
+  "usedRemaining": "Đã dùng {formattedConsume} {unit}. Còn lại: {formattedRemain} {unit2}",
+  "@usedRemaining": {
+    "placeholders": {
+      "formattedConsume": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "formattedRemain": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "warningQuantityHasDroppedTo": "Cảnh báo: số lượng đã xuống mức tối thiểu (≤ {minQuantity} {unit})",
+  "@warningQuantityHasDroppedTo": {
+    "placeholders": {
+      "minQuantity": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "confirmUse": "Xác nhận sử dụng",
+  "commonRestock2": "Nhập thêm: {name}",
+  "@commonRestock2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "quantityToAdd": "Số lượng thêm ({unit})",
+  "@quantityToAdd": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "addedTotal": "Đã thêm {addAmount} {unit}. Tổng: {formattedNew} {unit2}",
+  "@addedTotal": {
+    "placeholders": {
+      "addAmount": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "formattedNew": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "confirmRestock": "Xác nhận nhập thêm",
+  "commonRoot": "Gốc",
+  "storeDirectlyIn": "Cất trực tiếp vào \"{name}\"",
+  "@storeDirectlyIn": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonCurrent": "Hiện tại",
+  "placeItemAtThisLevel": "Đặt vật phẩm ở cấp này, không cho vào hộp con nào",
+  "chooseARoomShelfOr": "Chọn phòng, kệ hoặc ngăn chứa",
+  "selectLocation": "Chọn vị trí",
+  "scanQr": "Quét QR",
+  "currentLocation": "Vị trí hiện tại",
+  "subContainersInside": "Ngăn chứa con bên trong ({count})",
+  "@subContainersInside": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "noSubContainersInside": "Không có ngăn chứa con trong \"{name}\"",
+  "@noSubContainersInside": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "noLocationsAvailable": "Không có vị trí nào",
+  "youCanSelectDirectlyAbove": "Bạn có thể chọn trực tiếp \"{name}\" ở trên.",
+  "@youCanSelectDirectlyAbove": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "currentlySelectedLocation": "Vị trí đang chọn",
+  "selectedStorageDestination": "Nơi lưu trữ đã chọn",
+  "moveItemLocation": "Di chuyển vật phẩm",
+  "selectNewStorageDestinationFor": "Chọn nơi lưu trữ mới cho \"{name}\"",
+  "@selectNewStorageDestinationFor": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "confirmMove": "Xác nhận di chuyển",
+  "movedTo": "Đã chuyển \"{name}\" tới \"{name2}\"",
+  "@movedTo": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "name2": {
+        "type": "Object"
+      }
+    }
+  },
+  "selectNewStorageDestinationFor2": "Chọn nơi lưu trữ mới cho vật phẩm",
+  "youCanStoreDirectlyIn": "Bạn có thể cất \"{name}\" trực tiếp vào ngăn chứa này.",
+  "@youCanStoreDirectlyIn": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemIsAlreadyInThis": "Vật phẩm đã ở vị trí này",
+  "targetDestination": "Nơi đến",
+  "bulkMoveLocation": "Di chuyển hàng loạt",
+  "moveAndContents": "Di chuyển \"{name}\" và nội dung",
+  "@moveAndContents": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "allItemsAndNestedContainers": "Toàn bộ {totalItems} vật phẩm và {totalSubBoxes} ngăn chứa con bên trong sẽ di chuyển cùng ngăn chứa này.",
+  "@allItemsAndNestedContainers": {
+    "placeholders": {
+      "totalItems": {
+        "type": "Object"
+      },
+      "totalSubBoxes": {
+        "type": "Object"
+      }
+    }
+  },
+  "selectDestination": "Chọn nơi đến",
+  "rootLevelNoParentContainer": "Cấp gốc (không có ngăn chứa cha)",
+  "topOfHierarchy": "Đầu cây phân cấp",
+  "movedSuccessfully": "Đã di chuyển \"{name}\"",
+  "@movedSuccessfully": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "cannotMoveContainerIntoIts": "Không thể chuyển ngăn chứa vào chính ngăn con của nó",
+  "serverEndpoint": "Máy chủ",
+  "apiAuthentication": "Xác thực API",
+  "authenticatedAs": "Đã xác thực là {userName}",
+  "@authenticatedAs": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      }
+    }
+  },
+  "loginSwitch": "Đăng nhập / Đổi tài khoản",
+  "syncWithServer": "Đồng bộ với máy chủ",
+  "synchronizingBoxesItemsAlerts": "Đang đồng bộ hộp, vật phẩm & cảnh báo...",
+  "pullLatestInventoryLendingRecords": "Tải dữ liệu kho đồ & cho mượn mới nhất",
+  "successfullySynchronizedWithBackendServer": "Đã đồng bộ với máy chủ",
+  "syncFailed": "Đồng bộ thất bại",
+  "seedDemoDataToServer": "Nạp dữ liệu demo lên máy chủ",
+  "populateBackendWithRoomsItems": "Tạo sẵn phòng, vật phẩm, cảnh báo & khoản mượn mẫu trên backend",
+  "backendApiUrl": "URL API backend",
+  "enterTheBackendBaseUrl": "Nhập URL gốc của backend (mặc định: http://localhost:8080):",
+  "serverUrlUpdatedTo": "Đã cập nhật URL máy chủ thành {newUrl}",
+  "@serverUrlUpdatedTo": {
+    "placeholders": {
+      "newUrl": {
+        "type": "Object"
+      }
+    }
+  },
+  "saveConnect": "Lưu & kết nối",
+  "seedDemoInventory": "Nạp kho đồ demo?",
+  "thisWillUploadSampleMulti": "Thao tác này tải dữ liệu mẫu (phòng, tủ, hộp nhiều cấp, đồ công nghệ, thuốc, vật phẩm sắp hết và khoản mượn) lên cơ sở dữ liệu backend tại http://localhost:8080.\n\nCác vật phẩm hiện có sẽ được giữ nguyên.",
+  "successfullySeededSampleInventoryTo": "Đã nạp kho đồ mẫu lên backend!",
+  "failedToSeedSampleData": "Không thể nạp dữ liệu mẫu: {errorMessage}",
+  "@failedToSeedSampleData": {
+    "placeholders": {
+      "errorMessage": {
+        "type": "Object"
+      }
+    }
+  },
+  "seedData": "Nạp dữ liệu",
+  "usDollar": "Đô la Mỹ",
+  "vietnameseDong": "Đồng Việt Nam",
+  "commonEuro": "Euro",
+  "britishPound": "Bảng Anh",
+  "japaneseYen": "Yên Nhật",
+  "selectCurrency": "Chọn tiền tệ",
+  "appliedToPriceCalculationsAsset": "Áp dụng cho tính giá & định giá tài sản",
+  "currencyChangedTo": "Đã đổi tiền tệ thành {sym}",
+  "@currencyChangedTo": {
+    "placeholders": {
+      "sym": {
+        "type": "Object"
+      }
+    }
+  },
+  "defaultMeasuringUnitWhenCreating": "Đơn vị đo mặc định khi tạo vật phẩm mới",
+  "defaultUnitSetTo": "Đã đặt đơn vị mặc định là \"{unit}\"",
+  "@defaultUnitSetTo": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "howManyDaysBeforeExpiration": "Cảnh báo bạn trước hạn sử dụng bao nhiêu ngày",
+  "alertWindowSetToDays": "Đã đặt cảnh báo trước {days} ngày",
+  "@alertWindowSetToDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
+  "howManyDaysBeforeWarranty": "Cảnh báo bạn trước khi hết bảo hành bao nhiêu ngày",
+  "warrantyWindowSetToDays": "Đã đặt cảnh báo bảo hành trước {days} ngày",
+  "@warrantyWindowSetToDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
+  "alertsTreatTodayInThis": "Cảnh báo tính \"hôm nay\" theo múi giờ này",
+  "timeZoneSetTo": "Đã đặt múi giờ thành {tz}",
+  "@timeZoneSetTo": {
+    "placeholders": {
+      "tz": {
+        "type": "Object"
+      }
+    }
+  },
+  "updateYourDisplayNameAnd": "Cập nhật tên hiển thị và vai trò của bạn",
+  "displayName": "Tên hiển thị",
+  "eGSaraWilson": "VD: Nguyễn Thị B",
+  "roleDepartment": "Vai trò / Bộ phận",
+  "eGAssetManagerHome": "VD: Quản lý tài sản, Chủ nhà",
+  "profileUpdatedSuccessfully": "Đã cập nhật hồ sơ",
+  "commonNew": "Mới",
+  "searchCategories": "Tìm danh mục...",
+  "noCategoriesMatch": "Không có danh mục nào khớp \"{searchQuery}\"",
+  "@noCategoriesMatch": {
+    "placeholders": {
+      "searchQuery": {
+        "type": "Object"
+      }
+    }
+  },
+  "deleteCategory": "Xóa danh mục",
+  "deleteCategoryAnyItemsIn": "Xóa danh mục \"{cat}\"? Các vật phẩm trong danh mục này sẽ chuyển sang \"General\".",
+  "@deleteCategoryAnyItemsIn": {
+    "placeholders": {
+      "cat": {
+        "type": "Object"
+      }
+    }
+  },
+  "categoryRemoved": "Đã xóa danh mục \"{cat}\"",
+  "@categoryRemoved": {
+    "placeholders": {
+      "cat": {
+        "type": "Object"
+      }
+    }
+  },
+  "addNewCategory": "Thêm danh mục mới",
+  "enterACategoryNameFor": "Nhập tên danh mục cho kho đồ của bạn",
+  "eGPhotographyBoardGames": "VD: Nhiếp ảnh, Board game, Đồ cơ khí",
+  "categoryCreated2": "Đã tạo danh mục \"{name}\"",
+  "@categoryCreated2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "addCategory": "Thêm danh mục",
+  "inventoryReport": "Báo cáo kho đồ",
+  "generatedPlainTextInventoryStatus": "Đã tạo báo cáo tình trạng kho đồ dạng văn bản",
+  "reportCopiedToClipboard": "Đã sao chép báo cáo!",
+  "copyReportToClipboard": "Sao chép báo cáo",
+  "realTimeConditionBreakdownOf": "Phân tích tình trạng thời gian thực của {total} vật phẩm đang theo dõi",
+  "@realTimeConditionBreakdownOf": {
+    "placeholders": {
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "storedInContainers": "Đang cất trong ngăn chứa",
+  "inUseActive": "Đang dùng",
+  "lentToBorrowers": "Đã cho mượn",
+  "expiringSoonD": "Sắp hết hạn (≤ {expiryWarningDays} ngày)",
+  "@expiringSoonD": {
+    "placeholders": {
+      "expiryWarningDays": {
+        "type": "Object"
+      }
+    }
+  },
+  "expiredAssets": "Tài sản hết hạn",
+  "initialStock": "Tồn đầu",
+  "commonRestocked": "Nhập thêm",
+  "commonUsed": "Đã dùng",
+  "commonDamaged": "Hư hỏng",
+  "commonLost": "Mất",
+  "commonCorrection": "Điều chỉnh",
+  "commonMoved": "Đã di chuyển",
+  "commonAdjusted": "Đã chỉnh",
+  "couldNotLoadStockHistory": "Không thể tải lịch sử tồn kho",
+  "noConsumptionDataYet": "Chưa có dữ liệu tiêu thụ",
+  "avgDayAboutDaysLeft": "TB {count}/ngày · còn khoảng {count2} ngày",
+  "@avgDayAboutDaysLeft": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "count2": {
+        "type": "Object"
+      }
+    }
+  },
+  "noMovementsRecorded": "Chưa ghi nhận biến động nào",
+  "thermalLabelPrint": "In tem nhiệt",
+  "standardPrintableAdhesiveLabel": "Nhãn dán in tiêu chuẩn",
+  "thermalLabelCopiedToClipboard": "Đã sao chép tem nhiệt",
+  "copyId": "Sao chép ID",
+  "thermalLabelSentToPrinter": "Đã gửi tem nhiệt tới máy in ({value}mm)",
+  "@thermalLabelSentToPrinter": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonInitializing": "Đang khởi tạo...",
+  "youWereSignedOutOn": "Bạn đã đăng xuất ở thiết bị khác. Vui lòng đăng nhập lại.",
+  "yourSessionHasExpiredPlease": "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+  "connectingToServer": "Đang kết nối máy chủ...",
+  "commonAuthenticating": "Đang xác thực...",
+  "syncingInventory": "Đang đồng bộ kho đồ...",
+  "commonReady": "Sẵn sàng",
+  "couldnTSignInPlease": "Không thể đăng nhập. Vui lòng thử lại.",
+  "couldnTSignInWith": "Không thể đăng nhập bằng Google. Vui lòng thử lại.",
+  "couldnTCreateYourAccount": "Không thể tạo tài khoản. Vui lòng thử lại.",
+  "couldNotReachTheServer": "Không thể kết nối máy chủ. Hãy kiểm tra kết nối và thử lại.",
+  "cannotReachTheServer": "Không thể kết nối máy chủ",
+  "couldnTSyncYourData": "Không thể đồng bộ dữ liệu. Kéo xuống để thử lại.",
+  "thisWasChangedElsewhereShowing": "Dữ liệu này đã được thay đổi ở nơi khác. Đang hiển thị bản mới nhất.",
+  "commonManager": "Người quản lý: {userName} ({userRole})",
+  "@commonManager": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      },
+      "userRole": {
+        "type": "Object"
+      }
+    }
+  },
+  "serverBackend": "Máy chủ backend: {baseUrl}",
+  "@serverBackend": {
+    "placeholders": {
+      "baseUrl": {
+        "type": "Object"
+      }
+    }
+  },
+  "endOfReport": "Hết báo cáo",
+  "somethingWentWrongPleaseTry": "Đã xảy ra lỗi. Vui lòng thử lại.",
+  "incorrectEmailOrPassword": "Email hoặc mật khẩu không đúng.",
+  "thatItemNoLongerExists": "Vật phẩm này không còn tồn tại.",
+  "thisWasChangedSomewhereElse": "Dữ liệu này đã được thay đổi ở nơi khác. Hãy làm mới rồi thử lại.",
+  "tooManyAttemptsPleaseWait": "Thử quá nhiều lần. Vui lòng đợi một lát rồi thử lại.",
+  "theServerIsBusyRight": "Máy chủ đang bận. Vui lòng thử lại sau ít phút.",
+  "canTReachTheServer": "Không thể kết nối máy chủ. Hãy kiểm tra kết nối và thử lại.",
+  "reportTitle": "BÁO CÁO TÌNH TRẠNG KHO ĐỒ",
+  "reportGenerated": "Tạo lúc: {date}",
+  "@reportGenerated": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportOverview": "1. THỐNG KÊ TỔNG QUAN:",
+  "reportTotalContainers": "- Tổng số ngăn chứa: {count}",
+  "@reportTotalContainers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportTotalItems": "- Tổng số vật phẩm: {count}",
+  "@reportTotalItems": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportTotalValue": "- Tổng giá trị ước tính: {value}",
+  "@reportTotalValue": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportActiveLent": "- Vật phẩm đang cho mượn: {count}",
+  "@reportActiveLent": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportOverdueLent": "- Vật phẩm cho mượn quá hạn: {count}",
+  "@reportOverdueLent": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportExpired": "- Vật phẩm hết hạn: {count}",
+  "@reportExpired": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportExpiringSoon": "- Sắp hết hạn (trong {days} ngày): {count}",
+  "@reportExpiringSoon": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportCategories": "2. PHÂN BỔ THEO DANH MỤC:",
+  "reportCategoryLine": "- {category}: {count} vật phẩm",
+  "@reportCategoryLine": {
+    "placeholders": {
+      "category": {
+        "type": "Object"
+      },
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportCurrentItems": "3. VẬT PHẨM HIỆN CÓ:",
+  "reportPrice": " | Giá: {price}",
+  "@reportPrice": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportNoLocation": "Chưa có vị trí",
+  "qtyValue": "SL: {qty}",
+  "@qtyValue": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      }
+    }
+  },
+  "storageTypeRoom": "Phòng",
+  "storageTypeCabinet": "Tủ / Tủ quần áo",
+  "storageTypeShelf": "Kệ / Giá",
+  "storageTypeBox": "Hộp / Thùng",
+  "storageTypeDrawer": "Ngăn kéo",
+  "storageTypeOther": "Ngăn chứa",
+  "statusStored": "Đang cất",
+  "statusInUse": "Đang dùng",
+  "statusLent": "Đã cho mượn",
+  "statusBroken": "Hỏng",
+  "statusDisposed": "Đã thanh lý",
+  "statusLost": "Mất",
+  "heyName": "Xin chào {name}!",
+  "@heyName": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "heyFallbackName": "bạn",
+  "markReturnedBy": "Đánh dấu \"{item}\" đã được {borrower} trả?\nTrạng thái sẽ chuyển về Đang cất.",
+  "@markReturnedBy": {
+    "placeholders": {
+      "item": {
+        "type": "Object"
+      },
+      "borrower": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaveEmptyToLendAll": "Để trống để cho mượn tất cả (còn {qty} trong kho)",
+  "@leaveEmptyToLendAll": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemFallbackName": "vật phẩm"
+}

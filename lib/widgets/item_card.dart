@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'app_image_view.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class ItemCard extends StatelessWidget {
   final String name;
@@ -28,8 +31,8 @@ class ItemCard extends StatelessWidget {
     
     Widget card = Container(
       padding: const EdgeInsets.all(12),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
       ),
       child: Row(
         children: [
@@ -38,7 +41,7 @@ class ItemCard extends StatelessWidget {
             child: Container(
               width: 76,
               height: 76,
-              color: const Color(0xFFF4F4F6),
+              color: context.colors.fill,
               child: imageUrl != null && imageUrl!.isNotEmpty
                   ? AppImageView(
                       imageUrlOrPath: imageUrl!,
@@ -49,7 +52,7 @@ class ItemCard extends StatelessWidget {
                   : Center(
                       child: Icon(
                         Icons.image_outlined,
-                        color: Colors.grey.shade400,
+                        color: context.colors.textMuted,
                         size: 30,
                       ),
                     ),
@@ -85,7 +88,7 @@ class ItemCard extends StatelessWidget {
     );
 
     if (onTap != null) {
-      card = GestureDetector(
+      card = Tappable(
         onTap: onTap,
         child: card,
       );
@@ -110,10 +113,10 @@ class ItemCard extends StatelessWidget {
             if (onEdit != null)
               SlidableAction(
                 onPressed: (_) => onEdit!(),
-                backgroundColor: const Color(0xFF18181B),
+                backgroundColor: context.colors.primary,
                 foregroundColor: Colors.white,
                 icon: Icons.edit_outlined,
-                label: 'Edit',
+                label: context.l10n.commonEdit,
               ),
             if (onDelete != null)
               SlidableAction(
@@ -121,7 +124,7 @@ class ItemCard extends StatelessWidget {
                 backgroundColor: Colors.red.shade400,
                 foregroundColor: Colors.white,
                 icon: Icons.delete_outline,
-                label: 'Delete',
+                label: context.l10n.commonDelete,
               ),
           ],
         ),

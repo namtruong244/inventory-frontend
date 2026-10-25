@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 void showExportReportSheet(BuildContext context, InventoryProvider provider) {
   final report = provider.generateInventoryReport();
@@ -17,8 +19,8 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
       minChildSize: 0.5,
       maxChildSize: 0.95,
       builder: (_, scrollController) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
@@ -30,7 +32,7 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: context.colors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -39,22 +41,23 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Inventory Report',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                      context.l10n.inventoryReport,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                     ),
                     SizedBox(height: 2),
                     Text(
-                      'Generated plain-text inventory status report',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF71717A)),
+                      context.l10n.generatedPlainTextInventoryStatus,
+                      style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                     ),
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.grey),
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                  icon: Icon(Icons.close, color: context.colors.textSecondary),
                   onPressed: () => Navigator.pop(sheetContext),
                 ),
               ],
@@ -64,19 +67,19 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8F9FA),
+                  color: context.colors.fill,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(color: context.colors.border),
                 ),
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: SelectableText(
                     report,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'monospace',
                       fontSize: 12,
                       height: 1.5,
-                      color: Color(0xFF27272A),
+                      color: context.colors.textPrimary,
                     ),
                   ),
                 ),
@@ -89,12 +92,12 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: report));
                   Navigator.pop(sheetContext);
-                  AppFeedback.showSuccess(context, 'Report copied to clipboard!');
+                  AppFeedback.showSuccess(context, context.l10n.reportCopiedToClipboard);
                 },
                 icon: const Icon(Icons.copy_rounded, size: 18),
-                label: const Text('Copy Report to Clipboard', style: TextStyle(fontWeight: FontWeight.bold)),
+                label: Text(context.l10n.copyReportToClipboard, style: TextStyle(fontWeight: FontWeight.bold)),
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF18181B),
+                  backgroundColor: context.colors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 ),
@@ -126,8 +129,8 @@ void showInventoryStatusSheet(BuildContext context, InventoryProvider provider) 
 
       return Container(
         constraints: BoxConstraints(maxHeight: maxHeight),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: context.colors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: SafeArea(
@@ -143,20 +146,20 @@ void showInventoryStatusSheet(BuildContext context, InventoryProvider provider) 
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: context.colors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
                 const SizedBox(height: 18),
-                const Text(
-                  'Inventory Health Breakdown',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                Text(
+                  context.l10n.inventoryHealthBreakdown,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Real-time condition breakdown of $total tracked items',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  context.l10n.realTimeConditionBreakdownOf(total),
+                  style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                 ),
                 const SizedBox(height: 18),
                 Flexible(
@@ -165,12 +168,12 @@ void showInventoryStatusSheet(BuildContext context, InventoryProvider provider) 
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        buildStatusRow('Stored in Containers', stored, total, const Color(0xFF10B981)),
-                        buildStatusRow('In Use / Active', inUse, total, const Color(0xFF3B82F6)),
-                        buildStatusRow('Lent to Borrowers', lent, total, const Color(0xFF8B5CF6)),
-                        buildStatusRow('Low Stock Warning', lowStock, total, const Color(0xFFF59E0B)),
-                        buildStatusRow('Expiring Soon (≤ ${provider.expiryWarningDays}d)', expiringSoon, total, const Color(0xFFF97316)),
-                        buildStatusRow('Expired Assets', expired, total, const Color(0xFFEF4444)),
+                        buildStatusRow(context.l10n.storedInContainers, stored, total, const Color(0xFF10B981)),
+                        buildStatusRow(context.l10n.inUseActive, inUse, total, const Color(0xFF3B82F6)),
+                        buildStatusRow(context.l10n.lentToBorrowers, lent, total, const Color(0xFF8B5CF6)),
+                        buildStatusRow(context.l10n.lowStockWarning, lowStock, total, const Color(0xFFF59E0B)),
+                        buildStatusRow(context.l10n.expiringSoonD(provider.expiryWarningDays), expiringSoon, total, const Color(0xFFF97316)),
+                        buildStatusRow(context.l10n.expiredAssets, expired, total, const Color(0xFFEF4444)),
                       ],
                     ),
                   ),
@@ -186,6 +189,7 @@ void showInventoryStatusSheet(BuildContext context, InventoryProvider provider) 
 
 
 Widget buildStatusRow(String label, int count, int total, Color color) {
+  return Builder(builder: (context) {
   final percentage = total > 0 ? (count / total) : 0.0;
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -203,12 +207,12 @@ Widget buildStatusRow(String label, int count, int total, Color color) {
                   decoration: BoxDecoration(color: color, shape: BoxShape.circle),
                 ),
                 const SizedBox(width: 8),
-                Text(label, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13, color: Color(0xFF18181B))),
+                Text(label, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13, color: context.colors.textPrimary)),
               ],
             ),
             Text(
               '$count items (${(percentage * 100).toStringAsFixed(0)}%)',
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: context.colors.textSecondary),
             ),
           ],
         ),
@@ -217,7 +221,7 @@ Widget buildStatusRow(String label, int count, int total, Color color) {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: percentage,
-            backgroundColor: const Color(0xFFF4F4F6),
+            backgroundColor: context.colors.fill,
             valueColor: AlwaysStoppedAnimation<Color>(color),
             minHeight: 6,
           ),
@@ -225,4 +229,5 @@ Widget buildStatusRow(String label, int count, int total, Color color) {
       ],
     ),
   );
+});
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'app_feedback.dart';
 import 'app_form_field.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 
 void showAddPhotoModal(
@@ -17,15 +20,15 @@ void showAddPhotoModal(
   final presets = isReceipt
       ? [
           {
-            'title': 'Paper Receipt',
+            'title': context.l10n.paperReceipt,
             'url': 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop&q=80',
           },
           {
-            'title': 'Store Invoice',
+            'title': context.l10n.storeInvoice,
             'url': 'https://images.unsplash.com/photo-1450133064473-71024230f91b?w=800&auto=format&fit=crop&q=80',
           },
           {
-            'title': 'Warranty Card',
+            'title': context.l10n.warrantyCard,
             'url': 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=800&auto=format&fit=crop&q=80',
           },
         ]
@@ -61,7 +64,7 @@ void showAddPhotoModal(
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     builder: (ctx) => Material(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       child: Padding(
         padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
@@ -73,7 +76,7 @@ void showAddPhotoModal(
               child: Container(
                 width: 44,
                 height: 4,
-                decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(color: context.colors.border, borderRadius: BorderRadius.circular(2)),
               ),
             ),
             const SizedBox(height: 18),
@@ -81,10 +84,11 @@ void showAddPhotoModal(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  isReceipt ? 'Add Receipt Photo' : 'Add Product Photo',
+                  isReceipt ? context.l10n.addReceiptPhoto : context.l10n.addProductPhoto,
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 IconButton(
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                   icon: const Icon(Icons.close_rounded),
                   onPressed: () => Navigator.pop(ctx),
                 ),
@@ -98,7 +102,7 @@ void showAddPhotoModal(
                 // Camera Button
                 Expanded(
                   child: Material(
-                    color: const Color(0xFF18181B),
+                    color: context.colors.primary,
                     borderRadius: BorderRadius.circular(16),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
@@ -109,11 +113,11 @@ void showAddPhotoModal(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Column(
-                          children: const [
+                          children: [
                             Icon(Icons.camera_alt_rounded, color: Colors.white, size: 26),
                             SizedBox(height: 6),
                             Text(
-                              'Camera',
+                              context.l10n.commonCamera,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -131,7 +135,7 @@ void showAddPhotoModal(
                 // Gallery Button
                 Expanded(
                   child: Material(
-                    color: const Color(0xFFF4F4F6),
+                    color: context.colors.fill,
                     borderRadius: BorderRadius.circular(16),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(16),
@@ -142,13 +146,13 @@ void showAddPhotoModal(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Column(
-                          children: const [
-                            Icon(Icons.photo_library_rounded, color: Color(0xFF18181B), size: 26),
+                          children: [
+                            Icon(Icons.photo_library_rounded, color: context.colors.textPrimary, size: 26),
                             SizedBox(height: 6),
                             Text(
-                              'Gallery',
+                              context.l10n.commonGallery,
                               style: TextStyle(
-                                color: Color(0xFF18181B),
+                                color: context.colors.textPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               ),
@@ -166,27 +170,27 @@ void showAddPhotoModal(
             // Divider
             Row(
               children: [
-                Expanded(child: Divider(color: Colors.grey.shade200)),
+                Expanded(child: Divider(color: context.colors.border)),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
-                    'OR VIA URL',
+                    context.l10n.orViaUrl,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade400,
+                      color: context.colors.textMuted,
                       letterSpacing: 0.5,
                     ),
                   ),
                 ),
-                Expanded(child: Divider(color: Colors.grey.shade200)),
+                Expanded(child: Divider(color: context.colors.border)),
               ],
             ),
             const SizedBox(height: 14),
 
             // Image URL input
             AppFormField(
-              label: 'Image URL',
+              label: context.l10n.imageUrl,
               hintText: 'https://example.com/image.jpg',
               controller: urlController,
             ),
@@ -195,7 +199,7 @@ void showAddPhotoModal(
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF18181B),
+                  backgroundColor: context.colors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
@@ -204,18 +208,18 @@ void showAddPhotoModal(
                   if (text.isNotEmpty) {
                     onPhotoAdded(text);
                     Navigator.pop(ctx);
-                    AppFeedback.showSuccess(context, 'Photo added');
+                    AppFeedback.showSuccess(context, context.l10n.photoAdded);
                   }
                 },
-                child: const Text('Add via URL'),
+                child: Text(context.l10n.addViaUrl),
               ),
             ),
             const SizedBox(height: 20),
 
             // Quick preset photos
-            const Text(
-              'Or choose sample photo',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+            Text(
+              context.l10n.orChooseSamplePhoto,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
             ),
             const SizedBox(height: 10),
             SizedBox(
@@ -225,18 +229,18 @@ void showAddPhotoModal(
                 itemCount: presets.length,
                 itemBuilder: (context, idx) {
                   final p = presets[idx];
-                  return GestureDetector(
+                  return Tappable(
                     onTap: () {
                       onPhotoAdded(p['url']!);
                       Navigator.pop(ctx);
-                      AppFeedback.showSuccess(context, 'Sample photo selected');
+                      AppFeedback.showSuccess(context, context.l10n.samplePhotoSelected);
                     },
                     child: Container(
                       width: 76,
                       margin: const EdgeInsets.only(right: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: context.colors.border),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(14),

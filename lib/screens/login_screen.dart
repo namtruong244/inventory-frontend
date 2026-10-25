@@ -8,6 +8,8 @@ import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/google_logo.dart';
 import 'home_screen.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Screen allowing authentication with Google (Gmail) or Email/Password
 part 'login_screen_parts.dart';
@@ -123,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Colors.transparent,
           builder: (ctx) => _buildGoogleAccountSelectorSheet(
             ctx,
-            notice: 'Google Sign-In: ${e.description ?? e.code.name}. You can also pick a demo account below.',
+            notice: context.l10n.googleSignInYouCan(e.description ?? e.code.name),
           ),
         );
       }
@@ -137,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
           builder: (ctx) => _buildGoogleAccountSelectorSheet(
             ctx,
             notice: e.toString().contains('PlatformException')
-                ? 'Google Sign-In: Configure GIDClientID in Info.plist for live Google account. You can also pick a demo account below.'
+                ? context.l10n.googleSignInConfigureGidclientid
                 : null,
           ),
         );
@@ -165,12 +167,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       if (success) {
-        AppFeedback.showSuccess(context, 'Signed in as $email');
+        AppFeedback.showSuccess(context, context.l10n.signedInAs(email));
         _navigateToHome();
       } else {
         AppFeedback.showError(
           context,
-          provider.errorMessage ?? 'Google authentication failed',
+          provider.errorMessage ?? context.l10n.googleAuthenticationFailed,
         );
       }
     }
@@ -204,12 +206,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       if (success) {
-        AppFeedback.showSuccess(context, 'Welcome back, ${provider.userName}!');
+        AppFeedback.showSuccess(context, context.l10n.welcomeBack(provider.userName));
         _navigateToHome();
       } else {
         AppFeedback.showError(
           context,
-          provider.errorMessage ?? 'Authentication failed',
+          provider.errorMessage ?? context.l10n.authenticationFailed,
         );
       }
     }
@@ -228,7 +230,7 @@ class _LoginScreenState extends State<LoginScreen> {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F9FA),
+        backgroundColor: context.colors.background,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
@@ -247,7 +249,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: 68,
                           height: 68,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF18181B),
+                            color: context.colors.primary,
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
@@ -276,16 +278,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.5,
-                          color: const Color(0xFF18181B),
+                          color: context.colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Sign in to sync your inventory & assets across devices',
+                        context.l10n.signInToSyncYour,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.inter(
                           fontSize: 13,
-                          color: const Color(0xFF71717A),
+                          color: context.colors.textSecondary,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -295,17 +297,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       _buildOAuthButton(
                         onPressed: _isLoading ? null : _handleGoogleSignIn,
                         leading: const GoogleLogoWidget(size: 22),
-                        label: 'Continue with Google',
-                        backgroundColor: Colors.white,
-                        textColor: const Color(0xFF18181B),
-                        borderColor: const Color(0xFFE4E4E7),
+                        label: context.l10n.continueWithGoogle,
+                        backgroundColor: context.colors.surface,
+                        textColor: context.colors.textPrimary,
+                        borderColor: context.colors.border,
                       ),
                       const SizedBox(height: 24),
 
                       // Divider with "or continue with email"
                       Row(
                         children: [
-                          const Expanded(child: Divider(color: Color(0xFFE4E4E7))),
+                          Expanded(child: Divider(color: context.colors.border)),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 14.0),
                             child: Text(
@@ -313,11 +315,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: const Color(0xFFA1A1AA),
+                                color: context.colors.textMuted,
                               ),
                             ),
                           ),
-                          const Expanded(child: Divider(color: Color(0xFFE4E4E7))),
+                          Expanded(child: Divider(color: context.colors.border)),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -327,19 +329,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         TextFormField(
                           controller: _nameController,
                           decoration: InputDecoration(
-                            labelText: 'Full Name',
+                            labelText: context.l10n.fullName,
                             hintText: 'John Doe',
                             prefixIcon: const Icon(Icons.person_outline_rounded, size: 20),
-                            fillColor: Colors.white,
+                            fillColor: context.colors.surface,
                             filled: true,
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                              borderSide: BorderSide(color: context.colors.border),
                             ),
                           ),
                           validator: (val) {
                             if (_isRegisterMode && (val == null || val.trim().isEmpty)) {
-                              return 'Please enter your name';
+                              return context.l10n.pleaseEnterYourName;
                             }
                             return null;
                           },
@@ -352,22 +354,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          labelText: 'Email Address',
+                          labelText: context.l10n.emailAddress,
                           hintText: 'name@example.com',
                           prefixIcon: const Icon(Icons.mail_outline_rounded, size: 20),
-                          fillColor: Colors.white,
+                          fillColor: context.colors.surface,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                            borderSide: BorderSide(color: context.colors.border),
                           ),
                         ),
                         validator: (val) {
                           if (val == null || val.trim().isEmpty) {
-                            return 'Please enter your email';
+                            return context.l10n.pleaseEnterYourEmail;
                           }
                           if (!val.contains('@') || !val.contains('.')) {
-                            return 'Please enter a valid email';
+                            return context.l10n.pleaseEnterAValidEmail;
                           }
                           return null;
                         },
@@ -379,31 +381,36 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordController,
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          labelText: context.l10n.commonPassword,
                           hintText: '••••••••',
                           prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
                           suffixIcon: IconButton(
+ tooltip: context.l10n.showOrHidePassword,
                             icon: Icon(
                               _obscurePassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
                               size: 20,
-                              color: const Color(0xFF71717A),
+                              color: context.colors.textSecondary,
                             ),
                             onPressed: () {
                               setState(() => _obscurePassword = !_obscurePassword);
                             },
                           ),
-                          fillColor: Colors.white,
+                          fillColor: context.colors.surface,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(color: Color(0xFFE4E4E7)),
+                            borderSide: BorderSide(color: context.colors.border),
                           ),
                         ),
                         validator: (val) {
-                          if (val == null || val.trim().length < 6) {
-                            return 'Password must be at least 6 characters';
+                          if (val == null || val.isEmpty) {
+                            return context.l10n.passwordIsRequired;
+                          }
+                          // Login accepts older 6-7 character passwords; only new ones need 8.
+                          if (_isRegisterMode && val.length < 8) {
+                            return context.l10n.passwordMustBeAtLeast;
                           }
                           return null;
                         },
@@ -420,11 +427,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                             child: Text(
-                              'Forgot password?',
+                              context.l10n.forgotPassword,
                               style: GoogleFonts.inter(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
-                                color: const Color(0xFF52525B),
+                                color: context.colors.textSecondary,
                               ),
                             ),
                           ),
@@ -438,7 +445,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: FilledButton(
                           onPressed: _isLoading ? null : _handleEmailPasswordAuth,
                           style: FilledButton.styleFrom(
-                            backgroundColor: const Color(0xFF18181B),
+                            backgroundColor: context.colors.primary,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -454,7 +461,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 )
                               : Text(
-                                  _isRegisterMode ? 'Create Account' : 'Sign In',
+                                  _isRegisterMode ? context.l10n.createAccount : context.l10n.signIn,
                                   style: GoogleFonts.inter(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -473,8 +480,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         child: Text(
                           _isRegisterMode
-                              ? 'Already have an account? Sign in'
-                              : "Don't have an account? Sign up",
+                              ? context.l10n.alreadyHaveAnAccountSign
+                              : context.l10n.donTHaveAnAccount,
                           style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -487,7 +494,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Terms & Policy (WCAG AA compliant contrast #6B7280)
                       Text(
-                        'By continuing, you agree to our Terms of Service & Privacy Policy',
+                        context.l10n.byContinuingYouAgreeTo,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.inter(
                           fontSize: 11,

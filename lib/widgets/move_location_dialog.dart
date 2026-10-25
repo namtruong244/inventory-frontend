@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class MoveLocationDialog extends StatefulWidget {
   final Box targetBox;
@@ -42,7 +44,7 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
     final totalSubBoxes = provider.getBoxesIn(widget.targetBox.id).length;
 
     return Material(
-      color: Colors.white,
+      color: context.colors.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       child: Padding(
         padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(context).padding.bottom + 24),
@@ -60,7 +62,7 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
               width: 44,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: context.colors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -75,7 +77,7 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bulk Move Location',
+                    context.l10n.bulkMoveLocation,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
@@ -83,12 +85,13 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Move "${widget.targetBox.name}" and contents',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    context.l10n.moveAndContents(widget.targetBox.name),
+                    style: TextStyle(color: context.colors.textSecondary, fontSize: 13),
                   ),
                 ],
               ),
               IconButton(
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.close_rounded),
               ),
@@ -100,16 +103,16 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F4F6),
+              color: context.colors.fill,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, size: 20, color: Color(0xFF18181B)),
+                Icon(Icons.info_outline, size: 20, color: context.colors.textPrimary),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'All $totalItems items and $totalSubBoxes nested containers inside will move along with this container.',
+                    context.l10n.allItemsAndNestedContainers(totalItems, totalSubBoxes),
                     style: const TextStyle(fontSize: 12, height: 1.3),
                   ),
                 ),
@@ -118,12 +121,12 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
           ),
           const SizedBox(height: 16),
 
-          const Text(
-            'Select Destination',
+          Text(
+            context.l10n.selectDestination,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF18181B),
+              color: context.colors.textPrimary,
             ),
           ),
           const SizedBox(height: 8),
@@ -135,9 +138,9 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
                 // Option: Make Root Location (No parent)
                 _buildDestinationOption(
                   id: null,
-                  name: 'Root Level (No Parent Container)',
+                  name: context.l10n.rootLevelNoParentContainer,
                   type: StorageType.room,
-                  breadcrumb: 'Top of hierarchy',
+                  breadcrumb: context.l10n.topOfHierarchy,
                   isSelected: _selectedParentId == null,
                   isEnabled: widget.targetBox.parentId != null,
                 ),
@@ -188,24 +191,24 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
                         Navigator.pop(context, true);
                         AppFeedback.showSuccess(
                           context,
-                          'Moved "${widget.targetBox.name}" successfully',
+                          context.l10n.movedSuccessfully(widget.targetBox.name),
                         );
                       } else {
                         AppFeedback.showError(
                           context,
-                          'Cannot move container into its own descendant',
+                          context.l10n.cannotMoveContainerIntoIts,
                         );
                       }
                     },
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF18181B),
-                disabledBackgroundColor: Colors.grey.shade300,
+                backgroundColor: context.colors.primary,
+                disabledBackgroundColor: context.colors.border,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text(
-                'Confirm Move',
+              child: Text(
+                context.l10n.confirmMove,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
@@ -234,33 +237,33 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF18181B) : const Color(0xFFF4F4F6),
+          color: isSelected ? context.colors.primary : context.colors.fill,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
           type.icon,
           size: 20,
-          color: isSelected ? Colors.white : Colors.grey.shade700,
+          color: isSelected ? Colors.white : context.colors.textSecondary,
         ),
       ),
       title: Text(
         name,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-          color: isEnabled ? const Color(0xFF18181B) : Colors.grey.shade400,
+          color: isEnabled ? context.colors.textPrimary : context.colors.textMuted,
         ),
       ),
       subtitle: Text(
         disabledReason ?? breadcrumb,
         style: TextStyle(
           fontSize: 11,
-          color: disabledReason != null ? Colors.red.shade400 : Colors.grey.shade500,
+          color: disabledReason != null ? Colors.red.shade400 : context.colors.textMuted,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: isSelected
-          ? const Icon(Icons.check_circle_rounded, color: Color(0xFF18181B))
+          ? Icon(Icons.check_circle_rounded, color: context.colors.textPrimary)
           : null,
     );
   }

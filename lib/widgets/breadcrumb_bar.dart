@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../screens/box_details_screen.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
 
 class BreadcrumbBar extends StatelessWidget {
   final String locationId;
@@ -37,7 +39,7 @@ class BreadcrumbBar extends StatelessWidget {
                 child: Icon(
                   Icons.chevron_right_rounded,
                   size: 16,
-                  color: Colors.grey.shade400,
+                  color: context.colors.textMuted,
                 ),
               ),
           ],
@@ -50,7 +52,7 @@ class BreadcrumbBar extends StatelessWidget {
     final child = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: isLast ? const Color(0xFF18181B) : const Color(0xFFF4F4F6),
+        color: isLast ? context.colors.primary : context.colors.fill,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -59,7 +61,7 @@ class BreadcrumbBar extends StatelessWidget {
           Icon(
             box.type.icon,
             size: 13,
-            color: isLast ? Colors.white : const Color(0xFF18181B),
+            color: isLast ? Colors.white : context.colors.textPrimary,
           ),
           const SizedBox(width: 5),
           Text(
@@ -67,7 +69,7 @@ class BreadcrumbBar extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: isLast ? FontWeight.bold : FontWeight.w500,
-              color: isLast ? Colors.white : const Color(0xFF18181B),
+              color: isLast ? Colors.white : context.colors.textPrimary,
             ),
           ),
         ],
@@ -78,7 +80,7 @@ class BreadcrumbBar extends StatelessWidget {
       return child;
     }
 
-    return GestureDetector(
+    return Tappable(
       onTap: () {
         Navigator.push(
           context,

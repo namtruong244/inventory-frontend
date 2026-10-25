@@ -4,6 +4,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import 'tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class ThermalLabelSheet extends StatefulWidget {
   final Box box;
@@ -38,8 +41,8 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
     final labelHeight = 185.0;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(context).padding.bottom + 24),
@@ -51,7 +54,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
             width: 44,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: context.colors.border,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -65,7 +68,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Thermal Label Print',
+                    context.l10n.thermalLabelPrint,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
@@ -73,12 +76,13 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Standard printable adhesive label',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    context.l10n.standardPrintableAdhesiveLabel,
+                    style: TextStyle(color: context.colors.textSecondary, fontSize: 13),
                   ),
                 ],
               ),
               IconButton(
+ tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.close_rounded),
               ),
@@ -90,7 +94,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F4F6),
+              color: context.colors.fill,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -113,7 +117,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
               height: labelHeight,
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.black, width: 2),
                 boxShadow: [
@@ -130,7 +134,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                   Container(
                     width: 105,
                     height: 105,
-                    color: Colors.white,
+                    color: context.colors.surface,
                     child: QrImageView(
                       data: widget.box.label,
                       version: QrVersions.auto,
@@ -179,7 +183,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                           breadcrumb,
                           style: TextStyle(
                             fontSize: 10,
-                            color: Colors.grey.shade800,
+                            color: context.colors.textPrimary,
                             height: 1.2,
                           ),
                           maxLines: 2,
@@ -211,13 +215,13 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
-                    AppFeedback.showSuccess(context, 'Thermal label copied to clipboard');
+                    AppFeedback.showSuccess(context, context.l10n.thermalLabelCopiedToClipboard);
                   },
                   icon: const Icon(Icons.copy_rounded, size: 18),
-                  label: const Text('Copy ID'),
+                  label: Text(context.l10n.copyId),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    side: BorderSide(color: Colors.grey.shade300),
+                    side: BorderSide(color: context.colors.border),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -231,13 +235,13 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                     Navigator.pop(context);
                     AppFeedback.showSuccess(
                       context,
-                      'Thermal label sent to printer (${_selectedSize}mm)',
+                      context.l10n.thermalLabelSentToPrinter(_selectedSize),
                     );
                   },
                   icon: const Icon(Icons.print_rounded, size: 18),
-                  label: const Text('Print Label'),
+                  label: Text(context.l10n.printLabel),
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF18181B),
+                    backgroundColor: context.colors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -254,13 +258,13 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
 
   Widget _buildSizeTab(String size, String label) {
     final isSelected = _selectedSize == size;
-    return GestureDetector(
+    return Tappable(
       onTap: () => setState(() => _selectedSize = size),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
+          color: isSelected ? context.colors.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           boxShadow: isSelected
               ? [
@@ -278,7 +282,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
           style: TextStyle(
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? const Color(0xFF18181B) : Colors.grey.shade600,
+            color: isSelected ? context.colors.textPrimary : context.colors.textSecondary,
           ),
         ),
       ),

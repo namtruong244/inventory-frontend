@@ -24,7 +24,12 @@ extension InventoryBoxes on InventoryProvider {
     }
     return _commit(
       PendingOp('updateBox', {'box': updatedBox.toJson()}),
-      () => _apiService.updateBox(updatedBox),
+      () async {
+        final saved = await _apiService.updateBox(updatedBox);
+        final i = _boxes.indexWhere((x) => x.id == saved.id);
+        if (i != -1) _boxes[i] = saved;
+        _notify();
+      },
     );
   }
 
@@ -116,7 +121,7 @@ extension InventoryBoxes on InventoryProvider {
 
   String getBreadcrumbString(String locationId) {
     final path = getBreadcrumb(locationId);
-    if (path.isEmpty) return 'Unassigned';
+    if (path.isEmpty) return AppL10n.current.commonUnassigned;
     return path.map((b) => b.name).join(' › ');
   }
 

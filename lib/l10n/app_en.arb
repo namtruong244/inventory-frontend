@@ -1,0 +1,1611 @@
+{
+  "@@locale": "en",
+  "scanTitle": "Scan QR & Barcode",
+  "scanFoundContainer": "Container found: \"{name}\"",
+  "@scanFoundContainer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scanFoundItem": "Item found: \"{name}\"",
+  "@scanFoundItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "scanOpenDetailsPrompt": "Open its details now?",
+  "scanOpen": "Open",
+  "scanKeepScanning": "Keep Scanning",
+  "scanUnknownTitle": "Scanned Code: {code}",
+  "@scanUnknownTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "scanUnknownMessage": "No storage box or item currently matches this code. Would you like to create a new item with this barcode?",
+  "scanAddNewItem": "Add New Item",
+  "scanPickLocationTitle": "Where is it stored?",
+  "scanPickLocationSubtitle": "Pick the location for the new item",
+  "scanPickLocationConfirm": "Use This Location",
+  "scanModeLocation": "Location QR",
+  "scanModeProduct": "Product Barcode",
+  "scanHintProduct": "Scan product barcode (UPC/EAN) to auto-fill or search in inventory",
+  "scanHintLocation": "Point camera at container QR code to open details and view all contents",
+  "scanManualTitle": "Enter Code Manually",
+  "scanManualLabel": "Label ID or Barcode",
+  "settingsAppearanceHeader": "APPEARANCE & LANGUAGE",
+  "settingsTheme": "Theme",
+  "settingsThemeSubtitle": "Light or dark appearance",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "settingsLanguage": "Language",
+  "settingsLanguageSubtitle": "Screens already translated switch language immediately",
+  "languageSystem": "System",
+  "settingsScannerHeader": "SCANNER & RECOGNITION",
+  "settingsAlertsHeader": "ALERTS",
+  "settingsVibrate": "Vibration on Scan",
+  "settingsVibrateSubtitle": "Haptic feedback when QR/Barcode detected",
+  "settingsSound": "Sound Feedback",
+  "settingsSoundSubtitle": "Play a click sound when a scan succeeds (this device only)",
+  "settingsAutoOpen": "Auto-Open Details",
+  "settingsAutoOpenSubtitle": "Off: ask before opening the matched container/item",
+  "settingsExpiring": "Expiring Items",
+  "settingsExpiringSubtitle": "Count expired and expiring items in the in-app alert badge (no push notifications yet)",
+  "settingsOverdue": "Overdue Loans",
+  "settingsOverdueSubtitle": "Count overdue loans in the in-app alert badge (no push notifications yet)",
+  "settingsLowStock": "Low Stock",
+  "settingsLowStockSubtitle": "Count items below their minimum quantity in the in-app alert badge",
+  "trashConfirmItemTitle": "Move to Trash?",
+  "trashConfirmBoxTitle": "Move location to Trash?",
+  "trashConfirmMessage": "\"{name}\" will be moved to Trash. You can restore it within {days} days.",
+  "@trashConfirmMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "trashConfirmBoxMessage": "\"{name}\" and everything inside it will be moved to Trash. You can restore them within {days} days.",
+  "@trashConfirmBoxMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "trashMoveAction": "Move to Trash",
+  "trashMovedToast": "\"{name}\" moved to Trash",
+  "@trashMovedToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashUndo": "Undo",
+  "trashRestoredToast": "\"{name}\" restored",
+  "@trashRestoredToast": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "trashRestoreFailed": "Could not restore \"{name}\". Try from Trash in Settings.",
+  "@trashRestoreFailed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "syncOffline": "Offline: showing saved data",
+  "syncUnsynced": "Changes not synced yet",
+  "syncPending": "{count, plural, =0{No changes waiting} =1{1 change waiting to sync} other{{count} changes waiting to sync}}",
+  "@syncPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncNeedsAttention": "{count, plural, =1{1 needs your attention} other{{count} need your attention}}",
+  "@syncNeedsAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "syncSheetTitle": "Sync status",
+  "syncOfflineBody": "You are offline. Your changes are saved on this device and will upload automatically when the server is reachable.",
+  "syncOnlineBody": "Some changes have not reached the server yet.",
+  "syncRejectedTitle": "Rejected by the server",
+  "syncDismiss": "Dismiss",
+  "syncNow": "Sync now",
+  "lifecycleAlerts": "Lifecycle & Alerts",
+  "allGood": "All Good!",
+  "noItemsAreExpiredExpiring": "No items are expired, expiring soon, or overdue.",
+  "expiredItems": "Expired Items",
+  "expiringSoonPerishables": "Expiring Soon (Perishables)",
+  "warrantiesEndingSoon": "Warranties Ending Soon",
+  "overdueBorrowedItems": "Overdue Borrowed Items",
+  "lowStockWarnings": "Low Stock Warnings",
+  "commonStorage": "Storage",
+  "onlyRemainingThreshold": "Only {qty} {unit} remaining (Threshold: ≤ {minQty} {unit2})",
+  "@onlyRemainingThreshold": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "minQty": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "viewDetails": "View details",
+  "warrantyEndsInDays": "Warranty ends in {daysLeft} days",
+  "@warrantyEndsInDays": {
+    "placeholders": {
+      "daysLeft": {
+        "type": "Object"
+      }
+    }
+  },
+  "borrowedItem": "Borrowed Item",
+  "commonBorrower": "Borrower: {borrowerName} • {borrowerContact}",
+  "@commonBorrower": {
+    "placeholders": {
+      "borrowerName": {
+        "type": "Object"
+      },
+      "borrowerContact": {
+        "type": "Object"
+      }
+    }
+  },
+  "locationUpdatedSuccessfully": "Location \"{boxName}\" updated successfully",
+  "@locationUpdatedSuccessfully": {
+    "placeholders": {
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "locationCreatedSuccessfully": "Location \"{boxName}\" created successfully",
+  "@locationCreatedSuccessfully": {
+    "placeholders": {
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "pleaseEnterAValidLocation": "Please enter a valid location name",
+  "editLocation": "Edit Location",
+  "createRootLocation": "Create Root Location",
+  "createNestedContainer": "Create Nested Container",
+  "commonDelete": "Delete",
+  "couldNotDeletePleaseTry": "Could not delete \"{boxName}\". Please try again.",
+  "@couldNotDeletePleaseTry": {
+    "placeholders": {
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "storageType": "Storage Type",
+  "commonName": "Name",
+  "eGLivingRoomOak": "e.g. Living Room, Oak Bookshelf, Electronics Box",
+  "pleaseEnterAName": "Please enter a name",
+  "commonDescription": "Description",
+  "eGUpperShelfLeft": "e.g. Upper shelf, left side near window (Optional)",
+  "parentContainer": "Parent Container",
+  "qrLabelId": "QR Label ID",
+  "saveChanges": "Save Changes",
+  "saveLocation": "Save Location",
+  "locationNotFound": "Location not found",
+  "exportBarcodes": "Export Barcodes",
+  "moreOptions": "More Options",
+  "showQrCode": "Show QR code",
+  "commonOverview": "Overview",
+  "nestedContainers": "Nested Containers ({count})",
+  "@nestedContainers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "addContainer": "Add Container",
+  "addContainerInside": "Add Container Inside",
+  "couldNotDeletePleaseTry2": "Could not delete \"{name}\". Please try again.",
+  "@couldNotDeletePleaseTry2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemsInThisContainer": "Items in this container ({count})",
+  "@itemsInThisContainer": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "addItem": "Add Item",
+  "noDirectItemsStoredHere": "No direct items stored here",
+  "moveLocation": "Move Location",
+  "printThermalLabel": "Print Thermal Label",
+  "viewFullQrCode": "View Full QR Code",
+  "deleteLocation": "Delete Location",
+  "storageHierarchy": "Storage Hierarchy",
+  "exportAllQrCodes": "Export all QR codes",
+  "newLocation": "New Location",
+  "searchLocationsRoomsContainers": "Search locations, rooms, containers...",
+  "commonAll": "All ({count})",
+  "@commonAll": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonRooms": "Rooms ({count})",
+  "@commonRooms": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "cabinetsShelves": "Cabinets & Shelves ({count})",
+  "@cabinetsShelves": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "boxesDrawers": "Boxes & Drawers ({count})",
+  "@boxesDrawers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "switchToFlatList": "Switch to Flat List",
+  "switchToTreeView": "Switch to Tree View",
+  "expandAll": "Expand all",
+  "collapseAll": "Collapse all",
+  "noLocationsYet": "No locations yet",
+  "tapNewLocationAboveTo": "Tap \"New Location\" above to create your first room or box",
+  "noMatchingLocationsFound": "No matching locations found",
+  "trySearchingWithADifferent": "Try searching with a different name or label",
+  "commonMove": "Move",
+  "commonEdit": "Edit",
+  "addSubContainer": "Add sub-container",
+  "commonPath": "Path: ",
+  "trackManageYourInventory": "Track & manage\nyour inventory!",
+  "commonSearch": "Search",
+  "commonHome": "Home",
+  "commonBox": "Box",
+  "commonItem": "Item",
+  "commonSetting": "Setting",
+  "scanQrCode": "Scan QR Code",
+  "categoryCreated": "Category \"{created}\" created",
+  "@categoryCreated": {
+    "placeholders": {
+      "created": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemUpdatedSuccessfully": "Item \"{itemName}\" updated successfully",
+  "@itemUpdatedSuccessfully": {
+    "placeholders": {
+      "itemName": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemAddedSuccessfully": "Item \"{itemName}\" added successfully",
+  "@itemAddedSuccessfully": {
+    "placeholders": {
+      "itemName": {
+        "type": "Object"
+      }
+    }
+  },
+  "pleaseEnterAnItemName": "Please enter an item name",
+  "editItem": "Edit Item",
+  "newItem": "New Item",
+  "commonSave": "Save",
+  "commonCreate": "Create",
+  "productPhotos": "Product Photos",
+  "receiptsWarrantyProof": "Receipts & Warranty Proof",
+  "saveItem": "Save Item",
+  "basicInformation": "Basic Information",
+  "itemName": "Item Name",
+  "eGMacbookProFirst": "e.g. MacBook Pro, First Aid Kit, USB Cable",
+  "pleaseEnterItemName": "Please enter item name",
+  "commonCategory": "Category",
+  "selectCategory": "Select Category",
+  "tapToChangeCategory": "Tap to change category",
+  "commonQuantity": "Quantity",
+  "commonUnit": "Unit",
+  "selectUnit": "Select Unit",
+  "lowStockAlertThresholdOptional": "Low Stock Alert Threshold (Optional)",
+  "eG2AlertWhen": "e.g. 2 (Alert when quantity ≤ this number)",
+  "storageLocation": "Storage Location",
+  "selectStorageContainer": "Select Storage Container",
+  "commonUnassigned": "Unassigned",
+  "colorConditionAccessoriesOptional": "Color, condition, accessories (Optional)",
+  "consumableItem": "Consumable Item",
+  "consumableItemsBatteriesMasksFood": "Consumable items (batteries, masks, food, medicine...)",
+  "assetStatus": "Asset Status",
+  "assetWarrantyDetails": "Asset & Warranty Details",
+  "purchasePrice": "Purchase Price ({currency})",
+  "@purchasePrice": {
+    "placeholders": {
+      "currency": {
+        "type": "Object"
+      }
+    }
+  },
+  "serialNumber": "Serial Number",
+  "productBarcodeUpcEan": "Product Barcode (UPC / EAN)",
+  "scanOrEnterProductBarcode": "Scan or enter product barcode",
+  "warrantyExpiry": "Warranty Expiry",
+  "perishableExpiry": "Perishable Expiry",
+  "receiptCaptured": "Receipt captured",
+  "photoCaptured": "Photo captured",
+  "cameraIsnTAvailableCheck": "Camera isn't available. Check the app's camera permission.",
+  "receiptSelected": "Receipt selected",
+  "photoSelected": "Photo selected",
+  "couldnTOpenYourPhotos": "Couldn't open your photos. Check the app's photo permission.",
+  "commonCover": "Cover",
+  "notSet": "Not set",
+  "selectStorageLocation": "Select Storage Location",
+  "chooseContainerOrScanQr": "Choose container or scan QR to assign",
+  "setLocation": "Set Location",
+  "returnedToStorage": "Returned \"{name}\" to storage",
+  "@returnedToStorage": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnedToStorage2": "Returned \"{name}\" to storage{boxName}",
+  "@returnedToStorage2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "boxName": {
+        "type": "Object"
+      }
+    }
+  },
+  "movedBackToStorage": "Moved \"{name}\" back to storage",
+  "@movedBackToStorage": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemNotFoundOrHas": "Item not found or has been deleted",
+  "goBack": "Go Back",
+  "editItemDetails": "Edit Item Details",
+  "lendItem": "Lend Item",
+  "deleteItem": "Delete Item",
+  "commonConsumable": "Consumable",
+  "stockHistory": "Stock history",
+  "outOfStockRestock": "Out of Stock (Restock)",
+  "commonConsume": "Consume ({unit})",
+  "@commonConsume": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "returnToStorage": "Return to Storage",
+  "takeOutToUse": "Take Out to Use",
+  "itemCatalog": "Item Catalog",
+  "searchItemsBarcodesSerials": "Search items, barcodes, serials...",
+  "commonStored": "Stored ({count})",
+  "@commonStored": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "inUse": "In Use ({count})",
+  "@inUse": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonLent": "Lent ({count})",
+  "@commonLent": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "alertsExpiring": "Alerts / Expiring ({count})",
+  "@alertsExpiring": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "lowStock": "Low Stock ({count})",
+  "@lowStock": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "allStorageLocations": "All Storage Locations",
+  "noMatchingItemsFound": "No matching items found",
+  "noItemsFound": "No items found",
+  "trySearchingWithAnotherName": "Try searching with another name or clearing filters",
+  "tapAddItemAboveTo": "Tap \"Add Item\" above to catalogue your first asset",
+  "itemMarkedAsReturned": "Item marked as returned",
+  "commonReturn": "Return",
+  "commonLend": "Lend",
+  "selectDestinationContainer": "Select Destination Container",
+  "chooseContainerOrScanIts": "Choose container or scan its QR to add item",
+  "addItemHere": "Add Item Here",
+  "lendingTracker": "Lending Tracker",
+  "commonLoans": "Loans",
+  "itemsHavePassedTheirExpected": "Items have passed their expected return date.",
+  "commonActive": "Active ({count})",
+  "@commonActive": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonHistory": "History ({count})",
+  "@commonHistory": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "noActiveLoans": "No active loans",
+  "allYourItemsAreSafely": "All your items are safely in storage.",
+  "noLendingHistory": "No lending history",
+  "returnedItemsWillAppearHere": "Returned items will appear here.",
+  "unknownItem": "Unknown Item",
+  "lentTo": "Lent to {borrowerName}",
+  "@lentTo": {
+    "placeholders": {
+      "borrowerName": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonLent2": "Lent: {count}",
+  "@commonLent2": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonDue": "Due: {count}",
+  "@commonDue": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "markAsReturned": "Mark as Returned",
+  "confirmItemReturn": "Confirm Item Return",
+  "confirmReturn": "Confirm Return",
+  "itemMarkedAsReturnedSuccessfully": "Item marked as returned successfully",
+  "lendAnItem": "Lend an Item",
+  "selectItemToLend": "Select Item to Lend",
+  "chooseAnAvailableItem": "Choose an available item...",
+  "quantityToLend": "Quantity to lend",
+  "enterAQuantityGreaterThan": "Enter a quantity greater than 0",
+  "onlyInStock": "Only {quantity} in stock",
+  "@onlyInStock": {
+    "placeholders": {
+      "quantity": {
+        "type": "Object"
+      }
+    }
+  },
+  "borrowerName": "Borrower Name",
+  "eGJohnDoe": "e.g. John Doe",
+  "pleaseEnterBorrowerName": "Please enter borrower name",
+  "borrowerContact": "Borrower Contact",
+  "phoneNumberOrEmailOptional": "Phone number or email (Optional)",
+  "expectedReturnDate": "Expected Return Date",
+  "selectDueDateOptional": "Select due date (Optional)",
+  "commonNotes": "Notes",
+  "eGBorrowedForPhotography": "e.g. Borrowed for photography project",
+  "pleaseSelectAnItem": "Please select an item",
+  "itemMarkedAsLentSuccessfully": "Item marked as lent successfully",
+  "saveLoan": "Save Loan",
+  "googleSignInYouCan": "Google Sign-In: {count}. You can also pick a demo account below.",
+  "@googleSignInYouCan": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "googleSignInConfigureGidclientid": "Google Sign-In: Configure GIDClientID in Info.plist for live Google account. You can also pick a demo account below.",
+  "signedInAs": "Signed in as {email}",
+  "@signedInAs": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "googleAuthenticationFailed": "Google authentication failed",
+  "welcomeBack": "Welcome back, {userName}!",
+  "@welcomeBack": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      }
+    }
+  },
+  "authenticationFailed": "Authentication failed",
+  "signInToSyncYour": "Sign in to sync your inventory & assets across devices",
+  "continueWithGoogle": "Continue with Google",
+  "fullName": "Full Name",
+  "pleaseEnterYourName": "Please enter your name",
+  "emailAddress": "Email Address",
+  "pleaseEnterYourEmail": "Please enter your email",
+  "pleaseEnterAValidEmail": "Please enter a valid email",
+  "commonPassword": "Password",
+  "showOrHidePassword": "Show or hide password",
+  "passwordIsRequired": "Password is required",
+  "passwordMustBeAtLeast": "Password must be at least 8 characters",
+  "forgotPassword": "Forgot password?",
+  "createAccount": "Create Account",
+  "signIn": "Sign In",
+  "alreadyHaveAnAccountSign": "Already have an account? Sign in",
+  "donTHaveAnAccount": "Don't have an account? Sign up",
+  "byContinuingYouAgreeTo": "By continuing, you agree to our Terms of Service & Privacy Policy",
+  "signInWithGoogle": "Sign in with Google",
+  "chooseAnAccountToContinue": "Choose an account to continue to Personal Inventory",
+  "useAnotherGmailAccount": "Use another Gmail account",
+  "enterCustomGmailComAddress": "Enter custom @gmail.com address",
+  "enterGmailAccount": "Enter Gmail Account",
+  "yourName": "Your Name",
+  "gmailAddress": "Gmail Address",
+  "commonCancel": "Cancel",
+  "commonContinue": "Continue",
+  "resetPassword": "Reset Password",
+  "aPasswordResetLinkWill": "A password reset link will be sent to {email}.",
+  "@aPasswordResetLinkWill": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "pleaseEnterYourEmailAddress": "Please enter your email address on the sign in form to receive password reset instructions.",
+  "passwordResetEmailSentTo": "Password reset email sent to {email}",
+  "@passwordResetEmailSentTo": {
+    "placeholders": {
+      "email": {
+        "type": "Object"
+      }
+    }
+  },
+  "passwordResetInstructionsSent": "Password reset instructions sent",
+  "sendLink": "Send Link",
+  "boxQrCode": "Box QR Code",
+  "commonLabel": "Label: {label}",
+  "@commonLabel": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "printLabel": "Print Label",
+  "commonAll2": "All",
+  "commonStored2": "Stored",
+  "inUse2": "In Use",
+  "commonLent3": "Lent",
+  "commonPerishable": "Perishable",
+  "searchItemsSerialBarcodeBoxes": "Search items, serial, barcode, boxes...",
+  "searchYourEntireInventory": "Search your entire inventory",
+  "findItemsByNameBarcode": "Find items by name, barcode, serial number, or storage location",
+  "noResultsFor": "No results for \"{query}\"",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "Object"
+      }
+    }
+  },
+  "tryADifferentNameSerial": "Try a different name, serial number, or barcode",
+  "storageLocations": "Storage Locations ({count})",
+  "@storageLocations": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonItems": "Items ({count})",
+  "@commonItems": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "developerOptionsActivated": "Developer options activated!",
+  "tapMoreTimesToUnlock": "Tap {remaining} more times to unlock developer tools",
+  "@tapMoreTimesToUnlock": {
+    "placeholders": {
+      "remaining": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonSettings": "Settings",
+  "preferencesTaxonomyInventoryTools": "Preferences, taxonomy & inventory tools",
+  "taxonomyCategories": "TAXONOMY & CATEGORIES",
+  "manageCategories": "Manage Categories",
+  "inventoryPreferences": "INVENTORY PREFERENCES",
+  "currencySymbol": "Currency Symbol",
+  "usedForPurchasePricesValuation": "Used for purchase prices & valuation",
+  "defaultItemUnit": "Default Item Unit",
+  "preFilledUnitForNewly": "Pre-filled unit for newly created items",
+  "expiryWarningWindow": "Expiry Warning Window",
+  "daysBeforeExpirationToTrigger": "Days before expiration to trigger alert",
+  "warrantyWarningWindow": "Warranty Warning Window",
+  "daysBeforeWarrantyEndsTo": "Days before warranty ends to trigger alert",
+  "timeZone": "Time Zone",
+  "usedToDecideWhatToday": "Used to decide what \"today\" means for alerts",
+  "reportsInventoryAudit": "REPORTS & INVENTORY AUDIT",
+  "exportAllBoxBarcodesPdf": "Export All Box Barcodes (PDF)",
+  "generatePrintablePdfStickerSheet": "Generate printable PDF sticker sheet with box QR codes & names",
+  "exportInventoryReport": "Export Inventory Report",
+  "generateCopyFormattedSummaryOf": "Generate & copy formatted summary of all assets",
+  "commonTrash": "Trash",
+  "restoreOrPermanentlyDeleteRemoved": "Restore or permanently delete removed items & locations",
+  "inventoryHealthBreakdown": "Inventory Health Breakdown",
+  "statusDistributionInStockLent": "Status distribution: In Stock, Lent, Low Stock, Expired",
+  "developerOptionsBackendApi": "DEVELOPER OPTIONS & BACKEND API",
+  "developerModeDeactivated": "Developer mode deactivated",
+  "commonHide": "Hide",
+  "applicationInfo": "APPLICATION INFO",
+  "applicationVersion": "Application Version",
+  "designSystem": "Design System",
+  "minimalCharcoalIosStyle": "Minimal Charcoal (iOS Style)",
+  "qrBarcodeEngine": "QR & Barcode Engine",
+  "storageArchitecture": "Storage Architecture",
+  "hierarchicalMultiLevelTree": "Hierarchical Multi-Level Tree",
+  "logOutSwitchAccount": "Log Out / Switch Account",
+  "deleteAccount": "Delete Account",
+  "switchAccountLogin": "Switch Account / Login",
+  "editProfile": "Edit Profile",
+  "logOut": "Log Out?",
+  "areYouSureYouWant": "Are you sure you want to log out? You can sign back in anytime using Google or your email.",
+  "unsyncedChanges": "Unsynced changes",
+  "discardLogOut": "Discard & Log Out",
+  "logOut2": "Log Out",
+  "deleteAccount2": "Delete Account?",
+  "thisPermanentlyDeletesYourAccount": "This permanently deletes your account and all your boxes, items, loans and photos. This cannot be undone.",
+  "confirmDeletion": "Confirm deletion",
+  "typeDeleteToConfirm": "Type DELETE to confirm",
+  "deleteForever": "Delete Forever",
+  "inventoryQuickMetrics": "Inventory Quick Metrics",
+  "commonContainers": "Containers",
+  "totalAssets": "Total Assets",
+  "onLoan": "On Loan",
+  "estValue": "Est. Value",
+  "couldNotRestore": "Could not restore \"{name}\"",
+  "@couldNotRestore": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "deletePermanently": "Delete permanently?",
+  "couldNotDelete": "Could not delete \"{name}\"",
+  "@couldNotDelete": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "emptyTrash": "Empty trash?",
+  "everythingInTheTrashWill": "Everything in the trash will be removed for good.",
+  "commonEmpty": "Empty",
+  "couldNotEmptyTheTrash": "Could not empty the trash",
+  "couldNotLoadTheTrash": "Could not load the trash",
+  "commonRetry": "Retry",
+  "trashIsEmpty": "Trash is empty",
+  "commonLocation": "Location · {name}",
+  "@commonLocation": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonItem2": "Item · {quantity} {unit}",
+  "@commonItem2": {
+    "placeholders": {
+      "quantity": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonRestore": "Restore",
+  "deletePermanently2": "Delete permanently",
+  "commonConfirm": "Confirm",
+  "noStorageBoxFoundWith": "No storage box found with code \"{code}\". Please scan a valid box QR label.",
+  "@noStorageBoxFoundWith": {
+    "placeholders": {
+      "code": {
+        "type": "Object"
+      }
+    }
+  },
+  "selectTestBoxQrCode": "Select Test Box QR Code",
+  "simulateScanningAPhysicalBox": "Simulate scanning a physical box QR sticker:",
+  "enterBoxLabelQr": "Enter Box Label / QR",
+  "eGLocElectronicsBox": "e.g. loc_electronics_box",
+  "commonSubmit": "Submit",
+  "scanBoxQrCode": "Scan Box QR Code",
+  "pointCameraAtTargetBox": "Point camera at target box sticker",
+  "toggleFlash": "Toggle flash",
+  "scanAgain": "Scan Again",
+  "moveToThisBox": "Move to this Box",
+  "testWithPresets": "Test with Presets",
+  "enterCode": "Enter Code",
+  "cutGuide": "CUT GUIDE",
+  "barcodeImageReady": "Barcode Image Ready",
+  "highResolutionPngImageOf": "High-resolution PNG image of the box QR codes.",
+  "barcodeImageCaptured": "Barcode image captured",
+  "commonDone": "Done",
+  "failedToCaptureBarcodeGrid": "Failed to capture barcode grid",
+  "failedToGenerateImage": "Failed to generate image",
+  "couldnTExportTheLabels": "Couldn't export the labels. Please try again.",
+  "pdfGeneratedChooseSaveTo": "PDF generated. Choose \"Save to Files\" or share.",
+  "couldnTExportThePdf": "Couldn't export the PDF. Please try again.",
+  "couldnTOpenThePrint": "Couldn't open the print preview. Please try again.",
+  "exportAllBoxBarcodes": "Export All Box Barcodes",
+  "boxNotFound": "Box not found",
+  "exportBoxBarcodes": "Export Box Barcodes",
+  "captureAndSaveBarcodeSheet": "Capture and save barcode sheet as image",
+  "saveImage": "Save Image",
+  "thisContainer": "This Container",
+  "allContainers": "All Containers ({count})",
+  "@allContainers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "printSpecsFormat": "PRINT SPECS / FORMAT",
+  "a4TomyDecal": "A4 Tomy Decal",
+  "standardGridSheet": "Standard grid sheet",
+  "thermal50x30mm": "Thermal 50x30mm",
+  "singleRollLabel": "Single roll label",
+  "printPreview": "Print Preview",
+  "generatingPdf": "Generating PDF...",
+  "exportPdfSaveShare": "Export PDF (Save/Share)",
+  "tapToKeepYourVersion": "Tap to keep your version or discard it",
+  "unresolvedChanges": "Unresolved changes",
+  "nothingLeftToResolve": "Nothing left to resolve.",
+  "commonDiscard": "Discard",
+  "keepMine": "Keep mine",
+  "commonClose": "Close",
+  "recentItems": "Recent Items",
+  "viewAll": "View all",
+  "noItemsInInventoryYet": "No items in inventory yet",
+  "tapToAddYourFirst": "Tap + to add your first item",
+  "storageBox": "Storage Box",
+  "cannotConnectToBackend": "Cannot connect to backend ({serverUrl})",
+  "@cannotConnectToBackend": {
+    "placeholders": {
+      "serverUrl": {
+        "type": "Object"
+      }
+    }
+  },
+  "actionRequired": "Action Required",
+  "commonReview": "Review",
+  "commonLending": "Lending",
+  "noLoans": "No Loans",
+  "commonAlerts": "Alerts",
+  "allClear": "All Clear",
+  "storageSpaces": "Storage Spaces",
+  "noStorageSpacesYet": "No storage spaces yet",
+  "subContainerInLocation": "Sub-container in location",
+  "primaryStorageSpace": "Primary storage space",
+  "specificationsAttributes": "Specifications & Attributes",
+  "commonManage": "Manage",
+  "commonAdd": "Add",
+  "noSpecificationsAddedYet": "No specifications added yet",
+  "addCustomDetailsLikeColor": "Add custom details like Color, Size, Brand, or Specs.",
+  "addSpecification": "Add Specification",
+  "customizeAttributesAndMetadataFor": "Customize attributes and metadata for this item.",
+  "currentSpecifications": "CURRENT SPECIFICATIONS",
+  "commonRemoved": "Removed \"{key}\"",
+  "@commonRemoved": {
+    "placeholders": {
+      "key": {
+        "type": "Object"
+      }
+    }
+  },
+  "suggestedAttributes": "SUGGESTED ATTRIBUTES",
+  "editAttribute": "EDIT ATTRIBUTE",
+  "addAttribute": "ADD ATTRIBUTE",
+  "attributeName": "Attribute Name",
+  "eGColorRamSize": "e.g. Color, RAM, Size, Material",
+  "attributeValue": "Attribute Value",
+  "eGSpaceBlack16gb": "e.g. Space Black, 16GB, XL",
+  "pleaseEnterAnAttributeName": "Please enter an attribute name",
+  "pleaseEnterAnAttributeValue": "Please enter an attribute value",
+  "savedAttribute": "Saved attribute \"{k}\"",
+  "@savedAttribute": {
+    "placeholders": {
+      "k": {
+        "type": "Object"
+      }
+    }
+  },
+  "saveAttribute": "Save Attribute",
+  "newCategory": "New Category",
+  "createACustomCategoryFor": "Create a custom category for your assets",
+  "categoryName": "Category Name",
+  "eGPhotographyWatchesBoard": "e.g. Photography, Watches, Board Games",
+  "pleaseEnterACategoryName": "Please enter a category name",
+  "categoryAlreadyExists": "Category already exists",
+  "addSelect": "Add & Select",
+  "overdueLoan": "Overdue Loan",
+  "currentlyLentOut": "Currently Lent Out",
+  "commonBorrower2": "Borrower: {borrowerName}",
+  "@commonBorrower2": {
+    "placeholders": {
+      "borrowerName": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonContact": "Contact: {borrowerContact}",
+  "@commonContact": {
+    "placeholders": {
+      "borrowerContact": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonChange": "Change",
+  "unknownLocation": "Unknown Location",
+  "productHasExpired": "Product has Expired!",
+  "expiresSoonInDays": "Expires soon in {daysLeft} days",
+  "@expiresSoonInDays": {
+    "placeholders": {
+      "daysLeft": {
+        "type": "Object"
+      }
+    }
+  },
+  "freshDaysRemaining": "Fresh • {daysLeft} days remaining",
+  "@freshDaysRemaining": {
+    "placeholders": {
+      "daysLeft": {
+        "type": "Object"
+      }
+    }
+  },
+  "lowStockWarning": "Low Stock Warning",
+  "currentThreshold": "Current: {qty} {unit} • Threshold: ≤ {minQty} {unit2}",
+  "@currentThreshold": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "minQty": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "assetPurchaseInformation": "Asset & Purchase Information",
+  "purchasePrice2": "Purchase Price",
+  "notRecorded": "Not recorded",
+  "purchaseDate": "Purchase Date",
+  "lowStockAlertThreshold": "Low Stock Alert Threshold",
+  "notTracked": "Not tracked",
+  "barcodeUpcEan": "Barcode (UPC/EAN)",
+  "warrantyExpired": "Warranty Expired",
+  "warrantyActive": "Warranty Active",
+  "commonCopy": "Copy",
+  "copiedToClipboard": "Copied {label} to clipboard",
+  "@copiedToClipboard": {
+    "placeholders": {
+      "label": {
+        "type": "Object"
+      }
+    }
+  },
+  "addAttribute2": "Add Attribute",
+  "addCustomAttributesLikeColor": "Add custom attributes like Color, Size, RAM, or Brand",
+  "commonRemove": "Remove",
+  "editSpecification": "Edit Specification",
+  "eGColorRamSize2": "e.g. Color, RAM, Size, Material, Weight",
+  "eGSpaceBlack16gb2": "e.g. Space Black, 16GB, XL, Leather",
+  "saveSpecification": "Save Specification",
+  "paperReceipt": "Paper Receipt",
+  "storeInvoice": "Store Invoice",
+  "warrantyCard": "Warranty Card",
+  "addReceiptPhoto": "Add Receipt Photo",
+  "addProductPhoto": "Add Product Photo",
+  "commonCamera": "Camera",
+  "commonGallery": "Gallery",
+  "orViaUrl": "OR VIA URL",
+  "imageUrl": "Image URL",
+  "photoAdded": "Photo added",
+  "addViaUrl": "Add via URL",
+  "orChooseSamplePhoto": "Or choose sample photo",
+  "samplePhotoSelected": "Sample photo selected",
+  "commonConsume2": "Consume: {name}",
+  "@commonConsume2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "currentStock": "Current stock: {formattedCurrent} {unit}",
+  "@currentStock": {
+    "placeholders": {
+      "formattedCurrent": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "quantityToUse": "Quantity to use:",
+  "use1": "Use 1 {unit}",
+  "@use1": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "use2": "Use 2 {unit}",
+  "@use2": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "use5": "Use 5 {unit}",
+  "@use5": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "useAll": "Use All",
+  "willBeOutOfStock": "Will be out of stock after use",
+  "remainingAfterUse": "Remaining after use: {formattedRemain} {unit}",
+  "@remainingAfterUse": {
+    "placeholders": {
+      "formattedRemain": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonRestock": "Restock",
+  "usedRemaining": "Used {formattedConsume} {unit}. Remaining: {formattedRemain} {unit2}",
+  "@usedRemaining": {
+    "placeholders": {
+      "formattedConsume": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "formattedRemain": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "warningQuantityHasDroppedTo": "Warning: Quantity has dropped to minimum level (≤ {minQuantity} {unit})",
+  "@warningQuantityHasDroppedTo": {
+    "placeholders": {
+      "minQuantity": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "confirmUse": "Confirm Use",
+  "commonRestock2": "Restock: {name}",
+  "@commonRestock2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "quantityToAdd": "Quantity to add ({unit})",
+  "@quantityToAdd": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "addedTotal": "Added {addAmount} {unit}. Total: {formattedNew} {unit2}",
+  "@addedTotal": {
+    "placeholders": {
+      "addAmount": {
+        "type": "Object"
+      },
+      "unit": {
+        "type": "Object"
+      },
+      "formattedNew": {
+        "type": "Object"
+      },
+      "unit2": {
+        "type": "Object"
+      }
+    }
+  },
+  "confirmRestock": "Confirm Restock",
+  "commonRoot": "Root",
+  "storeDirectlyIn": "Store directly in \"{name}\"",
+  "@storeDirectlyIn": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonCurrent": "Current",
+  "placeItemAtThisLevel": "Place item at this level without placing it into any sub-box",
+  "chooseARoomShelfOr": "Choose a room, shelf, or container",
+  "selectLocation": "Select Location",
+  "scanQr": "Scan QR",
+  "currentLocation": "Current Location",
+  "subContainersInside": "Sub-containers inside ({count})",
+  "@subContainersInside": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "noSubContainersInside": "No sub-containers inside \"{name}\"",
+  "@noSubContainersInside": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "noLocationsAvailable": "No locations available",
+  "youCanSelectDirectlyAbove": "You can select \"{name}\" directly above.",
+  "@youCanSelectDirectlyAbove": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "currentlySelectedLocation": "Currently selected location",
+  "selectedStorageDestination": "Selected Storage Destination",
+  "moveItemLocation": "Move Item Location",
+  "selectNewStorageDestinationFor": "Select new storage destination for \"{name}\"",
+  "@selectNewStorageDestinationFor": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "confirmMove": "Confirm Move",
+  "movedTo": "Moved \"{name}\" to \"{name2}\"",
+  "@movedTo": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      },
+      "name2": {
+        "type": "Object"
+      }
+    }
+  },
+  "selectNewStorageDestinationFor2": "Select new storage destination for item",
+  "youCanStoreDirectlyIn": "You can store \"{name}\" directly in this container.",
+  "@youCanStoreDirectlyIn": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemIsAlreadyInThis": "Item is already in this location",
+  "targetDestination": "Target Destination",
+  "bulkMoveLocation": "Bulk Move Location",
+  "moveAndContents": "Move \"{name}\" and contents",
+  "@moveAndContents": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "allItemsAndNestedContainers": "All {totalItems} items and {totalSubBoxes} nested containers inside will move along with this container.",
+  "@allItemsAndNestedContainers": {
+    "placeholders": {
+      "totalItems": {
+        "type": "Object"
+      },
+      "totalSubBoxes": {
+        "type": "Object"
+      }
+    }
+  },
+  "selectDestination": "Select Destination",
+  "rootLevelNoParentContainer": "Root Level (No Parent Container)",
+  "topOfHierarchy": "Top of hierarchy",
+  "movedSuccessfully": "Moved \"{name}\" successfully",
+  "@movedSuccessfully": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "cannotMoveContainerIntoIts": "Cannot move container into its own descendant",
+  "serverEndpoint": "Server Endpoint",
+  "apiAuthentication": "API Authentication",
+  "authenticatedAs": "Authenticated as {userName}",
+  "@authenticatedAs": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      }
+    }
+  },
+  "loginSwitch": "Login / Switch",
+  "syncWithServer": "Sync With Server",
+  "synchronizingBoxesItemsAlerts": "Synchronizing boxes, items & alerts...",
+  "pullLatestInventoryLendingRecords": "Pull latest inventory & lending records",
+  "successfullySynchronizedWithBackendServer": "Successfully synchronized with backend server",
+  "syncFailed": "Sync failed",
+  "seedDemoDataToServer": "Seed Demo Data to Server",
+  "populateBackendWithRoomsItems": "Populate backend with rooms, items, alerts & loans",
+  "backendApiUrl": "Backend API URL",
+  "enterTheBackendBaseUrl": "Enter the backend base URL (default: http://localhost:8080):",
+  "serverUrlUpdatedTo": "Server URL updated to {newUrl}",
+  "@serverUrlUpdatedTo": {
+    "placeholders": {
+      "newUrl": {
+        "type": "Object"
+      }
+    }
+  },
+  "saveConnect": "Save & Connect",
+  "seedDemoInventory": "Seed Demo Inventory?",
+  "thisWillUploadSampleMulti": "This will upload sample multi-level rooms, cabinets, boxes, tech gear, medicine, low-stock items, and lending records directly into your backend database at http://localhost:8080.\n\nExisting items will be preserved.",
+  "successfullySeededSampleInventoryTo": "Successfully seeded sample inventory to backend server!",
+  "failedToSeedSampleData": "Failed to seed sample data: {errorMessage}",
+  "@failedToSeedSampleData": {
+    "placeholders": {
+      "errorMessage": {
+        "type": "Object"
+      }
+    }
+  },
+  "seedData": "Seed Data",
+  "usDollar": "US Dollar",
+  "vietnameseDong": "Vietnamese Dong",
+  "commonEuro": "Euro",
+  "britishPound": "British Pound",
+  "japaneseYen": "Japanese Yen",
+  "selectCurrency": "Select Currency",
+  "appliedToPriceCalculationsAsset": "Applied to price calculations & asset valuation",
+  "currencyChangedTo": "Currency changed to {sym}",
+  "@currencyChangedTo": {
+    "placeholders": {
+      "sym": {
+        "type": "Object"
+      }
+    }
+  },
+  "defaultMeasuringUnitWhenCreating": "Default measuring unit when creating new items",
+  "defaultUnitSetTo": "Default unit set to \"{unit}\"",
+  "@defaultUnitSetTo": {
+    "placeholders": {
+      "unit": {
+        "type": "Object"
+      }
+    }
+  },
+  "howManyDaysBeforeExpiration": "How many days before expiration to alert you",
+  "alertWindowSetToDays": "Alert window set to {days} days",
+  "@alertWindowSetToDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
+  "howManyDaysBeforeWarranty": "How many days before warranty ends to alert you",
+  "warrantyWindowSetToDays": "Warranty window set to {days} days",
+  "@warrantyWindowSetToDays": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      }
+    }
+  },
+  "alertsTreatTodayInThis": "Alerts treat \"today\" in this time zone",
+  "timeZoneSetTo": "Time zone set to {tz}",
+  "@timeZoneSetTo": {
+    "placeholders": {
+      "tz": {
+        "type": "Object"
+      }
+    }
+  },
+  "updateYourDisplayNameAnd": "Update your display name and inventory role",
+  "displayName": "Display Name",
+  "eGSaraWilson": "e.g. Sara Wilson",
+  "roleDepartment": "Role / Department",
+  "eGAssetManagerHome": "e.g. Asset Manager, Home Owner",
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "commonNew": "New",
+  "searchCategories": "Search categories...",
+  "noCategoriesMatch": "No categories match \"{searchQuery}\"",
+  "@noCategoriesMatch": {
+    "placeholders": {
+      "searchQuery": {
+        "type": "Object"
+      }
+    }
+  },
+  "deleteCategory": "Delete Category",
+  "deleteCategoryAnyItemsIn": "Delete category \"{cat}\"? Any items in this category will be reassigned to \"General\".",
+  "@deleteCategoryAnyItemsIn": {
+    "placeholders": {
+      "cat": {
+        "type": "Object"
+      }
+    }
+  },
+  "categoryRemoved": "Category \"{cat}\" removed",
+  "@categoryRemoved": {
+    "placeholders": {
+      "cat": {
+        "type": "Object"
+      }
+    }
+  },
+  "addNewCategory": "Add New Category",
+  "enterACategoryNameFor": "Enter a category name for your catalog",
+  "eGPhotographyBoardGames": "e.g. Photography, Board Games, Hardware",
+  "categoryCreated2": "Category \"{name}\" created",
+  "@categoryCreated2": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "addCategory": "Add Category",
+  "inventoryReport": "Inventory Report",
+  "generatedPlainTextInventoryStatus": "Generated plain-text inventory status report",
+  "reportCopiedToClipboard": "Report copied to clipboard!",
+  "copyReportToClipboard": "Copy Report to Clipboard",
+  "realTimeConditionBreakdownOf": "Real-time condition breakdown of {total} tracked items",
+  "@realTimeConditionBreakdownOf": {
+    "placeholders": {
+      "total": {
+        "type": "Object"
+      }
+    }
+  },
+  "storedInContainers": "Stored in Containers",
+  "inUseActive": "In Use / Active",
+  "lentToBorrowers": "Lent to Borrowers",
+  "expiringSoonD": "Expiring Soon (≤ {expiryWarningDays}d)",
+  "@expiringSoonD": {
+    "placeholders": {
+      "expiryWarningDays": {
+        "type": "Object"
+      }
+    }
+  },
+  "expiredAssets": "Expired Assets",
+  "initialStock": "Initial stock",
+  "commonRestocked": "Restocked",
+  "commonUsed": "Used",
+  "commonDamaged": "Damaged",
+  "commonLost": "Lost",
+  "commonCorrection": "Correction",
+  "commonMoved": "Moved",
+  "commonAdjusted": "Adjusted",
+  "couldNotLoadStockHistory": "Could not load stock history",
+  "noConsumptionDataYet": "No consumption data yet",
+  "avgDayAboutDaysLeft": "Avg {count}/day · about {count2} days left",
+  "@avgDayAboutDaysLeft": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      },
+      "count2": {
+        "type": "Object"
+      }
+    }
+  },
+  "noMovementsRecorded": "No movements recorded",
+  "thermalLabelPrint": "Thermal Label Print",
+  "standardPrintableAdhesiveLabel": "Standard printable adhesive label",
+  "thermalLabelCopiedToClipboard": "Thermal label copied to clipboard",
+  "copyId": "Copy ID",
+  "thermalLabelSentToPrinter": "Thermal label sent to printer ({value}mm)",
+  "@thermalLabelSentToPrinter": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "commonInitializing": "Initializing...",
+  "youWereSignedOutOn": "You were signed out on another device. Please sign in again.",
+  "yourSessionHasExpiredPlease": "Your session has expired. Please sign in again.",
+  "connectingToServer": "Connecting to server...",
+  "commonAuthenticating": "Authenticating...",
+  "syncingInventory": "Syncing inventory...",
+  "commonReady": "Ready",
+  "couldnTSignInPlease": "Couldn't sign in. Please try again.",
+  "couldnTSignInWith": "Couldn't sign in with Google. Please try again.",
+  "couldnTCreateYourAccount": "Couldn't create your account. Please try again.",
+  "couldNotReachTheServer": "Could not reach the server. Check your connection and try again.",
+  "cannotReachTheServer": "Cannot reach the server",
+  "couldnTSyncYourData": "Couldn't sync your data. Pull down to retry.",
+  "thisWasChangedElsewhereShowing": "This was changed elsewhere. Showing the latest version.",
+  "commonManager": "Manager: {userName} ({userRole})",
+  "@commonManager": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      },
+      "userRole": {
+        "type": "Object"
+      }
+    }
+  },
+  "serverBackend": "Server Backend: {baseUrl}",
+  "@serverBackend": {
+    "placeholders": {
+      "baseUrl": {
+        "type": "Object"
+      }
+    }
+  },
+  "endOfReport": "End of report",
+  "somethingWentWrongPleaseTry": "Something went wrong. Please try again.",
+  "incorrectEmailOrPassword": "Incorrect email or password.",
+  "thatItemNoLongerExists": "That item no longer exists.",
+  "thisWasChangedSomewhereElse": "This was changed somewhere else. Refresh and try again.",
+  "tooManyAttemptsPleaseWait": "Too many attempts. Please wait a moment and try again.",
+  "theServerIsBusyRight": "The server is busy right now. Please try again shortly.",
+  "canTReachTheServer": "Can't reach the server. Check your connection and try again.",
+  "reportTitle": "INVENTORY STATUS REPORT",
+  "reportGenerated": "Generated: {date}",
+  "@reportGenerated": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportOverview": "1. OVERVIEW STATISTICS:",
+  "reportTotalContainers": "- Total Storage Containers: {count}",
+  "@reportTotalContainers": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportTotalItems": "- Total Inventory Items: {count}",
+  "@reportTotalItems": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportTotalValue": "- Total Estimated Value: {value}",
+  "@reportTotalValue": {
+    "placeholders": {
+      "value": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportActiveLent": "- Active Lent Items: {count}",
+  "@reportActiveLent": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportOverdueLent": "- Overdue Lent Items: {count}",
+  "@reportOverdueLent": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportExpired": "- Expired Items: {count}",
+  "@reportExpired": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportExpiringSoon": "- Expiring Soon (within {days} days): {count}",
+  "@reportExpiringSoon": {
+    "placeholders": {
+      "days": {
+        "type": "Object"
+      },
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportCategories": "2. CATEGORIES BREAKDOWN:",
+  "reportCategoryLine": "- {category}: {count} items",
+  "@reportCategoryLine": {
+    "placeholders": {
+      "category": {
+        "type": "Object"
+      },
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportCurrentItems": "3. CURRENT INVENTORY ITEMS:",
+  "reportPrice": " | Price: {price}",
+  "@reportPrice": {
+    "placeholders": {
+      "price": {
+        "type": "Object"
+      }
+    }
+  },
+  "reportNoLocation": "No Location",
+  "qtyValue": "Qty: {qty}",
+  "@qtyValue": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      }
+    }
+  },
+  "storageTypeRoom": "Room",
+  "storageTypeCabinet": "Cabinet / Wardrobe",
+  "storageTypeShelf": "Shelf / Rack",
+  "storageTypeBox": "Box / Bin",
+  "storageTypeDrawer": "Drawer",
+  "storageTypeOther": "Container",
+  "statusStored": "Stored",
+  "statusInUse": "In Use",
+  "statusLent": "Lent",
+  "statusBroken": "Broken",
+  "statusDisposed": "Disposed",
+  "statusLost": "Lost",
+  "heyName": "Hey {name}!",
+  "@heyName": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "heyFallbackName": "there",
+  "markReturnedBy": "Mark \"{item}\" as returned by {borrower}?\nStatus will change back to Stored.",
+  "@markReturnedBy": {
+    "placeholders": {
+      "item": {
+        "type": "Object"
+      },
+      "borrower": {
+        "type": "Object"
+      }
+    }
+  },
+  "leaveEmptyToLendAll": "Leave empty to lend all ({qty} in stock)",
+  "@leaveEmptyToLendAll": {
+    "placeholders": {
+      "qty": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemFallbackName": "item"
+}

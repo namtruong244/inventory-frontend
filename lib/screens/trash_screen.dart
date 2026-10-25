@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Soft-deleted items and boxes, with restore and permanent delete.
 class TrashScreen extends StatefulWidget {
@@ -54,7 +56,7 @@ class _TrashScreenState extends State<TrashScreen> {
       AppFeedback.showSuccess(context, '"$name" restored');
       _load();
     } else {
-      AppFeedback.showError(context, 'Could not restore "$name"');
+      AppFeedback.showError(context, context.l10n.couldNotRestore(name));
     }
   }
 
@@ -65,9 +67,9 @@ class _TrashScreenState extends State<TrashScreen> {
   }) async {
     final confirmed = await AppFeedback.showConfirmDialog(
       context,
-      title: 'Delete permanently?',
+      title: context.l10n.deletePermanently,
       message: '"$name" will be removed for good. This cannot be undone.',
-      confirmLabel: 'Delete',
+      confirmLabel: context.l10n.commonDelete,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
@@ -79,16 +81,16 @@ class _TrashScreenState extends State<TrashScreen> {
     if (ok) {
       _load();
     } else {
-      AppFeedback.showError(context, 'Could not delete "$name"');
+      AppFeedback.showError(context, context.l10n.couldNotDelete(name));
     }
   }
 
   Future<void> _empty() async {
     final confirmed = await AppFeedback.showConfirmDialog(
       context,
-      title: 'Empty trash?',
-      message: 'Everything in the trash will be removed for good.',
-      confirmLabel: 'Empty',
+      title: context.l10n.emptyTrash,
+      message: context.l10n.everythingInTheTrashWill,
+      confirmLabel: context.l10n.commonEmpty,
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
@@ -97,7 +99,7 @@ class _TrashScreenState extends State<TrashScreen> {
     if (ok) {
       _load();
     } else {
-      AppFeedback.showError(context, 'Could not empty the trash');
+      AppFeedback.showError(context, context.l10n.couldNotEmptyTheTrash);
     }
   }
 
@@ -106,16 +108,16 @@ class _TrashScreenState extends State<TrashScreen> {
     final isEmpty = _items.isEmpty && _boxes.isEmpty;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Trash',
+        title: Text(
+          context.l10n.commonTrash,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           if (!isEmpty)
             TextButton(
               onPressed: _empty,
-              child: const Text(
-                'Empty',
+              child: Text(
+                context.l10n.commonEmpty,
                 style: TextStyle(color: Color(0xFFDC2626)),
               ),
             ),
@@ -128,16 +130,16 @@ class _TrashScreenState extends State<TrashScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text('Could not load the trash'),
-                  TextButton(onPressed: _load, child: const Text('Retry')),
+                  Text(context.l10n.couldNotLoadTheTrash),
+                  TextButton(onPressed: _load, child: Text(context.l10n.commonRetry)),
                 ],
               ),
             )
           : isEmpty
           ? Center(
               child: Text(
-                'Trash is empty',
-                style: TextStyle(color: Colors.grey.shade600),
+                context.l10n.trashIsEmpty,
+                style: TextStyle(color: context.colors.textSecondary),
               ),
             )
           : RefreshIndicator(
@@ -149,7 +151,7 @@ class _TrashScreenState extends State<TrashScreen> {
                     _row(
                       icon: box.type.icon,
                       name: box.name,
-                      subtitle: 'Location · ${box.type.name}',
+                      subtitle: context.l10n.commonLocation(box.type.name),
                       onRestore: () => _restore(boxId: box.id, name: box.name),
                       onPurge: () => _purge(boxId: box.id, name: box.name),
                     ),
@@ -157,7 +159,7 @@ class _TrashScreenState extends State<TrashScreen> {
                     _row(
                       icon: Icons.inventory_2_outlined,
                       name: item.name,
-                      subtitle: 'Item · ${item.quantity} ${item.unit}',
+                      subtitle: context.l10n.commonItem2(item.quantity, item.unit),
                       onRestore: () =>
                           _restore(itemId: item.id, name: item.name),
                       onPurge: () => _purge(itemId: item.id, name: item.name),
@@ -180,7 +182,7 @@ class _TrashScreenState extends State<TrashScreen> {
       margin: const EdgeInsets.only(bottom: 10),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.grey.shade200),
+        side: BorderSide(color: context.colors.border),
       ),
       child: ListTile(
         leading: Icon(icon),
@@ -190,12 +192,12 @@ class _TrashScreenState extends State<TrashScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              tooltip: 'Restore',
+              tooltip: context.l10n.commonRestore,
               icon: const Icon(Icons.restore_rounded),
               onPressed: onRestore,
             ),
             IconButton(
-              tooltip: 'Delete permanently',
+              tooltip: context.l10n.deletePermanently2,
               icon: const Icon(
                 Icons.delete_forever_outlined,
                 color: Color(0xFFDC2626),

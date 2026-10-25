@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 
 void showConsumeSheet(BuildContext context, Item item, InventoryProvider provider) {
@@ -26,8 +28,8 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
 
           return Container(
             padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: context.colors.surface,
               borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             ),
             child: Column(
@@ -39,7 +41,7 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: context.colors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -50,7 +52,7 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFEF2F2),
+                        color: context.colors.dangerSoft,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(Icons.remove_circle_outline, color: Color(0xFFEF4444), size: 24),
@@ -61,15 +63,15 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Consume: ${item.name}',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                            context.l10n.commonConsume2(item.name),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Current stock: $formattedCurrent ${item.unit}',
-                            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                            context.l10n.currentStock(formattedCurrent, item.unit),
+                            style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
                           ),
                         ],
                       ),
@@ -82,23 +84,23 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF8F9FA),
+                    color: context.colors.fill,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: context.colors.border),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Quantity to use:',
+                      Text(
+                        context.l10n.quantityToUse,
                         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                       ),
                       Row(
                         children: [
                           IconButton.filledTonal(
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF18181B),
+                              backgroundColor: context.colors.surface,
+                              foregroundColor: context.colors.textPrimary,
                             ),
                             icon: const Icon(Icons.remove, size: 18),
                             onPressed: consumeAmount > 1
@@ -109,13 +111,13 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                             padding: const EdgeInsets.symmetric(horizontal: 16),
                             child: Text(
                               '$formattedConsume ${item.unit}',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                             ),
                           ),
                           IconButton.filledTonal(
                             style: IconButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF18181B),
+                              backgroundColor: context.colors.surface,
+                              foregroundColor: context.colors.textPrimary,
                             ),
                             icon: const Icon(Icons.add, size: 18),
                             onPressed: consumeAmount < currentQty
@@ -135,41 +137,41 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                   children: [
                     if (currentQty >= 1)
                       ActionChip(
-                        label: Text('Use 1 ${item.unit}'),
+                        label: Text(context.l10n.use1(item.unit)),
                         onPressed: () => setSheetState(() => consumeAmount = 1.0),
-                        backgroundColor: consumeAmount == 1.0 ? const Color(0xFF18181B) : Colors.white,
+                        backgroundColor: consumeAmount == 1.0 ? context.colors.primary : context.colors.surface,
                         labelStyle: TextStyle(
-                          color: consumeAmount == 1.0 ? Colors.white : const Color(0xFF18181B),
+                          color: consumeAmount == 1.0 ? Colors.white : context.colors.textPrimary,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
                       ),
                     if (currentQty >= 2)
                       ActionChip(
-                        label: Text('Use 2 ${item.unit}'),
+                        label: Text(context.l10n.use2(item.unit)),
                         onPressed: () => setSheetState(() => consumeAmount = 2.0),
-                        backgroundColor: consumeAmount == 2.0 ? const Color(0xFF18181B) : Colors.white,
+                        backgroundColor: consumeAmount == 2.0 ? context.colors.primary : context.colors.surface,
                         labelStyle: TextStyle(
-                          color: consumeAmount == 2.0 ? Colors.white : const Color(0xFF18181B),
+                          color: consumeAmount == 2.0 ? Colors.white : context.colors.textPrimary,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
                       ),
                     if (currentQty >= 5)
                       ActionChip(
-                        label: Text('Use 5 ${item.unit}'),
+                        label: Text(context.l10n.use5(item.unit)),
                         onPressed: () => setSheetState(() => consumeAmount = 5.0),
-                        backgroundColor: consumeAmount == 5.0 ? const Color(0xFF18181B) : Colors.white,
+                        backgroundColor: consumeAmount == 5.0 ? context.colors.primary : context.colors.surface,
                         labelStyle: TextStyle(
-                          color: consumeAmount == 5.0 ? Colors.white : const Color(0xFF18181B),
+                          color: consumeAmount == 5.0 ? Colors.white : context.colors.textPrimary,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
                       ),
                     ActionChip(
-                      label: const Text('Use All'),
+                      label: Text(context.l10n.useAll),
                       onPressed: () => setSheetState(() => consumeAmount = currentQty),
-                      backgroundColor: consumeAmount == currentQty ? const Color(0xFFEF4444) : Colors.white,
+                      backgroundColor: consumeAmount == currentQty ? const Color(0xFFEF4444) : context.colors.surface,
                       labelStyle: TextStyle(
                         color: consumeAmount == currentQty ? Colors.white : const Color(0xFFEF4444),
                         fontWeight: FontWeight.w600,
@@ -199,8 +201,8 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                     const SizedBox(width: 6),
                     Text(
                       remainingAfter == 0
-                          ? 'Will be out of stock after use'
-                          : 'Remaining after use: $formattedRemain ${item.unit}',
+                          ? context.l10n.willBeOutOfStock
+                          : context.l10n.remainingAfterUse(formattedRemain, item.unit),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -208,7 +210,7 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                             ? Colors.red
                             : (item.minQuantity != null && remainingAfter <= item.minQuantity!
                                 ? const Color(0xFFD97706)
-                                : Colors.grey.shade700),
+                                : context.colors.textSecondary),
                       ),
                     ),
                   ],
@@ -221,21 +223,21 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                     OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        side: const BorderSide(color: Color(0xFF18181B), width: 1.5),
+                        side: BorderSide(color: context.colors.primary, width: 1.5),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
                       onPressed: () {
                         Navigator.pop(sheetCtx);
                         showRestockSheet(context, item, provider);
                       },
-                      icon: const Icon(Icons.add_shopping_cart_outlined, size: 18, color: Color(0xFF18181B)),
-                      label: const Text('Restock', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF18181B))),
+                      icon: Icon(Icons.add_shopping_cart_outlined, size: 18, color: context.colors.textPrimary),
+                      label: Text(context.l10n.commonRestock, style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.textPrimary)),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF18181B),
+                          backgroundColor: context.colors.primary,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -247,19 +249,19 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                           if (ok && context.mounted) {
                             AppFeedback.showSuccess(
                               context,
-                              'Used $formattedConsume ${item.unit}. Remaining: $formattedRemain ${item.unit}',
+                              context.l10n.usedRemaining(formattedConsume, item.unit, formattedRemain, item.unit),
                             );
                             if (item.minQuantity != null && remainingAfter <= item.minQuantity!) {
                               AppFeedback.showWarning(
                                 context,
-                                'Warning: Quantity has dropped to minimum level (≤ ${item.minQuantity} ${item.unit})',
+                                context.l10n.warningQuantityHasDroppedTo(item.minQuantity ?? 0, item.unit),
                               );
                             }
                           }
                         },
                         icon: const Icon(Icons.check_rounded, size: 18),
-                        label: const Text(
-                          'Confirm Use',
+                        label: Text(
+                          context.l10n.confirmUse,
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -292,8 +294,8 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
 
           return Container(
             padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: context.colors.surface,
               borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
             ),
             child: Column(
@@ -305,7 +307,7 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: context.colors.border,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -316,7 +318,7 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFECFDF5),
+                        color: context.colors.successSoft,
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(Icons.add_shopping_cart_outlined, color: Color(0xFF10B981), size: 24),
@@ -327,15 +329,15 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Restock: ${item.name}',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF18181B)),
+                            context.l10n.commonRestock2(item.name),
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Current stock: $formattedCurrent ${item.unit}',
-                            style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                            context.l10n.currentStock(formattedCurrent, item.unit),
+                            style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
                           ),
                         ],
                       ),
@@ -348,7 +350,7 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   autofocus: true,
                   decoration: InputDecoration(
-                    labelText: 'Quantity to add (${item.unit})',
+                    labelText: context.l10n.quantityToAdd(item.unit),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
                     suffixText: item.unit,
                   ),
@@ -390,13 +392,13 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
                               final formattedNew = newQty % 1 == 0 ? newQty.toInt().toString() : newQty.toString();
                               AppFeedback.showSuccess(
                                 context,
-                                'Added $addAmount ${item.unit}. Total: $formattedNew ${item.unit}',
+                                context.l10n.addedTotal(addAmount, item.unit, formattedNew, item.unit),
                               );
                             }
                           }
                         : null,
                     icon: const Icon(Icons.check_rounded, size: 18),
-                    label: const Text('Confirm Restock', style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: Text(context.l10n.confirmRestock, style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

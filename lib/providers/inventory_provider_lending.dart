@@ -18,6 +18,10 @@ extension InventoryLending on InventoryProvider {
     return _lendingRecords.where((l) => l.itemId == itemId).toList();
   }
 
+  /// Every open loan of an item, partial ones included.
+  List<LendingRecord> getActiveLoansForItem(String itemId) =>
+      _lendingRecords.where((l) => l.itemId == itemId && l.isActive).toList();
+
   LendingRecord? getActiveLoanForItem(String itemId) {
     try {
       return _lendingRecords.firstWhere(
