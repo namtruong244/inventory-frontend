@@ -155,6 +155,11 @@ extension InventoryItems on InventoryProvider {
       return true;
     } catch (e) {
       debugPrint('updateItemQuantity error: $e');
+      if (_isNetworkError(e)) {
+        // Offline: keep the change on the device and sync it later.
+        await _queueQuantityChange(itemId, quantity, reason);
+        return true;
+      }
       return false;
     }
   }

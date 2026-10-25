@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/inventory_models.dart';
 import '../services/api_service.dart';
+import '../services/offline_store.dart';
 import '../utils/formatters.dart';
 
 part 'inventory_provider_seed.dart';
@@ -11,6 +12,7 @@ part 'inventory_provider_settings.dart';
 part 'inventory_provider_alerts.dart';
 part 'inventory_provider_reports.dart';
 part 'inventory_provider_trash.dart';
+part 'inventory_provider_offline.dart';
 
 class InventoryProvider extends ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -33,6 +35,14 @@ class InventoryProvider extends ChangeNotifier {
 
   bool _isConnected = false;
   bool get isConnected => _isConnected;
+
+  /// Stock changes made offline that still wait for the next sync.
+  int _pendingChanges = 0;
+  int get pendingChanges => _pendingChanges;
+
+  /// Showing cached data because the server could not be reached.
+  bool _isOffline = false;
+  bool get isOffline => _isOffline;
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
@@ -270,6 +280,8 @@ class InventoryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      await _flushPending();
+
       // 1. Settings
       try {
         final settings = await _apiService.getSettings();
@@ -328,12 +340,23 @@ class InventoryProvider extends ChangeNotifier {
       }
 
       // 3. Boxes
+      var reachedServer = true;
       try {
         final boxList = await _apiService.getBoxes();
         _boxes.clear();
         _boxes.addAll(boxList);
       } catch (e) {
         debugPrint('Fetch boxes error: $e');
+        reachedServer = !_isNetworkError(e);
+      }
+
+      if (!reachedServer) {
+        // Offline: keep browsing and scanning against the last synced data.
+        final hadCache = await _loadSnapshot();
+        _isOffline = true;
+        _isConnected = false;
+        _errorMessage = hadCache ? 'Offline: showing saved data' : 'Cannot reach the server';
+        return;
       }
 
       // 4. Items
@@ -378,7 +401,9 @@ class InventoryProvider extends ChangeNotifier {
       }
 
       _isConnected = true;
+      _isOffline = false;
       _errorMessage = null;
+      await _saveSnapshot();
 
       // If database is completely empty on first launch, auto-seed sample demo data
       if (_boxes.isEmpty && _items.isEmpty) {

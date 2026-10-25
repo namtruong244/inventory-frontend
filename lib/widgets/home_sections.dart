@@ -37,7 +37,10 @@ class HomeSections {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'Cannot connect to backend (${provider.serverUrl})',
+                  provider.isOffline
+                      ? 'Offline: showing saved data'
+                          '${provider.pendingChanges > 0 ? ' · ${provider.pendingChanges} change(s) waiting to sync' : ''}'
+                      : 'Cannot connect to backend (${provider.serverUrl})',
                   style: const TextStyle(
                     fontSize: 12,
                     color: Color(0xFF991B1B),
