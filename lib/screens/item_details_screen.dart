@@ -8,6 +8,7 @@ import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/app_image_view.dart';
 import '../widgets/move_item_sheet.dart';
+import '../widgets/stock_history_sheet.dart';
 import 'box_details_screen.dart';
 import 'item_create_screen.dart';
 import 'lending_tracker_screen.dart';
@@ -343,7 +344,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           ),
                           onPressed: () async {
                             Navigator.pop(sheetCtx);
-                            final ok = await provider.updateItemQuantity(item.id, remainingAfter);
+                            final ok = await provider.updateItemQuantity(item.id, remainingAfter, reason: 'consume');
                             if (ok && context.mounted) {
                               AppFeedback.showSuccess(
                                 context,
@@ -484,7 +485,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                           ? () async {
                               Navigator.pop(sheetCtx);
                               final newQty = item.quantity + addAmount;
-                              final ok = await provider.updateItemQuantity(item.id, newQty);
+                              final ok = await provider.updateItemQuantity(item.id, newQty, reason: 'restock');
                               if (ok && context.mounted) {
                                 final formattedNew = newQty % 1 == 0 ? newQty.toInt().toString() : newQty.toString();
                                 AppFeedback.showSuccess(
@@ -839,6 +840,15 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             ),
 
                           // Quantity Pill
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                tooltip: 'Stock history',
+                                visualDensity: VisualDensity.compact,
+                                icon: const Icon(Icons.history, size: 20),
+                                onPressed: () => StockHistorySheet.show(context, item),
+                              ),
                           GestureDetector(
                             onTap: item.isConsumable
                                 ? () => _showConsumeSheet(context, item, provider)
@@ -867,6 +877,8 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                 ],
                               ),
                             ),
+                          ),
+                            ],
                           ),
                         ],
                       ),

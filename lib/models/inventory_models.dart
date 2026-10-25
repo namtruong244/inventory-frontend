@@ -51,7 +51,8 @@ enum ItemStatus {
   inUse,
   lent,
   broken,
-  disposed;
+  disposed,
+  lost;
 
   String get displayName {
     switch (this) {
@@ -65,6 +66,8 @@ enum ItemStatus {
         return 'Broken';
       case ItemStatus.disposed:
         return 'Disposed';
+      case ItemStatus.lost:
+        return 'Lost';
     }
   }
 
@@ -80,6 +83,8 @@ enum ItemStatus {
         return const Color(0xFFEF4444); // Red
       case ItemStatus.disposed:
         return const Color(0xFF6B7280); // Gray
+      case ItemStatus.lost:
+        return const Color(0xFF8B5CF6); // Violet
     }
   }
 
@@ -95,6 +100,8 @@ enum ItemStatus {
         return Icons.build_circle_outlined;
       case ItemStatus.disposed:
         return Icons.delete_sweep_outlined;
+      case ItemStatus.lost:
+        return Icons.help_outline;
     }
   }
 }
@@ -666,3 +673,52 @@ class ScanLookupResult {
       );
 }
 
+
+/// One row of an item's stock audit trail (`GET /items/:id/movements`).
+class StockMovement {
+  final String id;
+  final double delta;
+  final double quantityAfter;
+  final String reason;
+  final String note;
+  final DateTime createdAt;
+
+  const StockMovement({
+    required this.id,
+    required this.delta,
+    required this.quantityAfter,
+    required this.reason,
+    required this.note,
+    required this.createdAt,
+  });
+
+  factory StockMovement.fromJson(Map<String, dynamic> json) => StockMovement(
+        id: json['id'] as String,
+        delta: (json['delta'] as num?)?.toDouble() ?? 0,
+        quantityAfter: (json['quantityAfter'] as num?)?.toDouble() ?? 0,
+        reason: json['reason'] as String? ?? 'adjust',
+        note: json['note'] as String? ?? '',
+        createdAt: DateTime.parse(json['createdAt'] as String).toLocal(),
+      );
+}
+
+class StockHistory {
+  final List<StockMovement> movements;
+  final double avgDailyConsumption30d;
+  final double? estimatedDaysLeft;
+
+  const StockHistory({
+    required this.movements,
+    required this.avgDailyConsumption30d,
+    this.estimatedDaysLeft,
+  });
+
+  factory StockHistory.fromJson(Map<String, dynamic> json) => StockHistory(
+        movements: ((json['movements'] as List?) ?? const [])
+            .map((e) => StockMovement.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        avgDailyConsumption30d:
+            (json['avgDailyConsumption30d'] as num?)?.toDouble() ?? 0,
+        estimatedDaysLeft: (json['estimatedDaysLeft'] as num?)?.toDouble(),
+      );
+}

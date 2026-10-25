@@ -165,6 +165,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     valueText: '${provider.expiryWarningDays} days',
                     onTap: () => _showExpiryDaysPicker(context, provider),
                   ),
+                  const Divider(height: 1),
+                  _buildPreferenceTile(
+                    icon: Icons.verified_user_outlined,
+                    iconColor: const Color(0xFF8B5CF6),
+                    iconBg: const Color(0xFFF5F3FF),
+                    title: 'Warranty Warning Window',
+                    subtitle: 'Days before warranty ends to trigger alert',
+                    valueText: '${provider.warrantyWarningDays} days',
+                    onTap: () => _showWarrantyDaysPicker(context, provider),
+                  ),
+                  const Divider(height: 1),
+                  _buildPreferenceTile(
+                    icon: Icons.public,
+                    iconColor: const Color(0xFF0EA5E9),
+                    iconBg: const Color(0xFFF0F9FF),
+                    title: 'Time Zone',
+                    subtitle: 'Used to decide what "today" means for alerts',
+                    valueText: provider.timezone,
+                    onTap: () => _showTimezonePicker(context, provider),
+                  ),
                 ]),
                 const SizedBox(height: 24),
 
@@ -1162,6 +1182,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
       onSelected: (days) {
         provider.setExpiryWarningDays(days);
         AppFeedback.showSuccess(context, 'Alert window set to $days days');
+      },
+    );
+  }
+
+  void _showWarrantyDaysPicker(BuildContext context, InventoryProvider provider) {
+    _showSelectionSheet<int>(
+      context: context,
+      title: 'Warranty Warning Window',
+      subtitle: 'How many days before warranty ends to alert you',
+      items: const [7, 14, 30, 60, 90],
+      currentValue: provider.warrantyWarningDays,
+      displayBuilder: (days) => '$days days before warranty ends',
+      onSelected: (days) {
+        provider.setWarrantyWarningDays(days);
+        AppFeedback.showSuccess(context, 'Warranty window set to $days days');
+      },
+    );
+  }
+
+  void _showTimezonePicker(BuildContext context, InventoryProvider provider) {
+    const zones = [
+      'UTC',
+      'Asia/Ho_Chi_Minh',
+      'Asia/Bangkok',
+      'Asia/Singapore',
+      'Asia/Tokyo',
+      'Australia/Sydney',
+      'Europe/London',
+      'Europe/Berlin',
+      'America/New_York',
+      'America/Chicago',
+      'America/Los_Angeles',
+    ];
+    _showSelectionSheet<String>(
+      context: context,
+      title: 'Time Zone',
+      subtitle: 'Alerts treat "today" in this time zone',
+      items: zones,
+      currentValue: zones.contains(provider.timezone) ? provider.timezone : zones.first,
+      displayBuilder: (tz) => tz,
+      onSelected: (tz) {
+        provider.setTimezone(tz);
+        AppFeedback.showSuccess(context, 'Time zone set to $tz');
       },
     );
   }
