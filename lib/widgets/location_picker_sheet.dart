@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
-import 'move_item_sheet.dart';
+import 'box_qr_scan_sheet.dart';
 
 /// Reusable modal sheet to pick a storage location hierarchically
 /// (Level-by-level drill down) or by scanning a box QR code directly.
