@@ -1,0 +1,1110 @@
+openapi: 3.0.3
+info:
+  title: Personal Inventory & Asset Tracker API
+  description: Backend API specification for the Smart Personal Inventory application, including Google Social Auth, Specifications & Dynamic Attributes, Storage Hierarchy, Lending Tracker, and Scan Lookup.
+  version: 1.1.0
+servers:
+  - url: http://localhost:8080
+    description: Local Development Server
+
+paths:
+  # ==========================================
+  # 1. AUTHENTICATION & PROFILE
+  # ==========================================
+  /api/v1/auth/google:
+    post:
+      summary: Google Social Login
+      description: Authenticate or register a user using Google OAuth credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, name, id_token]
+              properties:
+                id_token:
+                  type: string
+                  description: Google ID token; verified server-side (the email is taken from the token, not from the body)
+                email:
+                  type: string
+                  format: email
+                  example: sara.wilson@gmail.com
+                name:
+                  type: string
+                  example: Sara Wilson
+                avatar_url:
+                  type: string
+                  nullable: true
+                  example: https://lh3.googleusercontent.com/a/default-user=s96-c
+      responses:
+        '200':
+          description: Successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /api/v1/auth/register:
+    post:
+      summary: Register with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /api/v1/auth/login:
+    post:
+      summary: Login with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /api/v1/auth/me:
+    get:
+      summary: Get current authenticated user profile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/User'
+
+  /api/v1/user/profile:
+    patch:
+      summary: Update user profile
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                role:
+                  type: string
+                avatarUrl:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/User'
+
+  # ==========================================
+  # 2. SETTINGS
+  # ==========================================
+  /api/v1/settings:
+    get:
+      summary: Get user settings
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/UserSettings'
+    patch:
+      summary: Update user settings
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSettings'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/UserSettings'
+
+  # ==========================================
+  # 3. CATEGORIES
+  # ==========================================
+  /api/v1/categories:
+    get:
+      summary: List all categories
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+    post:
+      summary: Create category
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /api/v1/categories/{name}:
+    delete:
+      summary: Delete category by name
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Category deleted
+
+  # ==========================================
+  # 4. STORAGE SPACES & BOXES
+  # ==========================================
+  /api/v1/boxes:
+    get:
+      summary: List storage boxes / locations
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: parentId
+          in: query
+          schema:
+            type: string
+        - name: tree
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Box'
+    post:
+      summary: Create a storage box / location
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoxCreateInput'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Box'
+
+  /api/v1/boxes/{id}:
+    get:
+      summary: Get box details with breadcrumbs
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+    put:
+      summary: Update box
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoxCreateInput'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Box'
+    delete:
+      summary: Delete box
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: cascade
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Box deleted
+
+  /api/v1/boxes/{id}/move:
+    patch:
+      summary: Move box to a new parent in hierarchy
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newParentId:
+                  type: string
+                  nullable: true
+      responses:
+        '200':
+          description: Box moved successfully
+
+  # ==========================================
+  # 5. ITEMS & SPECIFICATIONS
+  # ==========================================
+  /api/v1/items:
+    get:
+      summary: Query items catalog
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: boxId
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: isLowStock
+          in: query
+          schema:
+            type: boolean
+        - name: isExpired
+          in: query
+          schema:
+            type: boolean
+        - name: isExpiring
+          in: query
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 1000
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Item'
+
+    post:
+      summary: Create an item with specifications & custom attributes
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Item'
+
+  /api/v1/items/{id}:
+    get:
+      summary: Get item details
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Item'
+    put:
+      summary: Update full item details including specifications
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/Item'
+    delete:
+      summary: Delete item
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Item deleted
+
+  /api/v1/items/{id}/move:
+    patch:
+      summary: Move item to another box/location
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetBoxId]
+              properties:
+                targetBoxId:
+                  type: string
+      responses:
+        '200':
+          description: Item moved successfully
+
+  /api/v1/items/{id}/quantity:
+    patch:
+      summary: Quick update item quantity
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity:
+                  type: number
+      responses:
+        '200':
+          description: Item quantity updated
+
+  # ==========================================
+  # 6. LENDING & BORROWING
+  # ==========================================
+  /api/v1/lending/lend:
+    post:
+      summary: Lend an item to someone
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [itemId, borrowerName, lentDate]
+              properties:
+                itemId:
+                  type: string
+                borrowerName:
+                  type: string
+                borrowerContact:
+                  type: string
+                lentDate:
+                  type: string
+                  format: date-time
+                expectedReturnDate:
+                  type: string
+                  format: date-time
+                notes:
+                  type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    $ref: '#/components/schemas/LendingRecord'
+
+  /api/v1/lending/{id}/return:
+    post:
+      summary: Mark item as returned
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Item returned successfully
+
+  /api/v1/lending/active:
+    get:
+      summary: Get active active unreturned loans
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LendingRecord'
+
+  /api/v1/lending/overdue:
+    get:
+      summary: Get overdue loans
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LendingRecord'
+
+  /api/v1/lending/history:
+    get:
+      summary: Get lending history for an item
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: itemId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LendingRecord'
+
+  # ==========================================
+  # 7. SCAN & LOOKUP
+  # ==========================================
+  /api/v1/scan/lookup:
+    get:
+      summary: Look up item or box by scanned barcode or QR code
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        enum: [box, item]
+                      payload:
+                        type: object
+
+  # ==========================================
+  # 8. ALERTS & REPORTS
+  # ==========================================
+  /api/v1/alerts/summary:
+    get:
+      summary: Get summary of active warnings & alerts
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      overdueCount:
+                        type: integer
+                      expiredCount:
+                        type: integer
+                      expiringSoonCount:
+                        type: integer
+                      lowStockCount:
+                        type: integer
+                      expiringWarrantyCount:
+                        type: integer
+                      totalAlerts:
+                        type: integer
+
+  /api/v1/reports/inventory-health:
+    get:
+      summary: Get inventory health and total estimated value
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      totalAssetsCount:
+                        type: integer
+                      totalEstimatedValue:
+                        type: number
+                      breakdown:
+                        type: object
+                        properties:
+                          stored:
+                            type: integer
+                          inUse:
+                            type: integer
+                          lent:
+                            type: integer
+                          lowStock:
+                            type: integer
+                          expired:
+                            type: integer
+                          expiringSoon:
+                            type: integer
+                      storageLocationsCount:
+                        type: integer
+
+  # ==========================================
+  # 9. MEDIA UPLOAD
+  # ==========================================
+  /api/v1/media/upload:
+    post:
+      summary: Upload photo or document
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                folder:
+                  type: string
+                  default: items
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        avatarUrl:
+          type: string
+          nullable: true
+
+    AuthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+            user:
+              $ref: '#/components/schemas/User'
+
+    UserSettings:
+      type: object
+      properties:
+        currencySymbol:
+          type: string
+          default: '$'
+        defaultUnit:
+          type: string
+          default: 'pcs'
+        expiryWarningDays:
+          type: integer
+          default: 30
+        notifyExpiring:
+          type: boolean
+          default: true
+        notifyOverdue:
+          type: boolean
+          default: true
+        notifyLowStock:
+          type: boolean
+          default: true
+        vibrateOnScan:
+          type: boolean
+          default: true
+        autoOpenOnScan:
+          type: boolean
+          default: true
+
+    Box:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [room, cabinet, shelf, box, drawer, other]
+        description:
+          type: string
+        label:
+          type: string
+        parentId:
+          type: string
+          nullable: true
+        icon:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    BoxCreateInput:
+      type: object
+      required: [name, label]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [room, cabinet, shelf, box, drawer, other]
+          default: box
+        description:
+          type: string
+        label:
+          type: string
+        parentId:
+          type: string
+          nullable: true
+        icon:
+          type: string
+          nullable: true
+
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        boxId:
+          type: string
+        categoryId:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+        minQuantity:
+          type: number
+          nullable: true
+        status:
+          type: string
+          enum: [stored, inUse, lent, broken, disposed]
+        purchasePrice:
+          type: number
+          nullable: true
+        purchaseDate:
+          type: string
+          format: date-time
+          nullable: true
+        warrantyExpiryDate:
+          type: string
+          format: date-time
+          nullable: true
+        expiryDate:
+          type: string
+          format: date-time
+          nullable: true
+        serialNumber:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        photos:
+          type: array
+          items:
+            type: string
+        receiptPhotos:
+          type: array
+          items:
+            type: string
+        customAttributes:
+          type: object
+          description: Dynamic specifications & attributes key-value map
+          example:
+            Color: Space Gray
+            Storage: 256GB
+            RAM: 16GB
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    ItemInput:
+      type: object
+      required: [name, boxId]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        boxId:
+          type: string
+        categoryId:
+          type: string
+          default: General
+        quantity:
+          type: number
+          default: 1.0
+        unit:
+          type: string
+          default: pcs
+        minQuantity:
+          type: number
+          nullable: true
+        status:
+          type: string
+          enum: [stored, inUse, lent, broken, disposed]
+          default: stored
+        purchasePrice:
+          type: number
+          nullable: true
+        purchaseDate:
+          type: string
+          format: date-time
+          nullable: true
+        warrantyExpiryDate:
+          type: string
+          format: date-time
+          nullable: true
+        expiryDate:
+          type: string
+          format: date-time
+          nullable: true
+        serialNumber:
+          type: string
+          nullable: true
+        barcode:
+          type: string
+          nullable: true
+        photos:
+          type: array
+          items:
+            type: string
+        receiptPhotos:
+          type: array
+          items:
+            type: string
+        customAttributes:
+          type: object
+          description: Dynamic specifications & attributes key-value map
+          example:
+            Color: Space Gray
+            Storage: 256GB
+            RAM: 16GB
+
+    LendingRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        itemId:
+          type: string
+        borrowerName:
+          type: string
+        borrowerContact:
+          type: string
+        lentDate:
+          type: string
+          format: date-time
+        expectedReturnDate:
+          type: string
+          format: date-time
+          nullable: true
+        actualReturnDate:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
