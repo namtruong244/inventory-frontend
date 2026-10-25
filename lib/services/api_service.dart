@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/inventory_models.dart';
 
 /// Exception thrown when backend API returns an error or is unreachable
@@ -26,7 +28,10 @@ class ApiException implements Exception {
 /// Service handling all REST API interactions with the backend
 class ApiService {
   static const String _defaultLocalhost = 'http://localhost:8080';
-  static const String _envBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
+  static const String _envBaseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: '',
+  );
   static const String _prefKeyBaseUrl = 'inventory_api_base_url';
   static const String _prefKeyAuthToken = 'inventory_auth_token';
   static const String _prefKeyUser = 'inventory_auth_user';
@@ -114,9 +119,7 @@ class ApiService {
   // -------------------------------------------------------------
 
   Map<String, String> _buildHeaders({bool isJson = true}) {
-    final headers = <String, String>{
-      'Accept': 'application/json',
-    };
+    final headers = <String, String>{'Accept': 'application/json'};
     if (isJson) {
       headers['Content-Type'] = 'application/json';
     }
@@ -194,11 +197,7 @@ class ApiService {
   Future<dynamic> post(String path, dynamic body) async {
     final uri = _buildUri(path);
     final response = await http
-        .post(
-          uri,
-          headers: _buildHeaders(isJson: true),
-          body: jsonEncode(body),
-        )
+        .post(uri, headers: _buildHeaders(isJson: true), body: jsonEncode(body))
         .timeout(const Duration(seconds: 15));
     return _handleResponse(response);
   }
@@ -206,11 +205,7 @@ class ApiService {
   Future<dynamic> put(String path, dynamic body) async {
     final uri = _buildUri(path);
     final response = await http
-        .put(
-          uri,
-          headers: _buildHeaders(isJson: true),
-          body: jsonEncode(body),
-        )
+        .put(uri, headers: _buildHeaders(isJson: true), body: jsonEncode(body))
         .timeout(const Duration(seconds: 15));
     return _handleResponse(response);
   }
@@ -227,7 +222,10 @@ class ApiService {
     return _handleResponse(response);
   }
 
-  Future<dynamic> delete(String path, {Map<String, dynamic>? queryParams}) async {
+  Future<dynamic> delete(
+    String path, {
+    Map<String, dynamic>? queryParams,
+  }) async {
     final uri = _buildUri(path, queryParams);
     final response = await http
         .delete(uri, headers: _buildHeaders())
@@ -251,7 +249,10 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> register(
-      String name, String email, String password) async {
+    String name,
+    String email,
+    String password,
+  ) async {
     final data = await post('/api/v1/auth/register', {
       'name': name,
       'email': email,
@@ -293,9 +294,17 @@ class ApiService {
     } on ApiException catch (e) {
       // The server explicitly rejected the login (e.g. invalid token): never fake a session
       if (e.code == 'AUTH_FAILED' || e.code == 'INVALID_INPUT') rethrow;
-      return _offlineGoogleSession(email: email, name: name, avatarUrl: avatarUrl);
+      return _offlineGoogleSession(
+        email: email,
+        name: name,
+        avatarUrl: avatarUrl,
+      );
     } catch (_) {
-      return _offlineGoogleSession(email: email, name: name, avatarUrl: avatarUrl);
+      return _offlineGoogleSession(
+        email: email,
+        name: name,
+        avatarUrl: avatarUrl,
+      );
     }
   }
 
@@ -326,12 +335,18 @@ class ApiService {
     return data as Map<String, dynamic>;
   }
 
-  Future<Map<String, dynamic>> updateSettings(Map<String, dynamic> delta) async {
+  Future<Map<String, dynamic>> updateSettings(
+    Map<String, dynamic> delta,
+  ) async {
     final data = await patch('/api/v1/settings', delta);
     return data as Map<String, dynamic>;
   }
 
-  Future<User> updateProfile({String? name, String? role, String? avatarUrl}) async {
+  Future<User> updateProfile({
+    String? name,
+    String? role,
+    String? avatarUrl,
+  }) async {
     final body = <String, dynamic>{};
     if (name != null) body['name'] = name;
     if (role != null) body['role'] = role;
@@ -382,6 +397,7 @@ class ApiService {
 
   Future<Box> createBox(Box box) async {
     final body = {
+      'id': box.id,
       'name': box.name,
       'type': box.type.name,
       'description': box.description,
@@ -406,9 +422,7 @@ class ApiService {
   }
 
   Future<void> moveBox(String boxId, String? newParentId) async {
-    await patch('/api/v1/boxes/$boxId/move', {
-      'newParentId': newParentId,
-    });
+    await patch('/api/v1/boxes/$boxId/move', {'newParentId': newParentId});
   }
 
   Future<void> deleteBox(String boxId, {bool cascade = false}) async {
@@ -430,10 +444,7 @@ class ApiService {
     int page = 1,
     int limit = 200,
   }) async {
-    final params = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final params = <String, dynamic>{'page': page, 'limit': limit};
     if (query != null && query.isNotEmpty) params['q'] = query;
     if (boxId != null) params['boxId'] = boxId;
     if (category != null) params['category'] = category;
@@ -454,7 +465,7 @@ class ApiService {
   /// Fetches every item by walking pages, since the backend caps `limit` at 200.
   Future<List<Item>> getAllItems({int pageSize = 200}) async {
     final all = <Item>[];
-    for (var page = 1;; page++) {
+    for (var page = 1; ; page++) {
       final batch = await getItems(page: page, limit: pageSize);
       all.addAll(batch);
       if (batch.length < pageSize) break;
@@ -473,6 +484,7 @@ class ApiService {
 
   Future<Item> createItem(Item item) async {
     final body = <String, dynamic>{
+      'id': item.id,
       'name': item.name,
       'description': item.description,
       'boxId': item.boxId,
@@ -550,8 +562,12 @@ class ApiService {
     await patch('/api/v1/items/$itemId/move', {'targetBoxId': targetBoxId});
   }
 
-  Future<void> updateItemQuantity(String itemId, double quantity,
-      {String? reason, String? note}) async {
+  Future<void> updateItemQuantity(
+    String itemId,
+    double quantity, {
+    String? reason,
+    String? note,
+  }) async {
     await patch('/api/v1/items/$itemId/quantity', {
       'quantity': quantity,
       'reason': ?reason,
@@ -609,6 +625,7 @@ class ApiService {
   // -------------------------------------------------------------
 
   Future<LendingRecord> lendItem({
+    String? id,
     required String itemId,
     required String borrowerName,
     String borrowerContact = '',
@@ -618,6 +635,7 @@ class ApiService {
     double? quantity,
   }) async {
     final body = {
+      'id': ?id,
       'itemId': itemId,
       'borrowerName': borrowerName,
       'borrowerContact': borrowerContact,
@@ -650,8 +668,10 @@ class ApiService {
   }
 
   Future<List<LendingRecord>> getLendingHistory(String itemId) async {
-    final data = await get('/api/v1/lending/history',
-        queryParams: {'itemId': itemId});
+    final data = await get(
+      '/api/v1/lending/history',
+      queryParams: {'itemId': itemId},
+    );
     return (data as List)
         .map((json) => LendingRecord.fromJson(json as Map<String, dynamic>))
         .toList();
@@ -663,7 +683,10 @@ class ApiService {
 
   Future<Map<String, dynamic>?> lookupScan(String code) async {
     try {
-      final data = await get('/api/v1/scan/lookup', queryParams: {'code': code});
+      final data = await get(
+        '/api/v1/scan/lookup',
+        queryParams: {'code': code},
+      );
       return data as Map<String, dynamic>;
     } on ApiException catch (e) {
       if (e.statusCode == 404 || e.code == 'NOT_FOUND') {
@@ -711,7 +734,9 @@ class ApiService {
     request.fields['folder'] = folder;
     request.files.add(await http.MultipartFile.fromPath('file', filePath));
 
-    final streamedResponse = await request.send().timeout(const Duration(seconds: 30));
+    final streamedResponse = await request.send().timeout(
+      const Duration(seconds: 30),
+    );
     final response = await http.Response.fromStream(streamedResponse);
     final data = _handleResponse(response);
     return data['url'] as String;

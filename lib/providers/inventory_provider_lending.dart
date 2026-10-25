@@ -38,6 +38,7 @@ extension InventoryLending on InventoryProvider {
     double? quantity,
   }) async {
     final itemIndex = _items.indexWhere((i) => i.id == itemId);
+    final originalItem = itemIndex != -1 ? _items[itemIndex] : null;
     final stock = itemIndex != -1 ? _items[itemIndex].quantity : 0.0;
     // Mirrors the backend: 0 < quantity < stock lends only part of the stock.
     final isPartial = quantity != null && quantity > 0 && quantity < stock;
@@ -60,26 +61,26 @@ extension InventoryLending on InventoryProvider {
     }
     _notify();
 
-    try {
-      final remoteRecord = await _apiService.lendItem(
+    final ok = await _commit(
+      PendingOp('lend', {'record': localRecord.toJson()}),
+      () => _apiService.lendItem(
+        id: localRecord.id,
         itemId: itemId,
         borrowerName: borrowerName,
         borrowerContact: borrowerContact,
         lentDate: lentDate,
         expectedReturnDate: expectedReturnDate,
         notes: notes,
-        quantity: quantity,
-      );
-      // Replace with remote record
-      final idx = _lendingRecords.indexOf(localRecord);
-      if (idx != -1) {
-        _lendingRecords[idx] = remoteRecord;
-      }
-      return true;
-    } catch (e) {
-      debugPrint('lendItem error: $e');
-      return false;
+        quantity: isPartial ? quantity : null,
+      ),
+    );
+    if (!ok) {
+      // Rejected by the server: undo the optimistic change.
+      _lendingRecords.removeWhere((l) => l.id == localRecord.id);
+      if (itemIndex != -1) _items[itemIndex] = originalItem!;
+      _notify();
     }
+    return ok;
   }
 
   Future<bool> returnItem(String recordId, {String? newLocationId}) async {
@@ -88,7 +89,9 @@ extension InventoryLending on InventoryProvider {
     if (recordIndex != -1) {
       final record = _lendingRecords[recordIndex];
       itemId = record.itemId;
-      _lendingRecords[recordIndex] = record.copyWith(actualReturnDate: DateTime.now());
+      _lendingRecords[recordIndex] = record.copyWith(
+        actualReturnDate: DateTime.now(),
+      );
 
       final itemIndex = _items.indexWhere((i) => i.id == record.itemId);
       if (itemIndex != -1) {
@@ -103,16 +106,18 @@ extension InventoryLending on InventoryProvider {
       _notify();
     }
 
-    try {
-      await _apiService.returnItem(recordId);
-      if (newLocationId != null && itemId != null) {
-        await _apiService.moveItem(itemId, newLocationId);
-      }
-      return true;
-    } catch (e) {
-      debugPrint('returnItem error: $e');
-      return false;
+    final ok = await _commit(
+      PendingOp('returnLoan', {'id': recordId}),
+      () => _apiService.returnItem(recordId),
+    );
+    if (ok && newLocationId != null && itemId != null) {
+      final target = newLocationId;
+      await _commit(
+        PendingOp('moveItem', {'id': itemId, 'boxId': target}),
+        () => _apiService.moveItem(itemId!, target),
+      );
     }
+    return ok;
   }
 
   // ==========================================
@@ -141,7 +146,10 @@ extension InventoryLending on InventoryProvider {
     return null;
   }
 
-  Future<String?> uploadMedia(String filePath, {String folder = 'items'}) async {
+  Future<String?> uploadMedia(
+    String filePath, {
+    String folder = 'items',
+  }) async {
     try {
       return await _apiService.uploadMedia(filePath, folder: folder);
     } catch (e) {

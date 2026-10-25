@@ -7,18 +7,13 @@ extension InventoryBoxes on InventoryProvider {
   // ==========================================
 
   Future<bool> addBox(Box box) async {
-    try {
-      final created = await _apiService.createBox(box);
-      _boxes.add(created);
-      _notify();
-      return true;
-    } catch (e) {
-      debugPrint('createBox error: $e');
-      // Optimistic fallback
-      _boxes.add(box);
-      _notify();
-      return false;
-    }
+    _boxes.add(box);
+    _notify();
+    // A rejected create stays in the list until the next sync replaces it.
+    return _commit(
+      PendingOp('createBox', {'box': box.toJson()}),
+      () => _apiService.createBox(box),
+    );
   }
 
   Future<bool> updateBox(Box updatedBox) async {
@@ -27,17 +22,10 @@ extension InventoryBoxes on InventoryProvider {
       _boxes[index] = updatedBox;
       _notify();
     }
-    try {
-      final res = await _apiService.updateBox(updatedBox);
-      if (index != -1) {
-        _boxes[index] = res;
-        _notify();
-      }
-      return true;
-    } catch (e) {
-      debugPrint('updateBox error: $e');
-      return false;
-    }
+    return _commit(
+      PendingOp('updateBox', {'box': updatedBox.toJson()}),
+      () => _apiService.updateBox(updatedBox),
+    );
   }
 
   /// Returns true on success. On API failure the local state is restored.
@@ -57,18 +45,20 @@ extension InventoryBoxes on InventoryProvider {
           .toList();
       frontier = children;
     }
-    final removedItemIds =
-        _items.where((i) => doomed.contains(i.boxId)).map((i) => i.id).toSet();
+    final removedItemIds = _items
+        .where((i) => doomed.contains(i.boxId))
+        .map((i) => i.id)
+        .toSet();
     _items.removeWhere((i) => removedItemIds.contains(i.id));
     _lendingRecords.removeWhere((l) => removedItemIds.contains(l.itemId));
     _boxes.removeWhere((b) => doomed.contains(b.id));
     _notify();
 
-    try {
-      await _apiService.deleteBox(boxId, cascade: cascade);
-      return true;
-    } catch (e) {
-      debugPrint('deleteBox error: $e');
+    final ok = await _commit(
+      PendingOp('deleteBox', {'id': boxId, 'cascade': cascade}),
+      () => _apiService.deleteBox(boxId, cascade: cascade),
+    );
+    if (!ok) {
       _boxes
         ..clear()
         ..addAll(boxesSnapshot);
@@ -79,8 +69,8 @@ extension InventoryBoxes on InventoryProvider {
         ..clear()
         ..addAll(loansSnapshot);
       _notify();
-      return false;
     }
+    return ok;
   }
 
   List<Box> getRootBoxes() {
@@ -157,9 +147,10 @@ extension InventoryBoxes on InventoryProvider {
       _notify();
     }
 
-    _apiService.moveBox(locationId, newParentId).catchError((e) {
-      debugPrint('moveBox error: $e');
-    });
+    _commit(
+      PendingOp('moveBox', {'id': locationId, 'parentId': newParentId}),
+      () => _apiService.moveBox(locationId, newParentId),
+    );
     return true;
   }
 

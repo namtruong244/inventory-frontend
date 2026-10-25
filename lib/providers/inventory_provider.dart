@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../models/inventory_models.dart';
 import '../services/api_service.dart';
 import '../services/offline_store.dart';
@@ -42,6 +43,7 @@ class InventoryProvider extends ChangeNotifier {
 
   /// Showing cached data because the server could not be reached.
   bool _isOffline = false;
+  DateTime? _lastProbe;
   bool get isOffline => _isOffline;
 
   String? _errorMessage;
@@ -78,10 +80,12 @@ class InventoryProvider extends ChangeNotifier {
   String get defaultUnit => _defaultUnit;
 
   /// Helper to format a monetary value according to the current active currency symbol.
-  String formatPrice(num? price) => AppFormatters.formatCurrency(price, _currency);
+  String formatPrice(num? price) =>
+      AppFormatters.formatCurrency(price, _currency);
 
   /// Helper to format quantity and unit with correct English pluralization.
-  String formatQty(num qty, String unit) => AppFormatters.formatQuantity(qty, unit);
+  String formatQty(num qty, String unit) =>
+      AppFormatters.formatQuantity(qty, unit);
   int get expiryWarningDays => _expiryWarningDays;
   int get warrantyWarningDays => _warrantyWarningDays;
   String get timezone => _timezone;
@@ -157,7 +161,9 @@ class InventoryProvider extends ChangeNotifier {
         _errorMessage = null;
         return;
       } catch (e) {
-        debugPrint('Token check or getMe failed: $e. Using cached user if present...');
+        debugPrint(
+          'Token check or getMe failed: $e. Using cached user if present...',
+        );
         if (_apiService.currentUser != null) {
           _userName = _apiService.currentUser!.name;
           _userRole = _apiService.currentUser!.role;
@@ -295,7 +301,8 @@ class InventoryProvider extends ChangeNotifier {
           _expiryWarningDays = (settings['expiryWarningDays'] as num).toInt();
         }
         if (settings['warrantyWarningDays'] != null) {
-          _warrantyWarningDays = (settings['warrantyWarningDays'] as num).toInt();
+          _warrantyWarningDays = (settings['warrantyWarningDays'] as num)
+              .toInt();
         }
         if (settings['timezone'] != null) {
           _timezone = settings['timezone'] as String;
@@ -355,7 +362,9 @@ class InventoryProvider extends ChangeNotifier {
         final hadCache = await _loadSnapshot();
         _isOffline = true;
         _isConnected = false;
-        _errorMessage = hadCache ? 'Offline: showing saved data' : 'Cannot reach the server';
+        _errorMessage = hadCache
+            ? 'Offline: showing saved data'
+            : 'Cannot reach the server';
         return;
       }
 
@@ -407,7 +416,9 @@ class InventoryProvider extends ChangeNotifier {
 
       // If database is completely empty on first launch, auto-seed sample demo data
       if (_boxes.isEmpty && _items.isEmpty) {
-        debugPrint('Database is empty, auto-seeding sample demo data to backend...');
+        debugPrint(
+          'Database is empty, auto-seeding sample demo data to backend...',
+        );
         await seedBackendWithSampleData();
       }
     } catch (e) {
@@ -433,5 +444,4 @@ class InventoryProvider extends ChangeNotifier {
       return null;
     }
   }
-
 }

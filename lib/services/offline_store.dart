@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../models/inventory_models.dart';
 
 /// Last known inventory, kept on the device for offline browsing and scanning.
@@ -18,23 +20,19 @@ class InventorySnapshot {
   });
 }
 
-/// A stock change made while the server was unreachable, replayed on the next sync.
-class PendingQuantityChange {
-  final String itemId;
-  final double quantity;
-  final String? reason;
+/// A change made while the server was unreachable, replayed in order on the next sync.
+class PendingOp {
+  final String type;
+  final Map<String, dynamic> args;
 
-  const PendingQuantityChange(this.itemId, this.quantity, this.reason);
+  const PendingOp(this.type, this.args);
 
-  Map<String, dynamic> toJson() =>
-      {'itemId': itemId, 'quantity': quantity, 'reason': reason};
+  Map<String, dynamic> toJson() => {'type': type, 'args': args};
 
-  factory PendingQuantityChange.fromJson(Map<String, dynamic> json) =>
-      PendingQuantityChange(
-        json['itemId'] as String,
-        (json['quantity'] as num).toDouble(),
-        json['reason'] as String?,
-      );
+  factory PendingOp.fromJson(Map<String, dynamic> json) => PendingOp(
+    json['type'] as String,
+    Map<String, dynamic>.from(json['args'] as Map),
+  );
 }
 
 /// SharedPreferences-backed cache, keyed by user so accounts never see each other's data.
@@ -87,26 +85,29 @@ class OfflineStore {
     }
   }
 
-  Future<List<PendingQuantityChange>> loadPending() async {
+  Future<List<PendingOp>> loadPending() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString(_pendKey);
       if (raw == null) return [];
       return (jsonDecode(raw) as List)
-          .map((e) => PendingQuantityChange.fromJson(e as Map<String, dynamic>))
+          .map((e) => PendingOp.fromJson(Map<String, dynamic>.from(e as Map)))
           .toList();
     } catch (_) {
       return [];
     }
   }
 
-  Future<void> savePending(List<PendingQuantityChange> list) async {
+  Future<void> savePending(List<PendingOp> list) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       if (list.isEmpty) {
         await prefs.remove(_pendKey);
       } else {
-        await prefs.setString(_pendKey, jsonEncode(list.map((e) => e.toJson()).toList()));
+        await prefs.setString(
+          _pendKey,
+          jsonEncode(list.map((e) => e.toJson()).toList()),
+        );
       }
     } catch (e) {
       debugPrint('savePending error: $e');

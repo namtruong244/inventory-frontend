@@ -9,15 +9,16 @@ extension InventoryItems on InventoryProvider {
   Future<bool> addCategory(String category) async {
     final trimmed = category.trim();
     if (trimmed.isEmpty) return false;
-    final exists = _categories.any((c) => c.toLowerCase() == trimmed.toLowerCase());
+    final exists = _categories.any(
+      (c) => c.toLowerCase() == trimmed.toLowerCase(),
+    );
     if (!exists) {
       _categories.add(trimmed);
       _notify();
-      try {
-        await _apiService.createCategory(trimmed);
-      } catch (e) {
-        debugPrint('createCategory error: $e');
-      }
+      await _commit(
+        PendingOp('createCategory', {'name': trimmed}),
+        () => _apiService.createCategory(trimmed),
+      );
       return true;
     }
     return false;
@@ -33,65 +34,62 @@ extension InventoryItems on InventoryProvider {
         }
       }
       _notify();
-      try {
-        await _apiService.deleteCategory(trimmed);
-      } catch (e) {
-        debugPrint('deleteCategory error: $e');
-      }
+      await _commit(
+        PendingOp('deleteCategory', {'name': trimmed}),
+        () => _apiService.deleteCategory(trimmed),
+      );
       return true;
     }
     return false;
   }
 
   int getItemCountForCategory(String category) {
-    return _items.where((i) => i.categoryId.toLowerCase() == category.toLowerCase()).length;
+    return _items
+        .where((i) => i.categoryId.toLowerCase() == category.toLowerCase())
+        .length;
   }
 
   double get totalInventoryValue {
-    return _items.fold(0.0, (sum, item) => sum + ((item.purchasePrice ?? 0.0) * item.quantity));
+    return _items.fold(
+      0.0,
+      (sum, item) => sum + ((item.purchasePrice ?? 0.0) * item.quantity),
+    );
   }
 
   Future<bool> addItem(Item item) async {
     if (item.categoryId.isNotEmpty &&
-        !_categories.any((c) => c.toLowerCase() == item.categoryId.toLowerCase())) {
+        !_categories.any(
+          (c) => c.toLowerCase() == item.categoryId.toLowerCase(),
+        )) {
       _categories.add(item.categoryId);
     }
 
-    try {
-      final created = await _apiService.createItem(item);
-      _items.add(created);
-      _notify();
-      return true;
-    } catch (e) {
-      debugPrint('createItem error: $e');
-      _items.add(item);
-      _notify();
-      return false;
-    }
+    _items.add(item);
+    _notify();
+    // A rejected create stays in the list until the next sync replaces it.
+    return _commit(
+      PendingOp('createItem', {'item': item.toJson()}),
+      () => _apiService.createItem(item),
+    );
   }
 
   Future<bool> updateItem(Item updatedItem) async {
     final index = _items.indexWhere((i) => i.id == updatedItem.id);
     if (index != -1) {
       if (updatedItem.categoryId.isNotEmpty &&
-          !_categories.any((c) => c.toLowerCase() == updatedItem.categoryId.toLowerCase())) {
+          !_categories.any(
+            (c) => c.toLowerCase() == updatedItem.categoryId.toLowerCase(),
+          )) {
         _categories.add(updatedItem.categoryId);
       }
       _items[index] = updatedItem;
       _notify();
     }
 
-    try {
-      final res = await _apiService.updateItem(updatedItem);
-      if (index != -1) {
-        _items[index] = res;
-        _notify();
-      }
-      return true;
-    } catch (e) {
-      debugPrint('updateItem error: $e');
-      return false;
-    }
+    return _commit(
+      PendingOp('updateItem', {'item': updatedItem.toJson()}),
+      () => _apiService.updateItem(updatedItem),
+    );
   }
 
   Future<bool> deleteItem(String itemId) async {
@@ -101,11 +99,11 @@ extension InventoryItems on InventoryProvider {
     _lendingRecords.removeWhere((l) => l.itemId == itemId);
     _notify();
 
-    try {
-      await _apiService.deleteItem(itemId);
-      return true;
-    } catch (e) {
-      debugPrint('deleteItem error: $e');
+    final ok = await _commit(
+      PendingOp('deleteItem', {'id': itemId}),
+      () => _apiService.deleteItem(itemId),
+    );
+    if (!ok) {
       _items
         ..clear()
         ..addAll(itemsSnapshot);
@@ -113,8 +111,8 @@ extension InventoryItems on InventoryProvider {
         ..clear()
         ..addAll(loansSnapshot);
       _notify();
-      return false;
     }
+    return ok;
   }
 
   Future<bool> moveItem(String itemId, String newLocationId) async {
@@ -124,13 +122,10 @@ extension InventoryItems on InventoryProvider {
       _notify();
     }
 
-    try {
-      await _apiService.moveItem(itemId, newLocationId);
-      return true;
-    } catch (e) {
-      debugPrint('moveItem error: $e');
-      return false;
-    }
+    return _commit(
+      PendingOp('moveItem', {'id': itemId, 'boxId': newLocationId}),
+      () => _apiService.moveItem(itemId, newLocationId),
+    );
   }
 
   Future<StockHistory?> getItemMovements(String itemId) async {
@@ -142,26 +137,25 @@ extension InventoryItems on InventoryProvider {
     }
   }
 
-  Future<bool> updateItemQuantity(String itemId, double quantity,
-      {String? reason}) async {
+  Future<bool> updateItemQuantity(
+    String itemId,
+    double quantity, {
+    String? reason,
+  }) async {
     final index = _items.indexWhere((i) => i.id == itemId);
     if (index != -1) {
       _items[index] = _items[index].copyWith(quantity: quantity);
       _notify();
     }
 
-    try {
-      await _apiService.updateItemQuantity(itemId, quantity, reason: reason);
-      return true;
-    } catch (e) {
-      debugPrint('updateItemQuantity error: $e');
-      if (_isNetworkError(e)) {
-        // Offline: keep the change on the device and sync it later.
-        await _queueQuantityChange(itemId, quantity, reason);
-        return true;
-      }
-      return false;
-    }
+    return _commit(
+      PendingOp('quantity', {
+        'id': itemId,
+        'quantity': quantity,
+        'reason': reason,
+      }),
+      () => _apiService.updateItemQuantity(itemId, quantity, reason: reason),
+    );
   }
 
   List<Item> getItemsIn(String boxId) {
@@ -182,7 +176,8 @@ extension InventoryItems on InventoryProvider {
       return _items.firstWhere(
         (i) =>
             (i.barcode != null && i.barcode!.toLowerCase().trim() == trimmed) ||
-            (i.serialNumber != null && i.serialNumber!.toLowerCase().trim() == trimmed) ||
+            (i.serialNumber != null &&
+                i.serialNumber!.toLowerCase().trim() == trimmed) ||
             i.id.toLowerCase() == trimmed,
       );
     } catch (_) {
