@@ -24,6 +24,31 @@ class _ItemsScreenState extends State<ItemsScreen> {
   String? _selectedBoxFilter; // null: all, or specific boxId
   int _statusFilterIndex = 0; // 0: All, 1: Stored, 2: In Use, 3: Lent, 4: Expiring/Expired
 
+  static const int _pageSize = 30;
+  int _visibleCount = _pageSize;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Reveals the next page of items when the list is scrolled near its end.
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - 400) {
+      setState(() => _visibleCount += _pageSize);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -66,6 +91,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
             }
 
             return ListView(
+              controller: _scrollController,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
               children: [
@@ -111,7 +137,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
                 // Search field
                 TextField(
-                  onChanged: (val) => setState(() => _searchQuery = val.trim()),
+                  onChanged: (val) => setState(() { _searchQuery = val.trim(); _visibleCount = _pageSize; }),
                   style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
                   decoration: InputDecoration(
                     hintText: 'Search items, barcodes, serials...',
@@ -172,7 +198,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         )),
                       ],
                       onChanged: (val) {
-                        setState(() => _selectedBoxFilter = val);
+                        setState(() { _selectedBoxFilter = val; _visibleCount = _pageSize; });
                       },
                     ),
                   ),
@@ -210,7 +236,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     ),
                   )
                 else
-                  ...displayedItems.map((item) {
+                  ...displayedItems.take(_visibleCount).map((item) {
                     final parentBox = provider.getBoxById(item.boxId);
                     final breadcrumb = parentBox != null ? provider.getBreadcrumbString(parentBox.id) : '';
 
@@ -329,6 +355,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       ),
                     );
                   }),
+                if (displayedItems.length > _visibleCount)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))),
+                  ),
               ],
             );
           },
@@ -342,7 +373,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
     final theme = Theme.of(context);
 
     return GestureDetector(
-      onTap: () => setState(() => _statusFilterIndex = index),
+      onTap: () => setState(() { _statusFilterIndex = index; _visibleCount = _pageSize; }),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
