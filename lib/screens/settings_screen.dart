@@ -12,6 +12,7 @@ import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/export_barcodes_sheet.dart';
 import 'login_screen.dart';
+import 'trash_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final ScrollController? scrollController;
@@ -297,6 +298,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     trailing: const Icon(Icons.chevron_right_rounded, color: Colors.grey, size: 20),
                     onTap: () => showExportReportSheet(context, provider),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: buildIconBox(Icons.delete_outline_rounded, const Color(0xFFDC2626), const Color(0xFFFEE2E2)),
+                    title: const Text(
+                      'Trash',
+                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Color(0xFF18181B)),
+                    ),
+                    subtitle: Text(
+                      'Restore or permanently delete removed items & locations',
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded, color: Colors.grey, size: 20),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const TrashScreen()),
+                    ),
                   ),
                   const Divider(height: 1),
                   ListTile(

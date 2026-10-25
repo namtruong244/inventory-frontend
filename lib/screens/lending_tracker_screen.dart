@@ -429,6 +429,7 @@ class _LendItemFormSheetState extends State<_LendItemFormSheet> {
   final _borrowerNameCtrl = TextEditingController();
   final _borrowerContactCtrl = TextEditingController();
   final TextEditingController _notesCtrl = TextEditingController();
+  final _quantityCtrl = TextEditingController();
   final DateTime _lentDate = DateTime.now();
   DateTime? _expectedReturnDate;
 
@@ -437,6 +438,7 @@ class _LendItemFormSheetState extends State<_LendItemFormSheet> {
     _borrowerNameCtrl.dispose();
     _borrowerContactCtrl.dispose();
     _notesCtrl.dispose();
+    _quantityCtrl.dispose();
     super.dispose();
   }
 
@@ -445,6 +447,7 @@ class _LendItemFormSheetState extends State<_LendItemFormSheet> {
     final provider = Provider.of<InventoryProvider>(context);
     // Only items not currently lent
     final availableItems = provider.items.where((i) => i.status != ItemStatus.lent).toList();
+    final selectedItem = availableItems.where((i) => i.id == _selectedItemId).firstOrNull;
 
     return Container(
       decoration: const BoxDecoration(
@@ -509,11 +512,33 @@ class _LendItemFormSheetState extends State<_LendItemFormSheet> {
                         child: Text(item.name),
                       );
                     }).toList(),
-                    onChanged: (val) => setState(() => _selectedItemId = val),
+                    onChanged: (val) => setState(() {
+                      _selectedItemId = val;
+                      _quantityCtrl.clear();
+                    }),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
+
+              if (selectedItem != null && selectedItem.quantity > 1) ...[
+                AppFormField(
+                  label: 'Quantity to lend',
+                  hintText: 'Leave empty to lend all '
+                      '(${provider.formatQty(selectedItem.quantity, selectedItem.unit)} in stock)',
+                  controller: _quantityCtrl,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  validator: (val) {
+                    final text = val?.trim() ?? '';
+                    if (text.isEmpty) return null;
+                    final qty = double.tryParse(text);
+                    if (qty == null || qty <= 0) return 'Enter a quantity greater than 0';
+                    if (qty > selectedItem.quantity) return 'Only ${selectedItem.quantity} in stock';
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
 
               AppFormField(
                 label: 'Borrower Name',
@@ -599,6 +624,7 @@ class _LendItemFormSheetState extends State<_LendItemFormSheet> {
                         lentDate: _lentDate,
                         expectedReturnDate: _expectedReturnDate,
                         notes: _notesCtrl.text.trim(),
+                        quantity: double.tryParse(_quantityCtrl.text.trim()),
                       );
 
                       Navigator.pop(context);

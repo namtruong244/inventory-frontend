@@ -10,6 +10,7 @@ part 'inventory_provider_boxes.dart';
 part 'inventory_provider_settings.dart';
 part 'inventory_provider_alerts.dart';
 part 'inventory_provider_reports.dart';
+part 'inventory_provider_trash.dart';
 
 class InventoryProvider extends ChangeNotifier {
   final ApiService _apiService = ApiService();

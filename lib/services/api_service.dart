@@ -569,6 +569,42 @@ class ApiService {
   }
 
   // -------------------------------------------------------------
+  // Trash (soft-deleted items & boxes)
+  // -------------------------------------------------------------
+
+  Future<({List<Item> items, List<Box> boxes})> getTrash() async {
+    final data = await get('/api/v1/trash') as Map<String, dynamic>;
+    return (
+      items: ((data['items'] as List?) ?? [])
+          .map((j) => Item.fromJson(j as Map<String, dynamic>))
+          .toList(),
+      boxes: ((data['boxes'] as List?) ?? [])
+          .map((j) => Box.fromJson(j as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+
+  Future<void> restoreTrashItem(String id) async {
+    await post('/api/v1/trash/items/$id/restore', {});
+  }
+
+  Future<void> restoreTrashBox(String id) async {
+    await post('/api/v1/trash/boxes/$id/restore', {});
+  }
+
+  Future<void> purgeTrashItem(String id) async {
+    await delete('/api/v1/trash/items/$id');
+  }
+
+  Future<void> purgeTrashBox(String id) async {
+    await delete('/api/v1/trash/boxes/$id');
+  }
+
+  Future<void> emptyTrash() async {
+    await delete('/api/v1/trash');
+  }
+
+  // -------------------------------------------------------------
   // Module 4.6: Lending & Borrowing
   // -------------------------------------------------------------
 
@@ -579,6 +615,7 @@ class ApiService {
     required DateTime lentDate,
     DateTime? expectedReturnDate,
     String notes = '',
+    double? quantity,
   }) async {
     final body = {
       'itemId': itemId,
@@ -588,6 +625,7 @@ class ApiService {
       if (expectedReturnDate != null)
         'expectedReturnDate': expectedReturnDate.toUtc().toIso8601String(),
       'notes': notes,
+      'quantity': ?quantity,
     };
     final data = await post('/api/v1/lending/lend', body);
     return LendingRecord.fromJson(data as Map<String, dynamic>);

@@ -402,6 +402,8 @@ class LendingRecord {
   final DateTime? expectedReturnDate;
   final DateTime? actualReturnDate;
   final String notes;
+  final double quantity;
+  final bool isPartial;
 
   LendingRecord({
     String? id,
@@ -412,6 +414,8 @@ class LendingRecord {
     this.expectedReturnDate,
     this.actualReturnDate,
     this.notes = '',
+    this.quantity = 1,
+    this.isPartial = false,
   })  : id = id ?? const Uuid().v4(),
         lentDate = lentDate ?? DateTime.now();
 
@@ -430,6 +434,8 @@ class LendingRecord {
     DateTime? expectedReturnDate,
     DateTime? actualReturnDate,
     String? notes,
+    double? quantity,
+    bool? isPartial,
   }) {
     return LendingRecord(
       id: id ?? this.id,
@@ -440,6 +446,8 @@ class LendingRecord {
       expectedReturnDate: expectedReturnDate ?? this.expectedReturnDate,
       actualReturnDate: actualReturnDate ?? this.actualReturnDate,
       notes: notes ?? this.notes,
+      quantity: quantity ?? this.quantity,
+      isPartial: isPartial ?? this.isPartial,
     );
   }
 
@@ -452,6 +460,8 @@ class LendingRecord {
         'expectedReturnDate': expectedReturnDate?.toIso8601String(),
         'actualReturnDate': actualReturnDate?.toIso8601String(),
         'notes': notes,
+        'quantity': quantity,
+        'isPartial': isPartial,
       };
 
   factory LendingRecord.fromJson(Map<String, dynamic> json) => LendingRecord(
@@ -469,6 +479,8 @@ class LendingRecord {
             ? DateTime.tryParse(json['actualReturnDate'])
             : null,
         notes: json['notes'] ?? '',
+        quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
+        isPartial: json['isPartial'] == true,
       );
 }
 

@@ -35,7 +35,12 @@ extension InventoryLending on InventoryProvider {
     required DateTime lentDate,
     DateTime? expectedReturnDate,
     String notes = '',
+    double? quantity,
   }) async {
+    final itemIndex = _items.indexWhere((i) => i.id == itemId);
+    final stock = itemIndex != -1 ? _items[itemIndex].quantity : 0.0;
+    // Mirrors the backend: 0 < quantity < stock lends only part of the stock.
+    final isPartial = quantity != null && quantity > 0 && quantity < stock;
     final localRecord = LendingRecord(
       itemId: itemId,
       borrowerName: borrowerName,
@@ -43,12 +48,15 @@ extension InventoryLending on InventoryProvider {
       lentDate: lentDate,
       expectedReturnDate: expectedReturnDate,
       notes: notes,
+      quantity: isPartial ? quantity : stock,
+      isPartial: isPartial,
     );
     _lendingRecords.add(localRecord);
 
-    final itemIndex = _items.indexWhere((i) => i.id == itemId);
     if (itemIndex != -1) {
-      _items[itemIndex] = _items[itemIndex].copyWith(status: ItemStatus.lent);
+      _items[itemIndex] = isPartial
+          ? _items[itemIndex].copyWith(quantity: stock - quantity)
+          : _items[itemIndex].copyWith(status: ItemStatus.lent);
     }
     _notify();
 
@@ -60,6 +68,7 @@ extension InventoryLending on InventoryProvider {
         lentDate: lentDate,
         expectedReturnDate: expectedReturnDate,
         notes: notes,
+        quantity: quantity,
       );
       // Replace with remote record
       final idx = _lendingRecords.indexOf(localRecord);
@@ -83,10 +92,13 @@ extension InventoryLending on InventoryProvider {
 
       final itemIndex = _items.indexWhere((i) => i.id == record.itemId);
       if (itemIndex != -1) {
-        _items[itemIndex] = _items[itemIndex].copyWith(
-          status: ItemStatus.stored,
-          boxId: newLocationId ?? _items[itemIndex].boxId,
-        );
+        final item = _items[itemIndex];
+        _items[itemIndex] = record.isPartial
+            ? item.copyWith(quantity: item.quantity + record.quantity)
+            : item.copyWith(
+                status: ItemStatus.stored,
+                boxId: newLocationId ?? item.boxId,
+              );
       }
       _notify();
     }
