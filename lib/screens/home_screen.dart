@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_image_view.dart';
+import '../widgets/home_tab_support.dart';
 import 'alerts_screen.dart';
 import 'box_details_screen.dart';
 import 'boxes_screen.dart';
@@ -32,9 +33,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   bool _isHeaderScrolledPast = false;
 
   // Keys for sub-tab screens to enable scroll-to-top
-  final GlobalKey<_BoxesScreenWrapperState> _boxesKey = GlobalKey();
-  final GlobalKey<_ItemsScreenWrapperState> _itemsKey = GlobalKey();
-  final GlobalKey<_SettingsScreenWrapperState> _settingsKey = GlobalKey();
+  final GlobalKey<ScrollToTopHostState> _boxesKey = GlobalKey();
+  final GlobalKey<ScrollToTopHostState> _itemsKey = GlobalKey();
+  final GlobalKey<ScrollToTopHostState> _settingsKey = GlobalKey();
 
   @override
   void initState() {
@@ -159,10 +160,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _KeepAliveTab(child: _buildHomeTab(context)),
-                  _KeepAliveTab(child: _BoxesScreenWrapper(key: _boxesKey)),
-                  _KeepAliveTab(child: _ItemsScreenWrapper(key: _itemsKey)),
-                  _KeepAliveTab(child: _SettingsScreenWrapper(key: _settingsKey)),
+                  KeepAliveTab(child: _buildHomeTab(context)),
+                  KeepAliveTab(child: ScrollToTopHost(key: _boxesKey, child: const BoxesScreen())),
+                  KeepAliveTab(child: ScrollToTopHost(key: _itemsKey, child: const ItemsScreen())),
+                  KeepAliveTab(child: ScrollToTopHost(key: _settingsKey, child: const SettingsScreen())),
                 ],
               ),
             ),
@@ -1401,152 +1402,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Custom painter for the delicate wave pattern in the dark header
-class HeaderWavePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.08)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2;
-
-    for (int i = 0; i < 7; i++) {
-      final path = Path();
-      final offset = i * 14.0;
-      path.moveTo(size.width * 0.25, 0);
-      path.cubicTo(
-        size.width * 0.45,
-        size.height * 0.2 + offset,
-        size.width * 0.7,
-        size.height * 0.8 + (offset * 0.4),
-        size.width,
-        size.height * 0.35 + (offset * 0.7),
-      );
-      canvas.drawPath(path, paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// Helper wrapper that preserves the tab's state and scroll position across page transitions
-class _KeepAliveTab extends StatefulWidget {
-  final Widget child;
-  const _KeepAliveTab({required this.child});
-
-  @override
-  State<_KeepAliveTab> createState() => _KeepAliveTabState();
-}
-
-class _KeepAliveTabState extends State<_KeepAliveTab>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return widget.child;
-  }
-}
-
-/// Wrapper for BoxesScreen that exposes scroll-to-top via PrimaryScrollController
-class _BoxesScreenWrapper extends StatefulWidget {
-  const _BoxesScreenWrapper({super.key});
-
-  @override
-  State<_BoxesScreenWrapper> createState() => _BoxesScreenWrapperState();
-}
-
-class _BoxesScreenWrapperState extends State<_BoxesScreenWrapper> {
-  final ScrollController _scrollController = ScrollController();
-
-  void scrollToTop() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PrimaryScrollController(
-      controller: _scrollController,
-      child: const BoxesScreen(),
-    );
-  }
-}
-
-/// Wrapper for ItemsScreen that exposes scroll-to-top via PrimaryScrollController
-class _ItemsScreenWrapper extends StatefulWidget {
-  const _ItemsScreenWrapper({super.key});
-
-  @override
-  State<_ItemsScreenWrapper> createState() => _ItemsScreenWrapperState();
-}
-
-class _ItemsScreenWrapperState extends State<_ItemsScreenWrapper> {
-  final ScrollController _scrollController = ScrollController();
-
-  void scrollToTop() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PrimaryScrollController(
-      controller: _scrollController,
-      child: const ItemsScreen(),
-    );
-  }
-}
-
-/// Wrapper for SettingsScreen that exposes scroll-to-top via PrimaryScrollController
-class _SettingsScreenWrapper extends StatefulWidget {
-  const _SettingsScreenWrapper({super.key});
-
-  @override
-  State<_SettingsScreenWrapper> createState() => _SettingsScreenWrapperState();
-}
-
-class _SettingsScreenWrapperState extends State<_SettingsScreenWrapper> {
-  final ScrollController _scrollController = ScrollController();
-
-  void scrollToTop() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PrimaryScrollController(
-      controller: _scrollController,
-      child: const SettingsScreen(),
     );
   }
 }

@@ -26,24 +26,30 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
   static const int _pageSize = 30;
   int _visibleCount = _pageSize;
-  final ScrollController _scrollController = ScrollController();
+  ScrollController? _scrollController;
 
   @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reuse the tab's primary controller so tapping the tab scrolls to top.
+    final controller = PrimaryScrollController.maybeOf(context);
+    if (controller != _scrollController) {
+      _scrollController?.removeListener(_onScroll);
+      _scrollController = controller?..addListener(_onScroll);
+    }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController?.removeListener(_onScroll);
     super.dispose();
   }
 
   /// Reveals the next page of items when the list is scrolled near its end.
   void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final position = _scrollController.position;
+    final controller = _scrollController;
+    if (controller == null || !controller.hasClients) return;
+    final position = controller.position;
     if (position.pixels >= position.maxScrollExtent - 400) {
       setState(() => _visibleCount += _pageSize);
     }
@@ -91,7 +97,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
             }
 
             return ListView(
-              controller: _scrollController,
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
               children: [

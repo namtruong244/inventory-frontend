@@ -27,6 +27,7 @@ lib/widgets/                        Widget/bottom sheet tái sử dụng
 lib/utils/formatters.dart           AppFormatters.formatCurrency / formatQuantity
 ```
 
+- `InventoryProvider` chia file bằng `part`: truy vấn cảnh báo ở `inventory_provider_alerts.dart`, báo cáo text ở `inventory_provider_reports.dart` (extension, cùng library nên dùng được field private). Thêm logic chỉ-đọc mới vào các part này thay vì làm file chính phình thêm.
 - **Một provider duy nhất** `InventoryProvider`. UI đọc qua `context.watch/read<InventoryProvider>()` hoặc `Consumer`. Không thêm state-management lib khác.
 - UI **không gọi `ApiService` trực tiếp** — đi qua method của provider (provider expose `api` nhưng chỉ dùng cho trường hợp đặc biệt đã có sẵn).
 - Mutation trong provider theo mẫu **optimistic update**: sửa list local → `notifyListeners()` → gọi API → thay bằng dữ liệu server → trả `bool` thành công; lỗi thì `debugPrint` và trả `false` để UI báo lỗi.
