@@ -12,7 +12,7 @@ flutter test test/attributes_test.dart
 flutter run --dart-define=API_BASE_URL=http://localhost:8080
 ./run_ios_release.sh [API_URL] [DEVICE_ID]   # release trên iPhone thật
 ```
-`test/api_integration_test.dart` có nhóm "Backend Live API Integration" gọi backend thật tại `localhost:8080` — cần chạy BE trước, nếu không nhóm này sẽ fail.
+`test/api_integration_test.dart` có nhóm "Backend Live API Integration" gọi backend thật tại `localhost:8080`; nhóm này bị skip mặc định, bật bằng `flutter test --dart-define=LIVE_API=true` khi BE đang chạy.
 
 ## Kiến trúc
 

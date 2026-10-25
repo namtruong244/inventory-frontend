@@ -25,6 +25,8 @@ void main() {
     // Scroll down to find Application Version row
     final versionFinder = find.text('Application Version');
     await tester.scrollUntilVisible(versionFinder, 200);
+    await tester.ensureVisible(versionFinder);
+    await tester.pump();
     expect(versionFinder, findsOneWidget);
 
     // Tap 6 times - still locked

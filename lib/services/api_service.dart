@@ -550,8 +550,18 @@ class ApiService {
     await patch('/api/v1/items/$itemId/move', {'targetBoxId': targetBoxId});
   }
 
-  Future<void> updateItemQuantity(String itemId, double quantity) async {
-    await patch('/api/v1/items/$itemId/quantity', {'quantity': quantity});
+  Future<void> updateItemQuantity(String itemId, double quantity,
+      {String? reason, String? note}) async {
+    await patch('/api/v1/items/$itemId/quantity', {
+      'quantity': quantity,
+      'reason': ?reason,
+      if (note != null && note.isNotEmpty) 'note': note,
+    });
+  }
+
+  Future<StockHistory> getItemMovements(String itemId) async {
+    final data = await get('/api/v1/items/$itemId/movements');
+    return StockHistory.fromJson(data as Map<String, dynamic>);
   }
 
   Future<void> deleteItem(String itemId) async {

@@ -14,7 +14,7 @@ class AlertsScreen extends StatelessWidget {
 
     final expiredItems = provider.getExpiredItems();
     final expiringSoon = provider.getExpiringItems(withinDays: provider.expiryWarningDays);
-    final expiringWarranties = provider.getExpiringWarranties(withinDays: provider.expiryWarningDays);
+    final expiringWarranties = provider.getExpiringWarranties(withinDays: provider.warrantyWarningDays);
     final overdueLoans = provider.getOverdueLoans();
     final lowStockItems = provider.notifyLowStock ? provider.getLowStockItems() : <Item>[];
 

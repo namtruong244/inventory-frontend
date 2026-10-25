@@ -64,7 +64,34 @@ void main() {
     });
   });
 
-  group('Backend Live API Integration', () {
+  group('StockHistory and lost status', () {
+    test('StockHistory.fromJson', () {
+      final h = StockHistory.fromJson({
+        'movements': [
+          {
+            'id': 'm-1',
+            'delta': -6,
+            'quantityAfter': 4,
+            'reason': 'consume',
+            'note': '',
+            'createdAt': '2026-10-25T05:00:00Z',
+          }
+        ],
+        'avgDailyConsumption30d': 0.2,
+        'estimatedDaysLeft': null,
+      });
+      expect(h.movements.single.delta, -6);
+      expect(h.estimatedDaysLeft, isNull);
+    });
+
+    test('lost is a known ItemStatus', () {
+      expect(ItemStatus.values.map((s) => s.name), contains('lost'));
+    });
+  });
+
+  // Needs a running backend: flutter test --dart-define=LIVE_API=true
+  const liveApi = bool.fromEnvironment('LIVE_API');
+  group('Backend Live API Integration', skip: liveApi ? false : 'set --dart-define=LIVE_API=true with the backend running', () {
     final api = ApiService();
 
     setUpAll(() {

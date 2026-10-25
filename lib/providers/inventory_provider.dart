@@ -45,6 +45,8 @@ class InventoryProvider extends ChangeNotifier {
   String _currency = '\$';
   String _defaultUnit = 'pcs';
   int _expiryWarningDays = 30;
+  int _warrantyWarningDays = 30;
+  String _timezone = 'UTC';
   int _lowStockThreshold = 2;
   bool _vibrateOnScan = true;
   bool _beepOnScan = true;
@@ -62,6 +64,8 @@ class InventoryProvider extends ChangeNotifier {
   /// Helper to format quantity and unit with correct English pluralization.
   String formatQty(num qty, String unit) => AppFormatters.formatQuantity(qty, unit);
   int get expiryWarningDays => _expiryWarningDays;
+  int get warrantyWarningDays => _warrantyWarningDays;
+  String get timezone => _timezone;
   int get lowStockThreshold => _lowStockThreshold;
   bool get vibrateOnScan => _vibrateOnScan;
   bool get beepOnScan => _beepOnScan;
@@ -266,6 +270,12 @@ class InventoryProvider extends ChangeNotifier {
         if (settings['expiryWarningDays'] != null) {
           _expiryWarningDays = (settings['expiryWarningDays'] as num).toInt();
         }
+        if (settings['warrantyWarningDays'] != null) {
+          _warrantyWarningDays = (settings['warrantyWarningDays'] as num).toInt();
+        }
+        if (settings['timezone'] != null) {
+          _timezone = settings['timezone'] as String;
+        }
         if (settings['notifyExpiring'] != null) {
           _notifyExpiring = settings['notifyExpiring'];
         }
@@ -418,6 +428,26 @@ class InventoryProvider extends ChangeNotifier {
     notifyListeners();
     try {
       await _apiService.updateSettings({'expiryWarningDays': days});
+    } catch (e) {
+      debugPrint('updateSettings error: $e');
+    }
+  }
+
+  Future<void> setWarrantyWarningDays(int days) async {
+    _warrantyWarningDays = days;
+    notifyListeners();
+    try {
+      await _apiService.updateSettings({'warrantyWarningDays': days});
+    } catch (e) {
+      debugPrint('updateSettings error: $e');
+    }
+  }
+
+  Future<void> setTimezone(String tz) async {
+    _timezone = tz;
+    notifyListeners();
+    try {
+      await _apiService.updateSettings({'timezone': tz});
     } catch (e) {
       debugPrint('updateSettings error: $e');
     }
@@ -784,7 +814,17 @@ class InventoryProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateItemQuantity(String itemId, double quantity) async {
+  Future<StockHistory?> getItemMovements(String itemId) async {
+    try {
+      return await _apiService.getItemMovements(itemId);
+    } catch (e) {
+      debugPrint('getItemMovements error: $e');
+      return null;
+    }
+  }
+
+  Future<bool> updateItemQuantity(String itemId, double quantity,
+      {String? reason}) async {
     final index = _items.indexWhere((i) => i.id == itemId);
     if (index != -1) {
       _items[index] = _items[index].copyWith(quantity: quantity);
@@ -792,7 +832,7 @@ class InventoryProvider extends ChangeNotifier {
     }
 
     try {
-      await _apiService.updateItemQuantity(itemId, quantity);
+      await _apiService.updateItemQuantity(itemId, quantity, reason: reason);
       return true;
     } catch (e) {
       debugPrint('updateItemQuantity error: $e');
