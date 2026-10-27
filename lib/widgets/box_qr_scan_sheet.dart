@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
 
@@ -7,6 +8,8 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'scan_glyphs.dart';
+import 'tappable.dart';
 
 /// Specialized QR Scanner bottom sheet to scan box labels directly
 class BoxQRScanSheet extends StatefulWidget {
@@ -62,6 +65,19 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
         context,
         context.l10n.noStorageBoxFoundWith(code),
       );
+    }
+  }
+
+  Future<void> _pickFromGallery() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null || !mounted) return;
+    final capture = await _controller.analyzeImage(image.path);
+    if (!mounted) return;
+    final code = capture?.barcodes.firstOrNull?.rawValue;
+    if (code == null) {
+      AppFeedback.showError(context, context.l10n.noQrInImage);
+    } else {
+      _processScannedCode(code);
     }
   }
 
@@ -163,262 +179,35 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<InventoryProvider>(context);
+    final c = context.colors;
 
     return Material(
-      color: Colors.black,
+      color: c.background,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      clipBehavior: Clip.antiAlias,
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.82,
+          height: MediaQuery.of(context).size.height * 0.9,
           child: Column(
             children: [
-              // Top Bar
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                child: Row(
-                  children: [
-                    IconButton(
- tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                      icon: const Icon(Icons.close_rounded, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.scanBoxQrCode,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            context.l10n.pointCameraAtTargetBox,
-                            style: TextStyle(color: Colors.white70, fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Torch toggle
-                    IconButton(
- tooltip: context.l10n.toggleFlash,
-                      icon: const Icon(Icons.flash_on_rounded, color: Colors.white),
-                      onPressed: () => _controller.toggleTorch(),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Camera Viewport & Overlay
+              _buildHeader(provider),
               Expanded(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    MobileScanner(
-                      controller: _controller,
-                      onDetect: _onDetect,
-                    ),
-
-                    // Viewfinder styling
-                    Center(
-                      child: Container(
-                        width: 240,
-                        height: 240,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white, width: 2),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Stack(
-                          children: [
-                            // Corner markers
-                            Positioned(
-                              top: 8,
-                              left: 8,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(color: Color(0xFF10B981), width: 4),
-                                    left: BorderSide(color: Color(0xFF10B981), width: 4),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(color: Color(0xFF10B981), width: 4),
-                                    right: BorderSide(color: Color(0xFF10B981), width: 4),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 8,
-                              left: 8,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Color(0xFF10B981), width: 4),
-                                    left: BorderSide(color: Color(0xFF10B981), width: 4),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 8,
-                              right: 8,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(color: Color(0xFF10B981), width: 4),
-                                    right: BorderSide(color: Color(0xFF10B981), width: 4),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Processing overlay
-                    if (_isProcessing)
-                      Container(
-                        color: Colors.black54,
-                        child: const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        ),
-                      ),
-                  ],
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  child: _buildViewfinder(),
                 ),
               ),
-
-              // Bottom control & result panel
-              Container(
-                color: context.colors.primary,
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (_detectedBox != null) ...[
-                      // Detected box card
-                      Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          color: context.colors.primary,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFF10B981), width: 1.5),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Icon(
-                                _detectedBox!.type.icon,
-                                color: const Color(0xFF10B981),
-                                size: 22,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _detectedBox!.name,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                                  Text(
-                                    provider.getBreadcrumbString(_detectedBox!.id),
-                                    style: const TextStyle(color: Colors.white70, fontSize: 12),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-
-                      // Confirm button
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white70,
-                                side: const BorderSide(color: Colors.white24),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                              ),
-                              onPressed: () => setState(() => _detectedBox = null),
-                              child: Text(context.l10n.scanAgain),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            flex: 2,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF10B981),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                              ),
-                              onPressed: () => Navigator.pop(context, _detectedBox),
-                              child: Text(context.l10n.moveToThisBox, style: TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ] else ...[
-                      // Helper text & test presets buttons
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 8,
-                        children: [
-                          TextButton.icon(
-                            style: TextButton.styleFrom(foregroundColor: Colors.white70),
-                            onPressed: () => _showTestPresetsModal(provider),
-                            icon: const Icon(Icons.science_outlined, size: 16),
-                            label: Text(context.l10n.testWithPresets, style: TextStyle(fontSize: 12)),
-                          ),
-                          TextButton.icon(
-                            style: TextButton.styleFrom(foregroundColor: Colors.white70),
-                            onPressed: _showManualInputDialog,
-                            icon: const Icon(Icons.keyboard_outlined, size: 16),
-                            label: Text(context.l10n.enterCode, style: TextStyle(fontSize: 12)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ],
-                ),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                alignment: Alignment.topCenter,
+                child: _detectedBox == null
+                    ? _buildHint()
+                    : _buildResult(provider),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+                child: _detectedBox == null ? _buildControls() : const SizedBox.shrink(),
               ),
             ],
           ),
@@ -426,4 +215,238 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
       ),
     );
   }
+
+  Widget _buildHeader(InventoryProvider provider) {
+    final c = context.colors;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+      child: Row(
+        children: [
+          _GlyphButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onTap: () => Navigator.pop(context),
+            child: ScanGlyph(ScanGlyphType.back, color: c.textPrimary),
+          ),
+          Expanded(
+            child: Text(
+              context.l10n.boxScanTitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: c.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          _GlyphButton(
+            tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+            onTap: () => _showTestPresetsModal(provider),
+            child: ScanGlyph(ScanGlyphType.more, color: c.textPrimary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildViewfinder() {
+    final c = context.colors;
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(14),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(26),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                MobileScanner(controller: _controller, onDetect: _onDetect),
+                if (_isProcessing)
+                  ColoredBox(
+                    color: c.background.withValues(alpha: 0.6),
+                    child: Center(
+                      child: CircularProgressIndicator(color: c.textPrimary, strokeWidth: 2.5),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        IgnorePointer(child: ScanFrameBrackets(color: c.textPrimary)),
+      ],
+    );
+  }
+
+  Widget _buildHint() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(40, 8, 40, 8),
+      child: Text(
+        context.l10n.boxScanHint,
+        textAlign: TextAlign.center,
+        style: TextStyle(color: context.colors.textSecondary, fontSize: 14, height: 1.4),
+      ),
+    );
+  }
+
+  Widget _buildControls() {
+    final c = context.colors;
+    return Row(
+      children: [
+        _RoundButton(
+          tooltip: context.l10n.pickFromGallery,
+          onTap: _pickFromGallery,
+          color: c.surface,
+          child: ScanGlyph(ScanGlyphType.gallery, color: c.textPrimary),
+        ),
+        const SizedBox(width: 12),
+        ValueListenableBuilder<MobileScannerState>(
+          valueListenable: _controller,
+          builder: (context, state, _) {
+            final on = state.torchState == TorchState.on;
+            return _RoundButton(
+              tooltip: context.l10n.toggleFlash,
+              onTap: _controller.toggleTorch,
+              color: on ? c.primary : c.surface,
+              child: ScanGlyph(
+                on ? ScanGlyphType.flashOn : ScanGlyphType.flashOff,
+                color: on ? Colors.white : c.textPrimary,
+              ),
+            );
+          },
+        ),
+        const Spacer(),
+        _RoundButton(
+          tooltip: context.l10n.enterCode,
+          onTap: _showManualInputDialog,
+          color: c.primary,
+          diameter: 76,
+          child: const ScanGlyph(ScanGlyphType.scan, color: Colors.white, size: 30),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResult(InventoryProvider provider) {
+    final c = context.colors;
+    final box = _detectedBox!;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Icon(box.type.icon, size: 22, color: c.textPrimary),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      box.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: c.textPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      provider.getBreadcrumbString(box.id),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: c.textSecondary, fontSize: 13),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: c.textPrimary,
+                    side: BorderSide(color: c.border),
+                    shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: () => setState(() => _detectedBox = null),
+                  child: Text(context.l10n.scanAgain),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 2,
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: c.primary,
+                    foregroundColor: Colors.white,
+                    shape: const StadiumBorder(),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: () => Navigator.pop(context, box),
+                  child: Text(
+                    context.l10n.moveToThisBox,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GlyphButton extends StatelessWidget {
+  final String tooltip;
+  final VoidCallback onTap;
+  final Widget child;
+
+  const _GlyphButton({required this.tooltip, required this.onTap, required this.child});
+
+  @override
+  Widget build(BuildContext context) => Tappable(
+        behavior: HitTestBehavior.opaque,
+        semanticLabel: tooltip,
+        onTap: onTap,
+        child: SizedBox(width: 48, height: 48, child: Center(child: child)),
+      );
+}
+
+class _RoundButton extends StatelessWidget {
+  final String tooltip;
+  final VoidCallback onTap;
+  final Color color;
+  final double diameter;
+  final Widget child;
+
+  const _RoundButton({
+    required this.tooltip,
+    required this.onTap,
+    required this.color,
+    required this.child,
+    this.diameter = 56,
+  });
+
+  @override
+  Widget build(BuildContext context) => Tappable(
+        semanticLabel: tooltip,
+        onTap: onTap,
+        child: Container(
+          width: diameter,
+          height: diameter,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            border: Border.all(color: context.colors.border),
+          ),
+          child: Center(child: child),
+        ),
+      );
 }

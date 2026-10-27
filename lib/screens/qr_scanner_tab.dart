@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,10 @@ import '../widgets/location_picker_sheet.dart';
 import 'box_details_screen.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
+import '../widgets/scan_glyphs.dart';
 import '../widgets/tappable.dart';
+import '../theme/app_theme.dart';
+import '../l10n/l10n_ext.dart';
 
 class QRScannerTab extends StatefulWidget {
   final bool isFullScreen;
@@ -182,20 +186,20 @@ class _QRScannerTabState extends State<QRScannerTab> {
     final canPop = widget.isFullScreen || Navigator.canPop(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: context.colors.background,
       appBar: canPop
           ? AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
               leading: IconButton(
  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF18181B)),
+                icon: ScanGlyph(ScanGlyphType.back, color: context.colors.textPrimary),
                 onPressed: () => Navigator.pop(context),
               ),
               title: Text(
                 AppLocalizations.of(context).scanTitle,
                 style: TextStyle(
-                  color: Color(0xFF18181B),
+                  color: context.colors.textPrimary,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
@@ -223,7 +227,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
@@ -252,7 +256,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
                   ? AppLocalizations.of(context).scanHintProduct
                   : AppLocalizations.of(context).scanHintLocation,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey.shade600,
+                color: context.colors.textSecondary,
                 fontSize: 13,
               ),
             ),
@@ -270,6 +274,26 @@ class _QRScannerTabState extends State<QRScannerTab> {
                     MobileScanner(
                       controller: _controller,
                       onDetect: _onDetect,
+                    ),
+                    // Flashlight, for dark garages and cupboards
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: ValueListenableBuilder<MobileScannerState>(
+                        valueListenable: _controller,
+                        builder: (context, state, _) {
+                          if (state.torchState == TorchState.unavailable) return const SizedBox.shrink();
+                          final on = state.torchState == TorchState.on;
+                          return IconButton.filledTonal(
+                            tooltip: context.l10n.flashlight,
+                            onPressed: _controller.toggleTorch,
+                            icon: ScanGlyph(
+                              on ? ScanGlyphType.flashOn : ScanGlyphType.flashOff,
+                              color: context.colors.textPrimary,
+                            ),
+                          );
+                        },
+                      ),
                     ),
                     // Reticle
                     Center(
@@ -302,7 +326,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(
@@ -326,7 +350,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF18181B),
+                      color: context.colors.textPrimary,
                       letterSpacing: -0.2,
                     ),
                   ),
@@ -336,20 +360,20 @@ class _QRScannerTabState extends State<QRScannerTab> {
                       Expanded(
                         child: TextField(
                           controller: _manualController,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF18181B),
+                            color: context.colors.textPrimary,
                           ),
                           decoration: InputDecoration(
                             hintText: _isBarcodeMode ? 'e.g. 194253714201' : 'e.g. elec_001, loc_floor_1',
-                            hintStyle: const TextStyle(
-                              color: Color(0xFFA1A1AA),
+                            hintStyle: TextStyle(
+                              color: context.colors.textMuted,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                             ),
                             filled: true,
-                            fillColor: const Color(0xFFF4F4F6),
+                            fillColor: context.colors.fill,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
@@ -373,7 +397,8 @@ class _QRScannerTabState extends State<QRScannerTab> {
                           }
                         },
                         style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xFF18181B),
+                          backgroundColor: context.colors.primary,
+                          foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -386,17 +411,18 @@ class _QRScannerTabState extends State<QRScannerTab> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Quick test chips
+                  // Sample codes for development only; they mean nothing to real users.
+                  if (kDebugMode)
                   Consumer<InventoryProvider>(
                     builder: (context, provider, child) {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Quick Sample Codes (Tap to Test):',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.grey,
+                              color: context.colors.textMuted,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -433,7 +459,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF18181B) : Colors.transparent,
+          color: isSelected ? context.colors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -442,7 +468,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? Colors.white : Colors.grey.shade600,
+              color: isSelected ? Colors.white : context.colors.textSecondary,
             ),
             const SizedBox(width: 6),
             Text(
@@ -450,7 +476,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? Colors.white : Colors.grey.shade600,
+                color: isSelected ? Colors.white : context.colors.textSecondary,
               ),
             ),
           ],
@@ -463,7 +489,7 @@ class _QRScannerTabState extends State<QRScannerTab> {
     return ActionChip(
       label: Text(label),
       labelStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      backgroundColor: const Color(0xFFF4F4F6),
+      backgroundColor: context.colors.fill,
       side: BorderSide.none,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       onPressed: () {
