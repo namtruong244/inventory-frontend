@@ -2,6 +2,36 @@ part of 'inventory_provider.dart';
 
 /// Profile and app preference management.
 extension InventorySettings on InventoryProvider {
+  /// Copies the server's settings map into the fields (missing keys keep their value).
+  void _applySettings(Map<String, dynamic> m) {
+    _currency = m['currencySymbol'] as String? ?? _currency;
+    _defaultUnit = m['defaultUnit'] as String? ?? _defaultUnit;
+    _expiryWarningDays = (m['expiryWarningDays'] as num?)?.toInt() ?? _expiryWarningDays;
+    _warrantyWarningDays =
+        (m['warrantyWarningDays'] as num?)?.toInt() ?? _warrantyWarningDays;
+    _timezone = m['timezone'] as String? ?? _timezone;
+    _notifyExpiring = m['notifyExpiring'] as bool? ?? _notifyExpiring;
+    _notifyOverdue = m['notifyOverdue'] as bool? ?? _notifyOverdue;
+    _notifyLowStock = m['notifyLowStock'] as bool? ?? _notifyLowStock;
+    _vibrateOnScan = m['vibrateOnScan'] as bool? ?? _vibrateOnScan;
+    _autoOpenOnScan = m['autoOpenOnScan'] as bool? ?? _autoOpenOnScan;
+  }
+
+  /// Sends a settings change, or queues it offline. The local value stays (the UI already
+  /// shows it); the cached copy is updated so a restart offline keeps it too.
+  Future<void> _saveSetting(Map<String, dynamic> delta) async {
+    final store = _store;
+    if (store != null) {
+      await store.saveSettings({...?await store.loadSettings(), ...delta});
+    }
+    await _commit(
+      PendingOp('updateSettings', {'delta': delta}),
+      () async {
+        await _apiService.updateSettings(delta);
+      },
+    );
+  }
+
   // ==========================================
   // PROFILE & SETTINGS
   // ==========================================
@@ -25,51 +55,31 @@ extension InventorySettings on InventoryProvider {
   Future<void> setCurrency(String val) async {
     _currency = val;
     _notify();
-    try {
-      await _apiService.updateSettings({'currencySymbol': val});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'currencySymbol': val});
   }
 
   Future<void> setDefaultUnit(String val) async {
     _defaultUnit = val;
     _notify();
-    try {
-      await _apiService.updateSettings({'defaultUnit': val});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'defaultUnit': val});
   }
 
   Future<void> setExpiryWarningDays(int days) async {
     _expiryWarningDays = days;
     _notify();
-    try {
-      await _apiService.updateSettings({'expiryWarningDays': days});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'expiryWarningDays': days});
   }
 
   Future<void> setWarrantyWarningDays(int days) async {
     _warrantyWarningDays = days;
     _notify();
-    try {
-      await _apiService.updateSettings({'warrantyWarningDays': days});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'warrantyWarningDays': days});
   }
 
   Future<void> setTimezone(String tz) async {
     _timezone = tz;
     _notify();
-    try {
-      await _apiService.updateSettings({'timezone': tz});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'timezone': tz});
   }
 
   void setLowStockThreshold(int val) {
@@ -80,11 +90,7 @@ extension InventorySettings on InventoryProvider {
   Future<void> setVibrateOnScan(bool val) async {
     _vibrateOnScan = val;
     _notify();
-    try {
-      await _apiService.updateSettings({'vibrateOnScan': val});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'vibrateOnScan': val});
   }
 
   /// The backend has no field for this, so it is a per-device preference.
@@ -125,41 +131,25 @@ extension InventorySettings on InventoryProvider {
   Future<void> setAutoOpenOnScan(bool val) async {
     _autoOpenOnScan = val;
     _notify();
-    try {
-      await _apiService.updateSettings({'autoOpenOnScan': val});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'autoOpenOnScan': val});
   }
 
   Future<void> setNotifyExpiring(bool val) async {
     _notifyExpiring = val;
     _notify();
-    try {
-      await _apiService.updateSettings({'notifyExpiring': val});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'notifyExpiring': val});
   }
 
   Future<void> setNotifyOverdue(bool val) async {
     _notifyOverdue = val;
     _notify();
-    try {
-      await _apiService.updateSettings({'notifyOverdue': val});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'notifyOverdue': val});
   }
 
   Future<void> setNotifyLowStock(bool val) async {
     _notifyLowStock = val;
     _notify();
-    try {
-      await _apiService.updateSettings({'notifyLowStock': val});
-    } catch (e) {
-      debugPrint('updateSettings error: $e');
-    }
+    await _saveSetting({'notifyLowStock': val});
   }
 
   Future<void> setThemeMode(ThemeMode mode) async {

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import '../screens/login_screen.dart';
 import 'settings_common.dart';
@@ -34,7 +35,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              isOnline ? 'ONLINE' : 'OFFLINE',
+              isOnline ? context.l10n.statusOnlineTag : context.l10n.statusOfflineTag,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
@@ -123,26 +124,6 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
               }
             },
     ),
-    const Divider(height: 1),
-
-    // 4. Seed Sample Demo Data Tile
-    ListTile(
-      leading: buildIconBox(
-        Icons.cloud_upload_outlined,
-        const Color(0xFF8B5CF6),
-        context.colors.infoSoft,
-      ),
-      title: Text(
-        context.l10n.seedDemoDataToServer,
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
-      ),
-      subtitle: Text(
-        context.l10n.populateBackendWithRoomsItems,
-        style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
-      ),
-      trailing: Icon(Icons.arrow_forward_ios_rounded, color: context.colors.textSecondary, size: 14),
-      onTap: () => confirmSeedData(context, provider),
-    ),
   ]);
 }
 
@@ -166,26 +147,29 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
           TextField(
             controller: controller,
             decoration: InputDecoration(
-              hintText: 'http://localhost:8080',
+              hintText: kDebugMode ? 'http://localhost:8080' : 'https://',
               prefixIcon: const Icon(Icons.link_rounded),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
             keyboardType: TextInputType.url,
           ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 8,
-            children: [
-              ActionChip(
-                label: const Text('localhost:8080', style: TextStyle(fontSize: 11)),
-                onPressed: () => controller.text = 'http://localhost:8080',
-              ),
-              ActionChip(
-                label: const Text('10.0.2.2:8080 (Android)', style: TextStyle(fontSize: 11)),
-                onPressed: () => controller.text = 'http://10.0.2.2:8080',
-              ),
-            ],
-          ),
+          // Local development shortcuts mean nothing to end users.
+          if (kDebugMode) ...[
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              children: [
+                ActionChip(
+                  label: const Text('localhost:8080', style: TextStyle(fontSize: 11)),
+                  onPressed: () => controller.text = 'http://localhost:8080',
+                ),
+                ActionChip(
+                  label: const Text('10.0.2.2:8080 (Android)', style: TextStyle(fontSize: 11)),
+                  onPressed: () => controller.text = 'http://10.0.2.2:8080',
+                ),
+              ],
+            ),
+          ],
         ],
       ),
       actions: [

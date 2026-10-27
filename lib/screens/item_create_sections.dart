@@ -107,6 +107,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
+              validator: (v) => _isValidAmount(v)
+                  ? null
+                  : context.l10n.pleaseEnterAValidQuantity,
             ),
           ),
           const SizedBox(width: 12),
@@ -155,6 +158,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         hintText: context.l10n.eG2AlertWhen,
         controller: _minQuantityController,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        validator: (v) => _isValidAmount(v)
+            ? null
+            : context.l10n.pleaseEnterAValidQuantity,
       ),
       const SizedBox(height: 16),
 
@@ -421,6 +427,14 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         label: context.l10n.productBarcodeUpcEan,
         hintText: context.l10n.scanOrEnterProductBarcode,
         controller: _barcodeController,
+        suffixIcon: IconButton(
+          tooltip: context.l10n.scanBarcode,
+          icon: const Icon(Icons.qr_code_scanner_rounded),
+          onPressed: () async {
+            final code = await showBarcodeScanSheet(context);
+            if (code != null) _update(() => _barcodeController.text = code);
+          },
+        ),
       ),
       const SizedBox(height: 16),
 
@@ -468,94 +482,66 @@ extension _ItemCreateSections on _ItemCreateScreenState {
     ];
   }
 
-  Future<void> _captureFromCamera(bool isReceipt) async {
+  Future<void> _captureFromCamera(bool isReceipt) =>
+      _addPhoto(ImageSource.camera, isReceipt);
+
+  Future<void> _pickFromGallery(bool isReceipt) =>
+      _addPhoto(ImageSource.gallery, isReceipt);
+
+  /// Uploads the picked image and stores the server URL. A local file path is never
+  /// saved on the item: no other device (or reinstall) could open it. Offline or on a
+  /// failed upload the user is told so and can try again.
+  Future<void> _addPhoto(ImageSource source, bool isReceipt) async {
+    final XFile? photo;
     try {
-      final picker = ImagePicker();
-      final photo = await picker.pickImage(
-        source: ImageSource.camera,
+      photo = await ImagePicker().pickImage(
+        source: source,
         maxWidth: 1600,
         maxHeight: 1600,
         imageQuality: 85,
       );
-
-      if (photo != null && mounted) {
-        final provider = Provider.of<InventoryProvider>(context, listen: false);
-        String photoUrl = photo.path;
-        if (provider.isConnected) {
-          final uploaded = await provider.uploadMedia(
-            photo.path,
-            folder: isReceipt ? 'receipts' : 'items',
-          );
-          if (uploaded != null) {
-            photoUrl = uploaded;
-          }
-        }
-
-        _update(() {
-          if (isReceipt) {
-            _receiptPhotos.add(photoUrl);
-          } else {
-            _photos.add(photoUrl);
-          }
-        });
-        if (mounted) {
-          AppFeedback.showSuccess(
-            context,
-            isReceipt ? context.l10n.receiptCaptured : context.l10n.photoCaptured,
-          );
-        }
-      }
     } catch (e) {
       debugPrint('item_create_sections.dart error: $e');
       if (mounted) {
-        AppFeedback.showError(context, context.l10n.cameraIsnTAvailableCheck);
+        AppFeedback.showError(
+          context,
+          source == ImageSource.camera
+              ? context.l10n.cameraIsnTAvailableCheck
+              : context.l10n.couldnTOpenYourPhotos,
+        );
       }
+      return;
     }
+    if (photo == null || !mounted) return;
+
+    final provider = Provider.of<InventoryProvider>(context, listen: false);
+    final uploaded = provider.isConnected
+        ? await provider.uploadMedia(
+            photo.path,
+            folder: isReceipt ? 'receipts' : 'items',
+          )
+        : null;
+    if (!mounted) return;
+    if (uploaded == null) {
+      AppFeedback.showError(context, context.l10n.couldnTUploadThePhoto);
+      return;
+    }
+
+    _update(() => (isReceipt ? _receiptPhotos : _photos).add(uploaded));
+    AppFeedback.showSuccess(
+      context,
+      source == ImageSource.camera
+          ? (isReceipt ? context.l10n.receiptCaptured : context.l10n.photoCaptured)
+          : (isReceipt ? context.l10n.receiptSelected : context.l10n.photoSelected),
+    );
   }
 
-  Future<void> _pickFromGallery(bool isReceipt) async {
-    try {
-      final picker = ImagePicker();
-      final photo = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 1600,
-        maxHeight: 1600,
-        imageQuality: 85,
-      );
-
-      if (photo != null && mounted) {
-        final provider = Provider.of<InventoryProvider>(context, listen: false);
-        String photoUrl = photo.path;
-        if (provider.isConnected) {
-          final uploaded = await provider.uploadMedia(
-            photo.path,
-            folder: isReceipt ? 'receipts' : 'items',
-          );
-          if (uploaded != null) {
-            photoUrl = uploaded;
-          }
-        }
-
-        _update(() {
-          if (isReceipt) {
-            _receiptPhotos.add(photoUrl);
-          } else {
-            _photos.add(photoUrl);
-          }
-        });
-        if (mounted) {
-          AppFeedback.showSuccess(
-            context,
-            isReceipt ? context.l10n.receiptSelected : context.l10n.photoSelected,
-          );
-        }
-      }
-    } catch (e) {
-      debugPrint('item_create_sections.dart error: $e');
-      if (mounted) {
-        AppFeedback.showError(context, context.l10n.couldnTOpenYourPhotos);
-      }
-    }
+  /// Empty means "use the default"; otherwise a number that is 0 or more.
+  bool _isValidAmount(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) return true;
+    final n = double.tryParse(text);
+    return n != null && n >= 0;
   }
 
   Widget _buildPhotosGallery(bool isReceipt) {
@@ -650,6 +636,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                     top: 4,
                     right: 4,
                     child: Tappable(
+                      semanticLabel: MaterialLocalizations.of(context).deleteButtonTooltip,
                       onTap: () {
                         _update(() {
                           list.removeAt(idx);
@@ -695,8 +682,6 @@ extension _ItemCreateSections on _ItemCreateScreenState {
     required DateTime? date,
     required ValueChanged<DateTime?> onSelected,
   }) {
-    final dateFormat = DateFormat('MMM dd, yyyy');
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -731,7 +716,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               children: [
                 Expanded(
                   child: Text(
-                    date != null ? dateFormat.format(date) : context.l10n.notSet,
+                    date != null ? formatDate(context, date) : context.l10n.notSet,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: date != null
@@ -747,6 +732,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                 ),
                 if (date != null)
                   Tappable(
+                    semanticLabel: MaterialLocalizations.of(context).clearButtonTooltip,
                     onTap: () => onSelected(null),
                     child: Icon(
                       Icons.clear,

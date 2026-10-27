@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../models/inventory_models.dart';
@@ -12,6 +11,7 @@ import '../screens/box_details_screen.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../utils/date_format.dart';
 
 
 Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, LendingRecord loan) {
@@ -57,9 +57,9 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
                   color: const Color(0xFFDC2626),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'OVERDUE',
-                  style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                child: Text(
+                  context.l10n.tagOverdue,
+                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ),
           ],
@@ -76,12 +76,12 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
           ),
         const SizedBox(height: 6),
         Text(
-          'Lent on: ${DateFormat('MMM dd, yyyy').format(loan.lentDate)}',
+          context.l10n.lentOnDate(formatDate(context, loan.lentDate)),
           style: TextStyle(color: context.colors.textSecondary, fontSize: 12),
         ),
         if (loan.expectedReturnDate != null)
           Text(
-            'Expected Return: ${DateFormat('MMM dd, yyyy').format(loan.expectedReturnDate!)}',
+            context.l10n.expectedReturnOn(formatDate(context, loan.expectedReturnDate!)),
             style: TextStyle(
               color: isOverdue ? const Color(0xFFDC2626) : context.colors.textSecondary,
               fontSize: 12,
@@ -254,7 +254,7 @@ Widget buildExpiryCard(BuildContext context, Item item) {
               ),
               const SizedBox(height: 2),
               Text(
-                'Expiry date: ${DateFormat('MMMM dd, yyyy').format(item.expiryDate!)}',
+                context.l10n.expiryDateOn(formatDateLong(context, item.expiryDate!)),
                 style: TextStyle(color: textColor.withValues(alpha: 0.8), fontSize: 12),
               ),
             ],
@@ -352,7 +352,7 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
             Expanded(
               child: buildDetailTile(
                 label: context.l10n.purchaseDate,
-                value: item.purchaseDate != null ? DateFormat('MMM dd, yyyy').format(item.purchaseDate!) : 'Not recorded',
+                value: item.purchaseDate != null ? formatDate(context, item.purchaseDate!) : context.l10n.notRecorded,
                 icon: Icons.calendar_today_outlined,
               ),
             ),
@@ -410,7 +410,7 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
                       ),
                     ),
                     Text(
-                      'Valid until: ${DateFormat('MMM dd, yyyy').format(item.warrantyExpiryDate!)}${item.daysUntilWarrantyExpiry != null && item.daysUntilWarrantyExpiry! > 0 ? ' (${item.daysUntilWarrantyExpiry} days left)' : ''}',
+                      '${context.l10n.validUntilDate(formatDate(context, item.warrantyExpiryDate!))}${item.daysUntilWarrantyExpiry != null && item.daysUntilWarrantyExpiry! > 0 ? ' (${context.l10n.daysLeftCount(item.daysUntilWarrantyExpiry!)})' : ''}',
                       style: TextStyle(fontSize: 11, color: context.colors.textSecondary),
                     ),
                   ],
@@ -508,6 +508,7 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
             itemBuilder: (context, idx) {
               final photoUrl = receiptPhotos[idx];
               return Tappable(
+                semanticLabel: context.l10n.productPhotos,
                 onTap: () => showFullScreenImage(context, photoUrl),
                 child: Container(
                   width: 90,

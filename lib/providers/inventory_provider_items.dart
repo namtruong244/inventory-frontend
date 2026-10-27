@@ -66,15 +66,16 @@ extension InventoryItems on InventoryProvider {
 
     _items.add(item);
     _notify();
-    // A rejected create stays in the list until the next sync replaces it.
-    return _commit(
+    return _commitOrRollback(
       PendingOp('createItem', {'item': item.toJson()}),
       () => _apiService.createItem(item),
+      () => _items.removeWhere((i) => i.id == item.id),
     );
   }
 
   Future<bool> updateItem(Item updatedItem) async {
     final index = _items.indexWhere((i) => i.id == updatedItem.id);
+    final previous = index != -1 ? _items[index] : null;
     if (index != -1) {
       if (updatedItem.categoryId.isNotEmpty &&
           !_categories.any(
@@ -86,13 +87,17 @@ extension InventoryItems on InventoryProvider {
       _notify();
     }
 
-    return _commit(
+    return _commitOrRollback(
       PendingOp('updateItem', {'item': updatedItem.toJson()}),
       () async {
         final saved = await _apiService.updateItem(updatedItem);
         final i = _items.indexWhere((x) => x.id == saved.id);
         if (i != -1) _items[i] = saved;
         _notify();
+      },
+      () {
+        final i = _items.indexWhere((x) => x.id == updatedItem.id);
+        if (i != -1 && previous != null) _items[i] = previous;
       },
     );
   }
@@ -122,14 +127,19 @@ extension InventoryItems on InventoryProvider {
 
   Future<bool> moveItem(String itemId, String newLocationId) async {
     final index = _items.indexWhere((i) => i.id == itemId);
+    final previous = index != -1 ? _items[index] : null;
     if (index != -1) {
       _items[index] = _items[index].copyWith(boxId: newLocationId);
       _notify();
     }
 
-    return _commit(
+    return _commitOrRollback(
       PendingOp('moveItem', {'id': itemId, 'boxId': newLocationId}),
       () => _apiService.moveItem(itemId, newLocationId),
+      () {
+        final i = _items.indexWhere((x) => x.id == itemId);
+        if (i != -1 && previous != null) _items[i] = previous;
+      },
     );
   }
 
@@ -151,18 +161,32 @@ extension InventoryItems on InventoryProvider {
     if (index == -1) return false;
     // Queued as a delta so two devices consuming stock offline add up
     // instead of the last absolute value winning.
-    final delta = quantity - _items[index].quantity;
-    _items[index] = _items[index].copyWith(quantity: quantity);
+    final previous = _items[index];
+    final delta = quantity - previous.quantity;
+    _items[index] = previous.copyWith(quantity: quantity);
     _notify();
     if (delta == 0) return true;
 
-    return _commit(
+    // One key for the direct attempt and for a queued replay: if the first request
+    // reached the server but its answer was lost, the replay is not added a second time.
+    final key = const Uuid().v4();
+    return _commitOrRollback(
       PendingOp('adjustQuantity', {
         'id': itemId,
         'delta': delta,
         'reason': reason,
+        'key': key,
       }),
-      () => _apiService.adjustItemQuantity(itemId, delta, reason: reason),
+      () => _apiService.adjustItemQuantity(
+        itemId,
+        delta,
+        reason: reason,
+        idempotencyKey: key,
+      ),
+      () {
+        final i = _items.indexWhere((x) => x.id == itemId);
+        if (i != -1) _items[i] = previous;
+      },
     );
   }
 

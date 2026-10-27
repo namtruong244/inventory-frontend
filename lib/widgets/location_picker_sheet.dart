@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
+import '../utils/text_normalize.dart';
+import 'app_feedback.dart';
 import 'box_qr_scan_sheet.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
@@ -62,6 +65,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
 
   String? _currentLevelParentId;
   String? _selectedBoxId;
+  String _query = '';
 
   @override
   void initState() {
@@ -87,6 +91,52 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
     });
   }
 
+  /// Asks for a name and creates a location inside the level being browsed, then selects it.
+  Future<void> _createHere() async {
+    final provider = Provider.of<InventoryProvider>(context, listen: false);
+    final name = await showDialog<String>(
+      context: context,
+      builder: (ctx) {
+        final controller = TextEditingController();
+        return AlertDialog(
+          title: Text(context.l10n.createLocationHere),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(hintText: context.l10n.locationNameHint),
+            onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+              child: Text(context.l10n.commonCreate),
+            ),
+          ],
+        );
+      },
+    );
+    if (name == null || !mounted) return;
+    if (name.isEmpty) {
+      AppFeedback.showError(context, context.l10n.pleaseEnterAValidLocation);
+      return;
+    }
+    final box = Box(
+      name: name,
+      type: _currentLevelParentId == null ? StorageType.room : StorageType.box,
+      label: 'loc_${const Uuid().v4().substring(0, 8)}',
+      parentId: _currentLevelParentId,
+    );
+    final ok = await provider.addBox(box);
+    if (!mounted) return;
+    if (ok) {
+      setState(() => _selectedBoxId = box.id);
+    } else {
+      AppFeedback.showError(context, context.l10n.somethingWentWrongPleaseTry);
+    }
+  }
+
   void _selectBox(String boxId) {
     setState(() {
       _selectedBoxId = boxId;
@@ -110,6 +160,48 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       // Directly select and close
       Navigator.pop(context, scannedBox);
     }
+  }
+
+  List<Widget> _searchResults(InventoryProvider provider) {
+    final q = normalizeVi(_query.trim());
+    final matches = provider.boxes
+        .where((b) =>
+            containsNormalized(b.name, q) ||
+            containsNormalized(b.label, q) ||
+            containsNormalized(provider.getBreadcrumbString(b.id), q))
+        .toList();
+    if (matches.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text(
+              context.l10n.noMatchingLocationsFound,
+              style: TextStyle(color: context.colors.textSecondary),
+            ),
+          ),
+        ),
+      ];
+    }
+    return [
+      for (final box in matches)
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(box.type.icon, color: context.colors.textPrimary),
+          title: Text(box.name),
+          subtitle: Text(
+            provider.getBreadcrumbString(box.id),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          selected: box.id == _selectedBoxId,
+          onTap: () => setState(() {
+            _selectedBoxId = box.id;
+            _currentLevelParentId = box.parentId;
+            _query = '';
+          }),
+        ),
+    ];
   }
 
   void _confirmSelection() {
@@ -279,9 +371,22 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
               const SizedBox(height: 14),
             ],
 
-            // Level Drill-down Breadcrumb Navigation
-            _buildBreadcrumbBar(provider),
+            // Search every location by name, ignoring case and accents
+            TextField(
+              onChanged: (v) => setState(() => _query = v),
+              decoration: InputDecoration(
+                hintText: context.l10n.searchLocationsRoomsContainers,
+                prefixIcon: const Icon(Icons.search, size: 20),
+                isDense: true,
+              ),
+            ),
             const SizedBox(height: 10),
+
+            // Level Drill-down Breadcrumb Navigation
+            if (_query.trim().isEmpty) ...[
+              _buildBreadcrumbBar(provider),
+              const SizedBox(height: 10),
+            ],
 
             // Level Content: Either root boxes or sub-containers
             ConstrainedBox(
@@ -291,6 +396,9 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
               child: ListView(
                 shrinkWrap: true,
                 children: [
+                  if (_query.trim().isNotEmpty)
+                    ..._searchResults(provider)
+                  else ...[
                   // Option to select current parent level directly
                   if (currentParentBox != null) ...[
                     _buildCurrentParentDirectSelectCard(currentParentBox, provider),
@@ -349,6 +457,14 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                     ...visibleBoxes.map((box) {
                       return _buildBoxHierarchyTile(box, provider);
                     }),
+
+                  // Make the place you are looking for, right where you are
+                  TextButton.icon(
+                    onPressed: _createHere,
+                    icon: const Icon(Icons.add_rounded, size: 20),
+                    label: Text(context.l10n.createLocationHere),
+                  ),
+                  ],
                 ],
               ),
             ),

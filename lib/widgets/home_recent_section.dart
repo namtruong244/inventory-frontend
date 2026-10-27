@@ -6,6 +6,7 @@ import '../providers/inventory_provider.dart';
 import 'app_image_view.dart';
 import '../screens/item_details_screen.dart';
 
+import 'add_item_flow.dart';
 import 'home_sections.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
@@ -104,6 +105,13 @@ extension HomeRecentSection on HomeSections {
                             color: context.colors.textMuted,
                           ),
                         ),
+                        if (provider.boxes.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          FilledButton.tonal(
+                            onPressed: () => startAddItemFlow(context),
+                            child: Text(context.l10n.addFirstItem),
+                          ),
+                        ],
                       ],
                     ),
                   ),

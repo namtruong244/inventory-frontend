@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
-import '../widgets/app_feedback.dart';
-import '../widgets/app_form_field.dart';
 import '../widgets/app_refresh.dart';
+import '../widgets/lend_item_sheet.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../utils/date_format.dart';
 
 class LendingTrackerScreen extends StatefulWidget {
   const LendingTrackerScreen({super.key});
@@ -247,7 +246,6 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
     final isOverdue = record.isOverdue;
     final isActive = record.isActive;
 
-    final dateFormat = DateFormat('MMM dd, yyyy');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -307,10 +305,10 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                 ),
                 child: Text(
                   isOverdue
-                      ? 'OVERDUE'
+                      ? context.l10n.tagOverdue
                       : isActive
-                          ? 'LENT'
-                          : 'RETURNED',
+                          ? context.l10n.tagLent
+                          : context.l10n.tagReturned,
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
@@ -333,7 +331,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
               Icon(Icons.calendar_today_outlined, size: 14, color: context.colors.textMuted),
               const SizedBox(width: 6),
               Text(
-                context.l10n.commonLent2(dateFormat.format(record.lentDate)),
+                context.l10n.commonLent2(formatDate(context, record.lentDate)),
                 style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
               ),
               if (record.expectedReturnDate != null) ...[
@@ -341,7 +339,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                 Icon(Icons.event_outlined, size: 14, color: isOverdue ? Colors.red : context.colors.textMuted),
                 const SizedBox(width: 6),
                 Text(
-                  context.l10n.commonDue(dateFormat.format(record.expectedReturnDate!)),
+                  context.l10n.commonDue(formatDate(context, record.expectedReturnDate!)),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
@@ -396,259 +394,8 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
     );
   }
 
-  void _confirmReturn(BuildContext context, LendingRecord record, Item? item) async {
-    final provider = Provider.of<InventoryProvider>(context, listen: false);
+  void _confirmReturn(BuildContext context, LendingRecord record, Item? item) =>
+      confirmAndReturnLoan(context, record, itemName: item?.name ?? context.l10n.itemFallbackName);
 
-    final confirmed = await AppFeedback.showConfirmDialog(
-      context,
-      title: context.l10n.confirmItemReturn,
-      message: context.l10n.markReturnedBy(item?.name ?? context.l10n.itemFallbackName, record.borrowerName),
-      confirmLabel: context.l10n.confirmReturn,
-      icon: Icons.check_circle_outline,
-    );
-
-    if (confirmed && context.mounted) {
-      provider.returnItem(record.id);
-      AppFeedback.showSuccess(context, context.l10n.itemMarkedAsReturnedSuccessfully);
-    }
-  }
-
-  void _showLendItemSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (_) => const _LendItemFormSheet(),
-    );
-  }
-}
-
-class _LendItemFormSheet extends StatefulWidget {
-  const _LendItemFormSheet();
-
-  @override
-  State<_LendItemFormSheet> createState() => _LendItemFormSheetState();
-}
-
-class _LendItemFormSheetState extends State<_LendItemFormSheet> {
-  final _formKey = GlobalKey<FormState>();
-  String? _selectedItemId;
-  final _borrowerNameCtrl = TextEditingController();
-  final _borrowerContactCtrl = TextEditingController();
-  final TextEditingController _notesCtrl = TextEditingController();
-  final _quantityCtrl = TextEditingController();
-  final DateTime _lentDate = DateTime.now();
-  DateTime? _expectedReturnDate;
-
-  @override
-  void dispose() {
-    _borrowerNameCtrl.dispose();
-    _borrowerContactCtrl.dispose();
-    _notesCtrl.dispose();
-    _quantityCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<InventoryProvider>(context);
-    // Only items not currently lent
-    final availableItems = provider.items.where((i) => i.status != ItemStatus.lent).toList();
-    final selectedItem = availableItems.where((i) => i.id == _selectedItemId).firstOrNull;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-      ),
-      padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(context).viewInsets.bottom + 24),
-      child: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 44,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: context.colors.border,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    context.l10n.lendAnItem,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  IconButton(
- tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Item selector
-              Text(
-                context.l10n.selectItemToLend,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: context.colors.fill,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _selectedItemId,
-                    hint: Text(context.l10n.chooseAnAvailableItem),
-                    items: availableItems.map((item) {
-                      return DropdownMenuItem(
-                        value: item.id,
-                        child: Text(item.name),
-                      );
-                    }).toList(),
-                    onChanged: (val) => setState(() {
-                      _selectedItemId = val;
-                      _quantityCtrl.clear();
-                    }),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              if (selectedItem != null && selectedItem.quantity > 1) ...[
-                AppFormField(
-                  label: context.l10n.quantityToLend,
-                  hintText: context.l10n.leaveEmptyToLendAll(provider.formatQty(selectedItem.quantity, selectedItem.unit)),
-                  controller: _quantityCtrl,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  validator: (val) {
-                    final text = val?.trim() ?? '';
-                    if (text.isEmpty) return null;
-                    final qty = double.tryParse(text);
-                    if (qty == null || qty <= 0) return context.l10n.enterAQuantityGreaterThan;
-                    if (qty > selectedItem.quantity) return context.l10n.onlyInStock(selectedItem.quantity);
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-              ],
-
-              AppFormField(
-                label: context.l10n.borrowerName,
-                hintText: context.l10n.eGJohnDoe,
-                controller: _borrowerNameCtrl,
-                validator: (val) => val == null || val.trim().isEmpty ? context.l10n.pleaseEnterBorrowerName : null,
-              ),
-              const SizedBox(height: 16),
-
-              AppFormField(
-                label: context.l10n.borrowerContact,
-                hintText: context.l10n.phoneNumberOrEmailOptional,
-                controller: _borrowerContactCtrl,
-              ),
-              const SizedBox(height: 16),
-
-              // Expected return date picker
-              Text(
-                context.l10n.expectedReturnDate,
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 8),
-              Tappable(
-                onTap: () async {
-                  final picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now().add(const Duration(days: 7)),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime.now().add(const Duration(days: 365)),
-                  );
-                  if (picked != null) {
-                    setState(() => _expectedReturnDate = picked);
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                  decoration: BoxDecoration(
-                    color: context.colors.fill,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _expectedReturnDate != null
-                            ? DateFormat('MMM dd, yyyy').format(_expectedReturnDate!)
-                            : context.l10n.selectDueDateOptional,
-                        style: TextStyle(
-                          color: _expectedReturnDate != null ? context.colors.textPrimary : context.colors.textMuted,
-                          fontWeight: _expectedReturnDate != null ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                      const Icon(Icons.calendar_month_outlined, size: 20),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              AppFormField(
-                label: context.l10n.commonNotes,
-                hintText: context.l10n.eGBorrowedForPhotography,
-                controller: _notesCtrl,
-                maxLines: 2,
-              ),
-              const SizedBox(height: 24),
-
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: FilledButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      if (_selectedItemId == null) {
-                        AppFeedback.showError(context, context.l10n.pleaseSelectAnItem);
-                        return;
-                      }
-
-                      provider.lendItem(
-                        itemId: _selectedItemId!,
-                        borrowerName: _borrowerNameCtrl.text.trim(),
-                        borrowerContact: _borrowerContactCtrl.text.trim(),
-                        lentDate: _lentDate,
-                        expectedReturnDate: _expectedReturnDate,
-                        notes: _notesCtrl.text.trim(),
-                        quantity: double.tryParse(_quantityCtrl.text.trim()),
-                      );
-
-                      Navigator.pop(context);
-                      AppFeedback.showSuccess(context, context.l10n.itemMarkedAsLentSuccessfully);
-                    }
-                  },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  ),
-                  child: Text(context.l10n.saveLoan, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  void _showLendItemSheet(BuildContext context) => LendItemSheet.show(context);
 }

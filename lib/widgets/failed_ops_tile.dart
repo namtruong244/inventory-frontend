@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../providers/inventory_provider.dart';
 import '../services/offline_store.dart';
 import '../theme/app_theme.dart';
+import 'app_feedback.dart';
 import '../l10n/l10n_ext.dart';
 
 /// Lists offline changes the server could not apply (e.g. the item was edited elsewhere)
@@ -24,7 +25,7 @@ class FailedOpsTile extends StatelessWidget {
           Icons.sync_problem_rounded,
           color: Color(0xFFD97706),
         ),
-        title: Text('$count offline change(s) need your attention'),
+        title: Text(context.l10n.changesNeedAttention(count)),
         subtitle: Text(context.l10n.tapToKeepYourVersion),
         onTap: () => showDialog<void>(
           context: context,
@@ -40,6 +41,20 @@ class _FailedOpsDialog extends StatelessWidget {
   const _FailedOpsDialog({required this.provider});
 
   String _label(PendingOp op) => describePendingOp(op);
+
+  /// Dropping a change is final, so ask; then show the server's version it gave way to.
+  Future<void> _discard(BuildContext context, PendingOp op) async {
+    final ok = await AppFeedback.showConfirmDialog(
+      context,
+      title: context.l10n.discardChangeTitle,
+      message: context.l10n.discardChangeMessage,
+      confirmLabel: context.l10n.commonDiscard,
+      isDestructive: true,
+    );
+    if (!ok) return;
+    await provider.discardFailedOp(op.id);
+    await provider.fetchAllData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +83,7 @@ class _FailedOpsDialog extends StatelessWidget {
                           trailing: Wrap(
                             children: [
                               TextButton(
-                                onPressed: () =>
-                                    provider.discardFailedOp(op.id),
+                                onPressed: () => _discard(context, op),
                                 child: Text(context.l10n.commonDiscard),
                               ),
                               TextButton(

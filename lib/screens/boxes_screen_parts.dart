@@ -72,6 +72,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
+              onLongPress: () => showBoxActionsSheet(context, box),
               onTap: () {
                 Navigator.push(
                   context,
@@ -115,7 +116,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                               ),
                               const SizedBox(height: 3),
                               Text(
-                                '${box.type.displayName} • $itemCount ${itemCount == 1 ? 'item' : 'items'}${subBoxCount > 0 ? ' • $subBoxCount nested' : ''}',
+                                '${box.type.displayName} • ${context.l10n.itemsCountLabel(itemCount)}${subBoxCount > 0 ? ' • ${context.l10n.nestedCountLabel(subBoxCount)}' : ''}',
                                 style: GoogleFonts.inter(
                                   fontSize: 13,
                                   color: context.colors.textSecondary,
@@ -198,7 +199,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
   }
 
 
-  Widget _buildEmptyState({required String title, required String subtitle}) {
+  Widget _buildEmptyState({required String title, required String subtitle, VoidCallback? onAction, String? actionLabel}) {
     return Container(
       margin: const EdgeInsets.only(top: 40),
       padding: const EdgeInsets.all(32),
@@ -225,6 +226,10 @@ extension _BoxesScreenParts on _BoxesScreenState {
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(fontSize: 13, color: context.colors.textSecondary),
           ),
+          if (onAction != null && actionLabel != null) ...[
+            const SizedBox(height: 16),
+            FilledButton(onPressed: onAction, child: Text(actionLabel)),
+          ],
         ],
       ),
     );

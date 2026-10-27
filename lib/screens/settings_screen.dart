@@ -388,9 +388,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   color: const Color(0xFFDCFCE7),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
-                                child: const Text(
-                                  'DEVELOPER',
-                                  style: TextStyle(
+                                child: Text(
+                                  context.l10n.developerBadge,
+                                  style: const TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF15803D),

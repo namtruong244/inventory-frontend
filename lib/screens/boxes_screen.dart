@@ -10,11 +10,13 @@ import '../widgets/trash_actions.dart';
 import '../widgets/export_barcodes_sheet.dart';
 import '../widgets/move_location_dialog.dart';
 import 'box_create_screen.dart';
+import '../widgets/item_box_actions.dart';
 import 'box_details_screen.dart';
 import '../widgets/app_refresh.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../utils/text_normalize.dart';
 
 part 'boxes_screen_parts.dart';
 
@@ -96,11 +98,11 @@ class _BoxesScreenState extends State<BoxesScreen> {
 
             // Apply search query
             if (_searchQuery.isNotEmpty) {
-              final q = _searchQuery.toLowerCase();
+              final q = normalizeVi(_searchQuery);
               displayedBoxes = displayedBoxes.where((b) =>
-                b.name.toLowerCase().contains(q) ||
-                b.description.toLowerCase().contains(q) ||
-                b.label.toLowerCase().contains(q)
+                containsNormalized(b.name, q) ||
+                containsNormalized(b.description, q) ||
+                containsNormalized(b.label, q)
               ).toList();
             }
 
@@ -290,6 +292,11 @@ class _BoxesScreenState extends State<BoxesScreen> {
                   _buildEmptyState(
                     title: context.l10n.noLocationsYet,
                     subtitle: context.l10n.tapNewLocationAboveTo,
+                    actionLabel: context.l10n.createFirstLocation,
+                    onAction: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const BoxCreateScreen()),
+                    ),
                   )
                 else if (displayedBoxes.isEmpty)
                   _buildEmptyState(
@@ -403,6 +410,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
               ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(20),
+                onLongPress: () => showBoxActionsSheet(context, box),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -478,7 +486,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             ),
                             const SizedBox(height: 3),
                             Text(
-                              '${box.type.displayName} • $itemCount ${itemCount == 1 ? 'item' : 'items'}${children.isNotEmpty ? ' • ${children.length} sub-containers' : ''}',
+                              '${box.type.displayName} • ${context.l10n.itemsCountLabel(itemCount)}${children.isNotEmpty ? ' • ${context.l10n.subContainersCountLabel(children.length)}' : ''}',
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 color: context.colors.textSecondary,

@@ -338,7 +338,9 @@
       }
     }
   },
-  "pleaseEnterAnItemName": "Please enter an item name",
+  "pleaseEnterAValidQuantity": "Enter a valid quantity (0 or more)",
+  "pleaseFixTheHighlightedFields": "Please fix the highlighted fields",
+  "couldnTUploadThePhoto": "Couldn't upload the photo. Check your connection and try again.",
   "editItem": "Edit Item",
   "newItem": "New Item",
   "commonSave": "Save",
@@ -565,15 +567,6 @@
   "pleaseSelectAnItem": "Please select an item",
   "itemMarkedAsLentSuccessfully": "Item marked as lent successfully",
   "saveLoan": "Save Loan",
-  "googleSignInYouCan": "Google Sign-In: {count}. You can also pick a demo account below.",
-  "@googleSignInYouCan": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
-  "googleSignInConfigureGidclientid": "Google Sign-In: Configure GIDClientID in Info.plist for live Google account. You can also pick a demo account below.",
   "signedInAs": "Signed in as {email}",
   "@signedInAs": {
     "placeholders": {
@@ -585,6 +578,14 @@
   "googleAuthenticationFailed": "Google authentication failed",
   "welcomeBack": "Welcome back, {userName}!",
   "@welcomeBack": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      }
+    }
+  },
+  "welcomeUser": "Welcome, {userName}!",
+  "@welcomeUser": {
     "placeholders": {
       "userName": {
         "type": "Object"
@@ -603,41 +604,13 @@
   "showOrHidePassword": "Show or hide password",
   "passwordIsRequired": "Password is required",
   "passwordMustBeAtLeast": "Password must be at least 8 characters",
-  "forgotPassword": "Forgot password?",
   "createAccount": "Create Account",
   "signIn": "Sign In",
   "alreadyHaveAnAccountSign": "Already have an account? Sign in",
   "donTHaveAnAccount": "Don't have an account? Sign up",
   "byContinuingYouAgreeTo": "By continuing, you agree to our Terms of Service & Privacy Policy",
-  "signInWithGoogle": "Sign in with Google",
-  "chooseAnAccountToContinue": "Choose an account to continue to Personal Inventory",
-  "useAnotherGmailAccount": "Use another Gmail account",
-  "enterCustomGmailComAddress": "Enter custom @gmail.com address",
-  "enterGmailAccount": "Enter Gmail Account",
-  "yourName": "Your Name",
-  "gmailAddress": "Gmail Address",
   "commonCancel": "Cancel",
   "commonContinue": "Continue",
-  "resetPassword": "Reset Password",
-  "aPasswordResetLinkWill": "A password reset link will be sent to {email}.",
-  "@aPasswordResetLinkWill": {
-    "placeholders": {
-      "email": {
-        "type": "Object"
-      }
-    }
-  },
-  "pleaseEnterYourEmailAddress": "Please enter your email address on the sign in form to receive password reset instructions.",
-  "passwordResetEmailSentTo": "Password reset email sent to {email}",
-  "@passwordResetEmailSentTo": {
-    "placeholders": {
-      "email": {
-        "type": "Object"
-      }
-    }
-  },
-  "passwordResetInstructionsSent": "Password reset instructions sent",
-  "sendLink": "Send Link",
   "boxQrCode": "Box QR Code",
   "commonLabel": "Label: {label}",
   "@commonLabel": {
@@ -809,6 +782,10 @@
   "moveToThisBox": "Move to this Box",
   "testWithPresets": "Test with Presets",
   "enterCode": "Enter Code",
+  "boxScanTitle": "Box Scan",
+  "boxScanHint": "Place the QR code inside the frame to scan automatically.",
+  "pickFromGallery": "Pick from gallery",
+  "noQrInImage": "No QR code found in this image.",
   "cutGuide": "CUT GUIDE",
   "barcodeImageReady": "Barcode Image Ready",
   "highResolutionPngImageOf": "High-resolution PNG image of the box QR codes.",
@@ -1248,8 +1225,6 @@
   "pullLatestInventoryLendingRecords": "Pull latest inventory & lending records",
   "successfullySynchronizedWithBackendServer": "Successfully synchronized with backend server",
   "syncFailed": "Sync failed",
-  "seedDemoDataToServer": "Seed Demo Data to Server",
-  "populateBackendWithRoomsItems": "Populate backend with rooms, items, alerts & loans",
   "backendApiUrl": "Backend API URL",
   "enterTheBackendBaseUrl": "Enter the backend base URL (default: http://localhost:8080):",
   "serverUrlUpdatedTo": "Server URL updated to {newUrl}",
@@ -1261,18 +1236,6 @@
     }
   },
   "saveConnect": "Save & Connect",
-  "seedDemoInventory": "Seed Demo Inventory?",
-  "thisWillUploadSampleMulti": "This will upload sample multi-level rooms, cabinets, boxes, tech gear, medicine, low-stock items, and lending records directly into your backend database at http://localhost:8080.\n\nExisting items will be preserved.",
-  "successfullySeededSampleInventoryTo": "Successfully seeded sample inventory to backend server!",
-  "failedToSeedSampleData": "Failed to seed sample data: {errorMessage}",
-  "@failedToSeedSampleData": {
-    "placeholders": {
-      "errorMessage": {
-        "type": "Object"
-      }
-    }
-  },
-  "seedData": "Seed Data",
   "usDollar": "US Dollar",
   "vietnameseDong": "Vietnamese Dong",
   "commonEuro": "Euro",
@@ -1607,5 +1570,211 @@
       }
     }
   },
-  "itemFallbackName": "item"
+  "itemFallbackName": "item",
+  "createFirstLocation": "Create your first location",
+  "addFirstItem": "Add your first item",
+  "firstRoomsTitle": "Where do you keep your things?",
+  "firstRoomsSubtitle": "Pick the rooms you have. You can add cabinets, shelves and boxes inside them later.",
+  "roomLivingRoom": "Living room",
+  "roomKitchen": "Kitchen",
+  "roomBedroom": "Bedroom",
+  "roomBathroom": "Bathroom",
+  "roomGarage": "Garage",
+  "roomOffice": "Office",
+  "roomStorage": "Storage room",
+  "createSelectedRooms": "Create selected ({count})",
+  "@createSelectedRooms": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "addMyOwnLocation": "Add my own",
+  "locationsCreatedCount": "{count} locations created",
+  "@locationsCreatedCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "flashlight": "Flashlight",
+  "discardChangesTitle": "Discard changes?",
+  "discardChangesMessage": "You have unsaved changes. If you leave now they will be lost.",
+  "moreDetails": "More details",
+  "scanBarcode": "Scan barcode",
+  "createLocationHere": "Create new location here",
+  "locationNameHint": "Location name",
+  "lentOnDate": "Lent on: {date}",
+  "@lentOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expectedReturnOn": "Expected return: {date}",
+  "@expectedReturnOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expiryDateOn": "Expiry date: {date}",
+  "@expiryDateOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "validUntilDate": "Valid until: {date}",
+  "@validUntilDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "daysLeftCount": "{days, plural, =1{1 day left} other{{days} days left}}",
+  "@daysLeftCount": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "expiredAgoOn": "Expired {days, plural, =1{1 day} other{{days} days}} ago ({date})",
+  "@expiredAgoOn": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresInOn": "Expires in {days, plural, =1{1 day} other{{days} days}} ({date})",
+  "@expiresInOn": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tagOverdue": "OVERDUE",
+  "tagLent": "LENT",
+  "tagReturned": "RETURNED",
+  "tagLowStock": "LOW STOCK",
+  "tagExpired": "EXPIRED",
+  "expiresInShort": "Expires in {days}d",
+  "@expiresInShort": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inPlacePath": "In: {path}",
+  "@inPlacePath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "assetsTracked": "{count, plural, =1{1 asset tracked} other{{count} assets tracked}}",
+  "@assetsTracked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "itemsCountLabel": "{count, plural, =1{1 item} other{{count} items}}",
+  "@itemsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nestedCountLabel": "{count} nested",
+  "@nestedCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subContainersCountLabel": "{count, plural, =1{1 sub-container} other{{count} sub-containers}}",
+  "@subContainersCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statusOnlineTag": "ONLINE",
+  "statusOfflineTag": "OFFLINE",
+  "itemNowInUse": "\"{name}\" is now in use",
+  "@itemNowInUse": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "developerBadge": "DEVELOPER",
+  "splashTagline": "Smart inventory & asset tracker",
+  "continueToApp": "Continue to app →",
+  "changesNeedAttention": "{count, plural, =1{1 offline change needs your attention} other{{count} offline changes need your attention}}",
+  "@changesNeedAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesRejectedByServer": "{count, plural, =1{1 offline change was rejected by the server} other{{count} offline changes were rejected by the server}}",
+  "@changesRejectedByServer": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "opRejectedBecause": "{operation} was rejected: {reason}",
+  "@opRejectedBecause": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "discardChangeTitle": "Discard this change?",
+  "discardChangeMessage": "Your change will be dropped and the version on the server stays.",
+  "opCreateItem": "Add item",
+  "opUpdateItem": "Edit item",
+  "opDeleteItem": "Delete item",
+  "opMoveItem": "Move item",
+  "opChangeQuantity": "Change quantity",
+  "opCreateBox": "Add location",
+  "opUpdateBox": "Edit location",
+  "opMoveBox": "Move location",
+  "opDeleteBox": "Delete location",
+  "opLend": "Lend item",
+  "opReturnLoan": "Return item",
+  "opCreateCategory": "Add category",
+  "opDeleteCategory": "Delete category",
+  "opUpdateSettings": "Change settings"
 }

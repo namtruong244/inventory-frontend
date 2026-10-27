@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../providers/inventory_provider.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
+import '../l10n/l10n_ext.dart';
 
 /// Minimalist Splash Screen with clean typography and seamless initialization
 class SplashScreen extends StatefulWidget {
@@ -178,7 +179,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                     // Subtitle in English
                     Text(
-                      'Smart inventory & asset tracker',
+                      context.l10n.splashTagline,
                       style: GoogleFonts.inter(
                         color: const Color(0xFFA1A1AA),
                         fontSize: 13,
@@ -251,9 +252,9 @@ class _SplashScreenState extends State<SplashScreen>
                                   minimumSize: Size.zero,
                                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
-                                child: const Text(
-                                  'Continue to app →',
-                                  style: TextStyle(
+                                child: Text(
+                                  context.l10n.continueToApp,
+                                  style: const TextStyle(
                                     color: Color(0xFF60A5FA),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,

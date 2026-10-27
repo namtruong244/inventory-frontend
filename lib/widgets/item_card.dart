@@ -12,6 +12,7 @@ class ItemCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final bool enableClip;
 
   const ItemCard({
@@ -22,6 +23,7 @@ class ItemCard extends StatelessWidget {
     this.onDelete,
     this.onEdit,
     this.onTap,
+    this.onLongPress,
     this.enableClip = true,
   });
 
@@ -87,9 +89,10 @@ class ItemCard extends StatelessWidget {
       ),
     );
 
-    if (onTap != null) {
+    if (onTap != null || onLongPress != null) {
       card = Tappable(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: card,
       );
     }

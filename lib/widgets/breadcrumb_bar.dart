@@ -23,7 +23,8 @@ class BreadcrumbBar extends StatelessWidget {
     final provider = Provider.of<InventoryProvider>(context);
     final path = provider.getBreadcrumb(locationId);
 
-    if (path.length <= 1) return const SizedBox.shrink();
+    // Root locations show their own chip too, so every screen says where you are.
+    if (path.isEmpty) return const SizedBox.shrink();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -82,12 +83,16 @@ class BreadcrumbBar extends StatelessWidget {
 
     return Tappable(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BoxDetailsScreen(boxId: box.id),
-          ),
-        );
+        // Going up means going back: reuse the screen that is already open when there is one.
+        final open = OpenBoxRoutes.of(box.id);
+        if (open != null && open.isActive) {
+          Navigator.popUntil(context, (route) => route == open);
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => BoxDetailsScreen(boxId: box.id)),
+          );
+        }
       },
       child: child,
     );

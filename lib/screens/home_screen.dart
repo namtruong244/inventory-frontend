@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/inventory_provider.dart';
+import '../widgets/add_item_flow.dart';
+import '../widgets/first_rooms_card.dart';
 import '../widgets/home_recent_section.dart';
 import '../widgets/home_sections.dart';
 import '../widgets/home_storage_section.dart';
@@ -188,8 +190,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             _buildBottomNav(context),
           ],
         ),
+        // Quick add from anywhere (not on Settings), clear of the floating nav bar.
+        floatingActionButton: _currentIndex == 3
+            ? null
+            : Padding(
+                padding: EdgeInsets.only(bottom: 84 + _navBottomInset(context)),
+                child: FloatingActionButton(
+                  tooltip: context.l10n.addItem,
+                  onPressed: () => startAddItemFlow(context),
+                  backgroundColor: context.colors.primary,
+                  foregroundColor: Colors.white,
+                  child: const Icon(Icons.add_rounded, size: 28),
+                ),
+              ),
       ),
     );
+  }
+
+  /// The nav bar floats above the bottom edge; keep it off the home indicator / gesture bar.
+  double _navBottomInset(BuildContext context) {
+    final inset = MediaQuery.of(context).padding.bottom;
+    return inset > 16 ? inset : 16;
   }
 
   HomeSections _sections(BuildContext context) => HomeSections(
@@ -217,7 +238,13 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             _sections(context).buildAlertBanner(),
             _sections(context).buildQuickModulesSection(),
             const SizedBox(height: 28),
-            _sections(context).buildStorageSpacesSection(),
+            Consumer<InventoryProvider>(
+              builder: (context, p, _) {
+                // A brand-new account: ask where things are kept instead of showing empty lists.
+                final firstRun = p.boxes.isEmpty && !p.isLoading && !p.isSyncing;
+                return firstRun ? const FirstRoomsCard() : _sections(context).buildStorageSpacesSection();
+              },
+            ),
             const SizedBox(height: 32),
             _sections(context).buildRecentItemsSection(),
           ],
@@ -437,11 +464,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildBottomNav(BuildContext context) {
     return Positioned(
-      bottom: 24,
+      bottom: _navBottomInset(context),
       left: 24,
       right: 24,
       child: Container(
-        height: 68,
+        height: 72,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: context.colors.surface,
@@ -507,7 +534,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         onTap: () => _onTabSelected(index),
         behavior: HitTestBehavior.opaque,
         child: SizedBox(
-          width: 48,
+          width: 56,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -519,17 +546,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ? context.colors.textPrimary
                     : context.colors.textMuted,
               ),
-              const SizedBox(height: 4),
-              // Small active indicator dot - close and snug to the icon
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: isSelected ? 4 : 0,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? context.colors.primary
-                      : Colors.transparent,
-                  shape: BoxShape.circle,
+              const SizedBox(height: 3),
+              Text(
+                tooltip,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected ? context.colors.textPrimary : context.colors.textMuted,
                 ),
               ),
             ],
@@ -543,6 +568,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     return Tooltip(
       message: context.l10n.scanQrCode,
       child: Tappable(
+        semanticLabel: context.l10n.scanQrCode,
         onTap: () => _navigateWithOverlayRestore(const QRScannerTab(isFullScreen: true)),
         behavior: HitTestBehavior.opaque,
         child: Container(

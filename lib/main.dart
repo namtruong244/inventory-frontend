@@ -9,6 +9,7 @@ import 'l10n/l10n_ext.dart';
 import 'providers/inventory_provider.dart';
 import 'screens/splash_screen.dart';
 import 'theme/app_theme.dart';
+import 'widgets/auto_sync.dart';
 import 'widgets/session_guard.dart';
 import 'widgets/sync_status_bar.dart';
 
@@ -56,7 +57,7 @@ class InventoryApp extends StatelessWidget {
       ],
       builder: (context, child) {
         return SessionGuard(
-          child: SyncStatusBar(
+          child: AutoSync(child: SyncStatusBar(
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -69,7 +70,7 @@ class InventoryApp extends StatelessWidget {
                 },
               ),
             ),
-          ),
+          )),
         );
       },
       theme: buildAppTheme(Brightness.light),

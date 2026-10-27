@@ -9,26 +9,31 @@ extension InventoryBoxes on InventoryProvider {
   Future<bool> addBox(Box box) async {
     _boxes.add(box);
     _notify();
-    // A rejected create stays in the list until the next sync replaces it.
-    return _commit(
+    return _commitOrRollback(
       PendingOp('createBox', {'box': box.toJson()}),
       () => _apiService.createBox(box),
+      () => _boxes.removeWhere((b) => b.id == box.id),
     );
   }
 
   Future<bool> updateBox(Box updatedBox) async {
     final index = _boxes.indexWhere((b) => b.id == updatedBox.id);
+    final previous = index != -1 ? _boxes[index] : null;
     if (index != -1) {
       _boxes[index] = updatedBox;
       _notify();
     }
-    return _commit(
+    return _commitOrRollback(
       PendingOp('updateBox', {'box': updatedBox.toJson()}),
       () async {
         final saved = await _apiService.updateBox(updatedBox);
         final i = _boxes.indexWhere((x) => x.id == saved.id);
         if (i != -1) _boxes[i] = saved;
         _notify();
+      },
+      () {
+        final i = _boxes.indexWhere((x) => x.id == updatedBox.id);
+        if (i != -1 && previous != null) _boxes[i] = previous;
       },
     );
   }
@@ -138,12 +143,14 @@ extension InventoryBoxes on InventoryProvider {
     return true;
   }
 
-  bool bulkMoveLocation(String locationId, String? newParentId) {
+  /// False when the move would create a loop or the server rejected it (undone).
+  Future<bool> bulkMoveLocation(String locationId, String? newParentId) async {
     if (!canMoveLocation(locationId, newParentId)) {
       return false;
     }
 
     final index = _boxes.indexWhere((b) => b.id == locationId);
+    final previous = index != -1 ? _boxes[index] : null;
     if (index != -1) {
       _boxes[index] = _boxes[index].copyWith(
         parentId: newParentId,
@@ -152,11 +159,14 @@ extension InventoryBoxes on InventoryProvider {
       _notify();
     }
 
-    _commit(
+    return _commitOrRollback(
       PendingOp('moveBox', {'id': locationId, 'parentId': newParentId}),
       () => _apiService.moveBox(locationId, newParentId),
+      () {
+        final i = _boxes.indexWhere((x) => x.id == locationId);
+        if (i != -1 && previous != null) _boxes[i] = previous;
+      },
     );
-    return true;
   }
 
   int countTotalItemsIn(String locationId) {

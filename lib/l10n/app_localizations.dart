@@ -931,11 +931,23 @@ abstract class AppLocalizations {
   /// **'Item \"{itemName}\" added successfully'**
   String itemAddedSuccessfully(Object itemName);
 
-  /// No description provided for @pleaseEnterAnItemName.
+  /// No description provided for @pleaseEnterAValidQuantity.
   ///
   /// In en, this message translates to:
-  /// **'Please enter an item name'**
-  String get pleaseEnterAnItemName;
+  /// **'Enter a valid quantity (0 or more)'**
+  String get pleaseEnterAValidQuantity;
+
+  /// No description provided for @pleaseFixTheHighlightedFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fix the highlighted fields'**
+  String get pleaseFixTheHighlightedFields;
+
+  /// No description provided for @couldnTUploadThePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t upload the photo. Check your connection and try again.'**
+  String get couldnTUploadThePhoto;
 
   /// No description provided for @editItem.
   ///
@@ -1603,18 +1615,6 @@ abstract class AppLocalizations {
   /// **'Save Loan'**
   String get saveLoan;
 
-  /// No description provided for @googleSignInYouCan.
-  ///
-  /// In en, this message translates to:
-  /// **'Google Sign-In: {count}. You can also pick a demo account below.'**
-  String googleSignInYouCan(Object count);
-
-  /// No description provided for @googleSignInConfigureGidclientid.
-  ///
-  /// In en, this message translates to:
-  /// **'Google Sign-In: Configure GIDClientID in Info.plist for live Google account. You can also pick a demo account below.'**
-  String get googleSignInConfigureGidclientid;
-
   /// No description provided for @signedInAs.
   ///
   /// In en, this message translates to:
@@ -1632,6 +1632,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome back, {userName}!'**
   String welcomeBack(Object userName);
+
+  /// No description provided for @welcomeUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {userName}!'**
+  String welcomeUser(Object userName);
 
   /// No description provided for @authenticationFailed.
   ///
@@ -1705,12 +1711,6 @@ abstract class AppLocalizations {
   /// **'Password must be at least 8 characters'**
   String get passwordMustBeAtLeast;
 
-  /// No description provided for @forgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot password?'**
-  String get forgotPassword;
-
   /// No description provided for @createAccount.
   ///
   /// In en, this message translates to:
@@ -1741,48 +1741,6 @@ abstract class AppLocalizations {
   /// **'By continuing, you agree to our Terms of Service & Privacy Policy'**
   String get byContinuingYouAgreeTo;
 
-  /// No description provided for @signInWithGoogle.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in with Google'**
-  String get signInWithGoogle;
-
-  /// No description provided for @chooseAnAccountToContinue.
-  ///
-  /// In en, this message translates to:
-  /// **'Choose an account to continue to Personal Inventory'**
-  String get chooseAnAccountToContinue;
-
-  /// No description provided for @useAnotherGmailAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Use another Gmail account'**
-  String get useAnotherGmailAccount;
-
-  /// No description provided for @enterCustomGmailComAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter custom @gmail.com address'**
-  String get enterCustomGmailComAddress;
-
-  /// No description provided for @enterGmailAccount.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter Gmail Account'**
-  String get enterGmailAccount;
-
-  /// No description provided for @yourName.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Name'**
-  String get yourName;
-
-  /// No description provided for @gmailAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Gmail Address'**
-  String get gmailAddress;
-
   /// No description provided for @commonCancel.
   ///
   /// In en, this message translates to:
@@ -1794,42 +1752,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get commonContinue;
-
-  /// No description provided for @resetPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset Password'**
-  String get resetPassword;
-
-  /// No description provided for @aPasswordResetLinkWill.
-  ///
-  /// In en, this message translates to:
-  /// **'A password reset link will be sent to {email}.'**
-  String aPasswordResetLinkWill(Object email);
-
-  /// No description provided for @pleaseEnterYourEmailAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter your email address on the sign in form to receive password reset instructions.'**
-  String get pleaseEnterYourEmailAddress;
-
-  /// No description provided for @passwordResetEmailSentTo.
-  ///
-  /// In en, this message translates to:
-  /// **'Password reset email sent to {email}'**
-  String passwordResetEmailSentTo(Object email);
-
-  /// No description provided for @passwordResetInstructionsSent.
-  ///
-  /// In en, this message translates to:
-  /// **'Password reset instructions sent'**
-  String get passwordResetInstructionsSent;
-
-  /// No description provided for @sendLink.
-  ///
-  /// In en, this message translates to:
-  /// **'Send Link'**
-  String get sendLink;
 
   /// No description provided for @boxQrCode.
   ///
@@ -2418,6 +2340,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter Code'**
   String get enterCode;
+
+  /// No description provided for @boxScanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Box Scan'**
+  String get boxScanTitle;
+
+  /// No description provided for @boxScanHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Place the QR code inside the frame to scan automatically.'**
+  String get boxScanHint;
+
+  /// No description provided for @pickFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from gallery'**
+  String get pickFromGallery;
+
+  /// No description provided for @noQrInImage.
+  ///
+  /// In en, this message translates to:
+  /// **'No QR code found in this image.'**
+  String get noQrInImage;
 
   /// No description provided for @cutGuide.
   ///
@@ -3467,18 +3413,6 @@ abstract class AppLocalizations {
   /// **'Sync failed'**
   String get syncFailed;
 
-  /// No description provided for @seedDemoDataToServer.
-  ///
-  /// In en, this message translates to:
-  /// **'Seed Demo Data to Server'**
-  String get seedDemoDataToServer;
-
-  /// No description provided for @populateBackendWithRoomsItems.
-  ///
-  /// In en, this message translates to:
-  /// **'Populate backend with rooms, items, alerts & loans'**
-  String get populateBackendWithRoomsItems;
-
   /// No description provided for @backendApiUrl.
   ///
   /// In en, this message translates to:
@@ -3502,36 +3436,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save & Connect'**
   String get saveConnect;
-
-  /// No description provided for @seedDemoInventory.
-  ///
-  /// In en, this message translates to:
-  /// **'Seed Demo Inventory?'**
-  String get seedDemoInventory;
-
-  /// No description provided for @thisWillUploadSampleMulti.
-  ///
-  /// In en, this message translates to:
-  /// **'This will upload sample multi-level rooms, cabinets, boxes, tech gear, medicine, low-stock items, and lending records directly into your backend database at http://localhost:8080.\n\nExisting items will be preserved.'**
-  String get thisWillUploadSampleMulti;
-
-  /// No description provided for @successfullySeededSampleInventoryTo.
-  ///
-  /// In en, this message translates to:
-  /// **'Successfully seeded sample inventory to backend server!'**
-  String get successfullySeededSampleInventoryTo;
-
-  /// No description provided for @failedToSeedSampleData.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to seed sample data: {errorMessage}'**
-  String failedToSeedSampleData(Object errorMessage);
-
-  /// No description provided for @seedData.
-  ///
-  /// In en, this message translates to:
-  /// **'Seed Data'**
-  String get seedData;
 
   /// No description provided for @usDollar.
   ///
@@ -4234,6 +4138,390 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'item'**
   String get itemFallbackName;
+
+  /// No description provided for @createFirstLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first location'**
+  String get createFirstLocation;
+
+  /// No description provided for @addFirstItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first item'**
+  String get addFirstItem;
+
+  /// No description provided for @firstRoomsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where do you keep your things?'**
+  String get firstRoomsTitle;
+
+  /// No description provided for @firstRoomsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the rooms you have. You can add cabinets, shelves and boxes inside them later.'**
+  String get firstRoomsSubtitle;
+
+  /// No description provided for @roomLivingRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Living room'**
+  String get roomLivingRoom;
+
+  /// No description provided for @roomKitchen.
+  ///
+  /// In en, this message translates to:
+  /// **'Kitchen'**
+  String get roomKitchen;
+
+  /// No description provided for @roomBedroom.
+  ///
+  /// In en, this message translates to:
+  /// **'Bedroom'**
+  String get roomBedroom;
+
+  /// No description provided for @roomBathroom.
+  ///
+  /// In en, this message translates to:
+  /// **'Bathroom'**
+  String get roomBathroom;
+
+  /// No description provided for @roomGarage.
+  ///
+  /// In en, this message translates to:
+  /// **'Garage'**
+  String get roomGarage;
+
+  /// No description provided for @roomOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Office'**
+  String get roomOffice;
+
+  /// No description provided for @roomStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage room'**
+  String get roomStorage;
+
+  /// No description provided for @createSelectedRooms.
+  ///
+  /// In en, this message translates to:
+  /// **'Create selected ({count})'**
+  String createSelectedRooms(Object count);
+
+  /// No description provided for @addMyOwnLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Add my own'**
+  String get addMyOwnLocation;
+
+  /// No description provided for @locationsCreatedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} locations created'**
+  String locationsCreatedCount(Object count);
+
+  /// No description provided for @flashlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashlight'**
+  String get flashlight;
+
+  /// No description provided for @discardChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get discardChangesTitle;
+
+  /// No description provided for @discardChangesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. If you leave now they will be lost.'**
+  String get discardChangesMessage;
+
+  /// No description provided for @moreDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'More details'**
+  String get moreDetails;
+
+  /// No description provided for @scanBarcode.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan barcode'**
+  String get scanBarcode;
+
+  /// No description provided for @createLocationHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Create new location here'**
+  String get createLocationHere;
+
+  /// No description provided for @locationNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Location name'**
+  String get locationNameHint;
+
+  /// No description provided for @lentOnDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent on: {date}'**
+  String lentOnDate(String date);
+
+  /// No description provided for @expectedReturnOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected return: {date}'**
+  String expectedReturnOn(String date);
+
+  /// No description provided for @expiryDateOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry date: {date}'**
+  String expiryDateOn(String date);
+
+  /// No description provided for @validUntilDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until: {date}'**
+  String validUntilDate(String date);
+
+  /// No description provided for @daysLeftCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day left} other{{days} days left}}'**
+  String daysLeftCount(int days);
+
+  /// No description provided for @expiredAgoOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired {days, plural, =1{1 day} other{{days} days}} ago ({date})'**
+  String expiredAgoOn(int days, String date);
+
+  /// No description provided for @expiresInOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires in {days, plural, =1{1 day} other{{days} days}} ({date})'**
+  String expiresInOn(int days, String date);
+
+  /// No description provided for @tagOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'OVERDUE'**
+  String get tagOverdue;
+
+  /// No description provided for @tagLent.
+  ///
+  /// In en, this message translates to:
+  /// **'LENT'**
+  String get tagLent;
+
+  /// No description provided for @tagReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'RETURNED'**
+  String get tagReturned;
+
+  /// No description provided for @tagLowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'LOW STOCK'**
+  String get tagLowStock;
+
+  /// No description provided for @tagExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'EXPIRED'**
+  String get tagExpired;
+
+  /// No description provided for @expiresInShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires in {days}d'**
+  String expiresInShort(int days);
+
+  /// No description provided for @inPlacePath.
+  ///
+  /// In en, this message translates to:
+  /// **'In: {path}'**
+  String inPlacePath(String path);
+
+  /// No description provided for @assetsTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 asset tracked} other{{count} assets tracked}}'**
+  String assetsTracked(int count);
+
+  /// No description provided for @itemsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item} other{{count} items}}'**
+  String itemsCountLabel(int count);
+
+  /// No description provided for @nestedCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} nested'**
+  String nestedCountLabel(int count);
+
+  /// No description provided for @subContainersCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sub-container} other{{count} sub-containers}}'**
+  String subContainersCountLabel(int count);
+
+  /// No description provided for @statusOnlineTag.
+  ///
+  /// In en, this message translates to:
+  /// **'ONLINE'**
+  String get statusOnlineTag;
+
+  /// No description provided for @statusOfflineTag.
+  ///
+  /// In en, this message translates to:
+  /// **'OFFLINE'**
+  String get statusOfflineTag;
+
+  /// No description provided for @itemNowInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" is now in use'**
+  String itemNowInUse(String name);
+
+  /// No description provided for @developerBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'DEVELOPER'**
+  String get developerBadge;
+
+  /// No description provided for @splashTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart inventory & asset tracker'**
+  String get splashTagline;
+
+  /// No description provided for @continueToApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to app →'**
+  String get continueToApp;
+
+  /// No description provided for @changesNeedAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 offline change needs your attention} other{{count} offline changes need your attention}}'**
+  String changesNeedAttention(int count);
+
+  /// No description provided for @changesRejectedByServer.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 offline change was rejected by the server} other{{count} offline changes were rejected by the server}}'**
+  String changesRejectedByServer(int count);
+
+  /// No description provided for @opRejectedBecause.
+  ///
+  /// In en, this message translates to:
+  /// **'{operation} was rejected: {reason}'**
+  String opRejectedBecause(String operation, String reason);
+
+  /// No description provided for @discardChangeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this change?'**
+  String get discardChangeTitle;
+
+  /// No description provided for @discardChangeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your change will be dropped and the version on the server stays.'**
+  String get discardChangeMessage;
+
+  /// No description provided for @opCreateItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add item'**
+  String get opCreateItem;
+
+  /// No description provided for @opUpdateItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit item'**
+  String get opUpdateItem;
+
+  /// No description provided for @opDeleteItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete item'**
+  String get opDeleteItem;
+
+  /// No description provided for @opMoveItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Move item'**
+  String get opMoveItem;
+
+  /// No description provided for @opChangeQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Change quantity'**
+  String get opChangeQuantity;
+
+  /// No description provided for @opCreateBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Add location'**
+  String get opCreateBox;
+
+  /// No description provided for @opUpdateBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit location'**
+  String get opUpdateBox;
+
+  /// No description provided for @opMoveBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Move location'**
+  String get opMoveBox;
+
+  /// No description provided for @opDeleteBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete location'**
+  String get opDeleteBox;
+
+  /// No description provided for @opLend.
+  ///
+  /// In en, this message translates to:
+  /// **'Lend item'**
+  String get opLend;
+
+  /// No description provided for @opReturnLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'Return item'**
+  String get opReturnLoan;
+
+  /// No description provided for @opCreateCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add category'**
+  String get opCreateCategory;
+
+  /// No description provided for @opDeleteCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete category'**
+  String get opDeleteCategory;
+
+  /// No description provided for @opUpdateSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Change settings'**
+  String get opUpdateSettings;
 }
 
 class _AppLocalizationsDelegate

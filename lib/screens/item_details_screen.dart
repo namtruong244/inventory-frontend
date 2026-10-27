@@ -13,9 +13,9 @@ import '../widgets/item_attributes_card.dart';
 import '../widgets/item_detail_cards.dart';
 import '../widgets/item_stock_sheets.dart';
 import 'item_create_screen.dart';
-import 'lending_tracker_screen.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
+import '../widgets/lend_item_sheet.dart';
 import '../l10n/l10n_ext.dart';
 
 class ItemDetailsScreen extends StatefulWidget {
@@ -48,8 +48,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     LendingRecord? activeLoan,
   ) async {
     if (item.status == ItemStatus.lent && activeLoan != null) {
-      provider.returnItem(activeLoan.id);
-      AppFeedback.showSuccess(context, context.l10n.returnedToStorage(item.name));
+      await confirmAndReturnLoan(context, activeLoan, itemName: item.name);
       return;
     }
 
@@ -57,7 +56,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
       final updated = item.copyWith(status: ItemStatus.inUse);
       final success = await provider.updateItem(updated);
       if (success && context.mounted) {
-        AppFeedback.showSuccess(context, '"${item.name}" is now in use');
+        AppFeedback.showSuccess(context, context.l10n.itemNowInUse(item.name));
       }
     } else if (item.status == ItemStatus.inUse) {
       final updated = item.copyWith(status: ItemStatus.stored);
@@ -144,10 +143,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                         } else if (val == 'move') {
                           _showMoveItemDialog(context, item);
                         } else if (val == 'lend') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const LendingTrackerScreen()),
-                          );
+                          LendItemSheet.show(context, initialItem: item);
                         } else if (val == 'delete') {
                           final confirm = await TrashActions.confirm(context, name: item.name);
                           if (confirm && context.mounted) {
@@ -222,6 +218,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                               itemBuilder: (context, idx) {
                                 final photoUrl = item.photos[idx];
                                 return Tappable(
+                                  semanticLabel: context.l10n.productPhotos,
                                   onTap: () => showFullScreenImage(context, photoUrl),
                                   child: AppImageView(
                                     imageUrlOrPath: photoUrl,

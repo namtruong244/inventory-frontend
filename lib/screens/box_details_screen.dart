@@ -21,6 +21,58 @@ import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 
+/// The box screens currently on the navigator, by box id. A breadcrumb uses it to go back
+/// to a screen that is already open instead of stacking a second copy on top.
+class OpenBoxRoutes {
+  OpenBoxRoutes._();
+  static final Map<String, List<Route<dynamic>>> _routes = {};
+
+  /// The newest open route showing [boxId], if any.
+  static Route<dynamic>? of(String boxId) {
+    final list = _routes[boxId];
+    return list == null || list.isEmpty ? null : list.last;
+  }
+
+  static void _add(String boxId, Route<dynamic> route) =>
+      (_routes[boxId] ??= []).add(route);
+
+  static void _remove(String boxId, Route<dynamic> route) {
+    _routes[boxId]?.remove(route);
+    if (_routes[boxId]?.isEmpty ?? false) _routes.remove(boxId);
+  }
+}
+
+class _OpenBoxRoute extends StatefulWidget {
+  final String boxId;
+  final Widget child;
+  const _OpenBoxRoute({required this.boxId, required this.child});
+
+  @override
+  State<_OpenBoxRoute> createState() => _OpenBoxRouteState();
+}
+
+class _OpenBoxRouteState extends State<_OpenBoxRoute> {
+  Route<dynamic>? _route;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_route == null) {
+      _route = ModalRoute.of(context);
+      if (_route != null) OpenBoxRoutes._add(widget.boxId, _route!);
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_route != null) OpenBoxRoutes._remove(widget.boxId, _route!);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
+}
+
 class BoxDetailsScreen extends StatelessWidget {
   final String boxId;
 
@@ -28,6 +80,10 @@ class BoxDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return _OpenBoxRoute(boxId: boxId, child: _buildScreen(context));
+  }
+
+  Widget _buildScreen(BuildContext context) {
     return Consumer<InventoryProvider>(
       builder: (context, provider, child) {
         final box = provider.getBoxById(boxId);
@@ -445,9 +501,9 @@ class BoxDetailsScreen extends StatelessWidget {
                             meta += ' • ${provider.formatPrice(item.purchasePrice)}';
                           }
                           if (item.isExpired) {
-                            meta += ' • EXPIRED';
+                            meta += ' • ${context.l10n.tagExpired}';
                           } else if (item.daysUntilExpiry != null && item.daysUntilExpiry! <= 30) {
-                            meta += ' • Expires in ${item.daysUntilExpiry}d';
+                            meta += ' • ${context.l10n.expiresInShort(item.daysUntilExpiry!)}';
                           }
 
                           final fullDesc = desc.isNotEmpty ? '$desc\n$meta' : meta;

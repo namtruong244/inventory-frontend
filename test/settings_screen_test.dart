@@ -6,7 +6,7 @@ import 'package:inventory/providers/inventory_provider.dart';
 import 'package:inventory/screens/settings_screen.dart';
 
 void main() {
-  testWidgets('SettingsScreen hides developer options by default and unlocks on 7 taps on Version', (WidgetTester tester) async {
+  testWidgets('SettingsScreen hides developer options by default and unlocks on 7 taps on Version (no seed action)', (WidgetTester tester) async {
     final provider = InventoryProvider();
 
     await tester.pumpWidget(
@@ -47,10 +47,10 @@ void main() {
     expect(find.text('DEVELOPER OPTIONS & BACKEND API'), findsOneWidget);
     expect(find.text('DEVELOPER'), findsOneWidget);
 
-    // Scroll to see Seed Demo Data to Server
+    // Demo data seeding is gone, even from the developer section
     await tester.drag(find.byType(ListView).first, const Offset(0, -600));
     await tester.pumpAndSettle();
-    expect(find.text('Seed Demo Data to Server'), findsOneWidget);
+    expect(find.text('Seed Demo Data to Server'), findsNothing);
 
     // Scroll back up to find Hide button
     final hideButton = find.text('Hide');

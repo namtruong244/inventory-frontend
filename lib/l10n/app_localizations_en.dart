@@ -511,7 +511,15 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get pleaseEnterAnItemName => 'Please enter an item name';
+  String get pleaseEnterAValidQuantity => 'Enter a valid quantity (0 or more)';
+
+  @override
+  String get pleaseFixTheHighlightedFields =>
+      'Please fix the highlighted fields';
+
+  @override
+  String get couldnTUploadThePhoto =>
+      'Couldn\'t upload the photo. Check your connection and try again.';
 
   @override
   String get editItem => 'Edit Item';
@@ -890,15 +898,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveLoan => 'Save Loan';
 
   @override
-  String googleSignInYouCan(Object count) {
-    return 'Google Sign-In: $count. You can also pick a demo account below.';
-  }
-
-  @override
-  String get googleSignInConfigureGidclientid =>
-      'Google Sign-In: Configure GIDClientID in Info.plist for live Google account. You can also pick a demo account below.';
-
-  @override
   String signedInAs(Object email) {
     return 'Signed in as $email';
   }
@@ -909,6 +908,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String welcomeBack(Object userName) {
     return 'Welcome back, $userName!';
+  }
+
+  @override
+  String welcomeUser(Object userName) {
+    return 'Welcome, $userName!';
   }
 
   @override
@@ -949,9 +953,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordMustBeAtLeast => 'Password must be at least 8 characters';
 
   @override
-  String get forgotPassword => 'Forgot password?';
-
-  @override
   String get createAccount => 'Create Account';
 
   @override
@@ -968,56 +969,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'By continuing, you agree to our Terms of Service & Privacy Policy';
 
   @override
-  String get signInWithGoogle => 'Sign in with Google';
-
-  @override
-  String get chooseAnAccountToContinue =>
-      'Choose an account to continue to Personal Inventory';
-
-  @override
-  String get useAnotherGmailAccount => 'Use another Gmail account';
-
-  @override
-  String get enterCustomGmailComAddress => 'Enter custom @gmail.com address';
-
-  @override
-  String get enterGmailAccount => 'Enter Gmail Account';
-
-  @override
-  String get yourName => 'Your Name';
-
-  @override
-  String get gmailAddress => 'Gmail Address';
-
-  @override
   String get commonCancel => 'Cancel';
 
   @override
   String get commonContinue => 'Continue';
-
-  @override
-  String get resetPassword => 'Reset Password';
-
-  @override
-  String aPasswordResetLinkWill(Object email) {
-    return 'A password reset link will be sent to $email.';
-  }
-
-  @override
-  String get pleaseEnterYourEmailAddress =>
-      'Please enter your email address on the sign in form to receive password reset instructions.';
-
-  @override
-  String passwordResetEmailSentTo(Object email) {
-    return 'Password reset email sent to $email';
-  }
-
-  @override
-  String get passwordResetInstructionsSent =>
-      'Password reset instructions sent';
-
-  @override
-  String get sendLink => 'Send Link';
 
   @override
   String get boxQrCode => 'Box QR Code';
@@ -1348,6 +1303,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterCode => 'Enter Code';
+
+  @override
+  String get boxScanTitle => 'Box Scan';
+
+  @override
+  String get boxScanHint =>
+      'Place the QR code inside the frame to scan automatically.';
+
+  @override
+  String get pickFromGallery => 'Pick from gallery';
+
+  @override
+  String get noQrInImage => 'No QR code found in this image.';
 
   @override
   String get cutGuide => 'CUT GUIDE';
@@ -1965,13 +1933,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncFailed => 'Sync failed';
 
   @override
-  String get seedDemoDataToServer => 'Seed Demo Data to Server';
-
-  @override
-  String get populateBackendWithRoomsItems =>
-      'Populate backend with rooms, items, alerts & loans';
-
-  @override
   String get backendApiUrl => 'Backend API URL';
 
   @override
@@ -1985,25 +1946,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saveConnect => 'Save & Connect';
-
-  @override
-  String get seedDemoInventory => 'Seed Demo Inventory?';
-
-  @override
-  String get thisWillUploadSampleMulti =>
-      'This will upload sample multi-level rooms, cabinets, boxes, tech gear, medicine, low-stock items, and lending records directly into your backend database at http://localhost:8080.\n\nExisting items will be preserved.';
-
-  @override
-  String get successfullySeededSampleInventoryTo =>
-      'Successfully seeded sample inventory to backend server!';
-
-  @override
-  String failedToSeedSampleData(Object errorMessage) {
-    return 'Failed to seed sample data: $errorMessage';
-  }
-
-  @override
-  String get seedData => 'Seed Data';
 
   @override
   String get usDollar => 'US Dollar';
@@ -2435,4 +2377,285 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get itemFallbackName => 'item';
+
+  @override
+  String get createFirstLocation => 'Create your first location';
+
+  @override
+  String get addFirstItem => 'Add your first item';
+
+  @override
+  String get firstRoomsTitle => 'Where do you keep your things?';
+
+  @override
+  String get firstRoomsSubtitle =>
+      'Pick the rooms you have. You can add cabinets, shelves and boxes inside them later.';
+
+  @override
+  String get roomLivingRoom => 'Living room';
+
+  @override
+  String get roomKitchen => 'Kitchen';
+
+  @override
+  String get roomBedroom => 'Bedroom';
+
+  @override
+  String get roomBathroom => 'Bathroom';
+
+  @override
+  String get roomGarage => 'Garage';
+
+  @override
+  String get roomOffice => 'Office';
+
+  @override
+  String get roomStorage => 'Storage room';
+
+  @override
+  String createSelectedRooms(Object count) {
+    return 'Create selected ($count)';
+  }
+
+  @override
+  String get addMyOwnLocation => 'Add my own';
+
+  @override
+  String locationsCreatedCount(Object count) {
+    return '$count locations created';
+  }
+
+  @override
+  String get flashlight => 'Flashlight';
+
+  @override
+  String get discardChangesTitle => 'Discard changes?';
+
+  @override
+  String get discardChangesMessage =>
+      'You have unsaved changes. If you leave now they will be lost.';
+
+  @override
+  String get moreDetails => 'More details';
+
+  @override
+  String get scanBarcode => 'Scan barcode';
+
+  @override
+  String get createLocationHere => 'Create new location here';
+
+  @override
+  String get locationNameHint => 'Location name';
+
+  @override
+  String lentOnDate(String date) {
+    return 'Lent on: $date';
+  }
+
+  @override
+  String expectedReturnOn(String date) {
+    return 'Expected return: $date';
+  }
+
+  @override
+  String expiryDateOn(String date) {
+    return 'Expiry date: $date';
+  }
+
+  @override
+  String validUntilDate(String date) {
+    return 'Valid until: $date';
+  }
+
+  @override
+  String daysLeftCount(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String expiredAgoOn(int days, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'Expired $_temp0 ago ($date)';
+  }
+
+  @override
+  String expiresInOn(int days, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'Expires in $_temp0 ($date)';
+  }
+
+  @override
+  String get tagOverdue => 'OVERDUE';
+
+  @override
+  String get tagLent => 'LENT';
+
+  @override
+  String get tagReturned => 'RETURNED';
+
+  @override
+  String get tagLowStock => 'LOW STOCK';
+
+  @override
+  String get tagExpired => 'EXPIRED';
+
+  @override
+  String expiresInShort(int days) {
+    return 'Expires in ${days}d';
+  }
+
+  @override
+  String inPlacePath(String path) {
+    return 'In: $path';
+  }
+
+  @override
+  String assetsTracked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count assets tracked',
+      one: '1 asset tracked',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String itemsCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String nestedCountLabel(int count) {
+    return '$count nested';
+  }
+
+  @override
+  String subContainersCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sub-containers',
+      one: '1 sub-container',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get statusOnlineTag => 'ONLINE';
+
+  @override
+  String get statusOfflineTag => 'OFFLINE';
+
+  @override
+  String itemNowInUse(String name) {
+    return '\"$name\" is now in use';
+  }
+
+  @override
+  String get developerBadge => 'DEVELOPER';
+
+  @override
+  String get splashTagline => 'Smart inventory & asset tracker';
+
+  @override
+  String get continueToApp => 'Continue to app →';
+
+  @override
+  String changesNeedAttention(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count offline changes need your attention',
+      one: '1 offline change needs your attention',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String changesRejectedByServer(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count offline changes were rejected by the server',
+      one: '1 offline change was rejected by the server',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String opRejectedBecause(String operation, String reason) {
+    return '$operation was rejected: $reason';
+  }
+
+  @override
+  String get discardChangeTitle => 'Discard this change?';
+
+  @override
+  String get discardChangeMessage =>
+      'Your change will be dropped and the version on the server stays.';
+
+  @override
+  String get opCreateItem => 'Add item';
+
+  @override
+  String get opUpdateItem => 'Edit item';
+
+  @override
+  String get opDeleteItem => 'Delete item';
+
+  @override
+  String get opMoveItem => 'Move item';
+
+  @override
+  String get opChangeQuantity => 'Change quantity';
+
+  @override
+  String get opCreateBox => 'Add location';
+
+  @override
+  String get opUpdateBox => 'Edit location';
+
+  @override
+  String get opMoveBox => 'Move location';
+
+  @override
+  String get opDeleteBox => 'Delete location';
+
+  @override
+  String get opLend => 'Lend item';
+
+  @override
+  String get opReturnLoan => 'Return item';
+
+  @override
+  String get opCreateCategory => 'Add category';
+
+  @override
+  String get opDeleteCategory => 'Delete category';
+
+  @override
+  String get opUpdateSettings => 'Change settings';
 }

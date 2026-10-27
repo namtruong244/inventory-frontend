@@ -343,43 +343,11 @@ class ApiService {
       'id_token': ?idToken,
       'access_token': ?accessToken,
     };
-    try {
-      final res = await post('/api/v1/auth/google', payload);
-      final token = res['token'] as String;
-      final user = User.fromJson(res['user'] as Map<String, dynamic>);
-      await setSession(token, user);
-      return {'token': token, 'user': user};
-    } on ApiException catch (e) {
-      // The server explicitly rejected the login (e.g. invalid token): never fake a session
-      if (e.code == 'AUTH_FAILED' || e.code == 'INVALID_INPUT') rethrow;
-      return _offlineGoogleSession(
-        email: email,
-        name: name,
-        avatarUrl: avatarUrl,
-      );
-    } catch (_) {
-      return _offlineGoogleSession(
-        email: email,
-        name: name,
-        avatarUrl: avatarUrl,
-      );
-    }
-  }
-
-  Future<Map<String, dynamic>> _offlineGoogleSession({
-    required String email,
-    required String name,
-    String? avatarUrl,
-  }) async {
-    // Offline / standalone fallback session
-    final token = 'google_oauth_token_${DateTime.now().millisecondsSinceEpoch}';
-    final user = User(
-      id: 'google_${email.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '_')}',
-      name: name,
-      email: email,
-      role: 'Owner',
-      avatarUrl: avatarUrl,
-    );
+    // Never fake a session: a failed login (offline included) must surface as an error,
+    // otherwise the app holds a token the server rejects and a user id with no cache.
+    final res = await post('/api/v1/auth/google', payload);
+    final token = res['token'] as String;
+    final user = User.fromJson(res['user'] as Map<String, dynamic>);
     await setSession(token, user);
     return {'token': token, 'user': user};
   }
@@ -647,9 +615,11 @@ class ApiService {
     double delta, {
     String? reason,
     String? note,
+    String? idempotencyKey,
   }) async {
     final data = await patch('/api/v1/items/$itemId/quantity', {
       'delta': delta,
+      'idempotencyKey': ?idempotencyKey,
       'reason': ?reason,
       if (note != null && note.isNotEmpty) 'note': note,
     });
@@ -748,6 +718,17 @@ class ApiService {
 
   Future<List<LendingRecord>> getOverdueLoans() async {
     final data = await get('/api/v1/lending/overdue');
+    return (data as List)
+        .map((json) => LendingRecord.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Closed loans of every item, newest return first (one page).
+  Future<List<LendingRecord>> getReturnedLoans({int limit = 200}) async {
+    final data = await get(
+      '/api/v1/lending/history',
+      queryParams: {'limit': '$limit'},
+    );
     return (data as List)
         .map((json) => LendingRecord.fromJson(json as Map<String, dynamic>))
         .toList();

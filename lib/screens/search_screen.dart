@@ -12,6 +12,7 @@ import '../widgets/app_refresh.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../utils/text_normalize.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -105,13 +106,14 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     onChanged: (val) {
                       setState(() {
-                        _query = val.trim().toLowerCase();
+                        _query = normalizeVi(val.trim());
                       });
                     },
                   ),
                 ),
                 if (_query.isNotEmpty)
                   Tappable(
+                    semanticLabel: MaterialLocalizations.of(context).clearButtonTooltip,
                     onTap: () {
                       _searchController.clear();
                       setState(() {
@@ -188,7 +190,8 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Widget _buildSearchResults(BuildContext context, InventoryProvider provider) {
-    if (_query.isEmpty) {
+    // A status filter alone is a valid search ("everything that is lent out").
+    if (_query.isEmpty && _selectedFilter == 'all') {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -211,22 +214,26 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     // Matching Boxes
-    final matchingBoxes = provider.boxes.where((b) {
-      return b.name.toLowerCase().contains(_query) ||
-          b.description.toLowerCase().contains(_query) ||
-          b.label.toLowerCase().contains(_query);
-    }).toList();
+    // (locations have no status, so a filter without a keyword lists items only)
+    final matchingBoxes = _query.isEmpty
+        ? <Box>[]
+        : provider.boxes.where((b) {
+            return containsNormalized(b.name, _query) ||
+                containsNormalized(b.description, _query) ||
+                containsNormalized(b.label, _query);
+          }).toList();
 
     // Matching Items (Full-text search)
     var matchingItems = provider.items.where((i) {
-      final matchesQuery = i.name.toLowerCase().contains(_query) ||
-          i.description.toLowerCase().contains(_query) ||
-          i.categoryId.toLowerCase().contains(_query) ||
-          (i.serialNumber != null && i.serialNumber!.toLowerCase().contains(_query)) ||
-          (i.barcode != null && i.barcode!.toLowerCase().contains(_query)) ||
+      final matchesQuery = _query.isEmpty ||
+          containsNormalized(i.name, _query) ||
+          containsNormalized(i.description, _query) ||
+          containsNormalized(i.categoryId, _query) ||
+          containsNormalized(i.serialNumber, _query) ||
+          containsNormalized(i.barcode, _query) ||
           i.customAttributes.entries.any((entry) =>
-              entry.key.toLowerCase().contains(_query) ||
-              entry.value.toString().toLowerCase().contains(_query));
+              containsNormalized(entry.key, _query) ||
+              containsNormalized(entry.value.toString(), _query));
 
       if (!matchesQuery) return false;
 

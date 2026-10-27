@@ -508,7 +508,15 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get pleaseEnterAnItemName => 'Vui lòng nhập tên vật phẩm';
+  String get pleaseEnterAValidQuantity => 'Nhập số lượng hợp lệ (từ 0 trở lên)';
+
+  @override
+  String get pleaseFixTheHighlightedFields =>
+      'Vui lòng sửa các trường được đánh dấu';
+
+  @override
+  String get couldnTUploadThePhoto =>
+      'Không tải được ảnh lên. Kiểm tra kết nối rồi thử lại.';
 
   @override
   String get editItem => 'Sửa vật phẩm';
@@ -889,15 +897,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get saveLoan => 'Lưu khoản mượn';
 
   @override
-  String googleSignInYouCan(Object count) {
-    return 'Đăng nhập Google: $count. Bạn cũng có thể chọn tài khoản demo bên dưới.';
-  }
-
-  @override
-  String get googleSignInConfigureGidclientid =>
-      'Đăng nhập Google: cần cấu hình GIDClientID trong Info.plist để dùng tài khoản Google thật. Bạn cũng có thể chọn tài khoản demo bên dưới.';
-
-  @override
   String signedInAs(Object email) {
     return 'Đã đăng nhập với $email';
   }
@@ -908,6 +907,11 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String welcomeBack(Object userName) {
     return 'Chào mừng trở lại, $userName!';
+  }
+
+  @override
+  String welcomeUser(Object userName) {
+    return 'Chào mừng, $userName!';
   }
 
   @override
@@ -948,9 +952,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get passwordMustBeAtLeast => 'Mật khẩu phải có ít nhất 8 ký tự';
 
   @override
-  String get forgotPassword => 'Quên mật khẩu?';
-
-  @override
   String get createAccount => 'Tạo tài khoản';
 
   @override
@@ -967,56 +968,10 @@ class AppLocalizationsVi extends AppLocalizations {
       'Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ & Chính sách quyền riêng tư';
 
   @override
-  String get signInWithGoogle => 'Đăng nhập với Google';
-
-  @override
-  String get chooseAnAccountToContinue =>
-      'Chọn một tài khoản để tiếp tục vào Personal Inventory';
-
-  @override
-  String get useAnotherGmailAccount => 'Dùng tài khoản Gmail khác';
-
-  @override
-  String get enterCustomGmailComAddress => 'Nhập địa chỉ @gmail.com tùy chọn';
-
-  @override
-  String get enterGmailAccount => 'Nhập tài khoản Gmail';
-
-  @override
-  String get yourName => 'Tên của bạn';
-
-  @override
-  String get gmailAddress => 'Địa chỉ Gmail';
-
-  @override
   String get commonCancel => 'Hủy';
 
   @override
   String get commonContinue => 'Tiếp tục';
-
-  @override
-  String get resetPassword => 'Đặt lại mật khẩu';
-
-  @override
-  String aPasswordResetLinkWill(Object email) {
-    return 'Liên kết đặt lại mật khẩu sẽ được gửi tới $email.';
-  }
-
-  @override
-  String get pleaseEnterYourEmailAddress =>
-      'Vui lòng nhập email vào biểu mẫu đăng nhập để nhận hướng dẫn đặt lại mật khẩu.';
-
-  @override
-  String passwordResetEmailSentTo(Object email) {
-    return 'Đã gửi email đặt lại mật khẩu tới $email';
-  }
-
-  @override
-  String get passwordResetInstructionsSent =>
-      'Đã gửi hướng dẫn đặt lại mật khẩu';
-
-  @override
-  String get sendLink => 'Gửi liên kết';
 
   @override
   String get boxQrCode => 'Mã QR của hộp';
@@ -1346,6 +1301,18 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get enterCode => 'Nhập mã';
+
+  @override
+  String get boxScanTitle => 'Quét hộp';
+
+  @override
+  String get boxScanHint => 'Đặt mã QR vào trong khung để tự động quét.';
+
+  @override
+  String get pickFromGallery => 'Chọn từ thư viện ảnh';
+
+  @override
+  String get noQrInImage => 'Không tìm thấy mã QR trong ảnh này.';
 
   @override
   String get cutGuide => 'ĐƯỜNG CẮT';
@@ -1961,13 +1928,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get syncFailed => 'Đồng bộ thất bại';
 
   @override
-  String get seedDemoDataToServer => 'Nạp dữ liệu demo lên máy chủ';
-
-  @override
-  String get populateBackendWithRoomsItems =>
-      'Tạo sẵn phòng, vật phẩm, cảnh báo & khoản mượn mẫu trên backend';
-
-  @override
   String get backendApiUrl => 'URL API backend';
 
   @override
@@ -1981,25 +1941,6 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get saveConnect => 'Lưu & kết nối';
-
-  @override
-  String get seedDemoInventory => 'Nạp kho đồ demo?';
-
-  @override
-  String get thisWillUploadSampleMulti =>
-      'Thao tác này tải dữ liệu mẫu (phòng, tủ, hộp nhiều cấp, đồ công nghệ, thuốc, vật phẩm sắp hết và khoản mượn) lên cơ sở dữ liệu backend tại http://localhost:8080.\n\nCác vật phẩm hiện có sẽ được giữ nguyên.';
-
-  @override
-  String get successfullySeededSampleInventoryTo =>
-      'Đã nạp kho đồ mẫu lên backend!';
-
-  @override
-  String failedToSeedSampleData(Object errorMessage) {
-    return 'Không thể nạp dữ liệu mẫu: $errorMessage';
-  }
-
-  @override
-  String get seedData => 'Nạp dữ liệu';
 
   @override
   String get usDollar => 'Đô la Mỹ';
@@ -2427,4 +2368,237 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get itemFallbackName => 'vật phẩm';
+
+  @override
+  String get createFirstLocation => 'Tạo vị trí đầu tiên';
+
+  @override
+  String get addFirstItem => 'Thêm món đồ đầu tiên';
+
+  @override
+  String get firstRoomsTitle => 'Bạn cất đồ ở đâu?';
+
+  @override
+  String get firstRoomsSubtitle =>
+      'Chọn các phòng bạn có. Sau đó bạn có thể thêm tủ, kệ, hộp bên trong.';
+
+  @override
+  String get roomLivingRoom => 'Phòng khách';
+
+  @override
+  String get roomKitchen => 'Bếp';
+
+  @override
+  String get roomBedroom => 'Phòng ngủ';
+
+  @override
+  String get roomBathroom => 'Phòng tắm';
+
+  @override
+  String get roomGarage => 'Gara';
+
+  @override
+  String get roomOffice => 'Phòng làm việc';
+
+  @override
+  String get roomStorage => 'Kho';
+
+  @override
+  String createSelectedRooms(Object count) {
+    return 'Tạo các phòng đã chọn ($count)';
+  }
+
+  @override
+  String get addMyOwnLocation => 'Tự thêm vị trí';
+
+  @override
+  String locationsCreatedCount(Object count) {
+    return 'Đã tạo $count vị trí';
+  }
+
+  @override
+  String get flashlight => 'Đèn pin';
+
+  @override
+  String get discardChangesTitle => 'Bỏ các thay đổi?';
+
+  @override
+  String get discardChangesMessage =>
+      'Bạn có thay đổi chưa lưu. Nếu rời đi bây giờ, các thay đổi sẽ mất.';
+
+  @override
+  String get moreDetails => 'Chi tiết thêm';
+
+  @override
+  String get scanBarcode => 'Quét mã vạch';
+
+  @override
+  String get createLocationHere => 'Tạo vị trí mới tại đây';
+
+  @override
+  String get locationNameHint => 'Tên vị trí';
+
+  @override
+  String lentOnDate(String date) {
+    return 'Cho mượn ngày: $date';
+  }
+
+  @override
+  String expectedReturnOn(String date) {
+    return 'Hẹn trả: $date';
+  }
+
+  @override
+  String expiryDateOn(String date) {
+    return 'Hạn sử dụng: $date';
+  }
+
+  @override
+  String validUntilDate(String date) {
+    return 'Bảo hành đến: $date';
+  }
+
+  @override
+  String daysLeftCount(int days) {
+    return 'còn $days ngày';
+  }
+
+  @override
+  String expiredAgoOn(int days, String date) {
+    return 'Đã hết hạn $days ngày trước ($date)';
+  }
+
+  @override
+  String expiresInOn(int days, String date) {
+    return 'Còn $days ngày sẽ hết hạn ($date)';
+  }
+
+  @override
+  String get tagOverdue => 'QUÁ HẠN';
+
+  @override
+  String get tagLent => 'ĐANG MƯỢN';
+
+  @override
+  String get tagReturned => 'ĐÃ TRẢ';
+
+  @override
+  String get tagLowStock => 'SẮP HẾT';
+
+  @override
+  String get tagExpired => 'HẾT HẠN';
+
+  @override
+  String expiresInShort(int days) {
+    return 'Còn $days ngày hết hạn';
+  }
+
+  @override
+  String inPlacePath(String path) {
+    return 'Tại: $path';
+  }
+
+  @override
+  String assetsTracked(int count) {
+    return '$count món đồ đang theo dõi';
+  }
+
+  @override
+  String itemsCountLabel(int count) {
+    return '$count món đồ';
+  }
+
+  @override
+  String nestedCountLabel(int count) {
+    return '$count bên trong';
+  }
+
+  @override
+  String subContainersCountLabel(int count) {
+    return '$count ngăn con';
+  }
+
+  @override
+  String get statusOnlineTag => 'TRỰC TUYẾN';
+
+  @override
+  String get statusOfflineTag => 'NGOẠI TUYẾN';
+
+  @override
+  String itemNowInUse(String name) {
+    return '\"$name\" đang được sử dụng';
+  }
+
+  @override
+  String get developerBadge => 'NHÀ PHÁT TRIỂN';
+
+  @override
+  String get splashTagline => 'Quản lý đồ đạc và tài sản thông minh';
+
+  @override
+  String get continueToApp => 'Vào ứng dụng →';
+
+  @override
+  String changesNeedAttention(int count) {
+    return '$count thay đổi ngoại tuyến cần bạn xem lại';
+  }
+
+  @override
+  String changesRejectedByServer(int count) {
+    return 'Máy chủ đã từ chối $count thay đổi ngoại tuyến';
+  }
+
+  @override
+  String opRejectedBecause(String operation, String reason) {
+    return '$operation bị từ chối: $reason';
+  }
+
+  @override
+  String get discardChangeTitle => 'Bỏ thay đổi này?';
+
+  @override
+  String get discardChangeMessage =>
+      'Thay đổi của bạn sẽ bị bỏ và giữ nguyên bản trên máy chủ.';
+
+  @override
+  String get opCreateItem => 'Thêm vật phẩm';
+
+  @override
+  String get opUpdateItem => 'Sửa vật phẩm';
+
+  @override
+  String get opDeleteItem => 'Xóa vật phẩm';
+
+  @override
+  String get opMoveItem => 'Di chuyển vật phẩm';
+
+  @override
+  String get opChangeQuantity => 'Đổi số lượng';
+
+  @override
+  String get opCreateBox => 'Thêm vị trí';
+
+  @override
+  String get opUpdateBox => 'Sửa vị trí';
+
+  @override
+  String get opMoveBox => 'Di chuyển vị trí';
+
+  @override
+  String get opDeleteBox => 'Xóa vị trí';
+
+  @override
+  String get opLend => 'Cho mượn';
+
+  @override
+  String get opReturnLoan => 'Nhận trả';
+
+  @override
+  String get opCreateCategory => 'Thêm danh mục';
+
+  @override
+  String get opDeleteCategory => 'Xóa danh mục';
+
+  @override
+  String get opUpdateSettings => 'Đổi cài đặt';
 }

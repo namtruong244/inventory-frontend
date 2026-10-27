@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
@@ -7,6 +6,7 @@ import 'item_details_screen.dart';
 import '../widgets/app_refresh.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../utils/date_format.dart';
 
 class AlertsScreen extends StatelessWidget {
   const AlertsScreen({super.key});
@@ -307,7 +307,7 @@ class AlertsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Expired $daysAgo ${daysAgo == 1 ? 'day' : 'days'} ago (${DateFormat('MMM dd, yyyy').format(item.expiryDate!)})',
+                  context.l10n.expiredAgoOn(daysAgo, formatDate(context, item.expiryDate!)),
                   style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ],
@@ -377,7 +377,7 @@ class AlertsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Expires in $daysLeft days (${DateFormat('MMM dd, yyyy').format(item.expiryDate!)})',
+                  context.l10n.expiresInOn(daysLeft, formatDate(context, item.expiryDate!)),
                   style: TextStyle(
                     color: isUrgent ? const Color(0xFFD97706) : context.colors.textSecondary,
                     fontSize: 12,

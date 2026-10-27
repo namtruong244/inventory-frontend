@@ -121,6 +121,7 @@ class OfflineStore {
   String get _snapKey => '${_snapshotKey}_$userId';
   String get _pendKey => '${_pendingKey}_$userId';
   String get _failKey => '${_failedKey}_$userId';
+  String get _settingsKey => 'inventory_offline_settings_$userId';
 
   /// Runs [fn] against the latest queue and saves what it returns, one caller at a time.
   Future<T> mutatePending<T>(T Function(List<PendingOp> queue) fn) {
@@ -168,10 +169,32 @@ class OfflineStore {
       await prefs.remove(_snapKey);
       await prefs.remove(_pendKey);
       await prefs.remove(_failKey);
+      await prefs.remove(_settingsKey);
       final file = await _snapshotFile();
       if (file != null && await file.exists()) await file.delete();
     } catch (e) {
       debugPrint('clear offline store error: $e');
+    }
+  }
+
+  /// Last known server-side settings (currency, units, warning days...).
+  Future<void> saveSettings(Map<String, dynamic> settings) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_settingsKey, jsonEncode(settings));
+    } catch (e) {
+      debugPrint('save settings error: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> loadSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_settingsKey);
+      if (raw == null) return null;
+      return Map<String, dynamic>.from(jsonDecode(raw) as Map);
+    } catch (_) {
+      return null;
     }
   }
 

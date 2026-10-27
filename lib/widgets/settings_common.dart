@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../providers/inventory_provider.dart';
-import 'app_feedback.dart';
 import '../theme/app_theme.dart';
-import '../l10n/l10n_ext.dart';
 
 Widget buildSectionHeader(String title) {
   return Builder(builder: (context) {
@@ -127,39 +124,4 @@ Widget buildInfoRow(
   }
   return rowContent;
 });
-}
-
-
-void confirmSeedData(BuildContext context, InventoryProvider provider) {
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text(context.l10n.seedDemoInventory, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-      content: Text(
-        context.l10n.thisWillUploadSampleMulti,
-        style: TextStyle(fontSize: 13, height: 1.4),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text(context.l10n.commonCancel),
-        ),
-        FilledButton(
-          onPressed: () async {
-            Navigator.pop(ctx);
-            final success = await provider.seedBackendWithSampleData();
-            if (context.mounted) {
-              if (success) {
-                AppFeedback.showSuccess(context, context.l10n.successfullySeededSampleInventoryTo);
-              } else {
-                AppFeedback.showError(context, context.l10n.failedToSeedSampleData(provider.errorMessage ?? ''));
-              }
-            }
-          },
-          child: Text(context.l10n.seedData),
-        ),
-      ],
-    ),
-  );
 }

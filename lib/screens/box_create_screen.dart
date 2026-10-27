@@ -49,35 +49,49 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
     super.dispose();
   }
 
-  void _saveBox() {
-    if (_formKey.currentState!.validate()) {
-      final isEditing = widget.existingBox != null;
-      final boxName = _nameController.text.trim();
-      if (isEditing) {
-        final updatedBox = widget.existingBox!.copyWith(
+  bool _saving = false;
+
+  Future<void> _saveBox() async {
+    if (_saving) return;
+    if (!_formKey.currentState!.validate()) {
+      AppFeedback.showError(context, context.l10n.pleaseEnterAValidLocation);
+      return;
+    }
+    setState(() => _saving = true);
+    final provider = Provider.of<InventoryProvider>(context, listen: false);
+    final isEditing = widget.existingBox != null;
+    final boxName = _nameController.text.trim();
+    final bool ok;
+    if (isEditing) {
+      ok = await provider.updateBox(
+        widget.existingBox!.copyWith(
           name: boxName,
           type: _selectedType,
           description: _descriptionController.text.trim(),
           label: _label,
-        );
-        Provider.of<InventoryProvider>(context, listen: false).updateBox(updatedBox);
-      } else {
-        final newBox = Box(
+        ),
+      );
+    } else {
+      ok = await provider.addBox(
+        Box(
           name: boxName,
           type: _selectedType,
           description: _descriptionController.text.trim(),
           label: _label,
           parentId: widget.parentId,
-        );
-        Provider.of<InventoryProvider>(context, listen: false).addBox(newBox);
-      }
+        ),
+      );
+    }
+    if (!mounted) return;
+    if (ok) {
       Navigator.pop(context);
       AppFeedback.showSuccess(
         context,
         isEditing ? context.l10n.locationUpdatedSuccessfully(boxName) : context.l10n.locationCreatedSuccessfully(boxName),
       );
     } else {
-      AppFeedback.showError(context, context.l10n.pleaseEnterAValidLocation);
+      setState(() => _saving = false);
+      AppFeedback.showError(context, context.l10n.somethingWentWrongPleaseTry);
     }
   }
 
@@ -331,7 +345,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
               width: double.infinity,
               height: 52,
               child: FilledButton(
-                onPressed: _saveBox,
+                onPressed: _saving ? null : _saveBox,
                 style: FilledButton.styleFrom(
                   backgroundColor: context.colors.primary,
                   foregroundColor: Colors.white,

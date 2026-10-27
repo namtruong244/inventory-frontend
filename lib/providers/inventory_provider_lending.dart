@@ -89,6 +89,8 @@ extension InventoryLending on InventoryProvider {
 
   Future<bool> returnItem(String recordId, {String? newLocationId}) async {
     final recordIndex = _lendingRecords.indexWhere((l) => l.id == recordId);
+    final previousRecord = recordIndex != -1 ? _lendingRecords[recordIndex] : null;
+    Item? previousItem;
     String? itemId;
     if (recordIndex != -1) {
       final record = _lendingRecords[recordIndex];
@@ -100,6 +102,7 @@ extension InventoryLending on InventoryProvider {
       final itemIndex = _items.indexWhere((i) => i.id == record.itemId);
       if (itemIndex != -1) {
         final item = _items[itemIndex];
+        previousItem = item;
         _items[itemIndex] = record.isPartial
             ? item.copyWith(quantity: item.quantity + record.quantity)
             : item.copyWith(
@@ -110,9 +113,15 @@ extension InventoryLending on InventoryProvider {
       _notify();
     }
 
-    final ok = await _commit(
+    final ok = await _commitOrRollback(
       PendingOp('returnLoan', {'id': recordId}),
       () => _apiService.returnItem(recordId),
+      () {
+        final r = _lendingRecords.indexWhere((l) => l.id == recordId);
+        if (r != -1 && previousRecord != null) _lendingRecords[r] = previousRecord;
+        final i = _items.indexWhere((x) => x.id == itemId);
+        if (i != -1 && previousItem != null) _items[i] = previousItem;
+      },
     );
     if (ok && newLocationId != null && itemId != null) {
       final target = newLocationId;

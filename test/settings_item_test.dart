@@ -32,6 +32,11 @@ supportedLocales: AppLocalizations.supportedLocales,
     final unitField = find.widgetWithText(TextFormField, 'cái');
     expect(unitField, findsWidgets);
 
+    // The price lives under "More details"
+    await tester.scrollUntilVisible(find.text('More details'), 300, scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.text('More details'));
+    await tester.pumpAndSettle();
+
     // Scroll down to check Price field uses currency symbol '₫'
     await tester.drag(find.byType(ListView).first, const Offset(0, -1000));
     await tester.pumpAndSettle();

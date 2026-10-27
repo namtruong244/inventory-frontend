@@ -5,7 +5,6 @@ import 'package:inventory/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventory/providers/inventory_provider.dart';
-import 'package:inventory/screens/home_screen.dart';
 import 'package:inventory/screens/login_screen.dart';
 import 'package:inventory/services/offline_store.dart';
 
@@ -91,7 +90,7 @@ supportedLocales: AppLocalizations.supportedLocales,
       expect(find.text('Already have an account? Sign in'), findsOneWidget);
     });
 
-    testWidgets('tapping Google button opens Google account selector sheet',
+    testWidgets('failed Google sign-in shows an error, never a fake account list',
         (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1000, 2000);
       tester.view.devicePixelRatio = 2.0;
@@ -103,20 +102,18 @@ supportedLocales: AppLocalizations.supportedLocales,
       await tester.pumpWidget(buildTestLoginApp());
       await tester.pumpAndSettle();
 
-      // Tap Google button
+      // No Google plugin in a widget test, so sign-in fails.
       await tester.tap(find.text('Continue with Google'));
       await tester.pumpAndSettle();
 
-      // Verify Google sheet content
-      expect(find.text('Sign in with Google'), findsOneWidget);
-      expect(find.text('Choose an account to continue to Personal Inventory'), findsOneWidget);
-      expect(find.text('sara.wilson@gmail.com'), findsOneWidget);
-      expect(find.text('alex.turner@gmail.com'), findsOneWidget);
-      expect(find.text('Use another Gmail account'), findsOneWidget);
+      expect(find.text('sara.wilson@gmail.com'), findsNothing);
+      expect(find.text('alex.turner@gmail.com'), findsNothing);
+      expect(find.text('Use another Gmail account'), findsNothing);
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(find.byType(LoginScreen), findsOneWidget);
     });
 
-    testWidgets('selecting Google account logs in and navigates to HomeScreen',
-        (WidgetTester tester) async {
+    testWidgets('there is no dead "Forgot password" link', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(1000, 2000);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {
@@ -126,19 +123,7 @@ supportedLocales: AppLocalizations.supportedLocales,
 
       await tester.pumpWidget(buildTestLoginApp());
       await tester.pumpAndSettle();
-
-      // Open Google sheet
-      await tester.tap(find.text('Continue with Google'));
-      await tester.pumpAndSettle();
-
-      // Select Alex Turner account
-      await tester.tap(find.text('alex.turner@gmail.com'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-      await tester.pumpAndSettle();
-
-      // Verify navigated to HomeScreen
-      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(find.text('Forgot password?'), findsNothing);
     });
   });
 }

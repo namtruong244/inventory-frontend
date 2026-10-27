@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/google_logo.dart';
+import '../utils/friendly_error.dart';
 import 'home_screen.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
@@ -115,34 +116,16 @@ class _LoginScreenState extends State<LoginScreen> {
     } on GoogleSignInException catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        if (e.code == GoogleSignInExceptionCode.canceled) {
-          // User intentionally closed/cancelled the Google prompt
-          return;
-        }
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (ctx) => _buildGoogleAccountSelectorSheet(
-            ctx,
-            notice: context.l10n.googleSignInYouCan(e.description ?? e.code.name),
-          ),
-        );
+        // The user closing the Google prompt is not an error.
+        if (e.code == GoogleSignInExceptionCode.canceled) return;
+        debugPrint('google sign-in error: ${e.code.name} ${e.description}');
+        AppFeedback.showError(context, context.l10n.couldnTSignInWith);
       }
     } catch (e) {
+      debugPrint('google sign-in error: $e');
       if (mounted) {
         setState(() => _isLoading = false);
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (ctx) => _buildGoogleAccountSelectorSheet(
-            ctx,
-            notice: e.toString().contains('PlatformException')
-                ? context.l10n.googleSignInConfigureGidclientid
-                : null,
-          ),
-        );
+        AppFeedback.showError(context, friendlyError(e, fallback: context.l10n.couldnTSignInWith));
       }
     }
   }
@@ -206,7 +189,12 @@ class _LoginScreenState extends State<LoginScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       if (success) {
-        AppFeedback.showSuccess(context, context.l10n.welcomeBack(provider.userName));
+        AppFeedback.showSuccess(
+          context,
+          _isRegisterMode
+              ? context.l10n.welcomeUser(provider.userName)
+              : context.l10n.welcomeBack(provider.userName),
+        );
         _navigateToHome();
       } else {
         AppFeedback.showError(
@@ -216,10 +204,6 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     }
   }
-
-  // ==========================================
-  // FORGOT PASSWORD HANDLER
-  // ==========================================
 
   @override
   Widget build(BuildContext context) {
@@ -415,28 +399,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           return null;
                         },
                       ),
-                      if (!_isRegisterMode) ...[
-                        const SizedBox(height: 6),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: _handleForgotPassword,
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              context.l10n.forgotPassword,
-                              style: GoogleFonts.inter(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: context.colors.textSecondary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                       const SizedBox(height: 24),
 
                       // Primary Submit Button

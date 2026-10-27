@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' show Locale, ThemeMode;
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/inventory_models.dart';
 import '../services/api_service.dart';
@@ -13,7 +14,6 @@ import '../utils/formatters.dart';
 import '../utils/friendly_error.dart';
 import '../l10n/l10n_ext.dart';
 
-part 'inventory_provider_seed.dart';
 part 'inventory_provider_lending.dart';
 part 'inventory_provider_items.dart';
 part 'inventory_provider_boxes.dart';
@@ -58,9 +58,14 @@ class InventoryProvider extends ChangeNotifier {
   /// The replay of the offline queue that is running right now, if any.
   Completer<void>? _flushing;
 
+  /// Set by [_commit] when a 409 on an edit made it reload everything from the server,
+  /// so the optimistic change is already replaced and must not be rolled back.
+  bool _reloadedAfterConflict = false;
+
   /// Showing cached data because the server could not be reached.
   bool _isOffline = false;
   DateTime? _lastProbe;
+  Timer? _autoSyncTimer;
   bool get isOffline => _isOffline;
 
   String? _errorMessage;
@@ -145,6 +150,7 @@ class InventoryProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _autoSyncTimer?.cancel();
     _authSub?.cancel();
     super.dispose();
   }
@@ -175,8 +181,19 @@ class InventoryProvider extends ChangeNotifier {
     try {
       await _apiService.init();
 
+      // Show the last synced data right away: a weak connection must not leave
+      // the app empty while the requests below wait for their timeouts.
+      await _restoreFromCache();
+
       _initStatus = AppL10n.current.commonAuthenticating;
       notifyListeners();
+
+      if (_apiService.isAuthenticated && !await _probeServerNow()) {
+        await _goOffline();
+        _initStatus = AppL10n.current.commonReady;
+        notifyListeners();
+        return;
+      }
 
       // Check existing authenticated session
       await _ensureAuthenticated();
@@ -383,42 +400,19 @@ class InventoryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // A weak connection would otherwise burn the 15 s timeout on every request below.
+      if (!await _probeServerNow()) {
+        await _goOffline();
+        return;
+      }
+
       await _flushPending();
 
       // 1. Settings
       try {
         final settings = await _apiService.getSettings();
-        if (settings['currencySymbol'] != null) {
-          _currency = settings['currencySymbol'];
-        }
-        if (settings['defaultUnit'] != null) {
-          _defaultUnit = settings['defaultUnit'];
-        }
-        if (settings['expiryWarningDays'] != null) {
-          _expiryWarningDays = (settings['expiryWarningDays'] as num).toInt();
-        }
-        if (settings['warrantyWarningDays'] != null) {
-          _warrantyWarningDays = (settings['warrantyWarningDays'] as num)
-              .toInt();
-        }
-        if (settings['timezone'] != null) {
-          _timezone = settings['timezone'] as String;
-        }
-        if (settings['notifyExpiring'] != null) {
-          _notifyExpiring = settings['notifyExpiring'];
-        }
-        if (settings['notifyOverdue'] != null) {
-          _notifyOverdue = settings['notifyOverdue'];
-        }
-        if (settings['notifyLowStock'] != null) {
-          _notifyLowStock = settings['notifyLowStock'];
-        }
-        if (settings['vibrateOnScan'] != null) {
-          _vibrateOnScan = settings['vibrateOnScan'];
-        }
-        if (settings['autoOpenOnScan'] != null) {
-          _autoOpenOnScan = settings['autoOpenOnScan'];
-        }
+        _applySettings(settings);
+        await _store?.saveSettings(settings);
       } catch (e) {
         debugPrint('Fetch settings error: $e');
       }
@@ -443,81 +437,45 @@ class InventoryProvider extends ChangeNotifier {
         debugPrint('Fetch categories error: $e');
       }
 
-      // 3. Boxes
-      var reachedServer = true;
+      // 3-5. Boxes, items and loans go into temporaries and replace the lists (and the
+      // device cache) only when all three arrived. A partial result must never overwrite
+      // the last good snapshot, otherwise the next offline start would show nothing.
+      final List<Box> boxList;
+      final List<Item> itemList;
+      final List<LendingRecord> loanList;
       try {
-        final boxList = await _apiService.getBoxes();
-        _boxes.clear();
-        _boxes.addAll(boxList);
+        final fetched = await Future.wait([
+          _apiService.getBoxes(),
+          _apiService.getAllItems(),
+          _fetchLoans(),
+        ]);
+        boxList = fetched[0] as List<Box>;
+        itemList = fetched[1] as List<Item>;
+        loanList = fetched[2] as List<LendingRecord>;
       } catch (e) {
-        debugPrint('Fetch boxes error: $e');
-        reachedServer = !_isNetworkError(e);
-      }
-
-      if (!reachedServer) {
-        // Offline: keep browsing and scanning against the last synced data.
-        final hadCache = await _loadSnapshot();
-        _isOffline = true;
-        _isConnected = false;
-        _errorMessage = hadCache
-            ? AppL10n.current.syncOffline
-            : AppL10n.current.cannotReachTheServer;
-        return;
-      }
-
-      // 4. Items
-      try {
-        final itemList = await _apiService.getAllItems();
-        _items.clear();
-        _items.addAll(itemList);
-      } catch (e) {
-        debugPrint('Fetch items error: $e');
-      }
-
-      // 5. Lending records (active + overdue)
-      try {
-        final activeLoans = await _apiService.getActiveLoans();
-        final overdueLoans = await _apiService.getOverdueLoans();
-        _lendingRecords.clear();
-
-        final Set<String> seenIds = {};
-        for (final record in [...activeLoans, ...overdueLoans]) {
-          if (!seenIds.contains(record.id)) {
-            seenIds.add(record.id);
-            _lendingRecords.add(record);
-          }
+        debugPrint('Fetch inventory error: $e');
+        if (_isNetworkError(e)) {
+          // Offline: keep browsing and scanning against the last synced data.
+          await _goOffline();
+          return;
         }
-
-        // Also fetch history for lent items or items with loan records
-        for (final item in _items) {
-          if (item.status == ItemStatus.lent) {
-            try {
-              final hist = await _apiService.getLendingHistory(item.id);
-              for (final h in hist) {
-                if (!seenIds.contains(h.id)) {
-                  seenIds.add(h.id);
-                  _lendingRecords.add(h);
-                }
-              }
-            } catch (_) {}
-          }
-        }
-      } catch (e) {
-        debugPrint('Fetch lending records error: $e');
+        rethrow;
       }
+
+      _boxes
+        ..clear()
+        ..addAll(boxList);
+      _items
+        ..clear()
+        ..addAll(itemList);
+      _lendingRecords
+        ..clear()
+        ..addAll(loanList);
 
       _isConnected = true;
       _isOffline = false;
       _errorMessage = null;
       await _saveSnapshot();
-
-      // If database is completely empty on first launch, auto-seed sample demo data
-      if (_boxes.isEmpty && _items.isEmpty) {
-        debugPrint(
-          'Database is empty, auto-seeding sample demo data to backend...',
-        );
-        await seedBackendWithSampleData();
-      }
     } catch (e) {
       debugPrint('fetchAllData error: $e');
       _isConnected = false;

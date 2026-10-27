@@ -182,11 +182,17 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
             child: FilledButton(
               onPressed: _selectedParentId == widget.targetBox.parentId
                   ? null
-                  : () {
-                      final success = provider.bulkMoveLocation(
+                  : () async {
+                      final canMove = provider.canMoveLocation(
                         widget.targetBox.id,
                         _selectedParentId,
                       );
+                      final success = canMove &&
+                          await provider.bulkMoveLocation(
+                            widget.targetBox.id,
+                            _selectedParentId,
+                          );
+                      if (!context.mounted) return;
                       if (success) {
                         Navigator.pop(context, true);
                         AppFeedback.showSuccess(
@@ -196,7 +202,9 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
                       } else {
                         AppFeedback.showError(
                           context,
-                          context.l10n.cannotMoveContainerIntoIts,
+                          canMove
+                              ? context.l10n.somethingWentWrongPleaseTry
+                              : context.l10n.cannotMoveContainerIntoIts,
                         );
                       }
                     },

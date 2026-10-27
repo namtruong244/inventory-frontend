@@ -4,18 +4,20 @@ import 'package:provider/provider.dart';
 
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
+import '../widgets/add_item_flow.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/trash_actions.dart';
+import '../widgets/item_box_actions.dart';
 import '../widgets/item_card.dart';
-import '../widgets/location_picker_sheet.dart';
+import '../widgets/lend_item_sheet.dart';
 import '../widgets/move_item_sheet.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
-import 'lending_tracker_screen.dart';
 import '../widgets/app_refresh.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../utils/text_normalize.dart';
 
 class ItemsScreen extends StatefulWidget {
   const ItemsScreen({super.key});
@@ -92,12 +94,12 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
             // Search query
             if (_searchQuery.isNotEmpty) {
-              final q = _searchQuery.toLowerCase();
+              final q = normalizeVi(_searchQuery);
               displayedItems = displayedItems.where((i) =>
-                i.name.toLowerCase().contains(q) ||
-                i.description.toLowerCase().contains(q) ||
-                (i.serialNumber != null && i.serialNumber!.toLowerCase().contains(q)) ||
-                (i.barcode != null && i.barcode!.toLowerCase().contains(q))
+                containsNormalized(i.name, q) ||
+                containsNormalized(i.description, q) ||
+                containsNormalized(i.serialNumber, q) ||
+                containsNormalized(i.barcode, q)
               ).toList();
             }
 
@@ -122,7 +124,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '${provider.items.length} assets tracked',
+                          context.l10n.assetsTracked(provider.items.length),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: context.colors.textSecondary,
                           ),
@@ -244,6 +246,17 @@ class _ItemsScreenState extends State<ItemsScreen> {
                           textAlign: TextAlign.center,
                           style: TextStyle(color: context.colors.textSecondary),
                         ),
+                        if (_searchQuery.isEmpty) ...[
+                          const SizedBox(height: 16),
+                          FilledButton(
+                            onPressed: () => startAddItemFlow(context),
+                            child: Text(
+                              provider.boxes.isEmpty
+                                  ? context.l10n.createFirstLocation
+                                  : context.l10n.addFirstItem,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   )
@@ -254,15 +267,15 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
                     String meta = '${provider.formatQty(item.quantity, item.unit)} • ${item.status.displayName}';
                     if (item.isLowStock) {
-                      meta += ' • LOW STOCK';
+                      meta += ' • ${context.l10n.tagLowStock}';
                     }
                     if (item.purchasePrice != null) meta += ' • ${provider.formatPrice(item.purchasePrice)}';
                     if (item.isExpired) {
-                      meta += ' • EXPIRED';
+                      meta += ' • ${context.l10n.tagExpired}';
                     } else if (item.daysUntilExpiry != null && item.daysUntilExpiry! <= 30) {
-                      meta += ' • Expires in ${item.daysUntilExpiry}d';
+                      meta += ' • ${context.l10n.expiresInShort(item.daysUntilExpiry!)}';
                     }
-                    if (breadcrumb.isNotEmpty) meta += '\nIn: $breadcrumb';
+                    if (breadcrumb.isNotEmpty) meta += '\n${context.l10n.inPlacePath(breadcrumb)}';
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
@@ -287,10 +300,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                 SlidableAction(
                                   onPressed: (_) {
                                     final loan = provider.getActiveLoanForItem(item.id);
-                                    if (loan != null) {
-                                      provider.returnItem(loan.id);
-                                      AppFeedback.showSuccess(context, context.l10n.itemMarkedAsReturned);
-                                    }
+                                    if (loan != null) confirmAndReturnLoan(context, loan, itemName: item.name);
                                   },
                                   backgroundColor: const Color(0xFF10B981),
                                   foregroundColor: Colors.white,
@@ -299,14 +309,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                 )
                               else
                                 SlidableAction(
-                                  onPressed: (_) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => const LendingTrackerScreen(),
-                                      ),
-                                    );
-                                  },
+                                  onPressed: (_) => LendItemSheet.show(context, initialItem: item),
                                   backgroundColor: const Color(0xFFF59E0B),
                                   foregroundColor: Colors.white,
                                   icon: Icons.assignment_ind_outlined,
@@ -352,6 +355,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                             description: item.description.isEmpty ? meta : '${item.description}\n$meta',
                             imageUrl: item.imageUrl,
                             enableClip: false,
+                            onLongPress: () => showItemActionsSheet(context, item),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -403,19 +407,5 @@ class _ItemsScreenState extends State<ItemsScreen> {
     );
   }
 
-  Future<void> _showSelectBoxToAddItem(InventoryProvider provider) async {
-    final selectedBox = await LocationPickerSheet.show(
-      context,
-      title: context.l10n.selectDestinationContainer,
-      subtitle: context.l10n.chooseContainerOrScanIts,
-      confirmButtonText: context.l10n.addItemHere,
-    );
-    if (!mounted || selectedBox == null) return;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ItemCreateScreen(boxId: selectedBox.id),
-      ),
-    );
-  }
+  Future<void> _showSelectBoxToAddItem(InventoryProvider provider) => startAddItemFlow(context);
 }

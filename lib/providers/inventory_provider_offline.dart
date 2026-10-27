@@ -45,9 +45,52 @@ extension InventoryOffline on InventoryProvider {
         ..clear()
         ..addAll(snap.categories);
     }
+    final settings = await store.loadSettings();
+    if (settings != null) _applySettings(settings);
     _pendingChanges = (await store.loadPending()).length;
     _failedOps = await store.loadFailed();
     return true;
+  }
+
+  /// Startup: fills the lists from the device cache before any network request, so the
+  /// app has content even when the server answers slowly or not at all.
+  Future<void> _restoreFromCache() async {
+    final user = _apiService.currentUser;
+    if (!_apiService.isAuthenticated || user == null) return;
+    _userName = user.name;
+    _userRole = user.role;
+    if (await _loadSnapshot()) _notify();
+  }
+
+  /// Switches to offline mode: shows the cached data (the lists already hold it when
+  /// [_restoreFromCache] ran) and says so in the banner.
+  Future<void> _goOffline() async {
+    final hadCache = await _loadSnapshot() || _boxes.isNotEmpty || _items.isNotEmpty;
+    _isOffline = true;
+    _isConnected = false;
+    _errorMessage = hadCache
+        ? AppL10n.current.syncOffline
+        : AppL10n.current.cannotReachTheServer;
+    _notify();
+  }
+
+  /// Active and overdue loans, plus the most recent returned ones (best effort).
+  Future<List<LendingRecord>> _fetchLoans() async {
+    final results = await Future.wait([
+      _apiService.getActiveLoans(),
+      _apiService.getOverdueLoans(),
+    ]);
+    final loans = <LendingRecord>[];
+    final seenIds = <String>{};
+    for (final record in [...results[0], ...results[1]]) {
+      if (seenIds.add(record.id)) loans.add(record);
+    }
+    try {
+      for (final h in await _apiService.getReturnedLoans()) {
+        if (seenIds.add(h.id)) loans.add(h);
+      }
+    } catch (_) {}
+    return loans;
   }
 
   Future<void> _enqueue(PendingOp op) async {
@@ -98,6 +141,7 @@ extension InventoryOffline on InventoryProvider {
   /// Sends a mutation, or queues [op] when the server cannot be reached.
   /// Returns true if it was applied or queued, false if the server rejected it.
   Future<bool> _commit(PendingOp op, Future<void> Function() call) async {
+    _reloadedAfterConflict = false;
     if (await _mustQueue()) {
       await _enqueue(op);
       return true;
@@ -119,9 +163,25 @@ extension InventoryOffline on InventoryProvider {
         _errorMessage =
             AppL10n.current.thisWasChangedElsewhereShowing;
         await fetchAllData();
+        _reloadedAfterConflict = true;
       }
       return false;
     }
+  }
+
+  /// [_commit] plus the undo of the optimistic change: when the server rejects the
+  /// mutation [restore] puts the previous state back (a 409 already reloaded the data).
+  Future<bool> _commitOrRollback(
+    PendingOp op,
+    Future<void> Function() call,
+    void Function() restore,
+  ) async {
+    final ok = await _commit(op, call);
+    if (!ok && !_reloadedAfterConflict) {
+      restore();
+      _notify();
+    }
+    return ok;
   }
 
   /// The server bumps an item's updatedAt on quantity, move and loan changes. Pick the new
@@ -194,21 +254,21 @@ extension InventoryOffline on InventoryProvider {
         if (kind == SyncFailure.reject) {
           final conflict = e is ApiException && e.statusCode == 409;
           if (conflict && op.type.startsWith('update')) {
-            _pendingChanges = await store.parkFailed(op, e.toString());
+            _pendingChanges = await store.parkFailed(op, friendlyError(e));
             parked++;
           } else {
             _pendingChanges = await store.removePending(op.id);
             rejected++;
             _syncNotices = [
               ..._syncNotices,
-              '${describePendingOp(op)} was rejected: ${friendlyError(e)}',
+              AppL10n.current.opRejectedBecause(describePendingOp(op), friendlyError(e)),
             ];
           }
           continue;
         }
         // Poison: keep the order, but give up on the op after a few tries.
         if (op.attempts + 1 >= maxPoisonAttempts) {
-          _pendingChanges = await store.parkFailed(op, e.toString());
+          _pendingChanges = await store.parkFailed(op, friendlyError(e));
           parked++;
           continue;
         }
@@ -221,10 +281,10 @@ extension InventoryOffline on InventoryProvider {
     }
     _failedOps = await store.loadFailed();
     if (rejected > 0) {
-      _errorMessage = '$rejected offline change(s) were rejected by the server';
+      _errorMessage = AppL10n.current.changesRejectedByServer(rejected);
     }
     if (parked > 0) {
-      _errorMessage = '$parked offline change(s) need your attention';
+      _errorMessage = AppL10n.current.changesNeedAttention(parked);
     }
   }
 
@@ -234,6 +294,24 @@ extension InventoryOffline on InventoryProvider {
   void dismissSyncNotices() {
     _syncNotices = [];
     _notify();
+  }
+
+  /// App came back to the foreground: sync when offline or changes are waiting.
+  Future<void> onAppResumed() async {
+    if (!_apiService.isAuthenticated || _sessionExpired || _isSyncing) return;
+    if (_isOffline || _pendingChanges > 0) await fetchAllData();
+  }
+
+  /// While offline (or with queued changes) probe the server now and then, so the queue
+  /// flushes without the user touching anything. Stops itself once everything is synced.
+  void startAutoSync({Duration every = const Duration(seconds: 30)}) {
+    _autoSyncTimer?.cancel();
+    _autoSyncTimer = Timer.periodic(every, (_) => onAppResumed());
+  }
+
+  void stopAutoSync() {
+    _autoSyncTimer?.cancel();
+    _autoSyncTimer = null;
   }
 
   /// Retries the offline queue now (the banner's "Sync now").
@@ -318,6 +396,7 @@ extension InventoryOffline on InventoryProvider {
           a['id'] as String,
           (a['delta'] as num).toDouble(),
           reason: a['reason'] as String?,
+          idempotencyKey: a['key'] as String?,
         );
         touched.add(a['id'] as String);
       case 'lend':
@@ -337,6 +416,8 @@ extension InventoryOffline on InventoryProvider {
         await _apiService.returnItem(a['id'] as String);
         final loan = _lendingRecords.where((l) => l.id == a['id']).firstOrNull;
         if (loan != null) touched.add(loan.itemId);
+      case 'updateSettings':
+        await _apiService.updateSettings(_map(a['delta']));
       case 'createCategory':
         await _apiService.createCategory(a['name'] as String);
       case 'deleteCategory':
@@ -345,10 +426,28 @@ extension InventoryOffline on InventoryProvider {
   }
 }
 
-/// Short name of a queued change for the UI, e.g. "update item: Drill".
+/// Plain-language name of a queued change for the UI, e.g. "Edit item: Drill".
 String describePendingOp(PendingOp op) {
+  final l = AppL10n.current;
   final a = op.args;
   final target = a['item'] ?? a['box'];
   final name = target is Map ? target['name'] : null;
-  return '${op.type}${name != null ? ': $name' : ''}';
+  final label = switch (op.type) {
+    'createItem' => l.opCreateItem,
+    'updateItem' => l.opUpdateItem,
+    'deleteItem' => l.opDeleteItem,
+    'moveItem' => l.opMoveItem,
+    'quantity' || 'adjustQuantity' => l.opChangeQuantity,
+    'createBox' => l.opCreateBox,
+    'updateBox' => l.opUpdateBox,
+    'moveBox' => l.opMoveBox,
+    'deleteBox' => l.opDeleteBox,
+    'updateSettings' => l.opUpdateSettings,
+    'lend' => l.opLend,
+    'returnLoan' => l.opReturnLoan,
+    'createCategory' => l.opCreateCategory,
+    'deleteCategory' => l.opDeleteCategory,
+    _ => op.type,
+  };
+  return name != null ? '$label: $name' : label;
 }

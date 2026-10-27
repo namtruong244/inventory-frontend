@@ -338,7 +338,9 @@
       }
     }
   },
-  "pleaseEnterAnItemName": "Vui lòng nhập tên vật phẩm",
+  "pleaseEnterAValidQuantity": "Nhập số lượng hợp lệ (từ 0 trở lên)",
+  "pleaseFixTheHighlightedFields": "Vui lòng sửa các trường được đánh dấu",
+  "couldnTUploadThePhoto": "Không tải được ảnh lên. Kiểm tra kết nối rồi thử lại.",
   "editItem": "Sửa vật phẩm",
   "newItem": "Vật phẩm mới",
   "commonSave": "Lưu",
@@ -565,15 +567,6 @@
   "pleaseSelectAnItem": "Vui lòng chọn một vật phẩm",
   "itemMarkedAsLentSuccessfully": "Đã ghi nhận cho mượn",
   "saveLoan": "Lưu khoản mượn",
-  "googleSignInYouCan": "Đăng nhập Google: {count}. Bạn cũng có thể chọn tài khoản demo bên dưới.",
-  "@googleSignInYouCan": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
-  "googleSignInConfigureGidclientid": "Đăng nhập Google: cần cấu hình GIDClientID trong Info.plist để dùng tài khoản Google thật. Bạn cũng có thể chọn tài khoản demo bên dưới.",
   "signedInAs": "Đã đăng nhập với {email}",
   "@signedInAs": {
     "placeholders": {
@@ -585,6 +578,14 @@
   "googleAuthenticationFailed": "Xác thực Google thất bại",
   "welcomeBack": "Chào mừng trở lại, {userName}!",
   "@welcomeBack": {
+    "placeholders": {
+      "userName": {
+        "type": "Object"
+      }
+    }
+  },
+  "welcomeUser": "Chào mừng, {userName}!",
+  "@welcomeUser": {
     "placeholders": {
       "userName": {
         "type": "Object"
@@ -603,41 +604,13 @@
   "showOrHidePassword": "Hiện hoặc ẩn mật khẩu",
   "passwordIsRequired": "Vui lòng nhập mật khẩu",
   "passwordMustBeAtLeast": "Mật khẩu phải có ít nhất 8 ký tự",
-  "forgotPassword": "Quên mật khẩu?",
   "createAccount": "Tạo tài khoản",
   "signIn": "Đăng nhập",
   "alreadyHaveAnAccountSign": "Đã có tài khoản? Đăng nhập",
   "donTHaveAnAccount": "Chưa có tài khoản? Đăng ký",
   "byContinuingYouAgreeTo": "Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ & Chính sách quyền riêng tư",
-  "signInWithGoogle": "Đăng nhập với Google",
-  "chooseAnAccountToContinue": "Chọn một tài khoản để tiếp tục vào Personal Inventory",
-  "useAnotherGmailAccount": "Dùng tài khoản Gmail khác",
-  "enterCustomGmailComAddress": "Nhập địa chỉ @gmail.com tùy chọn",
-  "enterGmailAccount": "Nhập tài khoản Gmail",
-  "yourName": "Tên của bạn",
-  "gmailAddress": "Địa chỉ Gmail",
   "commonCancel": "Hủy",
   "commonContinue": "Tiếp tục",
-  "resetPassword": "Đặt lại mật khẩu",
-  "aPasswordResetLinkWill": "Liên kết đặt lại mật khẩu sẽ được gửi tới {email}.",
-  "@aPasswordResetLinkWill": {
-    "placeholders": {
-      "email": {
-        "type": "Object"
-      }
-    }
-  },
-  "pleaseEnterYourEmailAddress": "Vui lòng nhập email vào biểu mẫu đăng nhập để nhận hướng dẫn đặt lại mật khẩu.",
-  "passwordResetEmailSentTo": "Đã gửi email đặt lại mật khẩu tới {email}",
-  "@passwordResetEmailSentTo": {
-    "placeholders": {
-      "email": {
-        "type": "Object"
-      }
-    }
-  },
-  "passwordResetInstructionsSent": "Đã gửi hướng dẫn đặt lại mật khẩu",
-  "sendLink": "Gửi liên kết",
   "boxQrCode": "Mã QR của hộp",
   "commonLabel": "Nhãn: {label}",
   "@commonLabel": {
@@ -809,6 +782,10 @@
   "moveToThisBox": "Chuyển vào hộp này",
   "testWithPresets": "Thử với mẫu có sẵn",
   "enterCode": "Nhập mã",
+  "boxScanTitle": "Quét hộp",
+  "boxScanHint": "Đặt mã QR vào trong khung để tự động quét.",
+  "pickFromGallery": "Chọn từ thư viện ảnh",
+  "noQrInImage": "Không tìm thấy mã QR trong ảnh này.",
   "cutGuide": "ĐƯỜNG CẮT",
   "barcodeImageReady": "Ảnh mã vạch đã sẵn sàng",
   "highResolutionPngImageOf": "Ảnh PNG độ phân giải cao của các mã QR hộp.",
@@ -1248,8 +1225,6 @@
   "pullLatestInventoryLendingRecords": "Tải dữ liệu kho đồ & cho mượn mới nhất",
   "successfullySynchronizedWithBackendServer": "Đã đồng bộ với máy chủ",
   "syncFailed": "Đồng bộ thất bại",
-  "seedDemoDataToServer": "Nạp dữ liệu demo lên máy chủ",
-  "populateBackendWithRoomsItems": "Tạo sẵn phòng, vật phẩm, cảnh báo & khoản mượn mẫu trên backend",
   "backendApiUrl": "URL API backend",
   "enterTheBackendBaseUrl": "Nhập URL gốc của backend (mặc định: http://localhost:8080):",
   "serverUrlUpdatedTo": "Đã cập nhật URL máy chủ thành {newUrl}",
@@ -1261,18 +1236,6 @@
     }
   },
   "saveConnect": "Lưu & kết nối",
-  "seedDemoInventory": "Nạp kho đồ demo?",
-  "thisWillUploadSampleMulti": "Thao tác này tải dữ liệu mẫu (phòng, tủ, hộp nhiều cấp, đồ công nghệ, thuốc, vật phẩm sắp hết và khoản mượn) lên cơ sở dữ liệu backend tại http://localhost:8080.\n\nCác vật phẩm hiện có sẽ được giữ nguyên.",
-  "successfullySeededSampleInventoryTo": "Đã nạp kho đồ mẫu lên backend!",
-  "failedToSeedSampleData": "Không thể nạp dữ liệu mẫu: {errorMessage}",
-  "@failedToSeedSampleData": {
-    "placeholders": {
-      "errorMessage": {
-        "type": "Object"
-      }
-    }
-  },
-  "seedData": "Nạp dữ liệu",
   "usDollar": "Đô la Mỹ",
   "vietnameseDong": "Đồng Việt Nam",
   "commonEuro": "Euro",
@@ -1607,5 +1570,211 @@
       }
     }
   },
-  "itemFallbackName": "vật phẩm"
+  "itemFallbackName": "vật phẩm",
+  "createFirstLocation": "Tạo vị trí đầu tiên",
+  "addFirstItem": "Thêm món đồ đầu tiên",
+  "firstRoomsTitle": "Bạn cất đồ ở đâu?",
+  "firstRoomsSubtitle": "Chọn các phòng bạn có. Sau đó bạn có thể thêm tủ, kệ, hộp bên trong.",
+  "roomLivingRoom": "Phòng khách",
+  "roomKitchen": "Bếp",
+  "roomBedroom": "Phòng ngủ",
+  "roomBathroom": "Phòng tắm",
+  "roomGarage": "Gara",
+  "roomOffice": "Phòng làm việc",
+  "roomStorage": "Kho",
+  "createSelectedRooms": "Tạo các phòng đã chọn ({count})",
+  "@createSelectedRooms": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "addMyOwnLocation": "Tự thêm vị trí",
+  "locationsCreatedCount": "Đã tạo {count} vị trí",
+  "@locationsCreatedCount": {
+    "placeholders": {
+      "count": {
+        "type": "Object"
+      }
+    }
+  },
+  "flashlight": "Đèn pin",
+  "discardChangesTitle": "Bỏ các thay đổi?",
+  "discardChangesMessage": "Bạn có thay đổi chưa lưu. Nếu rời đi bây giờ, các thay đổi sẽ mất.",
+  "moreDetails": "Chi tiết thêm",
+  "scanBarcode": "Quét mã vạch",
+  "createLocationHere": "Tạo vị trí mới tại đây",
+  "locationNameHint": "Tên vị trí",
+  "lentOnDate": "Cho mượn ngày: {date}",
+  "@lentOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expectedReturnOn": "Hẹn trả: {date}",
+  "@expectedReturnOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expiryDateOn": "Hạn sử dụng: {date}",
+  "@expiryDateOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "validUntilDate": "Bảo hành đến: {date}",
+  "@validUntilDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "daysLeftCount": "còn {days} ngày",
+  "@daysLeftCount": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "expiredAgoOn": "Đã hết hạn {days} ngày trước ({date})",
+  "@expiredAgoOn": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "expiresInOn": "Còn {days} ngày sẽ hết hạn ({date})",
+  "@expiresInOn": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tagOverdue": "QUÁ HẠN",
+  "tagLent": "ĐANG MƯỢN",
+  "tagReturned": "ĐÃ TRẢ",
+  "tagLowStock": "SẮP HẾT",
+  "tagExpired": "HẾT HẠN",
+  "expiresInShort": "Còn {days} ngày hết hạn",
+  "@expiresInShort": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "inPlacePath": "Tại: {path}",
+  "@inPlacePath": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "assetsTracked": "{count} món đồ đang theo dõi",
+  "@assetsTracked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "itemsCountLabel": "{count} món đồ",
+  "@itemsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nestedCountLabel": "{count} bên trong",
+  "@nestedCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subContainersCountLabel": "{count} ngăn con",
+  "@subContainersCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statusOnlineTag": "TRỰC TUYẾN",
+  "statusOfflineTag": "NGOẠI TUYẾN",
+  "itemNowInUse": "\"{name}\" đang được sử dụng",
+  "@itemNowInUse": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "developerBadge": "NHÀ PHÁT TRIỂN",
+  "splashTagline": "Quản lý đồ đạc và tài sản thông minh",
+  "continueToApp": "Vào ứng dụng →",
+  "changesNeedAttention": "{count} thay đổi ngoại tuyến cần bạn xem lại",
+  "@changesNeedAttention": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "changesRejectedByServer": "Máy chủ đã từ chối {count} thay đổi ngoại tuyến",
+  "@changesRejectedByServer": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "opRejectedBecause": "{operation} bị từ chối: {reason}",
+  "@opRejectedBecause": {
+    "placeholders": {
+      "operation": {
+        "type": "String"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "discardChangeTitle": "Bỏ thay đổi này?",
+  "discardChangeMessage": "Thay đổi của bạn sẽ bị bỏ và giữ nguyên bản trên máy chủ.",
+  "opCreateItem": "Thêm vật phẩm",
+  "opUpdateItem": "Sửa vật phẩm",
+  "opDeleteItem": "Xóa vật phẩm",
+  "opMoveItem": "Di chuyển vật phẩm",
+  "opChangeQuantity": "Đổi số lượng",
+  "opCreateBox": "Thêm vị trí",
+  "opUpdateBox": "Sửa vị trí",
+  "opMoveBox": "Di chuyển vị trí",
+  "opDeleteBox": "Xóa vị trí",
+  "opLend": "Cho mượn",
+  "opReturnLoan": "Nhận trả",
+  "opCreateCategory": "Thêm danh mục",
+  "opDeleteCategory": "Xóa danh mục",
+  "opUpdateSettings": "Đổi cài đặt"
 }

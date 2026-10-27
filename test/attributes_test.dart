@@ -63,6 +63,11 @@ supportedLocales: AppLocalizations.supportedLocales,
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
 
+      // The optional sections sit behind "More details" on a new item.
+      await tester.scrollUntilVisible(find.text('More details'), 300, scrollable: find.byType(Scrollable).first);
+      await tester.tap(find.text('More details'));
+      await tester.pumpAndSettle();
+
       final specFinder = find.text('Specifications & Attributes');
       await tester.scrollUntilVisible(
         specFinder,
@@ -76,7 +81,7 @@ supportedLocales: AppLocalizations.supportedLocales,
       expect(find.text('Color'), findsOneWidget);
 
       // Scroll and Tap on "Add Specification" button to open modal sheet
-      await tester.drag(find.byType(ListView), const Offset(0, -250));
+      await tester.drag(find.byType(ListView).first, const Offset(0, -250));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Add Specification'));
       await tester.pumpAndSettle();
