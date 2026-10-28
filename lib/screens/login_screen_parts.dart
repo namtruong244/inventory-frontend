@@ -39,7 +39,7 @@ extension _LoginScreenParts on _LoginScreenState {
                 const SizedBox(width: 12),
                 Text(
                   label,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: textColor,

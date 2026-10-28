@@ -8,6 +8,8 @@ import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import '../utils/date_format.dart';
+import '../widgets/app_icon.dart';
+import '../widgets/soft_ui.dart';
 
 class LendingTrackerScreen extends StatefulWidget {
   const LendingTrackerScreen({super.key});
@@ -58,7 +60,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                 color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
+              child: AppIcon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
             ),
             onPressed: () => Navigator.pop(context),
           ),
@@ -75,9 +77,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showLendItemSheet(context),
-        backgroundColor: context.colors.primary,
-        foregroundColor: Colors.white,
-        icon: const Icon(Icons.add, size: 20),
+        icon: const AppIcon(Icons.add_rounded, size: 22),
         label: Text(context.l10n.lendItem, style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: Column(
@@ -89,18 +89,17 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: context.colors.dangerSoft, // Light red
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.3)),
+                borderRadius: BorderRadius.circular(24),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: const BoxDecoration(
-                      color: Color(0xFFEF4444),
+                      color: AppTones.coral,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.warning_amber_rounded, color: Colors.white, size: 20),
+                    child: const AppIcon(Icons.warning_amber_rounded, color: Colors.white, size: 20),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -196,13 +195,13 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? context.colors.primary : context.colors.surface,
+          color: isSelected ? context.colors.accent : context.colors.surface,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : context.colors.textPrimary,
+            color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
             fontSize: 13,
           ),
@@ -222,7 +221,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 56, color: context.colors.textMuted),
+            AppIcon(icon, size: 56, color: context.colors.textMuted),
             const SizedBox(height: 16),
             Text(
               title,
@@ -253,14 +252,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: isOverdue ? Border.all(color: const Color(0xFFEF4444), width: 1.5) : null,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: context.colors.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -293,33 +285,14 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isOverdue
-                      ? context.colors.dangerSoft
-                      : isActive
-                          ? context.colors.warningSoft
-                          : context.colors.successSoft,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  isOverdue
-                      ? context.l10n.tagOverdue
-                      : isActive
-                          ? context.l10n.tagLent
-                          : context.l10n.tagReturned,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                    color: isOverdue
-                        ? const Color(0xFFDC2626)
-                        : isActive
-                            ? const Color(0xFFD97706)
-                            : const Color(0xFF059669),
-                  ),
-                ),
+              SoftChip.tone(
+                isOverdue
+                    ? context.l10n.tagOverdue
+                    : isActive
+                        ? context.l10n.tagLent
+                        : context.l10n.tagReturned,
+                isOverdue ? AppTones.coral : (isActive ? AppTones.amber : AppTones.matcha),
+                dot: true,
               ),
             ],
           ),
@@ -328,7 +301,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
           // Details row
           Row(
             children: [
-              Icon(Icons.calendar_today_outlined, size: 14, color: context.colors.textMuted),
+              AppIcon(Icons.calendar_today_outlined, size: 14, color: context.colors.textMuted),
               const SizedBox(width: 6),
               Text(
                 context.l10n.commonLent2(formatDate(context, record.lentDate)),
@@ -336,25 +309,36 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
               ),
               if (record.expectedReturnDate != null) ...[
                 const SizedBox(width: 14),
-                Icon(Icons.event_outlined, size: 14, color: isOverdue ? Colors.red : context.colors.textMuted),
+                AppIcon(Icons.event_outlined, size: 14, color: isOverdue ? AppTones.coral : context.colors.textMuted),
                 const SizedBox(width: 6),
                 Text(
                   context.l10n.commonDue(formatDate(context, record.expectedReturnDate!)),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
-                    color: isOverdue ? Colors.red.shade700 : context.colors.textSecondary,
+                    color: isOverdue ? AppTones.coral : context.colors.textSecondary,
                   ),
                 ),
               ],
             ],
           ),
 
+          // Time elapsed between lend date and due date
+          if (isActive && record.expectedReturnDate != null) ...[
+            const SizedBox(height: 12),
+            Builder(builder: (context) {
+              final total = record.expectedReturnDate!.difference(record.lentDate).inMinutes;
+              final spent = DateTime.now().difference(record.lentDate).inMinutes;
+              final ratio = total <= 0 ? 1.0 : (spent / total).clamp(0.0, 1.0);
+              return SoftBar(value: ratio, color: isOverdue ? AppTones.coral : AppTones.amber, height: 6);
+            }),
+          ],
+
           if (record.borrowerContact.isNotEmpty) ...[
             const SizedBox(height: 6),
             Row(
               children: [
-                Icon(Icons.phone_outlined, size: 14, color: context.colors.textMuted),
+                AppIcon(Icons.phone_outlined, size: 14, color: context.colors.textMuted),
                 const SizedBox(width: 6),
                 Text(
                   record.borrowerContact,
@@ -379,7 +363,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: () => _confirmReturn(context, record, item),
-                icon: const Icon(Icons.assignment_turned_in_outlined, size: 18),
+                icon: const AppIcon(Icons.assignment_turned_in_outlined, size: 18),
                 label: Text(context.l10n.markAsReturned),
                 style: FilledButton.styleFrom(
                   backgroundColor: context.colors.primary,

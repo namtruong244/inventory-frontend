@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'app_icon.dart';
 
 Widget buildSectionHeader(String title) {
   return Builder(builder: (context) {
@@ -9,10 +10,10 @@ Widget buildSectionHeader(String title) {
     child: Text(
       title,
       style: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.bold,
-        color: context.colors.textMuted,
-        letterSpacing: 0.6,
+        fontSize: 13,
+        fontWeight: FontWeight.w800,
+        color: context.colors.textSecondary,
+        letterSpacing: 0.2,
       ),
     ),
   );
@@ -22,30 +23,32 @@ Widget buildSectionHeader(String title) {
 
 Widget buildCardContainer(List<Widget> children) {
   return Builder(builder: (context) {
-  return Material(
-    color: context.colors.surface,
-    borderRadius: BorderRadius.circular(20),
-    clipBehavior: Clip.antiAlias,
-    child: Container(
+    return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: context.colors.border),
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: context.colors.cardShadow,
       ),
-      child: Column(children: children),
-    ),
-  );
-});
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
+        clipBehavior: Clip.antiAlias,
+        child: Column(children: children),
+      ),
+    );
+  });
 }
 
 
 Widget buildIconBox(IconData icon, Color color, Color bg) {
   return Container(
-    padding: const EdgeInsets.all(8),
+    width: 40,
+    height: 40,
     decoration: BoxDecoration(
       color: bg,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(14),
     ),
-    child: Icon(icon, color: color, size: 20),
+    child: AppIcon(icon, color: color, size: 20),
   );
 }
 
@@ -79,7 +82,7 @@ Widget buildPreferenceTile({
           ),
         ),
         const SizedBox(width: 4),
-        Icon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
+        AppIcon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
       ],
     ),
     onTap: onTap,

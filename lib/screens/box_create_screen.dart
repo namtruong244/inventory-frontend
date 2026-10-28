@@ -10,6 +10,7 @@ import '../widgets/app_form_field.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 class BoxCreateScreen extends StatefulWidget {
   final String? parentId;
@@ -116,7 +117,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                 color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
+              child: AppIcon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
             ),
             onPressed: () => Navigator.pop(context),
           ),
@@ -144,7 +145,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                     color: context.colors.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.delete_outline, size: 20, color: Color(0xFFDC2626)),
+                  child: const AppIcon(Icons.delete_outline, size: 20, color: AppTones.coral),
                 ),
                 onPressed: () async {
                   final confirmed = await TrashActions.confirm(
@@ -201,18 +202,15 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                       margin: const EdgeInsets.only(right: 8),
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
-                        color: isSelected ? context.colors.primary : context.colors.surface,
+                        color: isSelected ? context.colors.accent : context.colors.surface,
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: isSelected ? context.colors.primary : context.colors.border,
-                        ),
                       ),
                       child: Row(
                         children: [
-                          Icon(
+                          AppIcon(
                             type.icon,
                             size: 16,
-                            color: isSelected ? Colors.white : context.colors.textPrimary,
+                            color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -220,7 +218,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              color: isSelected ? Colors.white : context.colors.textPrimary,
+                              color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
                             ),
                           ),
                         ],
@@ -274,7 +272,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(parentBox.type.icon, size: 20, color: context.colors.textPrimary),
+                        AppIcon(parentBox.type.icon, size: 20, color: context.colors.textPrimary),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -316,7 +314,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
+                      AppIcon(
                         Icons.qr_code_2_rounded,
                         size: 24,
                         color: context.colors.textPrimary,

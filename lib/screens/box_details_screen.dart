@@ -20,6 +20,7 @@ import '../widgets/app_refresh.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 /// The box screens currently on the navigator, by box id. A breadcrumb uses it to go back
 /// to a screen that is already open instead of stacking a second copy on top.
@@ -119,16 +120,9 @@ class BoxDetailsScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: context.colors.surface,
                         shape: BoxShape.circle,
-                        border: Border.all(color: context.colors.border),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.03),
-                            blurRadius: 4,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
+                        boxShadow: context.colors.cardShadow,
                       ),
-                      child: Icon(Icons.arrow_back_ios_new, size: 18, color: theme.colorScheme.primary),
+                      child: AppIcon(Icons.arrow_back_ios_new, size: 18, color: theme.colorScheme.primary),
                     ),
                     onPressed: () => Navigator.pop(context),
                   ),
@@ -144,16 +138,9 @@ class BoxDetailsScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: context.colors.surface,
                           shape: BoxShape.circle,
-                          border: Border.all(color: context.colors.border),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
+                          boxShadow: context.colors.cardShadow,
                         ),
-                        child: Icon(Icons.qr_code_2_rounded, size: 20, color: context.colors.textPrimary),
+                        child: AppIcon(Icons.qr_code_2_rounded, size: 20, color: context.colors.textPrimary),
                       ),
                       onPressed: () => ExportBarcodesSheet.show(context, box.id),
                     ),
@@ -168,16 +155,9 @@ class BoxDetailsScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: context.colors.surface,
                           shape: BoxShape.circle,
-                          border: Border.all(color: context.colors.border),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
+                          boxShadow: context.colors.cardShadow,
                         ),
-                        child: Icon(Icons.more_horiz_rounded, size: 20, color: context.colors.textPrimary),
+                        child: AppIcon(Icons.more_horiz_rounded, size: 20, color: context.colors.textPrimary),
                       ),
                       onPressed: () => _showBoxOptionsMenu(context, box, provider),
                     ),
@@ -209,14 +189,8 @@ class BoxDetailsScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: context.colors.surface,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: context.colors.cardShadow,
                         ),
                         child: Row(
                           children: [
@@ -228,7 +202,7 @@ class BoxDetailsScreen extends StatelessWidget {
                                 color: context.colors.primary,
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: Icon(box.type.icon, color: Colors.white, size: 24),
+                              child: AppIcon(box.type.icon, color: Colors.white, size: 24),
                             ),
                             const SizedBox(width: 14),
                             Expanded(
@@ -287,7 +261,7 @@ class BoxDetailsScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              icon: const Icon(Icons.qr_code, size: 24),
+                              icon: const AppIcon(Icons.qr_code, size: 24),
                             ),
                           ],
                         ),
@@ -333,7 +307,7 @@ class BoxDetailsScreen extends StatelessWidget {
                             },
                             child: Row(
                               children: [
-                                Icon(Icons.add_rounded, size: 18, color: theme.colorScheme.primary),
+                                AppIcon(Icons.add_rounded, size: 18, color: theme.colorScheme.primary),
                                 const SizedBox(width: 4),
                                 Text(
                                   context.l10n.addContainer,
@@ -368,16 +342,16 @@ class BoxDetailsScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: context.colors.surface,
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: context.colors.border),
+                                boxShadow: context.colors.cardShadow,
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.add_circle_outline_rounded, size: 18, color: context.colors.textSecondary),
+                                  AppIcon(Icons.add_circle_outline_rounded, size: 18, color: context.colors.textSecondary),
                                   const SizedBox(width: 8),
                                   Text(
                                     context.l10n.addContainerInside,
-                                    style: GoogleFonts.inter(
+                                    style: GoogleFonts.plusJakartaSans(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 13,
                                       color: context.colors.textPrimary,
@@ -458,7 +432,7 @@ class BoxDetailsScreen extends StatelessWidget {
                             },
                             child: Row(
                               children: [
-                                Icon(Icons.add, size: 16, color: theme.colorScheme.primary),
+                                AppIcon(Icons.add, size: 16, color: theme.colorScheme.primary),
                                 const SizedBox(width: 4),
                                 Text(
                                   context.l10n.addItem,
@@ -480,7 +454,7 @@ class BoxDetailsScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 32.0),
                             child: Column(
                               children: [
-                                Icon(Icons.inbox_outlined, size: 48, color: context.colors.textMuted),
+                                AppIcon(Icons.inbox_outlined, size: 48, color: context.colors.textMuted),
                                 const SizedBox(height: 12),
                                 Text(
                                   context.l10n.noDirectItemsStoredHere,
@@ -593,7 +567,7 @@ class BoxDetailsScreen extends StatelessWidget {
                         color: context.colors.fill,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(box.type.icon, size: 22, color: context.colors.textPrimary),
+                      child: AppIcon(box.type.icon, size: 22, color: context.colors.textPrimary),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -602,13 +576,13 @@ class BoxDetailsScreen extends StatelessWidget {
                         children: [
                           Text(
                             box.name,
-                            style: GoogleFonts.inter(fontWeight: FontWeight.w700, fontSize: 16, color: context.colors.textPrimary),
+                            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 16, color: context.colors.textPrimary),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
                             box.type.displayName,
-                            style: GoogleFonts.inter(fontSize: 13, color: context.colors.textSecondary),
+                            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: context.colors.textSecondary),
                           ),
                         ],
                       ),
@@ -619,8 +593,8 @@ class BoxDetailsScreen extends StatelessWidget {
               const SizedBox(height: 12),
               Divider(color: context.colors.border),
               ListTile(
-                leading: Icon(Icons.edit_outlined, color: context.colors.textPrimary),
-                title: Text(context.l10n.editLocation, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: AppIcon(Icons.edit_outlined, color: context.colors.textPrimary),
+                title: Text(context.l10n.editLocation, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   Navigator.push(
@@ -632,24 +606,24 @@ class BoxDetailsScreen extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.drive_file_move_outlined, color: context.colors.textPrimary),
-                title: Text(context.l10n.moveLocation, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: AppIcon(Icons.drive_file_move_outlined, color: context.colors.textPrimary),
+                title: Text(context.l10n.moveLocation, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   MoveLocationDialog.show(context, box);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.print_outlined, color: context.colors.textPrimary),
-                title: Text(context.l10n.printThermalLabel, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: AppIcon(Icons.print_outlined, color: context.colors.textPrimary),
+                title: Text(context.l10n.printThermalLabel, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   ThermalLabelSheet.show(context, box);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.qr_code_rounded, color: context.colors.textPrimary),
-                title: Text(context.l10n.viewFullQrCode, style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14)),
+                leading: AppIcon(Icons.qr_code_rounded, color: context.colors.textPrimary),
+                title: Text(context.l10n.viewFullQrCode, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w500, fontSize: 14)),
                 onTap: () {
                   Navigator.pop(bottomSheetContext);
                   Navigator.push(
@@ -662,10 +636,10 @@ class BoxDetailsScreen extends StatelessWidget {
               ),
               Divider(color: context.colors.border),
               ListTile(
-                leading: const Icon(Icons.delete_outline_rounded, color: Color(0xFFDC2626)),
+                leading: const AppIcon(Icons.delete_outline_rounded, color: AppTones.coral),
                 title: Text(
                   context.l10n.deleteLocation,
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 14, color: const Color(0xFFDC2626)),
+                  style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14, color: AppTones.coral),
                 ),
                 onTap: () async {
                   Navigator.pop(bottomSheetContext);

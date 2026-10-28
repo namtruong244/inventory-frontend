@@ -4,6 +4,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import '../models/inventory_models.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 class QRDisplayScreen extends StatelessWidget {
   final Box box;
@@ -38,13 +39,7 @@ class QRDisplayScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
+                boxShadow: context.colors.cardShadow,
               ),
               child: QrImageView(
                 data: box.label,
@@ -58,7 +53,7 @@ class QRDisplayScreen extends StatelessWidget {
               onPressed: () {
                 // TODO: Implement printing or sharing
               },
-              icon: const Icon(Icons.print),
+              icon: const AppIcon(Icons.print),
               label: Text(context.l10n.printLabel),
             ),
           ],

@@ -5,6 +5,7 @@ import 'app_form_field.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 
 void showAddPhotoModal(
@@ -89,7 +90,7 @@ void showAddPhotoModal(
                 ),
                 IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                  icon: const Icon(Icons.close_rounded),
+                  icon: const AppIcon(Icons.close_rounded),
                   onPressed: () => Navigator.pop(ctx),
                 ),
               ],
@@ -114,7 +115,7 @@ void showAddPhotoModal(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Column(
                           children: [
-                            Icon(Icons.camera_alt_rounded, color: Colors.white, size: 26),
+                            AppIcon(Icons.camera_alt_rounded, color: Colors.white, size: 26),
                             SizedBox(height: 6),
                             Text(
                               context.l10n.commonCamera,
@@ -147,7 +148,7 @@ void showAddPhotoModal(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Column(
                           children: [
-                            Icon(Icons.photo_library_rounded, color: context.colors.textPrimary, size: 26),
+                            AppIcon(Icons.photo_library_rounded, color: context.colors.textPrimary, size: 26),
                             SizedBox(height: 6),
                             Text(
                               context.l10n.commonGallery,
@@ -240,7 +241,6 @@ void showAddPhotoModal(
                       margin: const EdgeInsets.only(right: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: context.colors.border),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(14),

@@ -19,6 +19,7 @@ import 'login_screen.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 class HomeScreen extends StatefulWidget {
   final int initialIndex;
@@ -33,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   late TabController _tabController;
   late final ScrollController _homeScrollController;
   int _currentIndex = 0;
-  bool _isHeaderScrolledPast = false;
 
   // Keys for sub-tab screens to enable scroll-to-top
   final GlobalKey<ScrollToTopHostState> _boxesKey = GlobalKey();
@@ -47,20 +47,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _tabController = TabController(length: 4, vsync: this, initialIndex: widget.initialIndex);
     _tabController.addListener(_handleTabChange);
     _homeScrollController = ScrollController();
-    _homeScrollController.addListener(_handleHomeScroll);
-  }
-
-  void _handleHomeScroll() {
-    if (!_homeScrollController.hasClients) return;
-    // Dark header extends down to around 160px.
-    // When scrolled past ~80px, top notch area is over light background.
-    final isScrolled = _homeScrollController.offset > 80;
-    if (isScrolled != _isHeaderScrolledPast) {
-      setState(() {
-        _isHeaderScrolledPast = isScrolled;
-      });
-      _updateSystemOverlay();
-    }
   }
 
   void _handleTabChange() {
@@ -86,21 +72,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   SystemUiOverlayStyle get _currentOverlayStyle {
-    // If on Home tab and NOT scrolled past dark header:
-    // White/light icons for the dark header
-    if (_currentIndex == 0 && !_isHeaderScrolledPast) {
-      return const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.dark, // iOS: light/white icons
-        statusBarIconBrightness: Brightness.light, // Android: light/white icons
-      );
-    }
-    // Scrolled down on Home tab, or on other tabs (Boxes, Items, Settings):
-    // Dark icons for light background
-    return const SystemUiOverlayStyle(
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarBrightness: Brightness.light, // iOS: dark icons
-      statusBarIconBrightness: Brightness.dark, // Android: dark icons
+      statusBarBrightness: dark ? Brightness.dark : Brightness.light,
+      statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
     );
   }
 
@@ -108,7 +84,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void dispose() {
     _tabController.removeListener(_handleTabChange);
     _tabController.dispose();
-    _homeScrollController.removeListener(_handleHomeScroll);
     _homeScrollController.dispose();
     super.dispose();
   }
@@ -151,8 +126,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: _currentOverlayStyle,
       child: Scaffold(
@@ -170,39 +143,9 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 ],
               ),
             ),
-            // Floating backing bar under status bar when scrolled past dark header on Home
-            if (_currentIndex == 0)
-              Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                height: topPadding,
-                child: IgnorePointer(
-                  child: AnimatedOpacity(
-                    duration: const Duration(milliseconds: 200),
-                    opacity: _isHeaderScrolledPast ? 1.0 : 0.0,
-                    child: Container(
-                      color: context.colors.fill.withValues(alpha: 0.95),
-                    ),
-                  ),
-                ),
-              ),
             _buildBottomNav(context),
           ],
         ),
-        // Quick add from anywhere (not on Settings), clear of the floating nav bar.
-        floatingActionButton: _currentIndex == 3
-            ? null
-            : Padding(
-                padding: EdgeInsets.only(bottom: 84 + _navBottomInset(context)),
-                child: FloatingActionButton(
-                  tooltip: context.l10n.addItem,
-                  onPressed: () => startAddItemFlow(context),
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: Colors.white,
-                  child: const Icon(Icons.add_rounded, size: 28),
-                ),
-              ),
       ),
     );
   }
@@ -228,12 +171,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         controller: _homeScrollController,
-        padding: const EdgeInsets.only(bottom: 120),
+        padding: const EdgeInsets.only(bottom: 140),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeaderWithSearch(context),
-            const SizedBox(height: 38), // Space for overlapping search bar
+            const SizedBox(height: 20),
             _sections(context).buildConnectionBanner(),
             _sections(context).buildAlertBanner(),
             _sections(context).buildQuickModulesSection(),
@@ -255,266 +198,234 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildHeaderWithSearch(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
+    final c = context.colors;
 
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        // Dark Top Header with Wave lines
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.fromLTRB(24, topPadding + 14, 24, 38),
-          decoration: BoxDecoration(
-            color: context.colors.primary, // Dark Charcoal
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-          ),
-          child: Stack(
+    return Padding(
+      padding: EdgeInsets.fromLTRB(24, topPadding + 16, 24, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              // Wave Curves in Background
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: HeaderWavePainter(),
+              Consumer<InventoryProvider>(
+                builder: (context, provider, _) {
+                  final initial = provider.userName.trim().isNotEmpty
+                      ? provider.userName.trim()[0].toUpperCase()
+                      : 'U';
+                  return Tappable(
+                    semanticLabel: provider.userName,
+                    onTap: () => _navigateWithOverlayRestore(const LoginScreen()),
+                    child: CircleAvatar(
+                      radius: 22,
+                      backgroundColor: c.accent,
+                      child: Text(
+                        initial,
+                        style: TextStyle(
+                          color: c.onAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Consumer<InventoryProvider>(
+                  builder: (context, provider, _) {
+                    final firstName = provider.userName.trim().split(' ').first;
+                    return Text(
+                      context.l10n.heyName(firstName.isNotEmpty ? firstName : context.l10n.heyFallbackName),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: c.textSecondary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    );
+                  },
                 ),
               ),
-              // Greeting, Alert Bell & User Avatar
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              Consumer<InventoryProvider>(
+                builder: (context, provider, _) {
+                  final alertCount = provider.totalAlertCount;
+                  return Tappable(
+                    semanticLabel: context.l10n.commonAlerts,
+                    onTap: () => _navigateWithOverlayRestore(const AlertsScreen()),
+                    child: Stack(
+                      clipBehavior: Clip.none,
                       children: [
-                        Consumer<InventoryProvider>(
-                          builder: (context, provider, _) {
-                            final firstName = provider.userName.trim().split(' ').first;
-                            return Text(
-                              context.l10n.heyName(firstName.isNotEmpty ? firstName : context.l10n.heyFallbackName),
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.2,
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          context.l10n.trackManageYourInventory,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 21,
-                            fontWeight: FontWeight.w800,
-                            height: 1.2,
-                            letterSpacing: -0.4,
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: c.surface,
+                            shape: BoxShape.circle,
+                            boxShadow: c.cardShadow,
                           ),
+                          child: AppIcon(Icons.notifications_none_rounded, color: c.textPrimary, size: 22),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Bell Notification + User Avatar
-                  Row(
-                    children: [
-                      Consumer<InventoryProvider>(
-                        builder: (context, provider, _) {
-                          final alertCount = provider.totalAlertCount;
-                          return Tappable(
-                            onTap: () => _navigateWithOverlayRestore(const AlertsScreen()),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Container(
-                                  width: 44,
-                                  height: 44,
-                                  decoration: BoxDecoration(
-                                    color: context.colors.surface.withValues(alpha: 0.12),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.notifications_none_rounded,
-                                    color: Colors.white,
-                                    size: 22,
-                                  ),
-                                ),
-                                if (alertCount > 0)
-                                  Positioned(
-                                    top: -2,
-                                    right: -2,
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFFEF4444),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-                                      child: Center(
-                                        child: Text(
-                                          '$alertCount',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 12),
-                      Consumer<InventoryProvider>(
-                        builder: (context, provider, _) {
-                          final initial = provider.userName.trim().isNotEmpty
-                              ? provider.userName.trim()[0].toUpperCase()
-                              : 'U';
-                          return Tappable(
-                            onTap: () => _navigateWithOverlayRestore(const LoginScreen()),
+                        if (alertCount > 0)
+                          Positioned(
+                            top: -2,
+                            right: -2,
                             child: Container(
-                              padding: const EdgeInsets.all(2.5),
+                              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                              padding: const EdgeInsets.symmetric(horizontal: 5),
                               decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.45),
-                                  width: 1.5,
-                                ),
+                                color: c.dangerStrong,
+                                borderRadius: BorderRadius.circular(9),
                               ),
-                              child: CircleAvatar(
-                                radius: 22,
-                                backgroundColor: context.colors.primary,
+                              child: Center(
                                 child: Text(
-                                  initial,
+                                  '$alertCount',
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w800,
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
+                          ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),
-        ),
-
-        // Overlapping Search Bar
-        Positioned(
-          bottom: -26,
-          left: 24,
-          right: 24,
-          child: Tappable(
+          const SizedBox(height: 20),
+          Text(
+            context.l10n.trackManageYourInventory,
+            style: TextStyle(
+              color: c.textPrimary,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              height: 1.15,
+              letterSpacing: -0.8,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Tappable(
+            semanticLabel: context.l10n.commonSearch,
             onTap: () => _navigateWithOverlayRestore(const SearchScreen()),
             child: Container(
               height: 56,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.fromLTRB(18, 0, 8, 0),
               decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 20,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                color: c.surface,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: c.cardShadow,
               ),
               child: Row(
                 children: [
-                  Icon(Icons.search, color: context.colors.textMuted, size: 24),
+                  AppIcon(Icons.search_rounded, color: c.textMuted, size: 22),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       context.l10n.commonSearch,
-                      style: TextStyle(
-                        color: context.colors.textMuted,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(color: c.textMuted, fontSize: 15, fontWeight: FontWeight.w500),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: context.colors.primary,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.tune,
-                      color: Colors.white,
-                      size: 18,
-                    ),
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(color: c.fill, borderRadius: BorderRadius.circular(16)),
+                    child: AppIcon(Icons.tune_rounded, color: c.textPrimary, size: 18),
                   ),
                 ],
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildBottomNav(BuildContext context) {
+    final c = context.colors;
     return Positioned(
       bottom: _navBottomInset(context),
-      left: 24,
-      right: 24,
-      child: Container(
-        height: 72,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(36),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
+      left: 20,
+      right: 20,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: Container(
+              height: 68,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: c.surface,
+                borderRadius: BorderRadius.circular(34),
+                boxShadow: c.cardShadow,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildNavItem(
+                    index: 0,
+                    icon: Icons.home_outlined,
+                    activeIcon: Icons.home_rounded,
+                    tooltip: context.l10n.commonHome,
+                  ),
+                  _buildNavItem(
+                    index: 1,
+                    icon: Icons.inventory_2_outlined,
+                    activeIcon: Icons.inventory_2_rounded,
+                    tooltip: context.l10n.commonBox,
+                  ),
+                  _buildCenterQRButton(),
+                  _buildNavItem(
+                    index: 2,
+                    icon: Icons.category_outlined,
+                    activeIcon: Icons.category_rounded,
+                    tooltip: context.l10n.commonItem,
+                  ),
+                  _buildNavItem(
+                    index: 3,
+                    icon: Icons.settings_outlined,
+                    activeIcon: Icons.settings_rounded,
+                    tooltip: context.l10n.commonSetting,
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            // 0: Home
-            _buildNavItem(
-              index: 0,
-              icon: Icons.home_outlined,
-              activeIcon: Icons.home_rounded,
-              tooltip: context.l10n.commonHome,
-            ),
-            // 1: Box
-            _buildNavItem(
-              index: 1,
-              icon: Icons.inventory_2_outlined,
-              activeIcon: Icons.inventory_2_rounded,
-              tooltip: context.l10n.commonBox,
-            ),
-            // QR Scan Action Button (opens camera fullscreen, no navbar)
-            _buildCenterQRButton(),
-            // 2: Item
-            _buildNavItem(
-              index: 2,
-              icon: Icons.category_outlined,
-              activeIcon: Icons.category_rounded,
-              tooltip: context.l10n.commonItem,
-            ),
-            // 3: Setting
-            _buildNavItem(
-              index: 3,
-              icon: Icons.settings_outlined,
-              activeIcon: Icons.settings_rounded,
-              tooltip: context.l10n.commonSetting,
-            ),
-          ],
+          ),
+          const SizedBox(width: 12),
+          _buildQuickAddButton(),
+        ],
+      ),
+    );
+  }
+
+  /// Quick add sits next to the nav pill so it stays under the thumb.
+  Widget _buildQuickAddButton() {
+    final c = context.colors;
+    return Tooltip(
+      message: context.l10n.addItem,
+      child: Tappable(
+        semanticLabel: context.l10n.addItem,
+        onTap: () => startAddItemFlow(context),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          width: 68,
+          height: 68,
+          decoration: BoxDecoration(
+            color: c.accent,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: c.accent.withValues(alpha: 0.55),
+                blurRadius: 22,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: AppIcon(Icons.add_rounded, color: c.onAccent, size: 32),
         ),
       ),
     );
@@ -527,37 +438,27 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     required String tooltip,
   }) {
     final isSelected = _currentIndex == index;
+    final c = context.colors;
 
     return Tooltip(
       message: tooltip,
       child: Tappable(
+        semanticLabel: tooltip,
         onTap: () => _onTabSelected(index),
         behavior: HitTestBehavior.opaque,
-        child: SizedBox(
-          width: 56,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                isSelected ? activeIcon : icon,
-                size: 24,
-                color: isSelected
-                    ? context.colors.textPrimary
-                    : context.colors.textMuted,
-              ),
-              const SizedBox(height: 3),
-              Text(
-                tooltip,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? context.colors.textPrimary : context.colors.textMuted,
-                ),
-              ),
-            ],
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: isSelected ? c.accent : Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: AppIcon(
+            isSelected ? activeIcon : icon,
+            size: 24,
+            color: isSelected ? c.onAccent : c.textMuted,
           ),
         ),
       ),
@@ -565,6 +466,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   Widget _buildCenterQRButton() {
+    final c = context.colors;
     return Tooltip(
       message: context.l10n.scanQrCode,
       child: Tappable(
@@ -572,34 +474,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         onTap: () => _navigateWithOverlayRestore(const QRScannerTab(isFullScreen: true)),
         behavior: HitTestBehavior.opaque,
         child: Container(
-          width: 48,
-          height: 48,
-          decoration: const BoxDecoration(
-            color: Color(0xFF8696A3), // Lighter muted outer circle
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: c.primary,
             shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: Container(
-              width: 41,
-              height: 41,
-              decoration: BoxDecoration(
-                color: context.colors.primary, // Inner dark charcoal circle
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.15),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              child: const Icon(
-                Icons.qr_code_scanner_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
+            ],
           ),
+          child: AppIcon(Icons.qr_code_scanner_rounded, color: c.accent, size: 24),
         ),
       ),
     );

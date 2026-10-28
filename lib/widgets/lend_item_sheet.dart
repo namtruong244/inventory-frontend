@@ -10,6 +10,7 @@ import '../utils/text_normalize.dart';
 import 'app_feedback.dart';
 import 'app_form_field.dart';
 import 'tappable.dart';
+import 'app_icon.dart';
 
 /// The "lend an item" form. Opened from an item it comes with that item already chosen;
 /// opened from the lending tracker the item is picked from a searchable list.
@@ -119,7 +120,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
                     tooltip: MaterialLocalizations.of(context)
                         .closeButtonTooltip,
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded),
+                    icon: const AppIcon(Icons.close_rounded),
                   ),
                 ],
               ),
@@ -165,7 +166,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
                         ),
                       ),
                       if (widget.initialItem == null)
-                        Icon(
+                        AppIcon(
                           Icons.search_rounded,
                           size: 20,
                           color: context.colors.textSecondary,
@@ -267,7 +268,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
                               : FontWeight.normal,
                         ),
                       ),
-                      const Icon(Icons.calendar_month_outlined, size: 20),
+                      const AppIcon(Icons.calendar_month_outlined, size: 20),
                     ],
                   ),
                 ),
@@ -410,7 +411,7 @@ class _ItemPickerSheetState extends State<_ItemPickerSheet> {
                 onChanged: (v) => setState(() => _query = v),
                 decoration: InputDecoration(
                   hintText: context.l10n.searchItemsBarcodesSerials,
-                  prefixIcon: const Icon(Icons.search, size: 20),
+                  prefixIcon: const AppIcon(Icons.search, size: 20),
                 ),
               ),
             ),

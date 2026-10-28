@@ -16,18 +16,15 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? context.colors.primary : context.colors.fill,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? context.colors.primary : context.colors.border,
-          ),
+          color: isSelected ? context.colors.accent : context.colors.fill,
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
           children: [
-            Icon(
+            AppIcon(
               icon,
               size: 20,
-              color: isSelected ? Colors.white : context.colors.textPrimary,
+              color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -39,14 +36,14 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: isSelected ? Colors.white : context.colors.textPrimary,
+                      color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
                     ),
                   ),
                   Text(
                     subtitle,
                     style: TextStyle(
                       fontSize: 10,
-                      color: isSelected ? Colors.white70 : context.colors.textSecondary,
+                      color: isSelected ? context.colors.onAccent.withValues(alpha: 0.7) : context.colors.textSecondary,
                     ),
                   ),
                 ],
@@ -70,13 +67,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
           color: context.colors.border,
           width: 1.2,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: context.colors.cardShadow,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -85,7 +76,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.content_cut_rounded, size: 10, color: context.colors.textMuted),
+              AppIcon(Icons.content_cut_rounded, size: 10, color: context.colors.textMuted),
               const SizedBox(width: 4),
               Text(
                 context.l10n.cutGuide,
@@ -176,7 +167,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
                     Navigator.pop(ctx);
                     AppFeedback.showSuccess(context, context.l10n.barcodeImageCaptured);
                   },
-                  icon: const Icon(Icons.check_rounded, size: 18),
+                  icon: const AppIcon(Icons.check_rounded, size: 18),
                   label: Text(context.l10n.commonDone),
                   style: FilledButton.styleFrom(
                     backgroundColor: context.colors.primary,

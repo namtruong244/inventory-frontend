@@ -37,6 +37,11 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
   final Color infoSoft;
   /// Text on [infoSoft].
   final Color infoStrong;
+  /// Lime/matcha highlight: active states, primary call-to-action, progress.
+  /// Always carries [onAccent] content, never white.
+  final Color accent;
+  /// Content color on [accent].
+  final Color onAccent;
   const AppColors({
     required this.background,
     required this.surface,
@@ -54,24 +59,26 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
     required this.successStrong,
     required this.infoSoft,
     required this.infoStrong,
+    this.accent = const Color(0xFFC8F169),
+    this.onAccent = const Color(0xFF1B2406),
   });
   static const light = AppColors(
-    background: Color(0xFFF8F9FA),
+    background: Color(0xFFF7F8FA),
     surface: Colors.white,
-    fill: Color(0xFFF4F4F6),
-    border: Color(0xFFE4E4E7),
+    fill: Color(0xFFF1F3F6),
+    border: Color(0xFFE9EBEF),
     textPrimary: Color(0xFF18181B),
     // Both pass WCAG AA (4.5:1) on background, surface and fill.
     textSecondary: Color(0xFF5F5F68),
-    textMuted: Color(0xFF6E6E78),
+    textMuted: Color(0xFF686872),
     primary: Color(0xFF18181B),
-    dangerSoft: Color(0xFFFEF2F2),
-    dangerStrong: Color(0xFF991B1B),
-    warningSoft: Color(0xFFFEF3C7),
-    warningStrong: Color(0xFF92400E),
-    successSoft: Color(0xFFECFDF5),
-    successStrong: Color(0xFF047857),
-    infoSoft: Color(0xFFEFF6FF),
+    dangerSoft: Color(0xFFFFE9E4),
+    dangerStrong: Color(0xFF9F2D1C),
+    warningSoft: Color(0xFFFFF3C4),
+    warningStrong: Color(0xFF7A4B07),
+    successSoft: Color(0xFFEAF8CC),
+    successStrong: Color(0xFF3F6212),
+    infoSoft: Color(0xFFE4F0FF),
     infoStrong: Color(0xFF1D4ED8),
   );
   static const dark = AppColors(
@@ -92,6 +99,17 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
     infoSoft: Color(0xFF16233B),
     infoStrong: Color(0xFF93C5FD),
   );
+  /// Soft, wide drop shadow for white cards; no borders.
+  List<BoxShadow> get cardShadow => [
+        BoxShadow(
+          color: (surface.computeLuminance() > 0.5
+                  ? const Color(0xFF1F2A44)
+                  : Colors.black)
+              .withValues(alpha: surface.computeLuminance() > 0.5 ? 0.06 : 0.35),
+          blurRadius: 24,
+          offset: const Offset(0, 8),
+        ),
+      ];
   static AppColors of(BuildContext context) =>
       Theme.of(context).extension<AppColors>() ?? light;
   @override
@@ -112,6 +130,8 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
     Color? successStrong,
     Color? infoSoft,
     Color? infoStrong,
+    Color? accent,
+    Color? onAccent,
   }) {
     return AppColors(
       background: background ?? this.background,
@@ -130,6 +150,8 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
       successStrong: successStrong ?? this.successStrong,
       infoSoft: infoSoft ?? this.infoSoft,
       infoStrong: infoStrong ?? this.infoStrong,
+      accent: accent ?? this.accent,
+      onAccent: onAccent ?? this.onAccent,
     );
   }
   @override
@@ -152,6 +174,8 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
       successStrong: Color.lerp(successStrong, other.successStrong, t)!,
       infoSoft: Color.lerp(infoSoft, other.infoSoft, t)!,
       infoStrong: Color.lerp(infoStrong, other.infoStrong, t)!,
+      accent: Color.lerp(accent, other.accent, t)!,
+      onAccent: Color.lerp(onAccent, other.onAccent, t)!,
     );
   }
 }
@@ -175,7 +199,7 @@ ThemeData buildAppTheme(Brightness brightness) {
   ).copyWith(
     primary: primary,
     onPrimary: onPrimary,
-    secondary: isDark ? colors.fill : const Color(0xFFF1F5F9),
+    secondary: colors.fill,
     onSecondary: colors.textPrimary,
     surface: colors.surface,
     onSurface: colors.textPrimary,
@@ -203,16 +227,72 @@ ThemeData buildAppTheme(Brightness brightness) {
       backgroundColor: Colors.transparent,
       foregroundColor: colors.textPrimary,
       elevation: 0,
+      scrolledUnderElevation: 0,
+      titleTextStyle: TextStyle(
+        color: colors.textPrimary,
+        fontSize: 18,
+        fontWeight: FontWeight.w800,
+      ),
     ),
-    textTheme: GoogleFonts.interTextTheme(base.textTheme)
+    textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme)
         .apply(bodyColor: colors.textPrimary, displayColor: colors.textPrimary),
     cardTheme: CardThemeData(
+      shadowColor: const Color(0xFF1F2A44).withValues(alpha: 0.08),
       color: colors.surface,
       elevation: 0,
+      margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
     ),
-    dialogTheme: DialogThemeData(backgroundColor: colors.surface),
-    bottomSheetTheme: BottomSheetThemeData(backgroundColor: colors.surface),
+    dialogTheme: DialogThemeData(
+      backgroundColor: colors.surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    ),
+    bottomSheetTheme: BottomSheetThemeData(
+      backgroundColor: colors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: primary,
+        foregroundColor: onPrimary,
+        minimumSize: const Size(0, 52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        elevation: 0,
+        minimumSize: const Size(0, 52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+      ),
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: colors.accent,
+      foregroundColor: colors.onAccent,
+      elevation: 0,
+      highlightElevation: 0,
+      extendedTextStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: colors.surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    ),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
+      color: primary,
+      linearTrackColor: colors.fill,
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: colors.fill,
+      selectedColor: colors.accent,
+      side: BorderSide.none,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+    ),
     dividerColor: colors.border,
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -242,4 +322,21 @@ ThemeData buildAppTheme(Brightness brightness) {
       ),
     ),
   );
+}
+
+/// Muted accent tones for icons, tags and progress. Use [AppColors] soft/strong
+/// pairs when a theme-aware background is needed; these are fixed hues that
+/// stay legible on white and on dark surfaces.
+abstract final class AppTones {
+  static const coral = Color(0xFFD64535);
+  static const amber = Color(0xFFB86E00);
+  static const matcha = Color(0xFF4D7C0F);
+  static const sky = Color(0xFF2F6FCB);
+  static const lilac = Color(0xFF7C5CD6);
+  static const slate = Color(0xFF64748B);
+  static const ink = Color(0xFF1E293B);
+  static const limeSoft = Color(0xFFEAF8CC);
+  static const skySoft = Color(0xFFE4F0FF);
+  static const sandSoft = Color(0xFFFFF3C4);
+  static const mist = Color(0xFFF1F3F6);
 }

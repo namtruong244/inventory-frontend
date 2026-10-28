@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
+import 'app_icon.dart';
 
 /// A universal image widget that renders both Remote Network URLs (http/https)
 /// and Local File Paths (e.g. photos captured from camera or chosen from gallery).
@@ -89,7 +90,7 @@ class AppImageView extends StatelessWidget {
           height: height,
           color: context.colors.fill,
           child: Center(
-            child: Icon(
+            child: AppIcon(
               Icons.image_outlined,
               size: (width != null && width! < 40) ? 18 : 28,
               color: context.colors.textMuted,

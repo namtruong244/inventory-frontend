@@ -1776,5 +1776,13 @@
   "opReturnLoan": "Return item",
   "opCreateCategory": "Add category",
   "opDeleteCategory": "Delete category",
-  "opUpdateSettings": "Change settings"
+  "opUpdateSettings": "Change settings",
+  "daysOverdueCount": "{days, plural, =1{1 day} other{{days} days}} overdue",
+  "@daysOverdueCount": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }

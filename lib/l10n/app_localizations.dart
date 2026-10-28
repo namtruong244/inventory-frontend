@@ -4522,6 +4522,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change settings'**
   String get opUpdateSettings;
+
+  /// No description provided for @daysOverdueCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day} other{{days} days}} overdue'**
+  String daysOverdueCount(int days);
 }
 
 class _AppLocalizationsDelegate

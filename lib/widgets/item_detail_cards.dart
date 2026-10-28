@@ -12,6 +12,7 @@ import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import '../utils/date_format.dart';
+import 'app_icon.dart';
 
 
 Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, LendingRecord loan) {
@@ -21,10 +22,7 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
       color: isOverdue ? context.colors.dangerSoft : context.colors.infoSoft,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(
-        color: isOverdue ? const Color(0xFFFCA5A5) : const Color(0xFFBFDBFE),
-      ),
+      borderRadius: BorderRadius.circular(24),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,9 +32,9 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
           children: [
             Row(
               children: [
-                Icon(
+                AppIcon(
                   isOverdue ? Icons.warning_amber_rounded : Icons.handshake_outlined,
-                  color: isOverdue ? const Color(0xFFDC2626) : const Color(0xFF2563EB),
+                  color: isOverdue ? AppTones.coral : AppTones.sky,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -45,7 +43,7 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: isOverdue ? context.colors.dangerStrong : const Color(0xFF1E40AF),
+                    color: isOverdue ? context.colors.dangerStrong : AppTones.sky,
                   ),
                 ),
               ],
@@ -54,7 +52,7 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFDC2626),
+                  color: AppTones.coral,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -83,7 +81,7 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
           Text(
             context.l10n.expectedReturnOn(formatDate(context, loan.expectedReturnDate!)),
             style: TextStyle(
-              color: isOverdue ? const Color(0xFFDC2626) : context.colors.textSecondary,
+              color: isOverdue ? AppTones.coral : context.colors.textSecondary,
               fontSize: 12,
               fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
             ),
@@ -105,14 +103,8 @@ Widget buildStorageLocationCard(
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
       color: context.colors.surface,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
-          blurRadius: 10,
-          offset: const Offset(0, 3),
-        ),
-      ],
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: context.colors.cardShadow,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +114,7 @@ Widget buildStorageLocationCard(
           children: [
             Row(
               children: [
-                Icon(Icons.location_on_outlined, size: 20, color: context.colors.textPrimary),
+                AppIcon(Icons.location_on_outlined, size: 20, color: context.colors.textPrimary),
                 SizedBox(width: 8),
                 Text(
                   context.l10n.storageLocation,
@@ -134,7 +126,7 @@ Widget buildStorageLocationCard(
               onTap: () => MoveItemSheet.show(context, item),
               child: Text(
                 context.l10n.commonChange,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF2563EB)),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTones.sky),
               ),
             ),
           ],
@@ -169,7 +161,7 @@ Widget buildStorageLocationCard(
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          AppIcon(
                             breadcrumbs[i].type.icon,
                             size: 14,
                             color: i == breadcrumbs.length - 1 ? Colors.white : context.colors.textPrimary,
@@ -190,7 +182,7 @@ Widget buildStorageLocationCard(
                   if (i < breadcrumbs.length - 1)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Icon(Icons.chevron_right_rounded, size: 16, color: context.colors.textMuted),
+                      child: AppIcon(Icons.chevron_right_rounded, size: 16, color: context.colors.textMuted),
                     ),
                 ],
               ],
@@ -213,23 +205,19 @@ Widget buildExpiryCard(BuildContext context, Item item) {
 
   Color bgColor;
   Color textColor;
-  Color borderColor;
   String statusTitle;
 
   if (isExpired) {
     bgColor = context.colors.dangerSoft;
-    textColor = const Color(0xFFDC2626);
-    borderColor = const Color(0xFFFCA5A5);
+    textColor = AppTones.coral;
     statusTitle = context.l10n.productHasExpired;
   } else if (daysLeft != null && daysLeft <= 15) {
     bgColor = context.colors.warningSoft;
-    textColor = const Color(0xFFD97706);
-    borderColor = const Color(0xFFFDE68A);
+    textColor = AppTones.amber;
     statusTitle = context.l10n.expiresSoonInDays(daysLeft);
   } else {
-    bgColor = const Color(0xFFF0FDF4);
-    textColor = const Color(0xFF16A34A);
-    borderColor = const Color(0xFFBBF7D0);
+    bgColor = AppTones.limeSoft;
+    textColor = AppTones.matcha;
     statusTitle = context.l10n.freshDaysRemaining(daysLeft ?? 0);
   }
 
@@ -237,12 +225,11 @@ Widget buildExpiryCard(BuildContext context, Item item) {
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: bgColor,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: borderColor),
+      borderRadius: BorderRadius.circular(24),
     ),
     child: Row(
       children: [
-        Icon(Icons.event_busy_outlined, color: textColor, size: 24),
+        AppIcon(Icons.event_busy_outlined, color: textColor, size: 24),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -274,8 +261,7 @@ Widget buildLowStockCard(BuildContext context, Item item) {
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
       color: context.colors.warningSoft,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: const Color(0xFFFDE68A)),
+      borderRadius: BorderRadius.circular(24),
     ),
     child: Row(
       children: [
@@ -285,7 +271,7 @@ Widget buildLowStockCard(BuildContext context, Item item) {
             color: context.colors.warningSoft,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.production_quantity_limits_rounded, color: Color(0xFFD97706), size: 24),
+          child: const AppIcon(Icons.production_quantity_limits_rounded, color: AppTones.amber, size: 24),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -315,21 +301,15 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
       color: context.colors.surface,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
-          blurRadius: 10,
-          offset: const Offset(0, 3),
-        ),
-      ],
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: context.colors.cardShadow,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.receipt_long_outlined, size: 20, color: context.colors.textPrimary),
+            AppIcon(Icons.receipt_long_outlined, size: 20, color: context.colors.textPrimary),
             SizedBox(width: 8),
             Text(
               context.l10n.assetPurchaseInformation,
@@ -391,10 +371,10 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
           const Divider(height: 24, thickness: 0.8),
           Row(
             children: [
-              Icon(
+              AppIcon(
                 item.isWarrantyExpired ? Icons.shield_outlined : Icons.verified_user_outlined,
                 size: 20,
-                color: item.isWarrantyExpired ? Colors.red : const Color(0xFF10B981),
+                color: item.isWarrantyExpired ? AppTones.coral : AppTones.matcha,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -406,7 +386,7 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: item.isWarrantyExpired ? Colors.red : const Color(0xFF059669),
+                        color: item.isWarrantyExpired ? AppTones.coral : AppTones.matcha,
                       ),
                     ),
                     Text(
@@ -432,7 +412,7 @@ Widget buildDetailTile({required String label, required String value, required I
     children: [
       Row(
         children: [
-          Icon(icon, size: 14, color: context.colors.textMuted),
+          AppIcon(icon, size: 14, color: context.colors.textMuted),
           const SizedBox(width: 4),
           Text(label, style: TextStyle(fontSize: 12, color: context.colors.textMuted)),
         ],
@@ -448,7 +428,7 @@ Widget buildDetailTile({required String label, required String value, required I
 Widget buildCopyableRow(BuildContext context, String label, String value, IconData icon) {
   return Row(
     children: [
-      Icon(icon, size: 18, color: context.colors.textSecondary),
+      AppIcon(icon, size: 18, color: context.colors.textSecondary),
       const SizedBox(width: 8),
       Expanded(
         child: Column(
@@ -461,7 +441,7 @@ Widget buildCopyableRow(BuildContext context, String label, String value, IconDa
       ),
       IconButton(
  tooltip: context.l10n.commonCopy,
-        icon: const Icon(Icons.copy_rounded, size: 16),
+        icon: const AppIcon(Icons.copy_rounded, size: 16),
         onPressed: () {
           Clipboard.setData(ClipboardData(text: value));
           AppFeedback.showSuccess(context, context.l10n.copiedToClipboard(label));
@@ -477,21 +457,15 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
       color: context.colors.surface,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
-          blurRadius: 10,
-          offset: const Offset(0, 3),
-        ),
-      ],
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: context.colors.cardShadow,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.document_scanner_outlined, size: 20, color: context.colors.textPrimary),
+            AppIcon(Icons.document_scanner_outlined, size: 20, color: context.colors.textPrimary),
             SizedBox(width: 8),
             Text(
               context.l10n.receiptsWarrantyProof,
@@ -515,7 +489,6 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
                   margin: const EdgeInsets.only(right: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: context.colors.border),
                   ),
                   child: AppImageView(
                     imageUrlOrPath: photoUrl,
@@ -558,7 +531,7 @@ void showFullScreenImage(BuildContext context, String imageUrl) {
               backgroundColor: Colors.black.withValues(alpha: 0.6),
               child: IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                icon: const Icon(Icons.close, color: Colors.white),
+                icon: const AppIcon(Icons.close, color: Colors.white),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ),

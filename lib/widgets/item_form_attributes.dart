@@ -4,6 +4,7 @@ import 'app_feedback.dart';
 import 'app_form_field.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 
 Widget buildCustomAttributesSection(
@@ -59,10 +60,10 @@ Widget buildCustomAttributesSection(
           ),
           TextButton.icon(
             onPressed: () => showAddEditAttributeSheet(context, onSave: onSave),
-            icon: const Icon(Icons.add_rounded, size: 16),
+            icon: const AppIcon(Icons.add_rounded, size: 16),
             label: Text(context.l10n.addAttribute2),
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF3B82F6),
+              foregroundColor: AppTones.sky,
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -85,9 +86,9 @@ Widget buildCustomAttributesSection(
                   backgroundColor: context.colors.fill,
                   side: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(24),
                   ),
-                  avatar: Icon(Icons.add, size: 14, color: context.colors.textSecondary),
+                  avatar: AppIcon(Icons.add, size: 14, color: context.colors.textSecondary),
                   label: Text(
                     attr,
                     style: TextStyle(
@@ -113,7 +114,6 @@ Widget buildCustomAttributesSection(
           decoration: BoxDecoration(
             color: context.colors.fill,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: context.colors.border),
           ),
           child: Column(
             children: [
@@ -124,7 +124,7 @@ Widget buildCustomAttributesSection(
                   color: context.colors.fill,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: AppIcon(
                   Icons.tune_rounded,
                   size: 20,
                   color: context.colors.textMuted,
@@ -151,7 +151,7 @@ Widget buildCustomAttributesSection(
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: () => showAddEditAttributeSheet(context, onSave: onSave),
-                icon: const Icon(Icons.add, size: 16),
+                icon: const AppIcon(Icons.add, size: 16),
                 label: Text(context.l10n.addSpecification),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: context.colors.textPrimary,
@@ -170,7 +170,7 @@ Widget buildCustomAttributesSection(
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: context.colors.border),
+            boxShadow: context.colors.cardShadow,
           ),
           child: ListView.separated(
             shrinkWrap: true,
@@ -209,7 +209,7 @@ Widget buildCustomAttributesSection(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.edit_outlined, size: 18, color: context.colors.textSecondary),
+                      icon: AppIcon(Icons.edit_outlined, size: 18, color: context.colors.textSecondary),
                       tooltip: context.l10n.commonEdit,
                       onPressed: () => showAddEditAttributeSheet(context, onSave: onSave, 
                         existingKey: entry.key,
@@ -217,7 +217,7 @@ Widget buildCustomAttributesSection(
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFFEF4444)),
+                      icon: const AppIcon(Icons.close_rounded, size: 18, color: AppTones.coral),
                       tooltip: context.l10n.commonRemove,
                       onPressed: () {
                         onRemove(entry.key);
@@ -288,7 +288,7 @@ void showAddEditAttributeSheet(
                   const Spacer(),
                   IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                    icon: const Icon(Icons.close, size: 20),
+                    icon: const AppIcon(Icons.close, size: 20),
                     onPressed: () => Navigator.pop(ctx),
                   ),
                 ],

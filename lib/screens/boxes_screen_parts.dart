@@ -3,6 +3,36 @@ part of 'boxes_screen.dart';
 /// Box card, empty state and filter chip builders.
 extension _BoxesScreenParts on _BoxesScreenState {
 
+  Widget _roundAction({
+    required String tooltip,
+    required IconData icon,
+    required VoidCallback? onTap,
+    bool accent = false,
+  }) {
+    final c = context.colors;
+    return Tooltip(
+      message: tooltip,
+      child: Tappable(
+        semanticLabel: tooltip,
+        onTap: onTap,
+        child: Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: accent ? c.accent : c.surface,
+            shape: BoxShape.circle,
+            boxShadow: accent ? null : c.cardShadow,
+          ),
+          child: AppIcon(
+            icon,
+            size: 22,
+            color: onTap == null ? c.textMuted : (accent ? c.onAccent : c.textPrimary),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFlatBoxCard(Box box, InventoryProvider provider) {
     final itemCount = provider.countTotalItemsIn(box.id);
     final subBoxCount = provider.getBoxesIn(box.id).length;
@@ -10,8 +40,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+      child: SoftCard(
         child: Slidable(
           key: ValueKey(box.id),
           endActionPane: ActionPane(
@@ -20,7 +49,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
             children: [
               SlidableAction(
                 onPressed: (_) => MoveLocationDialog.show(context, box),
-                backgroundColor: const Color(0xFF64748B),
+                backgroundColor: AppTones.slate,
                 foregroundColor: Colors.white,
                 icon: Icons.drive_file_move_outlined,
                 label: context.l10n.commonMove,
@@ -57,7 +86,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                     }
                   }
                 },
-                backgroundColor: Colors.red.shade400,
+                backgroundColor: AppTones.coral,
                 foregroundColor: Colors.white,
                 icon: Icons.delete_outline,
                 label: context.l10n.commonDelete,
@@ -66,12 +95,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
           ),
           child: Material(
             color: context.colors.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-              side: BorderSide(color: context.colors.border, width: 1.0),
-            ),
             child: InkWell(
-              borderRadius: BorderRadius.circular(20),
               onLongPress: () => showBoxActionsSheet(context, box),
               onTap: () {
                 Navigator.push(
@@ -92,10 +116,10 @@ extension _BoxesScreenParts on _BoxesScreenState {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: context.colors.fill,
-                            borderRadius: BorderRadius.circular(14),
+                            color: context.colors.accent.withValues(alpha: 0.45),
+                            borderRadius: BorderRadius.circular(17),
                           ),
-                          child: Icon(
+                          child: AppIcon(
                             box.type.icon,
                             color: context.colors.textPrimary,
                             size: 24,
@@ -108,35 +132,31 @@ extension _BoxesScreenParts on _BoxesScreenState {
                             children: [
                               Text(
                                 box.name,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16,
                                   color: context.colors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 3),
-                              Text(
-                                '${box.type.displayName} • ${context.l10n.itemsCountLabel(itemCount)}${subBoxCount > 0 ? ' • ${context.l10n.nestedCountLabel(subBoxCount)}' : ''}',
-                                style: GoogleFonts.inter(
-                                  fontSize: 13,
-                                  color: context.colors.textSecondary,
-                                ),
+                              Wrap(
+                                spacing: 6,
+                                runSpacing: 4,
+                                children: [
+                                  SoftChip(
+                                    label: box.type.displayName,
+                                    background: context.colors.fill,
+                                    foreground: context.colors.textSecondary,
+                                  ),
+                                  SoftChip.tone(context.l10n.itemsCountLabel(itemCount), AppTones.sky, icon: Icons.category_outlined),
+                                  if (subBoxCount > 0)
+                                    SoftChip.tone(context.l10n.nestedCountLabel(subBoxCount), AppTones.lilac, icon: Icons.inventory_2_outlined),
+                                ],
                               ),
                             ],
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: context.colors.fill,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.arrow_forward_rounded,
-                            color: context.colors.textPrimary,
-                            size: 16,
-                          ),
-                        ),
+                        AppIcon(Icons.chevron_right_rounded, color: context.colors.textMuted, size: 24),
                       ],
                     ),
 
@@ -148,17 +168,16 @@ extension _BoxesScreenParts on _BoxesScreenState {
                         decoration: BoxDecoration(
                           color: context.colors.fill,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: context.colors.border),
                         ),
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              Icon(Icons.route_outlined, size: 14, color: context.colors.textSecondary),
+                              AppIcon(Icons.route_outlined, size: 14, color: context.colors.textSecondary),
                               const SizedBox(width: 6),
                               Text(
                                 context.l10n.commonPath,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: context.colors.textSecondary,
@@ -168,7 +187,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                 if (i > 0)
                                   Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 4.0),
-                                    child: Icon(
+                                    child: AppIcon(
                                       Icons.chevron_right_rounded,
                                       size: 14,
                                       color: context.colors.textMuted,
@@ -176,7 +195,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                   ),
                                 Text(
                                   breadcrumbList[i].name,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     fontWeight: i == breadcrumbList.length - 1 ? FontWeight.w600 : FontWeight.w400,
                                     color: i == breadcrumbList.length - 1 ? context.colors.textPrimary : context.colors.textSecondary,
@@ -206,15 +225,15 @@ extension _BoxesScreenParts on _BoxesScreenState {
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: context.colors.border),
+        boxShadow: context.colors.cardShadow,
       ),
       child: Column(
         children: [
-          Icon(Icons.inventory_2_outlined, size: 56, color: context.colors.textMuted),
+          SoftIconTile(Icons.inventory_2_outlined, color: context.colors.textPrimary, background: context.colors.accent.withValues(alpha: 0.45), size: 72),
           const SizedBox(height: 16),
           Text(
             title,
-            style: GoogleFonts.inter(
+            style: GoogleFonts.plusJakartaSans(
               fontWeight: FontWeight.w700,
               fontSize: 16,
               color: context.colors.textPrimary,
@@ -224,7 +243,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 13, color: context.colors.textSecondary),
+            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: context.colors.textSecondary),
           ),
           if (onAction != null && actionLabel != null) ...[
             const SizedBox(height: 16),
@@ -236,30 +255,6 @@ extension _BoxesScreenParts on _BoxesScreenState {
   }
 
 
-  Widget _buildFilterChip(int index, String label) {
-    final isSelected = _filterIndex == index;
-
-    return Tappable(
-      onTap: () => _update(() => _filterIndex = index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? context.colors.primary : context.colors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isSelected ? context.colors.primary : context.colors.border,
-          ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.inter(
-            color: isSelected ? Colors.white : context.colors.textPrimary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 13,
-          ),
-        ),
-      ),
-    );
-  }
+  Widget _buildFilterChip(int index, String label) =>
+      SoftFilterChip(label: label, selected: _filterIndex == index, onTap: () => _update(() => _filterIndex = index));
 }

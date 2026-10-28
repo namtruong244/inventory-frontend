@@ -10,6 +10,8 @@ import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'scan_glyphs.dart';
 import 'tappable.dart';
+import 'app_icon.dart';
+import 'soft_ui.dart';
 
 /// Specialized QR Scanner bottom sheet to scan box labels directly
 class BoxQRScanSheet extends StatefulWidget {
@@ -86,7 +88,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
       context: context,
       backgroundColor: context.colors.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (ctx) {
         return Padding(
@@ -117,10 +119,10 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                     final breadcrumb = provider.getBreadcrumbString(b.id);
                     return ListTile(
                       dense: true,
-                      leading: Icon(b.type.icon, size: 20, color: context.colors.textPrimary),
+                      leading: AppIcon(b.type.icon, size: 20, color: context.colors.textPrimary),
                       title: Text(b.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text('$breadcrumb (${b.label})', style: const TextStyle(fontSize: 11)),
-                      trailing: const Icon(Icons.qr_code_2_rounded, size: 20),
+                      trailing: const AppIcon(Icons.qr_code_2_rounded, size: 20),
                       onTap: () {
                         Navigator.pop(ctx);
                         _processScannedCode(b.label);
@@ -146,20 +148,18 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
           content: TextField(
             controller: _manualInputController,
             autofocus: true,
-            decoration: InputDecoration(
-              hintText: context.l10n.eGLocElectronicsBox,
-              border: OutlineInputBorder(),
-            ),
+            decoration: InputDecoration(hintText: context.l10n.eGLocElectronicsBox),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: Text(context.l10n.commonCancel),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: Colors.white,
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: context.colors.accent,
+                foregroundColor: context.colors.onAccent,
+                minimumSize: const Size(0, 44),
               ),
               onPressed: () {
                 final text = _manualInputController.text.trim();
@@ -183,7 +183,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
 
     return Material(
       color: c.background,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       clipBehavior: Clip.antiAlias,
       child: SafeArea(
         top: false,
@@ -233,8 +233,8 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: c.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ),
@@ -256,7 +256,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
         Padding(
           padding: const EdgeInsets.all(14),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(28),
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -306,10 +306,10 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
             return _RoundButton(
               tooltip: context.l10n.toggleFlash,
               onTap: _controller.toggleTorch,
-              color: on ? c.primary : c.surface,
+              color: on ? c.accent : c.surface,
               child: ScanGlyph(
                 on ? ScanGlyphType.flashOn : ScanGlyphType.flashOff,
-                color: on ? Colors.white : c.textPrimary,
+                color: on ? c.onAccent : c.textPrimary,
               ),
             );
           },
@@ -318,9 +318,9 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
         _RoundButton(
           tooltip: context.l10n.enterCode,
           onTap: _showManualInputDialog,
-          color: c.primary,
+          color: c.accent,
           diameter: 76,
-          child: const ScanGlyph(ScanGlyphType.scan, color: Colors.white, size: 30),
+          child: ScanGlyph(ScanGlyphType.scan, color: c.onAccent, size: 30),
         ),
       ],
     );
@@ -330,47 +330,47 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
     final c = context.colors;
     final box = _detectedBox!;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Icon(box.type.icon, size: 22, color: c.textPrimary),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      box.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: c.textPrimary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
+          SoftCard(
+            padding: const EdgeInsets.all(14),
+            child: Row(
+              children: [
+                SoftIconTile(box.type.icon, color: c.textPrimary, background: c.accent.withValues(alpha: 0.45)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        box.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: c.textPrimary, fontWeight: FontWeight.w800, fontSize: 16),
                       ),
-                    ),
-                    Text(
-                      provider.getBreadcrumbString(box.id),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: c.textSecondary, fontSize: 13),
-                    ),
-                  ],
+                      Text(
+                        provider.getBreadcrumbString(box.id),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: c.textSecondary, fontSize: 13),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                AppIcon(Icons.check_circle_rounded, size: 24, color: AppTones.matcha),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  style: OutlinedButton.styleFrom(
+                child: FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: c.fill,
                     foregroundColor: c.textPrimary,
-                    side: BorderSide(color: c.border),
                     shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
@@ -383,15 +383,15 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                 flex: 2,
                 child: FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: c.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: c.accent,
+                    foregroundColor: c.onAccent,
                     shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () => Navigator.pop(context, box),
                   child: Text(
                     context.l10n.moveToThisBox,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                    style: const TextStyle(fontWeight: FontWeight.w800),
                   ),
                 ),
               ),
@@ -444,7 +444,6 @@ class _RoundButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: color,
             shape: BoxShape.circle,
-            border: Border.all(color: context.colors.border),
           ),
           child: Center(child: child),
         ),

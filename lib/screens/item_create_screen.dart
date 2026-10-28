@@ -17,6 +17,7 @@ import '../widgets/location_picker_sheet.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 part 'item_create_sections.dart';
 
@@ -319,7 +320,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                 color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: AppIcon(
                 Icons.arrow_back_ios_new_rounded,
                 size: 16,
                 color: context.colors.textPrimary,
@@ -349,7 +350,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                     color: context.colors.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.delete_outline, size: 20, color: Color(0xFFDC2626)),
+                  child: const AppIcon(Icons.delete_outline, size: 20, color: AppTones.coral),
                 ),
                 onPressed: () async {
                   final name = widget.existingItem!.name;

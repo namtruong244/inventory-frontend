@@ -5,7 +5,103 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
+import 'soft_ui.dart';
+import 'tappable.dart';
 
+String _fmt(double v, {int digits = 1}) => v % 1 == 0 ? v.toInt().toString() : v.toStringAsFixed(digits);
+
+/// Shared sheet chrome: rounded top, grabber, tinted icon + title + stock line.
+class _StockSheetFrame extends StatelessWidget {
+  final IconData icon;
+  final Color tone;
+  final String title;
+  final String subtitle;
+  final List<Widget> children;
+
+  const _StockSheetFrame({
+    required this.icon,
+    required this.tone,
+    required this.title,
+    required this.subtitle,
+    required this.children,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      padding: EdgeInsets.fromLTRB(24, 12, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(color: c.border, borderRadius: BorderRadius.circular(2)),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                SoftIconTile(icon, color: tone),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: c.textPrimary),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(subtitle, style: TextStyle(fontSize: 13, color: c.textSecondary)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RoundStep extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback? onTap;
+  const _RoundStep(this.icon, this.onTap);
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Tappable(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: onTap == null ? c.fill : c.surface,
+          shape: BoxShape.circle,
+          boxShadow: onTap == null ? null : c.cardShadow,
+        ),
+        child: AppIcon(icon, size: 22, color: onTap == null ? c.textMuted : c.textPrimary),
+      ),
+    );
+  }
+}
 
 void showConsumeSheet(BuildContext context, Item item, InventoryProvider provider) {
   double consumeAmount = 1.0;
@@ -20,256 +116,120 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
     builder: (sheetCtx) {
       return StatefulBuilder(
         builder: (context, setSheetState) {
+          final c = context.colors;
           final currentQty = item.quantity;
           final remainingAfter = (currentQty - consumeAmount).clamp(0.0, double.infinity);
-          final formattedCurrent = currentQty % 1 == 0 ? currentQty.toInt().toString() : currentQty.toString();
-          final formattedConsume = consumeAmount % 1 == 0 ? consumeAmount.toInt().toString() : consumeAmount.toString();
-          final formattedRemain = remainingAfter % 1 == 0 ? remainingAfter.toInt().toString() : remainingAfter.toStringAsFixed(1);
+          final formattedCurrent = _fmt(currentQty, digits: 2);
+          final formattedConsume = _fmt(consumeAmount, digits: 2);
+          final formattedRemain = _fmt(remainingAfter);
+          final isEmpty = remainingAfter == 0;
+          final isLow = item.minQuantity != null && remainingAfter <= item.minQuantity!;
+          final tone = isEmpty ? AppTones.coral : (isLow ? AppTones.amber : AppTones.matcha);
 
-          return Container(
-            padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: context.colors.border,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: context.colors.dangerSoft,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: const Icon(Icons.remove_circle_outline, color: Color(0xFFEF4444), size: 24),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.commonConsume2(item.name),
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            context.l10n.currentStock(formattedCurrent, item.unit),
-                            style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
+          Widget quick(String label, double value) => SoftFilterChip(
+                label: label,
+                selected: consumeAmount == value,
+                onTap: () => setSheetState(() => consumeAmount = value),
+              );
 
-                // Stepper row
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: context.colors.fill,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: context.colors.border),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          return _StockSheetFrame(
+            icon: Icons.remove_circle_outline,
+            tone: AppTones.coral,
+            title: context.l10n.commonConsume2(item.name),
+            subtitle: context.l10n.currentStock(formattedCurrent, item.unit),
+            children: [
+              // Big stepper
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _RoundStep(Icons.remove, consumeAmount > 1 ? () => setSheetState(() => consumeAmount -= 1) : null),
+                  Column(
                     children: [
                       Text(
-                        context.l10n.quantityToUse,
-                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                        formattedConsume,
+                        style: TextStyle(fontSize: 44, fontWeight: FontWeight.w800, letterSpacing: -1.5, color: c.textPrimary, height: 1),
                       ),
-                      Row(
-                        children: [
-                          IconButton.filledTonal(
-                            style: IconButton.styleFrom(
-                              backgroundColor: context.colors.surface,
-                              foregroundColor: context.colors.textPrimary,
-                            ),
-                            icon: const Icon(Icons.remove, size: 18),
-                            onPressed: consumeAmount > 1
-                                ? () => setSheetState(() => consumeAmount -= 1)
-                                : null,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              '$formattedConsume ${item.unit}',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
-                            ),
-                          ),
-                          IconButton.filledTonal(
-                            style: IconButton.styleFrom(
-                              backgroundColor: context.colors.surface,
-                              foregroundColor: context.colors.textPrimary,
-                            ),
-                            icon: const Icon(Icons.add, size: 18),
-                            onPressed: consumeAmount < currentQty
-                                ? () => setSheetState(() => consumeAmount += 1)
-                                : null,
-                          ),
-                        ],
+                      const SizedBox(height: 4),
+                      Text(
+                        '${context.l10n.quantityToUse} · ${item.unit}',
+                        style: TextStyle(fontSize: 12, color: c.textSecondary),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 12),
+                  _RoundStep(Icons.add, consumeAmount < currentQty ? () => setSheetState(() => consumeAmount += 1) : null),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: [
+                  if (currentQty >= 1) quick(context.l10n.use1(item.unit), 1.0),
+                  if (currentQty >= 2) quick(context.l10n.use2(item.unit), 2.0),
+                  if (currentQty >= 5) quick(context.l10n.use5(item.unit), 5.0),
+                  quick(context.l10n.useAll, currentQty),
+                ],
+              ),
+              const SizedBox(height: 20),
 
-                // Quick chips
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    if (currentQty >= 1)
-                      ActionChip(
-                        label: Text(context.l10n.use1(item.unit)),
-                        onPressed: () => setSheetState(() => consumeAmount = 1.0),
-                        backgroundColor: consumeAmount == 1.0 ? context.colors.primary : context.colors.surface,
-                        labelStyle: TextStyle(
-                          color: consumeAmount == 1.0 ? Colors.white : context.colors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    if (currentQty >= 2)
-                      ActionChip(
-                        label: Text(context.l10n.use2(item.unit)),
-                        onPressed: () => setSheetState(() => consumeAmount = 2.0),
-                        backgroundColor: consumeAmount == 2.0 ? context.colors.primary : context.colors.surface,
-                        labelStyle: TextStyle(
-                          color: consumeAmount == 2.0 ? Colors.white : context.colors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    if (currentQty >= 5)
-                      ActionChip(
-                        label: Text(context.l10n.use5(item.unit)),
-                        onPressed: () => setSheetState(() => consumeAmount = 5.0),
-                        backgroundColor: consumeAmount == 5.0 ? context.colors.primary : context.colors.surface,
-                        labelStyle: TextStyle(
-                          color: consumeAmount == 5.0 ? Colors.white : context.colors.textPrimary,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ActionChip(
-                      label: Text(context.l10n.useAll),
-                      onPressed: () => setSheetState(() => consumeAmount = currentQty),
-                      backgroundColor: consumeAmount == currentQty ? const Color(0xFFEF4444) : context.colors.surface,
-                      labelStyle: TextStyle(
-                        color: consumeAmount == currentQty ? Colors.white : const Color(0xFFEF4444),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+              // What is left: bar + tinted verdict
+              SoftBar(value: currentQty > 0 ? remainingAfter / currentQty : 0, color: tone, height: 8),
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: SoftChip.tone(
+                  isEmpty ? context.l10n.willBeOutOfStock : context.l10n.remainingAfterUse(formattedRemain, item.unit),
+                  tone,
+                  icon: isEmpty
+                      ? Icons.error_outline_rounded
+                      : (isLow ? Icons.warning_amber_rounded : Icons.check_circle_outline_rounded),
                 ),
-                const SizedBox(height: 16),
+              ),
+              const SizedBox(height: 24),
 
-                // Remaining status preview
-                Row(
-                  children: [
-                    Icon(
-                      remainingAfter == 0
-                          ? Icons.error_outline_rounded
-                          : (item.minQuantity != null && remainingAfter <= item.minQuantity!
-                              ? Icons.warning_amber_rounded
-                              : Icons.check_circle_outline_rounded),
-                      size: 16,
-                      color: remainingAfter == 0
-                          ? Colors.red
-                          : (item.minQuantity != null && remainingAfter <= item.minQuantity!
-                              ? const Color(0xFFD97706)
-                              : const Color(0xFF10B981)),
+              Row(
+                children: [
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: c.fill,
+                      foregroundColor: c.textPrimary,
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      remainingAfter == 0
-                          ? context.l10n.willBeOutOfStock
-                          : context.l10n.remainingAfterUse(formattedRemain, item.unit),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: remainingAfter == 0
-                            ? Colors.red
-                            : (item.minQuantity != null && remainingAfter <= item.minQuantity!
-                                ? const Color(0xFFD97706)
-                                : context.colors.textSecondary),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Actions
-                Row(
-                  children: [
-                    OutlinedButton.icon(
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        side: BorderSide(color: context.colors.primary, width: 1.5),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      onPressed: () {
+                    onPressed: () {
+                      Navigator.pop(sheetCtx);
+                      showRestockSheet(context, item, provider);
+                    },
+                    icon: const AppIcon(Icons.add_shopping_cart_outlined, size: 18),
+                    label: Text(context.l10n.commonRestock),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(backgroundColor: c.accent, foregroundColor: c.onAccent),
+                      onPressed: () async {
                         Navigator.pop(sheetCtx);
-                        showRestockSheet(context, item, provider);
-                      },
-                      icon: Icon(Icons.add_shopping_cart_outlined, size: 18, color: context.colors.textPrimary),
-                      label: Text(context.l10n.commonRestock, style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.textPrimary)),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: context.colors.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        ),
-                        onPressed: () async {
-                          Navigator.pop(sheetCtx);
-                          final ok = await provider.updateItemQuantity(item.id, remainingAfter, reason: 'consume');
-                          if (ok && context.mounted) {
-                            AppFeedback.showSuccess(
+                        final ok = await provider.updateItemQuantity(item.id, remainingAfter, reason: 'consume');
+                        if (ok && context.mounted) {
+                          AppFeedback.showSuccess(
+                            context,
+                            context.l10n.usedRemaining(formattedConsume, item.unit, formattedRemain, item.unit),
+                          );
+                          if (item.minQuantity != null && remainingAfter <= item.minQuantity!) {
+                            AppFeedback.showWarning(
                               context,
-                              context.l10n.usedRemaining(formattedConsume, item.unit, formattedRemain, item.unit),
+                              context.l10n.warningQuantityHasDroppedTo(item.minQuantity ?? 0, item.unit),
                             );
-                            if (item.minQuantity != null && remainingAfter <= item.minQuantity!) {
-                              AppFeedback.showWarning(
-                                context,
-                                context.l10n.warningQuantityHasDroppedTo(item.minQuantity ?? 0, item.unit),
-                              );
-                            }
                           }
-                        },
-                        icon: const Icon(Icons.check_rounded, size: 18),
-                        label: Text(
-                          context.l10n.confirmUse,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
+                        }
+                      },
+                      icon: const AppIcon(Icons.check_rounded, size: 18),
+                      label: Text(context.l10n.confirmUse),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           );
         },
       );
@@ -289,120 +249,65 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
     builder: (sheetCtx) {
       return StatefulBuilder(
         builder: (context, setSheetState) {
-          final currentQty = item.quantity;
-          final formattedCurrent = currentQty % 1 == 0 ? currentQty.toInt().toString() : currentQty.toString();
+          final c = context.colors;
+          final formattedCurrent = _fmt(item.quantity, digits: 2);
 
-          return Container(
-            padding: EdgeInsets.fromLTRB(24, 20, 24, MediaQuery.of(context).viewInsets.bottom + 24),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: context.colors.border,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
+          return _StockSheetFrame(
+            icon: Icons.add_shopping_cart_outlined,
+            tone: AppTones.matcha,
+            title: context.l10n.commonRestock2(item.name),
+            subtitle: context.l10n.currentStock(formattedCurrent, item.unit),
+            children: [
+              TextField(
+                controller: controller,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                autofocus: true,
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                decoration: InputDecoration(
+                  labelText: context.l10n.quantityToAdd(item.unit),
+                  suffixText: item.unit,
                 ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: context.colors.successSoft,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: const Icon(Icons.add_shopping_cart_outlined, color: Color(0xFF10B981), size: 24),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.commonRestock2(item.name),
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            context.l10n.currentStock(formattedCurrent, item.unit),
-                            style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: controller,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  autofocus: true,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.quantityToAdd(item.unit),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-                    suffixText: item.unit,
-                  ),
-                  onChanged: (val) {
-                    final parsed = double.tryParse(val) ?? 0;
-                    setSheetState(() => addAmount = parsed);
-                  },
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  children: [1, 2, 5, 10].map((n) {
-                    return ActionChip(
-                      label: Text('+$n ${item.unit}'),
-                      onPressed: () {
-                        controller.text = n.toString();
-                        setSheetState(() => addAmount = n.toDouble());
-                      },
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    ),
-                    onPressed: addAmount > 0
-                        ? () async {
-                            Navigator.pop(sheetCtx);
-                            final newQty = item.quantity + addAmount;
-                            final ok = await provider.updateItemQuantity(item.id, newQty, reason: 'restock');
-                            if (ok && context.mounted) {
-                              final formattedNew = newQty % 1 == 0 ? newQty.toInt().toString() : newQty.toString();
-                              AppFeedback.showSuccess(
-                                context,
-                                context.l10n.addedTotal(addAmount, item.unit, formattedNew, item.unit),
-                              );
-                            }
-                          }
-                        : null,
-                    icon: const Icon(Icons.check_rounded, size: 18),
-                    label: Text(context.l10n.confirmRestock, style: TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                ),
-              ],
-            ),
+                onChanged: (val) {
+                  final parsed = double.tryParse(val) ?? 0;
+                  setSheetState(() => addAmount = parsed);
+                },
+              ),
+              const SizedBox(height: 14),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [1, 2, 5, 10].map((n) {
+                  return SoftFilterChip(
+                    label: '+$n ${item.unit}',
+                    selected: addAmount == n.toDouble(),
+                    onTap: () {
+                      controller.text = n.toString();
+                      setSheetState(() => addAmount = n.toDouble());
+                    },
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                style: FilledButton.styleFrom(backgroundColor: c.accent, foregroundColor: c.onAccent),
+                onPressed: addAmount > 0
+                    ? () async {
+                        Navigator.pop(sheetCtx);
+                        final newQty = item.quantity + addAmount;
+                        final ok = await provider.updateItemQuantity(item.id, newQty, reason: 'restock');
+                        if (ok && context.mounted) {
+                          final formattedNew = _fmt(newQty, digits: 2);
+                          AppFeedback.showSuccess(
+                            context,
+                            context.l10n.addedTotal(addAmount, item.unit, formattedNew, item.unit),
+                          );
+                        }
+                      }
+                    : null,
+                icon: const AppIcon(Icons.check_rounded, size: 18),
+                label: Text(context.l10n.confirmRestock),
+              ),
+            ],
           );
         },
       );

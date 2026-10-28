@@ -6,6 +6,7 @@ import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 /// Soft-deleted items and boxes, with restore and permanent delete.
 class TrashScreen extends StatefulWidget {
@@ -118,7 +119,7 @@ class _TrashScreenState extends State<TrashScreen> {
               onPressed: _empty,
               child: Text(
                 context.l10n.commonEmpty,
-                style: TextStyle(color: Color(0xFFDC2626)),
+                style: TextStyle(color: AppTones.coral),
               ),
             ),
         ],
@@ -185,7 +186,7 @@ class _TrashScreenState extends State<TrashScreen> {
         side: BorderSide(color: context.colors.border),
       ),
       child: ListTile(
-        leading: Icon(icon),
+        leading: AppIcon(icon),
         title: Text(name, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: Text(subtitle),
         trailing: Row(
@@ -193,14 +194,14 @@ class _TrashScreenState extends State<TrashScreen> {
           children: [
             IconButton(
               tooltip: context.l10n.commonRestore,
-              icon: const Icon(Icons.restore_rounded),
+              icon: const AppIcon(Icons.restore_rounded),
               onPressed: onRestore,
             ),
             IconButton(
               tooltip: context.l10n.deletePermanently2,
-              icon: const Icon(
+              icon: const AppIcon(
                 Icons.delete_forever_outlined,
-                color: Color(0xFFDC2626),
+                color: AppTones.coral,
               ),
               onPressed: onPurge,
             ),

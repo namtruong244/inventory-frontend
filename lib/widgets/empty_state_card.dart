@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import 'app_icon.dart';
 
 /// A placeholder for an empty list with a button for the obvious next step.
 class EmptyStateCard extends StatelessWidget {
@@ -27,12 +28,12 @@ class EmptyStateCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: c.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: c.border),
+        boxShadow: context.colors.cardShadow,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 52, color: c.textMuted),
+          AppIcon(icon, size: 52, color: c.textMuted),
           const SizedBox(height: 14),
           Text(
             title,

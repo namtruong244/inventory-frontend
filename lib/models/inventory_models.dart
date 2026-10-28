@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 import '../l10n/l10n_ext.dart';
+import '../theme/app_theme.dart';
 
 /// Storage hierarchy type (Room -> Cabinet -> Shelf -> Box -> Drawer -> Other)
 enum StorageType {
@@ -76,17 +77,17 @@ enum ItemStatus {
   Color get color {
     switch (this) {
       case ItemStatus.stored:
-        return const Color(0xFF10B981); // Emerald Green
+        return AppTones.matcha; // Emerald Green
       case ItemStatus.inUse:
-        return const Color(0xFF3B82F6); // Blue
+        return AppTones.sky; // Blue
       case ItemStatus.lent:
-        return const Color(0xFFF59E0B); // Amber Orange
+        return AppTones.amber; // Amber Orange
       case ItemStatus.broken:
-        return const Color(0xFFEF4444); // Red
+        return AppTones.coral; // Red
       case ItemStatus.disposed:
-        return const Color(0xFF6B7280); // Gray
+        return AppTones.slate; // Gray
       case ItemStatus.lost:
-        return const Color(0xFF8B5CF6); // Violet
+        return AppTones.lilac; // Violet
     }
   }
 

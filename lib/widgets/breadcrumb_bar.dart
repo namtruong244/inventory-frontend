@@ -5,6 +5,7 @@ import '../providers/inventory_provider.dart';
 import '../screens/box_details_screen.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
+import 'app_icon.dart';
 
 class BreadcrumbBar extends StatelessWidget {
   final String locationId;
@@ -37,7 +38,7 @@ class BreadcrumbBar extends StatelessWidget {
             if (i < path.length - 1)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: Icon(
+                child: AppIcon(
                   Icons.chevron_right_rounded,
                   size: 16,
                   color: context.colors.textMuted,
@@ -53,16 +54,16 @@ class BreadcrumbBar extends StatelessWidget {
     final child = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: isLast ? context.colors.primary : context.colors.fill,
+        color: isLast ? context.colors.accent : context.colors.fill,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          AppIcon(
             box.type.icon,
             size: 13,
-            color: isLast ? Colors.white : context.colors.textPrimary,
+            color: isLast ? context.colors.onAccent : context.colors.textPrimary,
           ),
           const SizedBox(width: 5),
           Text(
@@ -70,7 +71,7 @@ class BreadcrumbBar extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: isLast ? FontWeight.bold : FontWeight.w500,
-              color: isLast ? Colors.white : context.colors.textPrimary,
+              color: isLast ? context.colors.onAccent : context.colors.textPrimary,
             ),
           ),
         ],

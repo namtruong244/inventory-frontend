@@ -17,6 +17,8 @@ import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import '../utils/text_normalize.dart';
+import '../widgets/app_icon.dart';
+import '../widgets/soft_ui.dart';
 
 part 'boxes_screen_parts.dart';
 
@@ -123,17 +125,17 @@ class _BoxesScreenState extends State<BoxesScreen> {
                         children: [
                           Text(
                             context.l10n.storageHierarchy,
-                            style: GoogleFonts.inter(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.5,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.8,
                               color: context.colors.textPrimary,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             '${provider.boxes.length} locations & containers',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               color: context.colors.textSecondary,
                               fontWeight: FontWeight.w400,
@@ -146,39 +148,19 @@ class _BoxesScreenState extends State<BoxesScreen> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton.outlined(
+                        _roundAction(
                           tooltip: context.l10n.exportAllQrCodes,
-                          onPressed: provider.boxes.isEmpty
-                              ? null
-                              : () => ExportBarcodesSheet.showAll(context),
-                          icon: const Icon(Icons.qr_code_2_rounded, size: 20),
-                          style: IconButton.styleFrom(
-                            foregroundColor: context.colors.textPrimary,
-                            side: BorderSide(color: context.colors.border),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            padding: const EdgeInsets.all(11),
-                          ),
+                          icon: Icons.qr_code_2_rounded,
+                          onTap: provider.boxes.isEmpty ? null : () => ExportBarcodesSheet.showAll(context),
                         ),
-                        const SizedBox(width: 8),
-                        FilledButton.icon(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const BoxCreateScreen(),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.add, size: 18),
-                          label: Text(context.l10n.newLocation),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        const SizedBox(width: 10),
+                        _roundAction(
+                          tooltip: context.l10n.newLocation,
+                          icon: Icons.add_rounded,
+                          accent: true,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const BoxCreateScreen()),
                           ),
                         ),
                       ],
@@ -188,35 +170,11 @@ class _BoxesScreenState extends State<BoxesScreen> {
                 const SizedBox(height: 18),
 
                 // Search field
-                TextField(
+                SoftSearchField(
+                  hint: context.l10n.searchLocationsRoomsContainers,
+                  value: _searchQuery,
                   onChanged: (val) => setState(() => _searchQuery = val.trim()),
-                  style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 14),
-                  decoration: InputDecoration(
-                    hintText: context.l10n.searchLocationsRoomsContainers,
-                    prefixIcon: Icon(Icons.search, size: 20, color: context.colors.textSecondary),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
- tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
-                            icon: const Icon(Icons.clear, size: 18),
-                            onPressed: () => setState(() => _searchQuery = ''),
-                          )
-                        : null,
-                    fillColor: context.colors.surface,
-                    filled: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: context.colors.border),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: context.colors.border),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: context.colors.primary, width: 1.5),
-                    ),
-                  ),
+                  onClear: () => setState(() => _searchQuery = ''),
                 ),
                 const SizedBox(height: 14),
 
@@ -245,7 +203,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                         decoration: BoxDecoration(
                           color: context.colors.surface,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: context.colors.border),
+                          boxShadow: context.colors.cardShadow,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -253,7 +211,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             IconButton(
                               visualDensity: VisualDensity.compact,
                               tooltip: _isTreeView ? context.l10n.switchToFlatList : context.l10n.switchToTreeView,
-                              icon: Icon(
+                              icon: AppIcon(
                                 _isTreeView ? Icons.account_tree_rounded : Icons.view_agenda_outlined,
                                 size: 18,
                                 color: context.colors.textPrimary,
@@ -266,7 +224,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                               IconButton(
                                 visualDensity: VisualDensity.compact,
                                 tooltip: _expandedBoxIds.isEmpty ? context.l10n.expandAll : context.l10n.collapseAll,
-                                icon: Icon(
+                                icon: AppIcon(
                                   _expandedBoxIds.isEmpty ? Icons.unfold_more_rounded : Icons.unfold_less_rounded,
                                   size: 18,
                                   color: context.colors.textSecondary,
@@ -346,7 +304,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
           bottom: 10.0,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           child: Slidable(
             key: ValueKey(box.id),
             endActionPane: ActionPane(
@@ -355,7 +313,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
               children: [
                 SlidableAction(
                   onPressed: (_) => MoveLocationDialog.show(context, box),
-                  backgroundColor: const Color(0xFF64748B),
+                  backgroundColor: AppTones.slate,
                   foregroundColor: Colors.white,
                   icon: Icons.drive_file_move_outlined,
                   label: context.l10n.commonMove,
@@ -392,7 +350,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       }
                     }
                   },
-                  backgroundColor: Colors.red.shade400,
+                  backgroundColor: AppTones.coral,
                   foregroundColor: Colors.white,
                   icon: Icons.delete_outline,
                   label: context.l10n.commonDelete,
@@ -402,14 +360,14 @@ class _BoxesScreenState extends State<BoxesScreen> {
             child: Material(
               color: context.colors.surface,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 side: BorderSide(
                   color: depth == 0 ? context.colors.border : context.colors.border,
                   width: depth == 0 ? 1.2 : 1.0,
                 ),
               ),
               child: InkWell(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 onLongPress: () => showBoxActionsSheet(context, box),
                 onTap: () {
                   Navigator.push(
@@ -433,7 +391,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             child: AnimatedRotation(
                               turns: isExpanded ? 0.25 : 0.0,
                               duration: const Duration(milliseconds: 200),
-                              child: Icon(
+                              child: AppIcon(
                                 Icons.chevron_right_rounded,
                                 size: 22,
                                 color: context.colors.textSecondary,
@@ -444,7 +402,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       else if (depth > 0)
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Icon(
+                          child: AppIcon(
                             Icons.subdirectory_arrow_right_rounded,
                             size: 16,
                             color: context.colors.textMuted,
@@ -461,7 +419,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                           color: depth == 0 ? context.colors.fill : context.colors.fill,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(
+                        child: AppIcon(
                           box.type.icon,
                           color: context.colors.textPrimary,
                           size: 22,
@@ -476,7 +434,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                           children: [
                             Text(
                               box.name,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontWeight: depth == 0 ? FontWeight.w700 : FontWeight.w600,
                                 fontSize: depth == 0 ? 15 : 14,
                                 color: context.colors.textPrimary,
@@ -487,7 +445,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                             const SizedBox(height: 3),
                             Text(
                               '${box.type.displayName} • ${context.l10n.itemsCountLabel(itemCount)}${children.isNotEmpty ? ' • ${context.l10n.subContainersCountLabel(children.length)}' : ''}',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 color: context.colors.textSecondary,
                               ),
@@ -500,7 +458,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       IconButton(
                         tooltip: context.l10n.addSubContainer,
                         visualDensity: VisualDensity.compact,
-                        icon: Icon(Icons.add_rounded, size: 20, color: context.colors.textSecondary),
+                        icon: AppIcon(Icons.add_rounded, size: 20, color: context.colors.textSecondary),
                         onPressed: () {
                           Navigator.push(
                             context,
@@ -512,7 +470,7 @@ class _BoxesScreenState extends State<BoxesScreen> {
                       ),
 
                       // Forward arrow
-                      Icon(
+                      AppIcon(
                         Icons.arrow_forward_ios_rounded,
                         size: 14,
                         color: context.colors.textMuted,

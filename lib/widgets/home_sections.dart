@@ -7,6 +7,7 @@ import '../screens/lending_tracker_screen.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 /// Home tab sections. Navigation and tab switching stay owned by the home
 /// screen and are passed in as callbacks.
@@ -29,13 +30,12 @@ class HomeSections {
           decoration: BoxDecoration(
             color: context.colors.dangerSoft,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFFCA5A5)),
           ),
           child: Row(
             children: [
-              const Icon(
+              const AppIcon(
                 Icons.cloud_off_rounded,
-                color: Color(0xFFEF4444),
+                color: AppTones.coral,
                 size: 20,
               ),
               const SizedBox(width: 10),
@@ -93,17 +93,7 @@ class HomeSections {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: context.colors.dangerSoft,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: const Color(0xFFFCA5A5).withValues(alpha: 0.6),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFFEF4444).withValues(alpha: 0.06),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(24),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -111,12 +101,12 @@ class HomeSections {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEF4444).withValues(alpha: 0.15),
+                  color: AppTones.coral.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: const AppIcon(
                   Icons.warning_amber_rounded,
-                  color: Color(0xFFDC2626),
+                  color: AppTones.coral,
                   size: 20,
                 ),
               ),
@@ -177,159 +167,140 @@ class HomeSections {
 
   Widget buildQuickModulesSection() {
     final provider = Provider.of<InventoryProvider>(context);
+    final c = context.colors;
     final activeLoans = provider.getActiveLoans().length;
+    final overdueLoans = provider.getOverdueLoans().length;
     final totalAlerts = provider.totalAlertCount;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Lending Tracker Quick Card
           Expanded(
-            child: Tappable(
+            child: _QuickCard(
+              icon: Icons.handshake_outlined,
+              iconBg: c.infoSoft,
+              iconFg: c.infoStrong,
+              title: context.l10n.commonLending,
+              stat: '$activeLoans',
+              caption: activeLoans > 0 ? '$activeLoans Active' : context.l10n.noLoans,
+              // Share of active loans that are on time.
+              progress: activeLoans == 0 ? null : (activeLoans - overdueLoans) / activeLoans,
+              progressColor: overdueLoans > 0 ? c.dangerStrong : c.infoStrong,
               onTap: () => navigate(const LendingTrackerScreen()),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 12,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF3B82F6).withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.handshake_outlined,
-                        color: Color(0xFF2563EB),
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.commonLending,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: context.colors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            activeLoans > 0
-                                ? '$activeLoans Active'
-                                : context.l10n.noLoans,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: activeLoans > 0
-                                  ? const Color(0xFF2563EB)
-                                  : context.colors.textMuted,
-                              fontWeight: activeLoans > 0
-                                  ? FontWeight.w600
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
           const SizedBox(width: 12),
-          // Expiration & Alerts Quick Card
           Expanded(
-            child: Tappable(
+            child: _QuickCard(
+              icon: totalAlerts > 0 ? Icons.notifications_active_outlined : Icons.shield_outlined,
+              iconBg: totalAlerts > 0 ? c.dangerSoft : c.successSoft,
+              iconFg: totalAlerts > 0 ? c.dangerStrong : c.successStrong,
+              title: context.l10n.commonAlerts,
+              stat: '$totalAlerts',
+              caption: totalAlerts > 0 ? '$totalAlerts Issues' : context.l10n.allClear,
+              progress: totalAlerts == 0 ? 1 : null,
+              progressColor: c.successStrong,
               onTap: () => navigate(const AlertsScreen()),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 12,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color:
-                            (totalAlerts > 0
-                                    ? const Color(0xFFEF4444)
-                                    : const Color(0xFF10B981))
-                                .withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        totalAlerts > 0
-                            ? Icons.notifications_active_outlined
-                            : Icons.shield_outlined,
-                        color: totalAlerts > 0
-                            ? const Color(0xFFDC2626)
-                            : const Color(0xFF059669),
-                        size: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.commonAlerts,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: context.colors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            totalAlerts > 0
-                                ? '$totalAlerts Issues'
-                                : context.l10n.allClear,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: totalAlerts > 0
-                                  ? const Color(0xFFDC2626)
-                                  : const Color(0xFF059669),
-                              fontWeight: totalAlerts > 0
-                                  ? FontWeight.w600
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// White 24px card: bold stat, muted caption, thin progress bar and a
+/// trailing chevron that signals drill-down.
+class _QuickCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconBg;
+  final Color iconFg;
+  final String title;
+  final String stat;
+  final String caption;
+  final double? progress;
+  final Color progressColor;
+  final VoidCallback onTap;
+
+  const _QuickCard({
+    required this.icon,
+    required this.iconBg,
+    required this.iconFg,
+    required this.title,
+    required this.stat,
+    required this.caption,
+    required this.progress,
+    required this.progressColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Tappable(
+      semanticLabel: title,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: c.cardShadow,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(14)),
+                  child: AppIcon(icon, color: iconFg, size: 20),
+                ),
+                const Spacer(),
+                AppIcon(Icons.chevron_right_rounded, color: c.textMuted, size: 22),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              stat,
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                height: 1,
+                letterSpacing: -1,
+                color: c.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: c.textPrimary),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              caption,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 12, color: c.textSecondary),
+            ),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress ?? 0,
+                minHeight: 6,
+                backgroundColor: c.fill,
+                valueColor: AlwaysStoppedAnimation(progressColor),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

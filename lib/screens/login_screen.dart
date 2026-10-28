@@ -11,6 +11,7 @@ import '../utils/friendly_error.dart';
 import 'home_screen.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 /// Screen allowing authentication with Google (Gmail) or Email/Password
 part 'login_screen_parts.dart';
@@ -233,8 +234,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: 68,
                           height: 68,
                           decoration: BoxDecoration(
-                            color: context.colors.primary,
-                            borderRadius: BorderRadius.circular(20),
+                            color: context.colors.accent,
+                            borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.12),
@@ -243,11 +244,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          child: const Center(
-                            child: Icon(
+                          child: Center(
+                            child: AppIcon(
                               Icons.inventory_2_rounded,
                               size: 34,
-                              color: Colors.white,
+                              color: context.colors.onAccent,
                             ),
                           ),
                         ),
@@ -258,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         'Personal Inventory',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.5,
@@ -269,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         context.l10n.signInToSyncYour,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           color: context.colors.textSecondary,
                           fontWeight: FontWeight.w400,
@@ -296,7 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.symmetric(horizontal: 14.0),
                             child: Text(
                               'or continue with email',
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: context.colors.textMuted,
@@ -315,7 +316,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                             labelText: context.l10n.fullName,
                             hintText: 'John Doe',
-                            prefixIcon: const Icon(Icons.person_outline_rounded, size: 20),
+                            prefixIcon: const AppIcon(Icons.person_outline_rounded, size: 20),
                             fillColor: context.colors.surface,
                             filled: true,
                             enabledBorder: OutlineInputBorder(
@@ -340,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: context.l10n.emailAddress,
                           hintText: 'name@example.com',
-                          prefixIcon: const Icon(Icons.mail_outline_rounded, size: 20),
+                          prefixIcon: const AppIcon(Icons.mail_outline_rounded, size: 20),
                           fillColor: context.colors.surface,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
@@ -367,10 +368,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: context.l10n.commonPassword,
                           hintText: '••••••••',
-                          prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
+                          prefixIcon: const AppIcon(Icons.lock_outline_rounded, size: 20),
                           suffixIcon: IconButton(
  tooltip: context.l10n.showOrHidePassword,
-                            icon: Icon(
+                            icon: AppIcon(
                               _obscurePassword
                                   ? Icons.visibility_outlined
                                   : Icons.visibility_off_outlined,
@@ -424,7 +425,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 )
                               : Text(
                                   _isRegisterMode ? context.l10n.createAccount : context.l10n.signIn,
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.plusJakartaSans(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -444,10 +445,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           _isRegisterMode
                               ? context.l10n.alreadyHaveAnAccountSign
                               : context.l10n.donTHaveAnAccount,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0xFF3B82F6),
+                            color: AppTones.sky,
                           ),
                         ),
                       ),
@@ -458,9 +459,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Text(
                         context.l10n.byContinuingYouAgreeTo,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 11,
-                          color: const Color(0xFF6B7280),
+                          color: AppTones.slate,
                           fontWeight: FontWeight.w400,
                         ),
                       ),

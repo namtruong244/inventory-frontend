@@ -2658,4 +2658,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get opUpdateSettings => 'Change settings';
+
+  @override
+  String daysOverdueCount(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$_temp0 overdue';
+  }
 }

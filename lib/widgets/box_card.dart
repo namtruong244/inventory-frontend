@@ -4,6 +4,8 @@ import '../models/inventory_models.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
+import 'soft_ui.dart';
 
 class BoxCard extends StatelessWidget {
   final String name;
@@ -36,23 +38,23 @@ class BoxCard extends StatelessWidget {
     final card = Tappable(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: context.colors.surface,
         ),
         child: Row(
           children: [
             Container(
-              width: 56,
-              height: 56,
+              width: 52,
+              height: 52,
               decoration: BoxDecoration(
-                color: theme.colorScheme.secondary,
-                borderRadius: BorderRadius.circular(16),
+                color: context.colors.accent.withValues(alpha: 0.45),
+                borderRadius: BorderRadius.circular(18),
               ),
-              child: Icon(
+              child: AppIcon(
                 icon ?? type?.icon ?? Icons.inventory_2_outlined,
-                color: theme.colorScheme.primary,
-                size: 28,
+                color: context.colors.textPrimary,
+                size: 26,
               ),
             ),
             const SizedBox(width: 16),
@@ -80,18 +82,7 @@ class BoxCard extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.arrow_forward,
-                color: theme.colorScheme.primary,
-                size: 20,
-              ),
-            ),
+            AppIcon(Icons.chevron_right_rounded, color: context.colors.textMuted, size: 24),
           ],
         ),
       ),
@@ -99,14 +90,10 @@ class BoxCard extends StatelessWidget {
 
     if (onDelete == null && onEdit == null) {
       if (!enableClip) return card;
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: card,
-      );
+      return SoftCard(child: card);
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+    return SoftCard(
       child: Slidable(
         key: ValueKey(name + description),
         endActionPane: ActionPane(
@@ -124,7 +111,7 @@ class BoxCard extends StatelessWidget {
             if (onDelete != null)
               SlidableAction(
                 onPressed: (_) => onDelete!(),
-                backgroundColor: Colors.red.shade400,
+                backgroundColor: AppTones.coral,
                 foregroundColor: Colors.white,
                 icon: Icons.delete_outline,
                 label: context.l10n.commonDelete,

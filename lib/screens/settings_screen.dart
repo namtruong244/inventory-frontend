@@ -18,6 +18,7 @@ import 'login_screen.dart';
 import 'trash_screen.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 class SettingsScreen extends StatefulWidget {
   final ScrollController? scrollController;
@@ -78,9 +79,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       children: [
                         Text(
                           context.l10n.commonSettings,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.8,
                             color: context.colors.textPrimary,
                           ),
                         ),
@@ -111,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 8),
                 buildCardContainer([
                   ListTile(
-                    leading: buildIconBox(Icons.category_rounded, const Color(0xFF6366F1), context.colors.infoSoft),
+                    leading: buildIconBox(Icons.category_rounded, AppTones.lilac, context.colors.infoSoft),
                     title: Text(
                       context.l10n.manageCategories,
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: context.colors.textPrimary),
@@ -135,7 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Icon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
+                        AppIcon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
                       ],
                     ),
                     onTap: () => showCategoryManagementSheet(context, provider),
@@ -149,7 +150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 buildCardContainer([
                   buildPreferenceTile(
                     icon: Icons.payments_outlined,
-                    iconColor: const Color(0xFF10B981),
+                    iconColor: AppTones.matcha,
                     iconBg: context.colors.successSoft,
                     title: context.l10n.currencySymbol,
                     subtitle: context.l10n.usedForPurchasePricesValuation,
@@ -159,7 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(height: 1),
                   buildPreferenceTile(
                     icon: Icons.straighten_rounded,
-                    iconColor: const Color(0xFFF59E0B),
+                    iconColor: AppTones.amber,
                     iconBg: context.colors.warningSoft,
                     title: context.l10n.defaultItemUnit,
                     subtitle: context.l10n.preFilledUnitForNewly,
@@ -169,7 +170,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(height: 1),
                   buildPreferenceTile(
                     icon: Icons.event_available_rounded,
-                    iconColor: const Color(0xFF3B82F6),
+                    iconColor: AppTones.sky,
                     iconBg: context.colors.infoSoft,
                     title: context.l10n.expiryWarningWindow,
                     subtitle: context.l10n.daysBeforeExpirationToTrigger,
@@ -179,7 +180,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(height: 1),
                   buildPreferenceTile(
                     icon: Icons.verified_user_outlined,
-                    iconColor: const Color(0xFF8B5CF6),
+                    iconColor: AppTones.lilac,
                     iconBg: context.colors.infoSoft,
                     title: context.l10n.warrantyWarningWindow,
                     subtitle: context.l10n.daysBeforeWarrantyEndsTo,
@@ -189,8 +190,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const Divider(height: 1),
                   buildPreferenceTile(
                     icon: Icons.public,
-                    iconColor: const Color(0xFF0EA5E9),
-                    iconBg: const Color(0xFFF0F9FF),
+                    iconColor: AppTones.sky,
+                    iconBg: AppTones.skySoft,
                     title: context.l10n.timeZone,
                     subtitle: context.l10n.usedToDecideWhatToday,
                     valueText: provider.timezone,
@@ -212,7 +213,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       provider.setVibrateOnScan(val);
                       if (val) HapticFeedback.mediumImpact();
                     },
-                    secondary: buildIconBox(Icons.vibration_rounded, const Color(0xFF8B5CF6), context.colors.infoSoft),
+                    secondary: buildIconBox(Icons.vibration_rounded, AppTones.lilac, context.colors.infoSoft),
                     title: Text(l10n.settingsVibrate, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     subtitle: Text(l10n.settingsVibrateSubtitle, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
                     activeTrackColor: context.colors.primary,
@@ -222,7 +223,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SwitchListTile.adaptive(
                     value: provider.beepOnScan,
                     onChanged: (val) => provider.setBeepOnScan(val),
-                    secondary: buildIconBox(Icons.volume_up_outlined, const Color(0xFF06B6D4), const Color(0xFFECFEFF)),
+                    secondary: buildIconBox(Icons.volume_up_outlined, AppTones.sky, AppTones.skySoft),
                     title: Text(l10n.settingsSound, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     subtitle: Text(l10n.settingsSoundSubtitle, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
                     activeTrackColor: context.colors.primary,
@@ -232,7 +233,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SwitchListTile.adaptive(
                     value: provider.autoOpenOnScan,
                     onChanged: (val) => provider.setAutoOpenOnScan(val),
-                    secondary: buildIconBox(Icons.open_in_new_rounded, const Color(0xFF10B981), context.colors.successSoft),
+                    secondary: buildIconBox(Icons.open_in_new_rounded, AppTones.matcha, context.colors.successSoft),
                     title: Text(l10n.settingsAutoOpen, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     subtitle: Text(l10n.settingsAutoOpenSubtitle, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
                     activeTrackColor: context.colors.primary,
@@ -248,7 +249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SwitchListTile.adaptive(
                     value: provider.notifyExpiring,
                     onChanged: (val) => provider.setNotifyExpiring(val),
-                    secondary: buildIconBox(Icons.alarm_rounded, const Color(0xFFEF4444), context.colors.dangerSoft),
+                    secondary: buildIconBox(Icons.alarm_rounded, AppTones.coral, context.colors.dangerSoft),
                     title: Text(l10n.settingsExpiring, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     subtitle: Text(l10n.settingsExpiringSubtitle, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
                     activeTrackColor: context.colors.primary,
@@ -258,7 +259,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SwitchListTile.adaptive(
                     value: provider.notifyOverdue,
                     onChanged: (val) => provider.setNotifyOverdue(val),
-                    secondary: buildIconBox(Icons.assignment_late_outlined, const Color(0xFFF97316), context.colors.warningSoft),
+                    secondary: buildIconBox(Icons.assignment_late_outlined, AppTones.amber, context.colors.warningSoft),
                     title: Text(l10n.settingsOverdue, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     subtitle: Text(l10n.settingsOverdueSubtitle, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
                     activeTrackColor: context.colors.primary,
@@ -268,7 +269,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   SwitchListTile.adaptive(
                     value: provider.notifyLowStock,
                     onChanged: (val) => provider.setNotifyLowStock(val),
-                    secondary: buildIconBox(Icons.production_quantity_limits_rounded, const Color(0xFFEAB308), const Color(0xFFFEFCE8)),
+                    secondary: buildIconBox(Icons.production_quantity_limits_rounded, AppTones.amber, AppTones.sandSoft),
                     title: Text(l10n.settingsLowStock, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     subtitle: Text(l10n.settingsLowStockSubtitle, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
                     activeTrackColor: context.colors.primary,
@@ -282,7 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 8),
                 buildCardContainer([
                   ListTile(
-                    leading: buildIconBox(Icons.qr_code_2_rounded, const Color(0xFF6366F1), context.colors.infoSoft),
+                    leading: buildIconBox(Icons.qr_code_2_rounded, AppTones.lilac, context.colors.infoSoft),
                     title: Text(
                       context.l10n.exportAllBoxBarcodesPdf,
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
@@ -291,12 +292,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context.l10n.generatePrintablePdfStickerSheet,
                       style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                     ),
-                    trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
+                    trailing: AppIcon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
                     onTap: () => ExportBarcodesSheet.showAll(context),
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: buildIconBox(Icons.summarize_outlined, const Color(0xFF059669), context.colors.successSoft),
+                    leading: buildIconBox(Icons.summarize_outlined, AppTones.matcha, context.colors.successSoft),
                     title: Text(
                       context.l10n.exportInventoryReport,
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
@@ -305,12 +306,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context.l10n.generateCopyFormattedSummaryOf,
                       style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                     ),
-                    trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
+                    trailing: AppIcon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
                     onTap: () => showExportReportSheet(context, provider),
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: buildIconBox(Icons.delete_outline_rounded, const Color(0xFFDC2626), context.colors.dangerSoft),
+                    leading: buildIconBox(Icons.delete_outline_rounded, AppTones.coral, context.colors.dangerSoft),
                     title: Text(
                       context.l10n.commonTrash,
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
@@ -319,14 +320,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context.l10n.restoreOrPermanentlyDeleteRemoved,
                       style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                     ),
-                    trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
+                    trailing: AppIcon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const TrashScreen()),
                     ),
                   ),
                   const Divider(height: 1),
                   ListTile(
-                    leading: buildIconBox(Icons.donut_large_outlined, const Color(0xFF2563EB), context.colors.infoSoft),
+                    leading: buildIconBox(Icons.donut_large_outlined, AppTones.sky, context.colors.infoSoft),
                     title: Text(
                       context.l10n.inventoryHealthBreakdown,
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
@@ -335,7 +336,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context.l10n.statusDistributionInStockLent,
                       style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
                     ),
-                    trailing: Icon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
+                    trailing: AppIcon(Icons.chevron_right_rounded, color: context.colors.textSecondary, size: 20),
                     onTap: () => showInventoryStatusSheet(context, provider),
                   ),
                 ]),
@@ -355,7 +356,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           });
                           AppFeedback.showInfo(context, context.l10n.developerModeDeactivated);
                         },
-                        icon: Icon(Icons.lock_outline, size: 14, color: context.colors.textSecondary),
+                        icon: AppIcon(Icons.lock_outline, size: 14, color: context.colors.textSecondary),
                         label: Text(context.l10n.commonHide, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
                       ),
                     ],
@@ -372,8 +373,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: context.colors.border),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: context.colors.cardShadow,
                   ),
                   child: Column(
                     children: [
@@ -385,7 +386,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             ? Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFDCFCE7),
+                                  color: AppTones.limeSoft,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -393,18 +394,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   style: const TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xFF15803D),
+                                    color: AppTones.matcha,
                                   ),
                                 ),
                               )
                             : null,
                       ),
-                      const Divider(height: 20),
-                      buildInfoRow(context.l10n.designSystem, context.l10n.minimalCharcoalIosStyle),
-                      const Divider(height: 20),
-                      buildInfoRow(context.l10n.qrBarcodeEngine, 'MobileScanner v5'),
-                      const Divider(height: 20),
-                      buildInfoRow(context.l10n.storageArchitecture, context.l10n.hierarchicalMultiLevelTree),
                     ],
                   ),
                 ),
@@ -418,20 +413,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   height: 50,
                   child: OutlinedButton.icon(
                     onPressed: () => _confirmSignOut(context, provider),
-                    icon: const Icon(Icons.logout_rounded, size: 18, color: Color(0xFFEF4444)),
+                    icon: const AppIcon(Icons.logout_rounded, size: 18, color: AppTones.coral),
                     label: Text(
                       context.l10n.logOutSwitchAccount,
                       style: TextStyle(
-                        color: Color(0xFFEF4444),
+                        color: AppTones.coral,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: context.colors.dangerSoft, width: 1.5),
+                      side: BorderSide.none,
                       backgroundColor: context.colors.dangerSoft,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                     ),
                   ),
@@ -467,7 +462,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: context.colors.border),
+        boxShadow: context.colors.cardShadow,
       ),
       child: Row(
         children: [
@@ -475,14 +470,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: context.colors.primary,
+              color: context.colors.accent,
               shape: BoxShape.circle,
             ),
             child: Center(
               child: Text(
                 provider.userName.isNotEmpty ? provider.userName[0].toUpperCase() : 'U',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: context.colors.onAccent,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
@@ -532,7 +527,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: context.colors.fill,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.sync_alt_rounded, size: 18, color: context.colors.textPrimary),
+              child: AppIcon(Icons.sync_alt_rounded, size: 18, color: context.colors.textPrimary),
             ),
             onPressed: () {
               Navigator.of(context).push(
@@ -548,7 +543,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: context.colors.fill,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.edit_outlined, size: 18, color: context.colors.textPrimary),
+              child: AppIcon(Icons.edit_outlined, size: 18, color: context.colors.textPrimary),
             ),
             onPressed: () => showEditProfileDialog(context, provider),
           ),
@@ -561,7 +556,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(context.l10n.logOut, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         content: Text(
           context.l10n.areYouSureYouWant,
@@ -595,7 +590,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               }
             },
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
+            style: FilledButton.styleFrom(backgroundColor: AppTones.coral),
             child: Text(context.l10n.logOut2),
           ),
         ],
@@ -608,7 +603,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(context.l10n.deleteAccount2, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
         content: Text(
           context.l10n.thisPermanentlyDeletesYourAccount,
@@ -624,7 +619,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Navigator.pop(ctx);
               _confirmDeleteAccountTyped(context, provider);
             },
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
+            style: FilledButton.styleFrom(backgroundColor: AppTones.coral),
             child: Text(context.l10n.commonContinue),
           ),
         ],
@@ -638,7 +633,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setState) => AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(context.l10n.confirmDeletion, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           content: TextField(
             controller: controller,
@@ -669,7 +664,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     }
                   : null,
-              style: FilledButton.styleFrom(backgroundColor: const Color(0xFFEF4444)),
+              style: FilledButton.styleFrom(backgroundColor: AppTones.coral),
               child: Text(context.l10n.deleteForever),
             ),
           ],
@@ -680,24 +675,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // --- Stats Banner ---
   Widget _buildStatsBanner(InventoryProvider provider, int totalBoxes, int totalItems, int activeLoans) {
+    final c = context.colors;
+    final divider = Container(width: 1, height: 32, color: c.onAccent.withValues(alpha: 0.18));
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
-        color: context.colors.primary,
+        color: c.accent,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Text(
               context.l10n.inventoryQuickMetrics,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: c.onAccent, fontSize: 14, fontWeight: FontWeight.w800),
             ),
           ),
           const SizedBox(height: 16),
@@ -705,11 +698,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildStatItem(context.l10n.commonContainers, '$totalBoxes'),
-              Container(width: 1, height: 32, color: Colors.white24),
+              divider,
               _buildStatItem(context.l10n.totalAssets, '$totalItems'),
-              Container(width: 1, height: 32, color: Colors.white24),
+              divider,
               _buildStatItem(context.l10n.onLoan, '$activeLoans'),
-              Container(width: 1, height: 32, color: Colors.white24),
+              divider,
               _buildStatItem(context.l10n.estValue, provider.formatPrice(provider.totalInventoryValue)),
             ],
           ),
@@ -719,23 +712,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildStatItem(String label, String value) {
+    final c = context.colors;
     return Column(
       children: [
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: c.onAccent, fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5),
         ),
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 11,
-          ),
+          style: TextStyle(color: c.onAccent.withValues(alpha: 0.75), fontSize: 11, fontWeight: FontWeight.w600),
         ),
       ],
     );

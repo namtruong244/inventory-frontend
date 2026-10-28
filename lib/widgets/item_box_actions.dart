@@ -14,6 +14,7 @@ import 'lend_item_sheet.dart';
 import 'move_item_sheet.dart';
 import 'move_location_dialog.dart';
 import 'trash_actions.dart';
+import 'app_icon.dart';
 
 /// What can be done to an item, as a menu opened by long-pressing it. Swiping a row
 /// stays as a shortcut, but nothing is only reachable by swiping.
@@ -130,7 +131,7 @@ Future<void> _showActions(
             ),
             for (final action in actions)
               ListTile(
-                leading: Icon(action.icon, color: action.destructive ? c.dangerStrong : c.textPrimary),
+                leading: AppIcon(action.icon, color: action.destructive ? c.dangerStrong : c.textPrimary),
                 title: Text(
                   action.label,
                   style: TextStyle(color: action.destructive ? c.dangerStrong : c.textPrimary),

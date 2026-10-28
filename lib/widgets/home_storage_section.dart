@@ -9,6 +9,7 @@ import 'home_sections.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 extension HomeStorageSection on HomeSections {
 
@@ -48,7 +49,7 @@ extension HomeStorageSection on HomeSections {
                       ),
                     ),
                     const SizedBox(width: 3),
-                    Icon(
+                    AppIcon(
                       Icons.arrow_forward_ios_rounded,
                       size: 11,
                       color: context.colors.textSecondary,
@@ -79,7 +80,7 @@ extension HomeStorageSection on HomeSections {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        AppIcon(
                           Icons.inventory_2_outlined,
                           size: 36,
                           color: context.colors.textMuted,
@@ -162,15 +163,8 @@ extension HomeStorageSection on HomeSections {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: context.colors.surface,
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: context.colors.border, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 14,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: context.colors.cardShadow,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,10 +177,10 @@ extension HomeStorageSection on HomeSections {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: context.colors.fill,
+                    color: context.colors.accent.withValues(alpha: 0.45),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: AppIcon(
                     boxIcon,
                     color: context.colors.textPrimary,
                     size: 20,
@@ -263,13 +257,12 @@ extension HomeStorageSection on HomeSections {
                     ),
                     decoration: BoxDecoration(
                       color: context.colors.fill,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: context.colors.border),
+                      borderRadius: BorderRadius.circular(24),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
+                        AppIcon(
                           Icons.inventory_2_outlined,
                           size: 13,
                           color: context.colors.textPrimary,
@@ -277,7 +270,7 @@ extension HomeStorageSection on HomeSections {
                         const SizedBox(width: 5),
                         Flexible(
                           child: Text(
-                            '$itemCount ${itemCount == 1 ? "item" : "items"}${subBoxCount > 0 ? " • $subBoxCount ${subBoxCount == 1 ? (box.type == StorageType.room ? "box" : "container") : (box.type == StorageType.room ? "boxes" : "containers")}" : ""}',
+                            '${context.l10n.itemsCountLabel(itemCount)}${subBoxCount > 0 ? " • ${context.l10n.nestedCountLabel(subBoxCount)}" : ""}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -296,13 +289,13 @@ extension HomeStorageSection on HomeSections {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: context.colors.primary,
+                    color: context.colors.accent,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: AppIcon(
                     Icons.arrow_forward_rounded,
                     size: 16,
-                    color: Colors.white,
+                    color: context.colors.onAccent,
                   ),
                 ),
               ],

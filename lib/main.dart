@@ -15,7 +15,7 @@ import 'widgets/sync_status_bar.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Inter ships in assets/google_fonts; never fetch it over the network.
+  // Plus Jakarta Sans ships in assets/google_fonts; never fetch it over the network.
   GoogleFonts.config.allowRuntimeFetching = false;
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

@@ -11,6 +11,7 @@ import 'home_sections.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 extension HomeRecentSection on HomeSections {
 
@@ -50,7 +51,7 @@ extension HomeRecentSection on HomeSections {
                       ),
                     ),
                     const SizedBox(width: 3),
-                    Icon(
+                    AppIcon(
                       Icons.arrow_forward_ios_rounded,
                       size: 11,
                       color: context.colors.textSecondary,
@@ -77,13 +78,13 @@ extension HomeRecentSection on HomeSections {
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFF1F1F4)),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: context.colors.cardShadow,
                   ),
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(
+                        AppIcon(
                           Icons.inventory_2_outlined,
                           size: 36,
                           color: context.colors.textMuted,
@@ -155,15 +156,8 @@ extension HomeRecentSection on HomeSections {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: context.colors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFF1F1F4)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: context.colors.cardShadow,
         ),
         child: Row(
           children: [
@@ -184,7 +178,7 @@ extension HomeRecentSection on HomeSections {
                   color: context.colors.fill,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
+                child: AppIcon(
                   CategoryHelper.getCategoryIcon(item.categoryId),
                   color: context.colors.textPrimary,
                   size: 22,
@@ -211,7 +205,7 @@ extension HomeRecentSection on HomeSections {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
+                      AppIcon(
                         Icons.inventory_2_outlined,
                         size: 13,
                         color: context.colors.textMuted,
@@ -279,7 +273,7 @@ extension HomeRecentSection on HomeSections {
                   decoration: BoxDecoration(
                     color:
                         (item.isLowStock
-                                ? const Color(0xFFF59E0B)
+                                ? AppTones.amber
                                 : item.status.color)
                             .withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
@@ -290,7 +284,7 @@ extension HomeRecentSection on HomeSections {
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       color: item.isLowStock
-                          ? const Color(0xFFD97706)
+                          ? AppTones.amber
                           : item.status.color,
                     ),
                   ),
@@ -298,7 +292,7 @@ extension HomeRecentSection on HomeSections {
               ],
             ),
             const SizedBox(width: 4),
-            Icon(
+            AppIcon(
               Icons.chevron_right_rounded,
               size: 20,
               color: context.colors.textMuted,

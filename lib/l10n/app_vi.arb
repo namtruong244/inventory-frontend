@@ -1776,5 +1776,6 @@
   "opReturnLoan": "Nhận trả",
   "opCreateCategory": "Thêm danh mục",
   "opDeleteCategory": "Xóa danh mục",
-  "opUpdateSettings": "Đổi cài đặt"
+  "opUpdateSettings": "Đổi cài đặt",
+  "daysOverdueCount": "Quá hạn {days} ngày"
 }

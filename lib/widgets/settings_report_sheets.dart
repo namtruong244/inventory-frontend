@@ -6,6 +6,7 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 void showExportReportSheet(BuildContext context, InventoryProvider provider) {
   final report = provider.generateInventoryReport();
@@ -57,7 +58,7 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
                 ),
                 IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                  icon: Icon(Icons.close, color: context.colors.textSecondary),
+                  icon: AppIcon(Icons.close, color: context.colors.textSecondary),
                   onPressed: () => Navigator.pop(sheetContext),
                 ),
               ],
@@ -69,7 +70,6 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
                 decoration: BoxDecoration(
                   color: context.colors.fill,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: context.colors.border),
                 ),
                 child: SingleChildScrollView(
                   controller: scrollController,
@@ -94,7 +94,7 @@ void showExportReportSheet(BuildContext context, InventoryProvider provider) {
                   Navigator.pop(sheetContext);
                   AppFeedback.showSuccess(context, context.l10n.reportCopiedToClipboard);
                 },
-                icon: const Icon(Icons.copy_rounded, size: 18),
+                icon: const AppIcon(Icons.copy_rounded, size: 18),
                 label: Text(context.l10n.copyReportToClipboard, style: TextStyle(fontWeight: FontWeight.bold)),
                 style: FilledButton.styleFrom(
                   backgroundColor: context.colors.primary,
@@ -168,12 +168,12 @@ void showInventoryStatusSheet(BuildContext context, InventoryProvider provider) 
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        buildStatusRow(context.l10n.storedInContainers, stored, total, const Color(0xFF10B981)),
-                        buildStatusRow(context.l10n.inUseActive, inUse, total, const Color(0xFF3B82F6)),
-                        buildStatusRow(context.l10n.lentToBorrowers, lent, total, const Color(0xFF8B5CF6)),
-                        buildStatusRow(context.l10n.lowStockWarning, lowStock, total, const Color(0xFFF59E0B)),
-                        buildStatusRow(context.l10n.expiringSoonD(provider.expiryWarningDays), expiringSoon, total, const Color(0xFFF97316)),
-                        buildStatusRow(context.l10n.expiredAssets, expired, total, const Color(0xFFEF4444)),
+                        buildStatusRow(context.l10n.storedInContainers, stored, total, AppTones.matcha),
+                        buildStatusRow(context.l10n.inUseActive, inUse, total, AppTones.sky),
+                        buildStatusRow(context.l10n.lentToBorrowers, lent, total, AppTones.lilac),
+                        buildStatusRow(context.l10n.lowStockWarning, lowStock, total, AppTones.amber),
+                        buildStatusRow(context.l10n.expiringSoonD(provider.expiryWarningDays), expiringSoon, total, AppTones.amber),
+                        buildStatusRow(context.l10n.expiredAssets, expired, total, AppTones.coral),
                       ],
                     ),
                   ),

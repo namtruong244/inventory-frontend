@@ -1,3 +1,4 @@
+import '../theme/app_theme.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import '../providers/inventory_provider.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 /// Minimalist Splash Screen with clean typography and seamless initialization
 class SplashScreen extends StatefulWidget {
@@ -120,16 +122,16 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    const primaryDark = Color(0xFF18181B);
+    final c = context.colors;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.dark, // iOS: white icons
-        statusBarIconBrightness: Brightness.light, // Android: white icons
+        statusBarBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: primaryDark,
+        backgroundColor: c.background,
         body: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
@@ -146,18 +148,15 @@ class _SplashScreenState extends State<SplashScreen>
                       width: 76,
                       height: 76,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF27272A),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.10),
-                          width: 1,
-                        ),
+                        color: c.accent,
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: c.cardShadow,
                       ),
-                      child: const Center(
-                        child: Icon(
+                      child: Center(
+                        child: AppIcon(
                           Icons.inventory_2_rounded,
                           size: 38,
-                          color: Colors.white,
+                          color: c.onAccent,
                         ),
                       ),
                     ),
@@ -167,10 +166,10 @@ class _SplashScreenState extends State<SplashScreen>
                     // App Title
                     Text(
                       'Personal Inventory',
-                      style: GoogleFonts.inter(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: c.textPrimary,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
                         letterSpacing: -0.4,
                       ),
                     ),
@@ -180,8 +179,8 @@ class _SplashScreenState extends State<SplashScreen>
                     // Subtitle in English
                     Text(
                       context.l10n.splashTagline,
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFFA1A1AA),
+                      style: GoogleFonts.plusJakartaSans(
+                        color: c.textSecondary,
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
                       ),
@@ -199,10 +198,10 @@ class _SplashScreenState extends State<SplashScreen>
                               height: 2.5,
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
-                                child: const LinearProgressIndicator(
-                                  backgroundColor: Color(0xFF27272A),
+                                child: LinearProgressIndicator(
+                                  backgroundColor: c.fill,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(0xFF3B82F6),
+                                    c.primary,
                                   ),
                                 ),
                               ),
@@ -222,8 +221,8 @@ class _SplashScreenState extends State<SplashScreen>
                                   provider.initStatus,
                                   key: ValueKey(provider.initStatus),
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.inter(
-                                    color: const Color(0xFF71717A),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: c.textSecondary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -254,8 +253,8 @@ class _SplashScreenState extends State<SplashScreen>
                                 ),
                                 child: Text(
                                   context.l10n.continueToApp,
-                                  style: const TextStyle(
-                                    color: Color(0xFF60A5FA),
+                                  style: TextStyle(
+                                    color: c.textPrimary,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -270,8 +269,8 @@ class _SplashScreenState extends State<SplashScreen>
                     // Minimal Footer
                     Text(
                       'v1.0.0',
-                      style: GoogleFonts.inter(
-                        color: const Color(0xFF52525B),
+                      style: GoogleFonts.plusJakartaSans(
+                        color: c.textMuted,
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),

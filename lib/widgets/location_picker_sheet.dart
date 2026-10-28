@@ -9,6 +9,9 @@ import 'app_feedback.dart';
 import 'box_qr_scan_sheet.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
+import 'soft_ui.dart';
+import 'tappable.dart';
 
 /// Reusable modal sheet to pick a storage location hierarchically
 /// (Level-by-level drill down) or by scanning a box QR code directly.
@@ -187,7 +190,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
       for (final box in matches)
         ListTile(
           contentPadding: EdgeInsets.zero,
-          leading: Icon(box.type.icon, color: context.colors.textPrimary),
+          leading: AppIcon(box.type.icon, color: context.colors.textPrimary),
           title: Text(box.name),
           subtitle: Text(
             provider.getBreadcrumbString(box.id),
@@ -237,7 +240,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
 
     return Material(
       color: context.colors.surface,
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
           20,
@@ -272,9 +275,9 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                       Text(
                         widget.title ?? context.l10n.selectStorageLocation,
                         style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.6,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -286,29 +289,29 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                   ),
                 ),
                 // Quick Scan QR Button
-                Material(
-                  color: context.colors.primary,
-                  borderRadius: BorderRadius.circular(14),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: _openQRScanner,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.qr_code_scanner_rounded, color: Colors.white, size: 18),
-                          SizedBox(width: 6),
-                          Text(
-                            context.l10n.scanQr,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
+                Tappable(
+                  semanticLabel: context.l10n.scanQr,
+                  onTap: _openQRScanner,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: context.colors.accent,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppIcon(Icons.qr_code_scanner_rounded, color: context.colors.onAccent, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          context.l10n.scanQr,
+                          style: TextStyle(
+                            color: context.colors.onAccent,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 12,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -322,18 +325,17 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 decoration: BoxDecoration(
                   color: context.colors.fill,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: context.colors.border),
+                  borderRadius: BorderRadius.circular(18),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(6),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         color: context.colors.surface,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(
+                      child: AppIcon(
                         currentAssignedBox.type.icon,
                         size: 16,
                         color: context.colors.textPrimary,
@@ -376,7 +378,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
               onChanged: (v) => setState(() => _query = v),
               decoration: InputDecoration(
                 hintText: context.l10n.searchLocationsRoomsContainers,
-                prefixIcon: const Icon(Icons.search, size: 20),
+                prefixIcon: const AppIcon(Icons.search_rounded, size: 20),
                 isDense: true,
               ),
             ),
@@ -424,12 +426,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                       decoration: BoxDecoration(
                         color: context.colors.fill,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: context.colors.border),
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.inventory_2_outlined, size: 36, color: context.colors.textMuted),
+                          AppIcon(Icons.inventory_2_outlined, size: 36, color: context.colors.textMuted),
                           const SizedBox(height: 8),
                           Text(
                             currentParentBox != null
@@ -461,7 +462,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                   // Make the place you are looking for, right where you are
                   TextButton.icon(
                     onPressed: _createHere,
-                    icon: const Icon(Icons.add_rounded, size: 20),
+                    icon: const AppIcon(Icons.add_rounded, size: 20),
                     label: Text(context.l10n.createLocationHere),
                   ),
                   ],
@@ -478,17 +479,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                   color: isSameAsCurrent
                       ? context.colors.warningSoft.withValues(alpha: 0.6)
                       : context.colors.successSoft,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: isSameAsCurrent
-                        ? const Color(0xFFF59E0B)
-                        : const Color(0xFF10B981),
-                    width: 1,
-                  ),
+                  borderRadius: BorderRadius.circular(18),
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    AppIcon(
                       isSameAsCurrent
                           ? Icons.info_outline_rounded
                           : Icons.check_circle_rounded,
@@ -521,7 +516,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                               fontWeight: FontWeight.bold,
                               color: isSameAsCurrent
                                   ? context.colors.warningStrong
-                                  : const Color(0xFF065F46),
+                                  : AppTones.matcha,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -539,26 +534,22 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
             SizedBox(
               width: double.infinity,
               height: 52,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: context.colors.border,
-                  disabledForegroundColor: context.colors.textSecondary,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
+              child: FilledButton(
+                style: FilledButton.styleFrom(
+                  backgroundColor: context.colors.accent,
+                  foregroundColor: context.colors.onAccent,
+                  disabledBackgroundColor: context.colors.fill,
+                  disabledForegroundColor: context.colors.textMuted,
                 ),
                 onPressed: canConfirm ? _confirmSelection : null,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.check_rounded, size: 20),
+                    const AppIcon(Icons.check_rounded, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       widget.confirmButtonText ?? context.l10n.selectLocation,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                     ),
                   ],
                 ),

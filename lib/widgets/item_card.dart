@@ -4,11 +4,22 @@ import 'app_image_view.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
+import 'soft_ui.dart';
 
 class ItemCard extends StatelessWidget {
   final String name;
   final String description;
   final String? imageUrl;
+  /// Quantity headline on the right, e.g. "12 pcs".
+  final String? quantityText;
+  /// Colored status pill (lent, broken...).
+  final Widget? status;
+  /// Extra pastel tags under the name (low stock, expiring...).
+  final List<Widget> tags;
+  /// 0..1 stock level against the minimum; shown as a thin bar.
+  final double? stockRatio;
+  final Color? stockColor;
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
   final VoidCallback? onTap;
@@ -20,6 +31,11 @@ class ItemCard extends StatelessWidget {
     required this.name,
     required this.description,
     this.imageUrl,
+    this.quantityText,
+    this.status,
+    this.tags = const [],
+    this.stockRatio,
+    this.stockColor,
     this.onDelete,
     this.onEdit,
     this.onTap,
@@ -29,84 +45,83 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
+    final c = context.colors;
+    final hasChips = status != null || tags.isNotEmpty;
+
     Widget card = Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-      ),
-      child: Row(
+      color: c.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: Container(
-              width: 76,
-              height: 76,
-              color: context.colors.fill,
-              child: imageUrl != null && imageUrl!.isNotEmpty
-                  ? AppImageView(
-                      imageUrlOrPath: imageUrl!,
-                      width: 76,
-                      height: 76,
-                      fit: BoxFit.cover,
-                    )
-                  : Center(
-                      child: Icon(
-                        Icons.image_outlined,
-                        color: context.colors.textMuted,
-                        size: 30,
-                      ),
-                    ),
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+          Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  width: 68,
+                  height: 68,
+                  color: c.fill,
+                  child: imageUrl != null && imageUrl!.isNotEmpty
+                      ? AppImageView(imageUrlOrPath: imageUrl!, width: 68, height: 68, fit: BoxFit.cover)
+                      : Center(child: AppIcon(Icons.image_outlined, color: c.textMuted, size: 28)),
                 ),
-                if (description.isNotEmpty) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    description,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: c.textPrimary),
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                    if (description.isNotEmpty) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(fontSize: 12, height: 1.3, color: c.textSecondary),
+                      ),
+                    ],
+                    if (hasChips) ...[
+                      const SizedBox(height: 8),
+                      Wrap(spacing: 6, runSpacing: 6, children: [?status, ...tags]),
+                    ],
+                  ],
+                ),
+              ),
+              if (quantityText != null) ...[
+                const SizedBox(width: 8),
+                Text(
+                  quantityText!,
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: c.textPrimary),
+                ),
               ],
-            ),
+              AppIcon(Icons.chevron_right_rounded, color: c.textMuted, size: 22),
+            ],
           ),
+          if (stockRatio != null) ...[
+            const SizedBox(height: 10),
+            SoftBar(value: stockRatio!, color: stockColor ?? c.successStrong, height: 5),
+          ],
         ],
       ),
     );
 
     if (onTap != null || onLongPress != null) {
-      card = Tappable(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: card,
-      );
+      card = Tappable(onTap: onTap, onLongPress: onLongPress, child: card);
     }
 
     if (onDelete == null && onEdit == null) {
       if (!enableClip) return card;
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: card,
-      );
+      return SoftCard(child: card);
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+    return SoftCard(
       child: Slidable(
         key: ValueKey(name + description),
         endActionPane: ActionPane(
@@ -116,7 +131,7 @@ class ItemCard extends StatelessWidget {
             if (onEdit != null)
               SlidableAction(
                 onPressed: (_) => onEdit!(),
-                backgroundColor: context.colors.primary,
+                backgroundColor: c.primary,
                 foregroundColor: Colors.white,
                 icon: Icons.edit_outlined,
                 label: context.l10n.commonEdit,
@@ -124,7 +139,7 @@ class ItemCard extends StatelessWidget {
             if (onDelete != null)
               SlidableAction(
                 onPressed: (_) => onDelete!(),
-                backgroundColor: Colors.red.shade400,
+                backgroundColor: AppTones.coral,
                 foregroundColor: Colors.white,
                 icon: Icons.delete_outline,
                 label: context.l10n.commonDelete,

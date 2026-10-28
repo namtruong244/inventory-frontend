@@ -5,6 +5,7 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 class MoveLocationDialog extends StatefulWidget {
   final Box targetBox;
@@ -93,7 +94,7 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
               IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close_rounded),
+                icon: const AppIcon(Icons.close_rounded),
               ),
             ],
           ),
@@ -108,7 +109,7 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
             ),
             child: Row(
               children: [
-                Icon(Icons.info_outline, size: 20, color: context.colors.textPrimary),
+                AppIcon(Icons.info_outline, size: 20, color: context.colors.textPrimary),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -245,13 +246,13 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isSelected ? context.colors.primary : context.colors.fill,
+          color: isSelected ? context.colors.accent : context.colors.fill,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(
+        child: AppIcon(
           type.icon,
           size: 20,
-          color: isSelected ? Colors.white : context.colors.textSecondary,
+          color: isSelected ? context.colors.onAccent : context.colors.textSecondary,
         ),
       ),
       title: Text(
@@ -265,13 +266,13 @@ class _MoveLocationDialogState extends State<MoveLocationDialog> {
         disabledReason ?? breadcrumb,
         style: TextStyle(
           fontSize: 11,
-          color: disabledReason != null ? Colors.red.shade400 : context.colors.textMuted,
+          color: disabledReason != null ? AppTones.coral : context.colors.textMuted,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: isSelected
-          ? Icon(Icons.check_circle_rounded, color: context.colors.textPrimary)
+          ? AppIcon(Icons.check_circle_rounded, color: context.colors.textPrimary)
           : null,
     );
   }

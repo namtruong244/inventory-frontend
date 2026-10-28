@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/inventory_provider.dart';
 import 'settings_common.dart';
 import '../theme/app_theme.dart';
+import 'app_icon.dart';
 
 /// Theme and language choices (per-device, not synced to the server).
 class SettingsAppearanceSection extends StatelessWidget {
@@ -22,7 +23,7 @@ class SettingsAppearanceSection extends StatelessWidget {
         buildCardContainer([
           buildPreferenceTile(
             icon: Icons.brightness_6_outlined,
-            iconColor: const Color(0xFF6366F1),
+            iconColor: AppTones.lilac,
             iconBg: context.colors.infoSoft,
             title: l10n.settingsTheme,
             subtitle: l10n.settingsThemeSubtitle,
@@ -36,8 +37,8 @@ class SettingsAppearanceSection extends StatelessWidget {
           const Divider(height: 1),
           buildPreferenceTile(
             icon: Icons.language_rounded,
-            iconColor: const Color(0xFF0EA5E9),
-            iconBg: const Color(0xFFF0F9FF),
+            iconColor: AppTones.sky,
+            iconBg: AppTones.skySoft,
             title: l10n.settingsLanguage,
             subtitle: l10n.settingsLanguageSubtitle,
             valueText: switch (provider.locale?.languageCode) {
@@ -111,7 +112,7 @@ class SettingsAppearanceSection extends StatelessWidget {
               ListTile(
                 title: Text(entry.value),
                 trailing: entry.key == current
-                    ? const Icon(Icons.check_rounded)
+                    ? const AppIcon(Icons.check_rounded)
                     : null,
                 onTap: () => Navigator.pop(ctx, entry.key),
               ),

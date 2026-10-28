@@ -51,6 +51,7 @@ dependencies:
   printing: ^5.15.1
   flutter_secure_storage: ^11.2.0
   path_provider: ^2.1.5
+  flutter_svg: ^2.3.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,7 +75,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # Inter is bundled so the first (possibly offline) launch never falls back
+  # Plus Jakarta Sans (and legacy Inter) are bundled so the first (possibly offline) launch never falls back
   # to the platform font; google_fonts finds these by file name.
   assets:
     - assets/google_fonts/

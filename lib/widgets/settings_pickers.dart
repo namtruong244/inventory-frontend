@@ -4,6 +4,7 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 void showCurrencyPicker(BuildContext context, InventoryProvider provider) {
   final currencies = [
@@ -203,7 +204,7 @@ void showSelectionSheet<T>({
                                 ),
                               ),
                               trailing: isSelected
-                                  ? Icon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
+                                  ? AppIcon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
                                   : null,
                               onTap: () {
                                 Navigator.pop(sheetContext);

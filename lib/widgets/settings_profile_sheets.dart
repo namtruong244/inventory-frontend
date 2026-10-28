@@ -6,6 +6,7 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 void showEditProfileDialog(BuildContext context, InventoryProvider provider) {
   final nameController = TextEditingController(text: provider.userName);
@@ -160,7 +161,7 @@ void showCategoryManagementSheet(BuildContext context, InventoryProvider provide
                               setSheetState(() {});
                             });
                           },
-                          icon: const Icon(Icons.add, size: 16),
+                          icon: const AppIcon(Icons.add, size: 16),
                           label: Text(context.l10n.commonNew, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                           style: FilledButton.styleFrom(
                             backgroundColor: context.colors.primary,
@@ -177,7 +178,7 @@ void showCategoryManagementSheet(BuildContext context, InventoryProvider provide
                       decoration: InputDecoration(
                         hintText: context.l10n.searchCategories,
                         hintStyle: TextStyle(color: context.colors.textMuted, fontSize: 14),
-                        prefixIcon: Icon(Icons.search, size: 20, color: context.colors.textSecondary),
+                        prefixIcon: AppIcon(Icons.search, size: 20, color: context.colors.textSecondary),
                         filled: true,
                         fillColor: context.colors.fill,
                         border: OutlineInputBorder(
@@ -211,7 +212,7 @@ void showCategoryManagementSheet(BuildContext context, InventoryProvider provide
                                       color: context.colors.fill,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: Icon(
+                                    child: AppIcon(
                                       CategoryHelper.getCategoryIcon(cat),
                                       color: context.colors.textPrimary,
                                       size: 20,
@@ -228,7 +229,7 @@ void showCategoryManagementSheet(BuildContext context, InventoryProvider provide
                                   trailing: !isDefault
                                       ? IconButton(
  tooltip: context.l10n.commonDelete,
-                                          icon: const Icon(Icons.delete_outline, size: 20, color: Color(0xFFEF4444)),
+                                          icon: const AppIcon(Icons.delete_outline, size: 20, color: AppTones.coral),
                                           onPressed: () async {
                                             final confirmed = await AppFeedback.showConfirmDialog(
                                               dialogCtx,
@@ -308,7 +309,7 @@ void showAddCategorySubDialog(BuildContext context, InventoryProvider provider, 
                           color: context.colors.fill,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Icon(previewIcon, color: context.colors.textPrimary, size: 22),
+                        child: AppIcon(previewIcon, color: context.colors.textPrimary, size: 22),
                       ),
                       const SizedBox(width: 14),
                       Column(
@@ -338,7 +339,7 @@ void showAddCategorySubDialog(BuildContext context, InventoryProvider provider, 
                   ),
                   if (errorText != null) ...[
                     const SizedBox(height: 6),
-                    Text(errorText!, style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12)),
+                    Text(errorText!, style: const TextStyle(color: AppTones.coral, fontSize: 12)),
                   ],
                   const SizedBox(height: 24),
                   Row(

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../l10n/l10n_ext.dart';
+import '../theme/app_theme.dart';
 
 /// Bottom sheet listing an item's stock movements and consumption estimate.
 class StockHistorySheet extends StatelessWidget {
@@ -94,7 +95,7 @@ class StockHistorySheet extends StatelessWidget {
                           '${m.delta > 0 ? '+' : ''}${provider.formatQty(m.delta, item.unit)}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: m.delta > 0 ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+                            color: m.delta > 0 ? AppTones.matcha : AppTones.coral,
                           ),
                         ),
                       Text('→ ${provider.formatQty(m.quantityAfter, item.unit)}',

@@ -6,6 +6,7 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 
 Widget buildCustomAttributesCard(BuildContext context, Item item) {
@@ -16,14 +17,8 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
     padding: const EdgeInsets.all(18),
     decoration: BoxDecoration(
       color: context.colors.surface,
-      borderRadius: BorderRadius.circular(20),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
-          blurRadius: 10,
-          offset: const Offset(0, 3),
-        ),
-      ],
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: context.colors.cardShadow,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +28,7 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
             Expanded(
               child: Row(
                 children: [
-                  Icon(Icons.tune_rounded, size: 20, color: context.colors.textPrimary),
+                  AppIcon(Icons.tune_rounded, size: 20, color: context.colors.textPrimary),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
@@ -65,10 +60,10 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
             ),
             TextButton.icon(
               onPressed: () => showManageAttributesSheet(context, item),
-              icon: Icon(hasAttributes ? Icons.edit_outlined : Icons.add_rounded, size: 15),
+              icon: AppIcon(hasAttributes ? Icons.edit_outlined : Icons.add_rounded, size: 15),
               label: Text(hasAttributes ? context.l10n.commonManage : context.l10n.commonAdd),
               style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF3B82F6),
+                foregroundColor: AppTones.sky,
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -122,7 +117,6 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
             decoration: BoxDecoration(
               color: context.colors.fill,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: context.colors.border),
             ),
             child: Column(
               children: [
@@ -145,7 +139,7 @@ Widget buildCustomAttributesCard(BuildContext context, Item item) {
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
                   onPressed: () => showManageAttributesSheet(context, item),
-                  icon: const Icon(Icons.add, size: 15),
+                  icon: const AppIcon(Icons.add, size: 15),
                   label: Text(context.l10n.addSpecification),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: context.colors.textPrimary,
@@ -225,7 +219,7 @@ void showManageAttributesSheet(
                     const SizedBox(height: 16),
                     Row(
                       children: [
-                        Icon(Icons.tune_rounded, size: 22, color: context.colors.textPrimary),
+                        AppIcon(Icons.tune_rounded, size: 22, color: context.colors.textPrimary),
                         const SizedBox(width: 8),
                         Text(
                           context.l10n.specificationsAttributes,
@@ -238,7 +232,7 @@ void showManageAttributesSheet(
                         const Spacer(),
                         IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                          icon: const Icon(Icons.close, size: 20),
+                          icon: const AppIcon(Icons.close, size: 20),
                           onPressed: () => Navigator.pop(ctx),
                         ),
                       ],
@@ -266,7 +260,6 @@ void showManageAttributesSheet(
                         decoration: BoxDecoration(
                           color: context.colors.fill,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: context.colors.border),
                         ),
                         child: Column(
                           children: currentAttributes.entries.map((entry) {
@@ -293,7 +286,7 @@ void showManageAttributesSheet(
                                 children: [
                                   IconButton(
  tooltip: context.l10n.commonEdit,
-                                    icon: Icon(Icons.edit_outlined, size: 18, color: context.colors.textSecondary),
+                                    icon: AppIcon(Icons.edit_outlined, size: 18, color: context.colors.textSecondary),
                                     onPressed: () {
                                       setSheetState(() {
                                         keyController.text = entry.key;
@@ -303,7 +296,7 @@ void showManageAttributesSheet(
                                   ),
                                   IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                                    icon: const Icon(Icons.close_rounded, size: 18, color: Color(0xFFEF4444)),
+                                    icon: const AppIcon(Icons.close_rounded, size: 18, color: AppTones.coral),
                                     onPressed: () async {
                                       final newAttrs = Map<String, dynamic>.from(latestItem.customAttributes)
                                         ..remove(entry.key);
@@ -347,9 +340,9 @@ void showManageAttributesSheet(
                                 backgroundColor: context.colors.fill,
                                 side: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(24),
                                 ),
-                                avatar: Icon(Icons.add, size: 14, color: context.colors.textSecondary),
+                                avatar: AppIcon(Icons.add, size: 14, color: context.colors.textSecondary),
                                 label: Text(
                                   attr,
                                   style: TextStyle(

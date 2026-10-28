@@ -13,6 +13,7 @@ import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import '../utils/text_normalize.dart';
+import '../widgets/app_icon.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -62,7 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: Icon(Icons.arrow_back_ios_new_rounded, color: context.colors.textPrimary, size: 16),
+              child: AppIcon(Icons.arrow_back_ios_new_rounded, color: context.colors.textPrimary, size: 16),
             ),
             onPressed: () => Navigator.pop(context),
           ),
@@ -76,18 +77,11 @@ class _SearchScreenState extends State<SearchScreen> {
             decoration: BoxDecoration(
               color: context.colors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: context.colors.border),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              boxShadow: context.colors.cardShadow,
             ),
             child: Row(
               children: [
-                Icon(Icons.search, size: 20, color: context.colors.textMuted),
+                AppIcon(Icons.search, size: 20, color: context.colors.textMuted),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
@@ -126,7 +120,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         color: context.colors.border,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.close_rounded, size: 16, color: context.colors.textSecondary),
+                      child: AppIcon(Icons.close_rounded, size: 16, color: context.colors.textSecondary),
                     ),
                   ),
               ],
@@ -157,18 +151,15 @@ class _SearchScreenState extends State<SearchScreen> {
                             margin: const EdgeInsets.only(right: 8),
                             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                             decoration: BoxDecoration(
-                              color: isSelected ? context.colors.primary : context.colors.surface,
+                              color: isSelected ? context.colors.accent : context.colors.surface,
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: isSelected ? context.colors.primary : context.colors.border,
-                              ),
                             ),
                             child: Text(
                               _filterLabel(context, filter),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                color: isSelected ? Colors.white : context.colors.textPrimary,
+                                color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
                               ),
                             ),
                           ),
@@ -196,7 +187,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_rounded, size: 56, color: context.colors.border),
+            AppIcon(Icons.search_rounded, size: 56, color: context.colors.border),
             const SizedBox(height: 12),
             Text(
               context.l10n.searchYourEntireInventory,
@@ -251,7 +242,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined, size: 56, color: context.colors.border),
+            AppIcon(Icons.inventory_2_outlined, size: 56, color: context.colors.border),
             const SizedBox(height: 12),
             Text(
               context.l10n.noResultsFor(_query),
@@ -276,7 +267,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (matchingBoxes.isNotEmpty) ...[
           Row(
             children: [
-              const Icon(Icons.meeting_room_outlined, size: 18),
+              const AppIcon(Icons.meeting_room_outlined, size: 18),
               const SizedBox(width: 8),
               Text(
                 context.l10n.storageLocations(matchingBoxes.length),
@@ -314,7 +305,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (matchingItems.isNotEmpty) ...[
           Row(
             children: [
-              const Icon(Icons.category_outlined, size: 18),
+              const AppIcon(Icons.category_outlined, size: 18),
               const SizedBox(width: 8),
               Text(
                 context.l10n.commonItems(matchingItems.length),
@@ -340,14 +331,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: context.colors.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: context.colors.cardShadow,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,7 +410,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.location_on_outlined, size: 14, color: context.colors.textPrimary),
+                                  AppIcon(Icons.location_on_outlined, size: 14, color: context.colors.textPrimary),
                                   const SizedBox(width: 6),
                                   Flexible(
                                     child: Text(
@@ -439,7 +424,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 4),
-                                  Icon(Icons.chevron_right, size: 14, color: context.colors.textSecondary),
+                                  AppIcon(Icons.chevron_right, size: 14, color: context.colors.textSecondary),
                                 ],
                               ),
                             ),

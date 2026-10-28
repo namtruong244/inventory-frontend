@@ -7,6 +7,7 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
   final isOnline = provider.isConnected;
@@ -18,7 +19,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
     ListTile(
       leading: buildIconBox(
         Icons.dns_rounded,
-        isOnline ? const Color(0xFF10B981) : const Color(0xFFEF4444),
+        isOnline ? AppTones.matcha : AppTones.coral,
         isOnline ? context.colors.successSoft : context.colors.dangerSoft,
       ),
       title: Row(
@@ -31,7 +32,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: isOnline ? const Color(0xFFDCFCE7) : context.colors.dangerSoft,
+              color: isOnline ? AppTones.limeSoft : context.colors.dangerSoft,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -39,7 +40,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
-                color: isOnline ? const Color(0xFF15803D) : context.colors.dangerStrong,
+                color: isOnline ? AppTones.matcha : context.colors.dangerStrong,
               ),
             ),
           ),
@@ -49,7 +50,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
         serverUrl,
         style: TextStyle(fontSize: 12, color: context.colors.textSecondary, fontFamily: 'monospace'),
       ),
-      trailing: Icon(Icons.edit_outlined, color: context.colors.textSecondary, size: 20),
+      trailing: AppIcon(Icons.edit_outlined, color: context.colors.textSecondary, size: 20),
       onTap: () => showChangeServerUrlDialog(context, provider),
     ),
     const Divider(height: 1),
@@ -58,7 +59,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
     ListTile(
       leading: buildIconBox(
         Icons.verified_user_outlined,
-        const Color(0xFF6366F1),
+        AppTones.lilac,
         context.colors.infoSoft,
       ),
       title: Text(
@@ -91,8 +92,8 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
     ListTile(
       leading: buildIconBox(
         Icons.sync_rounded,
-        const Color(0xFF0284C7),
-        const Color(0xFFE0F2FE),
+        AppTones.sky,
+        AppTones.skySoft,
       ),
       title: Text(
         context.l10n.syncWithServer,
@@ -110,7 +111,7 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
               height: 20,
               child: CircularProgressIndicator(strokeWidth: 2, color: context.colors.textPrimary),
             )
-          : Icon(Icons.refresh_rounded, color: context.colors.textSecondary, size: 20),
+          : AppIcon(Icons.refresh_rounded, color: context.colors.textSecondary, size: 20),
       onTap: provider.isSyncing
           ? null
           : () async {
@@ -133,7 +134,7 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       title: Text(context.l10n.backendApiUrl, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -148,7 +149,7 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
             controller: controller,
             decoration: InputDecoration(
               hintText: kDebugMode ? 'http://localhost:8080' : 'https://',
-              prefixIcon: const Icon(Icons.link_rounded),
+              prefixIcon: const AppIcon(Icons.link_rounded),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
             keyboardType: TextInputType.url,

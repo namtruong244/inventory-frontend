@@ -39,7 +39,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: context.colors.border),
+            boxShadow: context.colors.cardShadow,
           ),
           child: Row(
             children: [
@@ -50,7 +50,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   color: context.colors.fill,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: AppIcon(
                   CategoryHelper.getCategoryIcon(_selectedCategory),
                   size: 20,
                   color: context.colors.textPrimary,
@@ -84,7 +84,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   ],
                 ),
               ),
-              Icon(
+              AppIcon(
                 Icons.keyboard_arrow_down_rounded,
                 color: context.colors.textSecondary,
                 size: 22,
@@ -122,7 +122,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   : 'pcs',
               controller: _unitController,
               suffixIcon: PopupMenuButton<String>(
-                icon: Icon(
+                icon: AppIcon(
                   Icons.arrow_drop_down_rounded,
                   color: context.colors.textSecondary,
                 ),
@@ -181,7 +181,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           decoration: BoxDecoration(
             color: context.colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: context.colors.border),
+            boxShadow: context.colors.cardShadow,
           ),
           child: Row(
             children: [
@@ -192,7 +192,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   color: context.colors.fill,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: AppIcon(
                   currentBox?.type.icon ?? Icons.location_on_outlined,
                   color: context.colors.textPrimary,
                   size: 20,
@@ -214,7 +214,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                     const SizedBox(height: 3),
                     Row(
                       children: [
-                        Icon(
+                        AppIcon(
                           Icons.route_outlined,
                           size: 12,
                           color: context.colors.textSecondary,
@@ -244,7 +244,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   color: context.colors.fill,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: AppIcon(
                   Icons.chevron_right_rounded,
                   color: context.colors.textPrimary,
                   size: 18,
@@ -270,14 +270,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         decoration: BoxDecoration(
           color: context.colors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: context.colors.border, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: context.colors.cardShadow,
         ),
         child: Row(
           children: [
@@ -289,7 +282,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                     : context.colors.fill,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
+              child: AppIcon(
                 Icons.shopping_basket_outlined,
                 color: _isConsumable ? Colors.white : context.colors.textSecondary,
                 size: 22,
@@ -348,20 +341,15 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? context.colors.primary : context.colors.surface,
+                  color: isSelected ? context.colors.accent : context.colors.surface,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(
-                    color: isSelected
-                        ? context.colors.primary
-                        : context.colors.border,
-                  ),
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    AppIcon(
                       status.icon,
                       size: 16,
-                      color: isSelected ? Colors.white : status.color,
+                      color: isSelected ? context.colors.onAccent : status.color,
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -372,7 +360,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                             ? FontWeight.bold
                             : FontWeight.w500,
                         color: isSelected
-                            ? Colors.white
+                            ? context.colors.onAccent
                             : context.colors.textPrimary,
                       ),
                     ),
@@ -429,7 +417,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         controller: _barcodeController,
         suffixIcon: IconButton(
           tooltip: context.l10n.scanBarcode,
-          icon: const Icon(Icons.qr_code_scanner_rounded),
+          icon: const AppIcon(Icons.qr_code_scanner_rounded),
           onPressed: () async {
             final code = await showBarcodeScanSheet(context);
             if (code != null) _update(() => _barcodeController.text = code);
@@ -560,15 +548,11 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               decoration: BoxDecoration(
                 color: context.colors.fill,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: context.colors.border,
-                  style: BorderStyle.solid,
-                ),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  AppIcon(
                     isReceipt
                         ? Icons.receipt_long_outlined
                         : Icons.add_a_photo_outlined,
@@ -648,7 +632,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                           color: Colors.black.withValues(alpha: 0.65),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(
+                        child: const AppIcon(
                           Icons.close,
                           size: 12,
                           color: Colors.white,
@@ -734,14 +718,14 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   Tappable(
                     semanticLabel: MaterialLocalizations.of(context).clearButtonTooltip,
                     onTap: () => onSelected(null),
-                    child: Icon(
+                    child: AppIcon(
                       Icons.clear,
                       size: 16,
                       color: context.colors.textSecondary,
                     ),
                   )
                 else
-                  Icon(
+                  AppIcon(
                     Icons.event_outlined,
                     size: 16,
                     color: context.colors.textSecondary,

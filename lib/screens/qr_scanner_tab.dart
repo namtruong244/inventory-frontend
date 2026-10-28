@@ -15,6 +15,7 @@ import '../widgets/scan_glyphs.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../widgets/app_icon.dart';
 
 class QRScannerTab extends StatefulWidget {
   final bool isFullScreen;
@@ -182,269 +183,246 @@ class _QRScannerTabState extends State<QRScannerTab> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final c = context.colors;
+    final l10n = AppLocalizations.of(context);
     final canPop = widget.isFullScreen || Navigator.canPop(context);
+    final reticleW = _isBarcodeMode ? 280.0 : 230.0;
+    final reticleH = _isBarcodeMode ? 150.0 : 230.0;
 
+    // Camera fills the screen; controls float on top and the bottom card holds
+    // the mode switch and manual entry, within thumb reach.
     return Scaffold(
-      backgroundColor: context.colors.background,
-      appBar: canPop
-          ? AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
- tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                icon: ScanGlyph(ScanGlyphType.back, color: context.colors.textPrimary),
-                onPressed: () => Navigator.pop(context),
-              ),
-              title: Text(
-                AppLocalizations.of(context).scanTitle,
-                style: TextStyle(
-                  color: context.colors.textPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+      backgroundColor: Colors.black,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          MobileScanner(controller: _controller, onDetect: _onDetect),
+          // Soft shade behind the top controls
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 140,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.black.withValues(alpha: 0.55), Colors.transparent],
+                  ),
                 ),
               ),
-              centerTitle: true,
-            )
-          : null,
-      body: SafeArea(
-        bottom: false,
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(20, canPop ? 8 : 16, 20, canPop ? 40 : 120),
-          children: [
-            if (!canPop) ...[
-              Text(
-                AppLocalizations.of(context).scanTitle,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
+            ),
+          ),
+          Align(
+            alignment: const Alignment(0, -0.35),
+            child: IgnorePointer(
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                width: reticleW,
+                height: reticleH,
+                child: CustomPaint(painter: _ReticlePainter(c.accent)),
               ),
-              const SizedBox(height: 4),
-            ],
-
-            // Scanner mode toggle
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(16),
-              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Row(
                 children: [
+                  if (canPop)
+                    _glassButton(
+                      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                      onTap: () => Navigator.pop(context),
+                      child: const ScanGlyph(ScanGlyphType.back, color: Colors.white),
+                    )
+                  else
+                    const SizedBox(width: 44),
                   Expanded(
-                    child: _buildModeTab(
-                      isBarcode: false,
-                      icon: Icons.qr_code_2_rounded,
-                      label: AppLocalizations.of(context).scanModeLocation,
+                    child: Text(
+                      l10n.scanTitle,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w800),
                     ),
                   ),
-                  Expanded(
-                    child: _buildModeTab(
-                      isBarcode: true,
-                      icon: Icons.barcode_reader,
-                      label: AppLocalizations.of(context).scanModeProduct,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            Text(
-              _isBarcodeMode
-                  ? AppLocalizations.of(context).scanHintProduct
-                  : AppLocalizations.of(context).scanHintLocation,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: context.colors.textSecondary,
-                fontSize: 13,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Scanner Viewfinder
-            ClipRRect(
-              borderRadius: BorderRadius.circular(28),
-              child: Container(
-                height: 290,
-                color: Colors.black,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    MobileScanner(
-                      controller: _controller,
-                      onDetect: _onDetect,
-                    ),
-                    // Flashlight, for dark garages and cupboards
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: ValueListenableBuilder<MobileScannerState>(
-                        valueListenable: _controller,
-                        builder: (context, state, _) {
-                          if (state.torchState == TorchState.unavailable) return const SizedBox.shrink();
-                          final on = state.torchState == TorchState.on;
-                          return IconButton.filledTonal(
-                            tooltip: context.l10n.flashlight,
-                            onPressed: _controller.toggleTorch,
-                            icon: ScanGlyph(
-                              on ? ScanGlyphType.flashOn : ScanGlyphType.flashOff,
-                              color: context.colors.textPrimary,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    // Reticle
-                    Center(
-                      child: Container(
-                        width: _isBarcodeMode ? 260 : 210,
-                        height: _isBarcodeMode ? 140 : 210,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.8),
-                            width: 2.5,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+                  ValueListenableBuilder<MobileScannerState>(
+                    valueListenable: _controller,
+                    builder: (context, state, _) {
+                      if (state.torchState == TorchState.unavailable) return const SizedBox(width: 44);
+                      final on = state.torchState == TorchState.on;
+                      return _glassButton(
+                        tooltip: context.l10n.flashlight,
+                        onTap: _controller.toggleTorch,
+                        highlighted: on,
+                        child: ScanGlyph(
+                          on ? ScanGlyphType.flashOn : ScanGlyphType.flashOff,
+                          color: on ? c.onAccent : Colors.white,
                         ),
-                      ),
-                    ),
-                    if (_isProcessing)
-                      Container(
-                        color: Colors.black54,
-                        child: const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Manual Input Card
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.keyboard_outlined, size: 20, color: theme.colorScheme.primary),
-                      const SizedBox(width: 8),
-                      Text(
-                        AppLocalizations.of(context).scanManualTitle,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Text(
-                    AppLocalizations.of(context).scanManualLabel,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: context.colors.textPrimary,
-                      letterSpacing: -0.2,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _manualController,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                            color: context.colors.textPrimary,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: _isBarcodeMode ? 'e.g. 194253714201' : 'e.g. elec_001, loc_floor_1',
-                            hintStyle: TextStyle(
-                              color: context.colors.textMuted,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            ),
-                            filled: true,
-                            fillColor: context.colors.fill,
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide.none,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          onSubmitted: (val) {
-                            if (val.trim().isNotEmpty) _processCode(val.trim());
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      FilledButton(
-                        onPressed: () {
-                          if (_manualController.text.trim().isNotEmpty) {
-                            _processCode(_manualController.text.trim());
-                          }
-                        },
-                        style: FilledButton.styleFrom(
-                          backgroundColor: context.colors.primary,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: const Icon(Icons.search, size: 20),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Sample codes for development only; they mean nothing to real users.
-                  if (kDebugMode)
-                  Consumer<InventoryProvider>(
-                    builder: (context, provider, child) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Quick Sample Codes (Tap to Test):',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: context.colors.textMuted,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              _buildQuickChip('elec_001', 'elec_001 (Box)'),
-                              _buildQuickChip('box_game_01', 'box_game_01 (Drawer)'),
-                              _buildQuickChip('194253714201', '194253714201 (MacBook UPC)'),
-                              _buildQuickChip('300810733877', '300810733877 (Meds Barcode)'),
-                            ],
-                          ),
-                        ],
                       );
                     },
                   ),
                 ],
               ),
             ),
-          ],
+          ),
+          if (_isProcessing)
+            Container(
+              color: Colors.black54,
+              child: const Center(child: CircularProgressIndicator(color: Colors.white)),
+            ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SingleChildScrollView(
+              reverse: true,
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.of(context).padding.bottom),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: c.surface,
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: c.cardShadow,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(color: c.fill, borderRadius: BorderRadius.circular(20)),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _buildModeTab(
+                              isBarcode: false,
+                              icon: Icons.qr_code_2_rounded,
+                              label: l10n.scanModeLocation,
+                            ),
+                          ),
+                          Expanded(
+                            child: _buildModeTab(
+                              isBarcode: true,
+                              icon: Icons.barcode_reader,
+                              label: l10n.scanModeProduct,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      _isBarcodeMode ? l10n.scanHintProduct : l10n.scanHintLocation,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: c.textSecondary, fontSize: 13),
+                    ),
+                    const SizedBox(height: 12),
+                    // Manual entry is secondary, so it sits behind a drill-down row.
+                    Tappable(
+                      semanticLabel: l10n.scanManualTitle,
+                      onTap: () => setState(() => _manualOpen = !_manualOpen),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(color: c.fill, borderRadius: BorderRadius.circular(18)),
+                        child: Row(
+                          children: [
+                            AppIcon(Icons.keyboard_outlined, size: 20, color: c.textPrimary),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                l10n.scanManualTitle,
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: c.textPrimary),
+                              ),
+                            ),
+                            AppIcon(
+                              _manualOpen ? Icons.keyboard_arrow_down_rounded : Icons.chevron_right_rounded,
+                              size: 22,
+                              color: c.textMuted,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (_manualOpen) ...[
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _manualController,
+                              autofocus: true,
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: c.textPrimary),
+                              decoration: InputDecoration(
+                                hintText: l10n.scanManualLabel,
+                                fillColor: c.fill,
+                              ),
+                              onSubmitted: (val) {
+                                if (val.trim().isNotEmpty) _processCode(val.trim());
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Tappable(
+                            semanticLabel: context.l10n.commonSearch,
+                            onTap: () {
+                              if (_manualController.text.trim().isNotEmpty) {
+                                _processCode(_manualController.text.trim());
+                              }
+                            },
+                            child: Container(
+                              width: 52,
+                              height: 52,
+                              decoration: BoxDecoration(color: c.accent, borderRadius: BorderRadius.circular(18)),
+                              child: AppIcon(Icons.search_rounded, size: 22, color: c.onAccent),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Sample codes for development only; they mean nothing to real users.
+                      if (kDebugMode) ...[
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _buildQuickChip('elec_001', 'elec_001 (Box)'),
+                            _buildQuickChip('box_game_01', 'box_game_01 (Drawer)'),
+                            _buildQuickChip('194253714201', '194253714201 (MacBook UPC)'),
+                          ],
+                        ),
+                      ],
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  bool _manualOpen = false;
+
+  Widget _glassButton({
+    required String tooltip,
+    required VoidCallback onTap,
+    required Widget child,
+    bool highlighted = false,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: Tappable(
+        semanticLabel: tooltip,
+        onTap: onTap,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: highlighted ? context.colors.accent : Colors.white.withValues(alpha: 0.18),
+            shape: BoxShape.circle,
+          ),
+          child: Center(child: child),
         ),
       ),
     );
@@ -452,31 +430,33 @@ class _QRScannerTabState extends State<QRScannerTab> {
 
   Widget _buildModeTab({required bool isBarcode, required IconData icon, required String label}) {
     final isSelected = _isBarcodeMode == isBarcode;
+    final c = context.colors;
 
     return Tappable(
+      semanticLabel: label,
       onTap: () => setState(() => _isBarcodeMode = isBarcode),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? context.colors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected ? c.accent : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 16,
-              color: isSelected ? Colors.white : context.colors.textSecondary,
-            ),
+            AppIcon(icon, size: 18, color: isSelected ? c.onAccent : c.textSecondary),
             const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected ? Colors.white : context.colors.textSecondary,
+            Flexible(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                  color: isSelected ? c.onAccent : c.textSecondary,
+                ),
               ),
             ),
           ],
@@ -498,4 +478,30 @@ class _QRScannerTabState extends State<QRScannerTab> {
       },
     );
   }
+}
+
+/// Four rounded corner brackets in the accent color.
+class _ReticlePainter extends CustomPainter {
+  final Color color;
+  _ReticlePainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const len = 34.0, r = 18.0;
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 4;
+    final w = size.width, h = size.height;
+    final path = Path()
+      ..moveTo(0, len)..lineTo(0, r)..quadraticBezierTo(0, 0, r, 0)..lineTo(len, 0)
+      ..moveTo(w - len, 0)..lineTo(w - r, 0)..quadraticBezierTo(w, 0, w, r)..lineTo(w, len)
+      ..moveTo(w, h - len)..lineTo(w, h - r)..quadraticBezierTo(w, h, w - r, h)..lineTo(w - len, h)
+      ..moveTo(len, h)..lineTo(r, h)..quadraticBezierTo(0, h, 0, h - r)..lineTo(0, h - len);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(_ReticlePainter old) => old.color != color;
 }

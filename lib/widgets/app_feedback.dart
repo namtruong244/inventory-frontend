@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 class AppFeedback {
   /// Display action confirmation dialog (Delete, Cancel, Change...)
@@ -50,11 +51,11 @@ class AppFeedback {
                             : context.colors.border, // Light slate
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
+                      child: AppIcon(
                         icon,
                         size: 32,
                         color: isDestructive
-                            ? const Color(0xFFDC2626) // Strong red
+                            ? AppTones.coral // Strong red
                             : theme.colorScheme.primary,
                       ),
                     ),
@@ -106,7 +107,7 @@ class AppFeedback {
                             onPressed: () => Navigator.of(context).pop(true),
                             style: FilledButton.styleFrom(
                               backgroundColor: isDestructive
-                                  ? const Color(0xFFDC2626)
+                                  ? AppTones.coral
                                   : theme.colorScheme.primary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
@@ -157,18 +158,14 @@ class AppFeedback {
         padding: EdgeInsets.zero,
         duration: Duration(seconds: onAction == null ? 3 : 6),
         content: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.72),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.32),
-                  width: 1.2,
-                ),
+                borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
                     color: color.withValues(alpha: 0.22),
@@ -191,7 +188,7 @@ class AppFeedback {
                         ),
                       ],
                     ),
-                    child: Icon(
+                    child: AppIcon(
                       icon,
                       color: iconColor,
                       size: 18,
@@ -246,8 +243,8 @@ class AppFeedback {
       actionLabel: actionLabel,
       onAction: onAction,
       icon: Icons.check_rounded,
-      color: const Color(0xFF059669), // Emerald
-      iconColor: const Color(0xFF059669),
+      color: AppTones.matcha, // Emerald
+      iconColor: AppTones.matcha,
     );
   }
 
@@ -257,8 +254,8 @@ class AppFeedback {
       context,
       message: message,
       icon: Icons.priority_high_rounded,
-      color: const Color(0xFFDC2626), // Rose red
-      iconColor: const Color(0xFFDC2626),
+      color: AppTones.coral, // Rose red
+      iconColor: AppTones.coral,
     );
   }
 
@@ -268,8 +265,8 @@ class AppFeedback {
       context,
       message: message,
       icon: Icons.warning_amber_rounded,
-      color: const Color(0xFFD97706), // Amber
-      iconColor: const Color(0xFFD97706),
+      color: AppTones.amber, // Amber
+      iconColor: AppTones.amber,
     );
   }
 
@@ -279,8 +276,8 @@ class AppFeedback {
       context,
       message: message,
       icon: Icons.info_outline_rounded,
-      color: const Color(0xFF1E293B), // Deep navy / charcoal
-      iconColor: const Color(0xFF1E293B),
+      color: AppTones.ink, // Deep navy / charcoal
+      iconColor: AppTones.ink,
     );
   }
 }

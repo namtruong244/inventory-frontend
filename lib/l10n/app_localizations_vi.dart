@@ -2601,4 +2601,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get opUpdateSettings => 'Đổi cài đặt';
+
+  @override
+  String daysOverdueCount(int days) {
+    return 'Quá hạn $days ngày';
+  }
 }

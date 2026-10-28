@@ -68,7 +68,7 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
       decoration: BoxDecoration(
         color: c.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: c.border),
+        boxShadow: context.colors.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

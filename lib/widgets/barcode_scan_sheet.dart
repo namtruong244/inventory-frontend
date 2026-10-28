@@ -69,7 +69,7 @@ class _BarcodeScanSheetState extends State<_BarcodeScanSheet> {
               ),
               const SizedBox(height: 14),
               ClipRRect(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 child: SizedBox(
                   height: 260,
                   child: MobileScanner(controller: _controller, onDetect: _onDetect),

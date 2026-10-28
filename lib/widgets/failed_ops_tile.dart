@@ -5,6 +5,7 @@ import '../services/offline_store.dart';
 import '../theme/app_theme.dart';
 import 'app_feedback.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 /// Lists offline changes the server could not apply (e.g. the item was edited elsewhere)
 /// and lets the user keep their version or drop it. Hidden when there is nothing to resolve.
@@ -21,9 +22,9 @@ class FailedOpsTile extends StatelessWidget {
       child: ListTile(
         tileColor: context.colors.warningSoft,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        leading: const Icon(
+        leading: const AppIcon(
           Icons.sync_problem_rounded,
-          color: Color(0xFFD97706),
+          color: AppTones.amber,
         ),
         title: Text(context.l10n.changesNeedAttention(count)),
         subtitle: Text(context.l10n.tapToKeepYourVersion),

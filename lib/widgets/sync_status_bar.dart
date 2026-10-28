@@ -6,6 +6,7 @@ import '../providers/inventory_provider.dart';
 import 'failed_ops_tile.dart';
 import 'session_guard.dart';
 import '../theme/app_theme.dart';
+import 'app_icon.dart';
 
 /// App-wide strip shown above every screen while the app is offline, changes are
 /// waiting to sync, or the server dropped some of them. Tap for details and "Sync now".
@@ -50,7 +51,7 @@ class SyncStatusBar extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   child: Row(
                     children: [
-                      Icon(
+                      AppIcon(
                         provider.isOffline
                             ? Icons.cloud_off_rounded
                             : Icons.sync_problem_rounded,
@@ -66,7 +67,7 @@ class SyncStatusBar extends StatelessWidget {
                           style: TextStyle(fontSize: 12, color: fg, fontWeight: FontWeight.w600),
                         ),
                       ),
-                      Icon(Icons.chevron_right_rounded, size: 18, color: fg),
+                      AppIcon(Icons.chevron_right_rounded, size: 18, color: fg),
                     ],
                   ),
                 ),
@@ -162,7 +163,7 @@ class _SyncDetailsSheet extends StatelessWidget {
                         height: 16,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.sync_rounded),
+                    : const AppIcon(Icons.sync_rounded),
                 label: Text(l10n.syncNow),
               ),
             ),

@@ -5,6 +5,7 @@ import '../providers/inventory_provider.dart';
 import 'app_form_field.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 
 Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider provider) async {
@@ -55,7 +56,7 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                           color: context.colors.fill,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: Icon(previewIcon, color: context.colors.textPrimary, size: 24),
+                        child: AppIcon(previewIcon, color: context.colors.textPrimary, size: 24),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -95,7 +96,7 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                     const SizedBox(height: 6),
                     Text(
                       errorText!,
-                      style: const TextStyle(color: Color(0xFFDC2626), fontSize: 12),
+                      style: const TextStyle(color: AppTones.coral, fontSize: 12),
                     ),
                   ],
                   const SizedBox(height: 24),
@@ -207,7 +208,7 @@ void showCategoryPickerSheet(
                           Navigator.pop(ctx);
                           onAddNew();
                         },
-                        icon: Icon(Icons.add, size: 16, color: context.colors.textPrimary),
+                        icon: AppIcon(Icons.add, size: 16, color: context.colors.textPrimary),
                         label: Text(
                           context.l10n.newCategory,
                           style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.textPrimary, fontSize: 13),
@@ -231,13 +232,13 @@ void showCategoryPickerSheet(
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: isSelected ? context.colors.primary : context.colors.fill,
+                              color: isSelected ? context.colors.accent : context.colors.fill,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Icon(
+                            child: AppIcon(
                               CategoryHelper.getCategoryIcon(cat),
                               size: 18,
-                              color: isSelected ? Colors.white : context.colors.textPrimary,
+                              color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
                             ),
                           ),
                           title: Text(
@@ -249,7 +250,7 @@ void showCategoryPickerSheet(
                             ),
                           ),
                           trailing: isSelected
-                              ? Icon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
+                              ? AppIcon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
                               : null,
                           onTap: () {
                             onSelected(cat);

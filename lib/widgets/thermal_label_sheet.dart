@@ -7,6 +7,7 @@ import 'app_feedback.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_icon.dart';
 
 class ThermalLabelSheet extends StatefulWidget {
   final Box box;
@@ -84,7 +85,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
               IconButton(
  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close_rounded),
+                icon: const AppIcon(Icons.close_rounded),
               ),
             ],
           ),
@@ -120,13 +121,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                 color: context.colors.surface,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.black, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+                boxShadow: context.colors.cardShadow,
               ),
               child: Row(
                 children: [
@@ -217,7 +212,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                     Navigator.pop(context);
                     AppFeedback.showSuccess(context, context.l10n.thermalLabelCopiedToClipboard);
                   },
-                  icon: const Icon(Icons.copy_rounded, size: 18),
+                  icon: const AppIcon(Icons.copy_rounded, size: 18),
                   label: Text(context.l10n.copyId),
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -238,7 +233,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                       context.l10n.thermalLabelSentToPrinter(_selectedSize),
                     );
                   },
-                  icon: const Icon(Icons.print_rounded, size: 18),
+                  icon: const AppIcon(Icons.print_rounded, size: 18),
                   label: Text(context.l10n.printLabel),
                   style: FilledButton.styleFrom(
                     backgroundColor: context.colors.primary,

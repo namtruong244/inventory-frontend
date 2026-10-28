@@ -14,10 +14,11 @@ import '../widgets/move_item_sheet.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
 import '../widgets/app_refresh.dart';
-import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import '../utils/text_normalize.dart';
+import '../widgets/app_icon.dart';
+import '../widgets/soft_ui.dart';
 
 class ItemsScreen extends StatefulWidget {
   const ItemsScreen({super.key});
@@ -117,9 +118,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       children: [
                         Text(
                           context.l10n.itemCatalog,
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.8,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -131,38 +132,16 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         ),
                       ],
                     ),
-                    if (provider.boxes.isNotEmpty)
-                      FilledButton.icon(
-                        onPressed: () => _showSelectBoxToAddItem(provider),
-                        icon: const Icon(Icons.add, size: 18),
-                        label: Text(context.l10n.addItem),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: context.colors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        ),
-                      ),
                   ],
                 ),
                 const SizedBox(height: 20),
 
                 // Search field
-                TextField(
+                SoftSearchField(
+                  hint: context.l10n.searchItemsBarcodesSerials,
+                  value: _searchQuery,
                   onChanged: (val) => setState(() { _searchQuery = val.trim(); _visibleCount = _pageSize; }),
-                  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
-                  decoration: InputDecoration(
-                    hintText: context.l10n.searchItemsBarcodesSerials,
-                    prefixIcon: const Icon(Icons.search, size: 20),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
- tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
-                            icon: const Icon(Icons.clear, size: 18),
-                            onPressed: () => setState(() => _searchQuery = ''),
-                          )
-                        : null,
-                  ),
+                  onClear: () => setState(() => _searchQuery = ''),
                 ),
                 const SizedBox(height: 16),
 
@@ -193,13 +172,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   decoration: BoxDecoration(
                     color: context.colors.surface,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: context.colors.border),
+                    boxShadow: context.colors.cardShadow,
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String?>(
                       value: _selectedBoxFilter,
                       isExpanded: true,
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                      icon: const AppIcon(Icons.keyboard_arrow_down_rounded),
                       hint: Text(context.l10n.allStorageLocations),
                       items: [
                         DropdownMenuItem<String?>(
@@ -230,7 +209,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     ),
                     child: Column(
                       children: [
-                        Icon(Icons.category_outlined, size: 56, color: context.colors.textMuted),
+                        AppIcon(Icons.category_outlined, size: 56, color: context.colors.textMuted),
                         const SizedBox(height: 16),
                         Text(
                           _searchQuery.isNotEmpty ? context.l10n.noMatchingItemsFound : context.l10n.noItemsFound,
@@ -265,22 +244,24 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     final parentBox = provider.getBoxById(item.boxId);
                     final breadcrumb = parentBox != null ? provider.getBreadcrumbString(parentBox.id) : '';
 
-                    String meta = '${provider.formatQty(item.quantity, item.unit)} • ${item.status.displayName}';
-                    if (item.isLowStock) {
-                      meta += ' • ${context.l10n.tagLowStock}';
-                    }
-                    if (item.purchasePrice != null) meta += ' • ${provider.formatPrice(item.purchasePrice)}';
-                    if (item.isExpired) {
-                      meta += ' • ${context.l10n.tagExpired}';
-                    } else if (item.daysUntilExpiry != null && item.daysUntilExpiry! <= 30) {
-                      meta += ' • ${context.l10n.expiresInShort(item.daysUntilExpiry!)}';
-                    }
-                    if (breadcrumb.isNotEmpty) meta += '\n${context.l10n.inPlacePath(breadcrumb)}';
+                    final c = context.colors;
+                    final tags = <Widget>[
+                      if (item.isLowStock)
+                        SoftChip.tone(context.l10n.tagLowStock, AppTones.amber, icon: Icons.production_quantity_limits_rounded),
+                      if (item.isExpired)
+                        SoftChip.tone(context.l10n.tagExpired, AppTones.coral, icon: Icons.event_busy_outlined)
+                      else if (item.daysUntilExpiry != null && item.daysUntilExpiry! <= 30)
+                        SoftChip.tone(context.l10n.expiresInShort(item.daysUntilExpiry!), AppTones.amber, icon: Icons.event_outlined),
+                    ];
+                    final min = item.minQuantity;
+                    final description = [
+                      if (breadcrumb.isNotEmpty) context.l10n.inPlacePath(breadcrumb),
+                      if (item.purchasePrice != null) provider.formatPrice(item.purchasePrice),
+                    ].join(' • ');
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 12.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
+                      child: SoftCard(
                         child: Slidable(
                           key: ValueKey(item.id),
                           endActionPane: ActionPane(
@@ -290,7 +271,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                               // Move action
                               SlidableAction(
                                 onPressed: (_) => MoveItemSheet.show(context, item),
-                                backgroundColor: const Color(0xFF6366F1),
+                                backgroundColor: AppTones.lilac,
                                 foregroundColor: Colors.white,
                                 icon: Icons.drive_file_move_outlined,
                                 label: context.l10n.commonMove,
@@ -302,7 +283,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                     final loan = provider.getActiveLoanForItem(item.id);
                                     if (loan != null) confirmAndReturnLoan(context, loan, itemName: item.name);
                                   },
-                                  backgroundColor: const Color(0xFF10B981),
+                                  backgroundColor: AppTones.matcha,
                                   foregroundColor: Colors.white,
                                   icon: Icons.assignment_turned_in_outlined,
                                   label: context.l10n.commonReturn,
@@ -310,7 +291,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                               else
                                 SlidableAction(
                                   onPressed: (_) => LendItemSheet.show(context, initialItem: item),
-                                  backgroundColor: const Color(0xFFF59E0B),
+                                  backgroundColor: AppTones.amber,
                                   foregroundColor: Colors.white,
                                   icon: Icons.assignment_ind_outlined,
                                   label: context.l10n.commonLend,
@@ -343,7 +324,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                     }
                                   }
                                 },
-                                backgroundColor: Colors.red.shade400,
+                                backgroundColor: AppTones.coral,
                                 foregroundColor: Colors.white,
                                 icon: Icons.delete_outline,
                                 label: context.l10n.commonDelete,
@@ -352,7 +333,12 @@ class _ItemsScreenState extends State<ItemsScreen> {
                           ),
                           child: ItemCard(
                             name: item.name,
-                            description: item.description.isEmpty ? meta : '${item.description}\n$meta',
+                            description: description,
+                            quantityText: provider.formatQty(item.quantity, item.unit),
+                            status: SoftChip.tone(item.status.displayName, item.status.color, dot: true),
+                            tags: tags,
+                            stockRatio: min != null && min > 0 ? (item.quantity + item.lentQuantity) / (min * 2) : null,
+                            stockColor: item.isLowStock ? AppTones.amber : c.successStrong,
                             imageUrl: item.imageUrl,
                             enableClip: false,
                             onLongPress: () => showItemActionsSheet(context, item),
@@ -383,29 +369,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
   }
 
   Widget _buildStatusFilterChip(int index, String label) {
-    final isSelected = _statusFilterIndex == index;
-    final theme = Theme.of(context);
-
-    return Tappable(
+    return SoftFilterChip(
+      label: label,
+      selected: _statusFilterIndex == index,
       onTap: () => setState(() { _statusFilterIndex = index; _visibleCount = _pageSize; }),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? context.colors.primary : context.colors.surface,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : theme.colorScheme.primary,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            fontSize: 13,
-          ),
-        ),
-      ),
     );
   }
 
-  Future<void> _showSelectBoxToAddItem(InventoryProvider provider) => startAddItemFlow(context);
 }
