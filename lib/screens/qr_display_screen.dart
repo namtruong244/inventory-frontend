@@ -14,7 +14,28 @@ class QRDisplayScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.colors.background,
       appBar: AppBar(
+        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8),
+          child: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: context.colors.surface,
+                shape: BoxShape.circle,
+              ),
+              child: AppIcon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 16,
+                color: context.colors.textPrimary,
+              ),
+            ),
+            onPressed: () => Navigator.maybePop(context),
+          ),
+        ),
         title: Text(context.l10n.boxQrCode),
       ),
       body: Center(
@@ -23,7 +44,8 @@ class QRDisplayScreen extends StatelessWidget {
           children: [
             Text(
               box.name,
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme.of(context).textTheme.headlineMedium
+                  ?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
             Text(
@@ -49,11 +71,16 @@ class QRDisplayScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 48),
-            OutlinedButton.icon(
+            FilledButton.icon(
+              style: FilledButton.styleFrom(
+                backgroundColor: context.colors.accent,
+                foregroundColor: context.colors.onAccent,
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+              ),
               onPressed: () {
                 // TODO: Implement printing or sharing
               },
-              icon: const AppIcon(Icons.print),
+              icon: AppIcon(Icons.print, color: context.colors.onAccent),
               label: Text(context.l10n.printLabel),
             ),
           ],

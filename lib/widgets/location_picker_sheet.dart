@@ -107,11 +107,16 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
             controller: controller,
             autofocus: true,
             textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(hintText: context.l10n.locationNameHint),
+            decoration: InputDecoration(
+              hintText: context.l10n.locationNameHint,
+            ),
             onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(context.l10n.commonCancel),
+            ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, controller.text.trim()),
               child: Text(context.l10n.commonCreate),
@@ -168,10 +173,12 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
   List<Widget> _searchResults(InventoryProvider provider) {
     final q = normalizeVi(_query.trim());
     final matches = provider.boxes
-        .where((b) =>
-            containsNormalized(b.name, q) ||
-            containsNormalized(b.label, q) ||
-            containsNormalized(provider.getBreadcrumbString(b.id), q))
+        .where(
+          (b) =>
+              containsNormalized(b.name, q) ||
+              containsNormalized(b.label, q) ||
+              containsNormalized(provider.getBreadcrumbString(b.id), q),
+        )
         .toList();
     if (matches.isEmpty) {
       return [
@@ -235,7 +242,8 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
         ? provider.getBoxById(_selectedBoxId!)
         : null;
 
-    final isSameAsCurrent = widget.currentBoxId != null && _selectedBoxId == widget.currentBoxId;
+    final isSameAsCurrent =
+        widget.currentBoxId != null && _selectedBoxId == widget.currentBoxId;
     final canConfirm = _selectedBoxId != null;
 
     return Material(
@@ -283,7 +291,10 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                       const SizedBox(height: 3),
                       Text(
                         widget.subtitle ?? context.l10n.chooseARoomShelfOr,
-                        style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: context.colors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -293,7 +304,10 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                   semanticLabel: context.l10n.scanQr,
                   onTap: _openQRScanner,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: context.colors.accent,
                       borderRadius: BorderRadius.circular(18),
@@ -301,7 +315,11 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        AppIcon(Icons.qr_code_scanner_rounded, color: context.colors.onAccent, size: 18),
+                        AppIcon(
+                          Icons.qr_code_scanner_rounded,
+                          color: context.colors.onAccent,
+                          size: 18,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           context.l10n.scanQr,
@@ -322,7 +340,10 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
             // Current Location Badge if applicable
             if (currentAssignedBox != null) ...[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: context.colors.fill,
                   borderRadius: BorderRadius.circular(18),
@@ -401,70 +422,89 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                   if (_query.trim().isNotEmpty)
                     ..._searchResults(provider)
                   else ...[
-                  // Option to select current parent level directly
-                  if (currentParentBox != null) ...[
-                    _buildCurrentParentDirectSelectCard(currentParentBox, provider),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        Text(
-                          context.l10n.subContainersInside(visibleBoxes.length),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: context.colors.textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-
-                  if (visibleBoxes.isEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: context.colors.fill,
-                        borderRadius: BorderRadius.circular(16),
+                    // Option to select current parent level directly
+                    if (currentParentBox != null) ...[
+                      _buildCurrentParentDirectSelectCard(
+                        currentParentBox,
+                        provider,
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      const SizedBox(height: 10),
+                      Row(
                         children: [
-                          AppIcon(Icons.inventory_2_outlined, size: 36, color: context.colors.textMuted),
-                          const SizedBox(height: 8),
                           Text(
-                            currentParentBox != null
-                                ? context.l10n.noSubContainersInside(currentParentBox.name)
-                                : context.l10n.noLocationsAvailable,
-                            textAlign: TextAlign.center,
+                            context.l10n.subContainersInside(
+                              visibleBoxes.length,
+                            ),
                             style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
                               color: context.colors.textSecondary,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
                             ),
                           ),
-                          if (currentParentBox != null) ...[
-                            const SizedBox(height: 10),
-                            Text(
-                              context.l10n.youCanSelectDirectlyAbove(currentParentBox.name),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: context.colors.textMuted, fontSize: 12),
-                            ),
-                          ],
                         ],
                       ),
-                    )
-                  else
-                    ...visibleBoxes.map((box) {
-                      return _buildBoxHierarchyTile(box, provider);
-                    }),
+                      const SizedBox(height: 8),
+                    ],
 
-                  // Make the place you are looking for, right where you are
-                  TextButton.icon(
-                    onPressed: _createHere,
-                    icon: const AppIcon(Icons.add_rounded, size: 20),
-                    label: Text(context.l10n.createLocationHere),
-                  ),
+                    if (visibleBoxes.isEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 32,
+                          horizontal: 20,
+                        ),
+                        decoration: BoxDecoration(
+                          color: context.colors.fill,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            AppIcon(
+                              Icons.inventory_2_outlined,
+                              size: 36,
+                              color: context.colors.textMuted,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              currentParentBox != null
+                                  ? context.l10n.noSubContainersInside(
+                                      currentParentBox.name,
+                                    )
+                                  : context.l10n.noLocationsAvailable,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: context.colors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                              ),
+                            ),
+                            if (currentParentBox != null) ...[
+                              const SizedBox(height: 10),
+                              Text(
+                                context.l10n.youCanSelectDirectlyAbove(
+                                  currentParentBox.name,
+                                ),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: context.colors.textMuted,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      )
+                    else
+                      ...visibleBoxes.map((box) {
+                        return _buildBoxHierarchyTile(box, provider);
+                      }),
+
+                    // Make the place you are looking for, right where you are
+                    TextButton.icon(
+                      onPressed: _createHere,
+                      icon: const AppIcon(Icons.add_rounded, size: 20),
+                      label: Text(context.l10n.createLocationHere),
+                    ),
                   ],
                 ],
               ),
@@ -474,7 +514,10 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
             // Selected Target Destination Card
             if (selectedBox != null)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: isSameAsCurrent
                       ? context.colors.warningSoft.withValues(alpha: 0.6)
@@ -549,7 +592,9 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                     const SizedBox(width: 8),
                     Text(
                       widget.confirmButtonText ?? context.l10n.selectLocation,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        ),
                     ),
                   ],
                 ),

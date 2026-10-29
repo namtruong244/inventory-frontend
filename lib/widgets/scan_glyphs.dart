@@ -12,10 +12,8 @@ class ScanGlyph extends StatelessWidget {
   const ScanGlyph(this.type, {super.key, required this.color, this.size = 24});
 
   @override
-  Widget build(BuildContext context) => CustomPaint(
-        size: Size.square(size),
-        painter: _GlyphPainter(type, color),
-      );
+  Widget build(BuildContext context) =>
+      CustomPaint(size: Size.square(size), painter: _GlyphPainter(type, color));
 }
 
 class _GlyphPainter extends CustomPainter {
@@ -111,9 +109,9 @@ class ScanFrameBrackets extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-        painter: _BracketPainter(color),
-        child: const SizedBox.expand(),
-      );
+    painter: _BracketPainter(color),
+    child: const SizedBox.expand(),
+  );
 }
 
 class _BracketPainter extends CustomPainter {

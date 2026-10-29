@@ -6,7 +6,6 @@ import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
 
-
 Widget buildCustomAttributesSection(
   BuildContext context, {
   required Map<String, String> attributes,
@@ -40,7 +39,10 @@ Widget buildCustomAttributesSection(
                 if (attributes.isNotEmpty) ...[
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: context.colors.primary,
                       borderRadius: BorderRadius.circular(10),
@@ -88,7 +90,11 @@ Widget buildCustomAttributesSection(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),
-                  avatar: AppIcon(Icons.add, size: 14, color: context.colors.textSecondary),
+                  avatar: AppIcon(
+                    Icons.add,
+                    size: 14,
+                    color: context.colors.textSecondary,
+                  ),
                   label: Text(
                     attr,
                     style: TextStyle(
@@ -97,7 +103,11 @@ Widget buildCustomAttributesSection(
                       color: context.colors.textSecondary,
                     ),
                   ),
-                  onPressed: () => showAddEditAttributeSheet(context, onSave: onSave, initialKey: attr),
+                  onPressed: () => showAddEditAttributeSheet(
+                    context,
+                    onSave: onSave,
+                    initialKey: attr,
+                  ),
                 ),
               );
             }).toList(),
@@ -150,7 +160,8 @@ Widget buildCustomAttributesSection(
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: () => showAddEditAttributeSheet(context, onSave: onSave),
+                onPressed: () =>
+                    showAddEditAttributeSheet(context, onSave: onSave),
                 icon: const AppIcon(Icons.add, size: 16),
                 label: Text(context.l10n.addSpecification),
                 style: OutlinedButton.styleFrom(
@@ -159,7 +170,10 @@ Widget buildCustomAttributesSection(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                 ),
               ),
             ],
@@ -186,7 +200,10 @@ Widget buildCustomAttributesSection(
             itemBuilder: (context, index) {
               final entry = attributes.entries.elementAt(index);
               return ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 2,
+                ),
                 dense: true,
                 title: Text(
                   entry.key.toUpperCase(),
@@ -209,15 +226,25 @@ Widget buildCustomAttributesSection(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: AppIcon(Icons.edit_outlined, size: 18, color: context.colors.textSecondary),
+                      icon: AppIcon(
+                        Icons.edit_outlined,
+                        size: 18,
+                        color: context.colors.textSecondary,
+                      ),
                       tooltip: context.l10n.commonEdit,
-                      onPressed: () => showAddEditAttributeSheet(context, onSave: onSave, 
+                      onPressed: () => showAddEditAttributeSheet(
+                        context,
+                        onSave: onSave,
                         existingKey: entry.key,
                         existingValue: entry.value,
                       ),
                     ),
                     IconButton(
-                      icon: const AppIcon(Icons.close_rounded, size: 18, color: AppTones.coral),
+                      icon: const AppIcon(
+                        Icons.close_rounded,
+                        size: 18,
+                        color: AppTones.coral,
+                      ),
                       tooltip: context.l10n.commonRemove,
                       onPressed: () {
                         onRemove(entry.key);
@@ -233,7 +260,6 @@ Widget buildCustomAttributesSection(
   );
 }
 
-
 void showAddEditAttributeSheet(
   BuildContext context, {
   required void Function(String key, String value, String? replacedKey) onSave,
@@ -241,7 +267,9 @@ void showAddEditAttributeSheet(
   String? existingValue,
   String? initialKey,
 }) {
-  final keyController = TextEditingController(text: existingKey ?? initialKey ?? '');
+  final keyController = TextEditingController(
+    text: existingKey ?? initialKey ?? '',
+  );
   final valueController = TextEditingController(text: existingValue ?? '');
   final isEditing = existingKey != null;
 
@@ -251,9 +279,7 @@ void showAddEditAttributeSheet(
     backgroundColor: Colors.transparent,
     builder: (ctx) {
       return Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(ctx).viewInsets.bottom,
-        ),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
         child: Container(
           decoration: BoxDecoration(
             color: context.colors.surface,
@@ -278,7 +304,9 @@ void showAddEditAttributeSheet(
               Row(
                 children: [
                   Text(
-                    isEditing ? context.l10n.editSpecification : context.l10n.addSpecification,
+                    isEditing
+                        ? context.l10n.editSpecification
+                        : context.l10n.addSpecification,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -287,7 +315,8 @@ void showAddEditAttributeSheet(
                   ),
                   const Spacer(),
                   IconButton(
- tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                    tooltip: MaterialLocalizations.of(context)
+                        .closeButtonTooltip,
                     icon: const AppIcon(Icons.close, size: 20),
                     onPressed: () => Navigator.pop(ctx),
                   ),
@@ -314,14 +343,24 @@ void showAddEditAttributeSheet(
                     final k = keyController.text.trim();
                     final v = valueController.text.trim();
                     if (k.isEmpty) {
-                      AppFeedback.showError(ctx, context.l10n.pleaseEnterAnAttributeName);
+                      AppFeedback.showError(
+                        ctx,
+                        context.l10n.pleaseEnterAnAttributeName,
+                      );
                       return;
                     }
                     if (v.isEmpty) {
-                      AppFeedback.showError(ctx, context.l10n.pleaseEnterAnAttributeValue);
+                      AppFeedback.showError(
+                        ctx,
+                        context.l10n.pleaseEnterAnAttributeValue,
+                      );
                       return;
                     }
-                    onSave(k, v, isEditing && existingKey != k ? existingKey : null);
+                    onSave(
+                      k,
+                      v,
+                      isEditing && existingKey != k ? existingKey : null,
+                    );
                     Navigator.pop(ctx);
                   },
                   style: FilledButton.styleFrom(
@@ -332,9 +371,10 @@ void showAddEditAttributeSheet(
                     ),
                   ),
                   child: Text(
-                    isEditing ? context.l10n.saveSpecification : context.l10n.addSpecification,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                    isEditing
+                        ? context.l10n.saveSpecification
+                        : context.l10n.addSpecification,
+                    ),
                 ),
               ),
             ],

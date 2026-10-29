@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
 import 'app_image_view.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
@@ -11,12 +12,16 @@ class ItemCard extends StatelessWidget {
   final String name;
   final String description;
   final String? imageUrl;
+
   /// Quantity headline on the right, e.g. "12 pcs".
   final String? quantityText;
+
   /// Colored status pill (lent, broken...).
   final Widget? status;
+
   /// Extra pastel tags under the name (low stock, expiring...).
   final List<Widget> tags;
+
   /// 0..1 stock level against the minimum; shown as a thin bar.
   final double? stockRatio;
   final Color? stockColor;
@@ -63,8 +68,19 @@ class ItemCard extends StatelessWidget {
                   height: 68,
                   color: c.fill,
                   child: imageUrl != null && imageUrl!.isNotEmpty
-                      ? AppImageView(imageUrlOrPath: imageUrl!, width: 68, height: 68, fit: BoxFit.cover)
-                      : Center(child: AppIcon(Icons.image_outlined, color: c.textMuted, size: 28)),
+                      ? AppImageView(
+                          imageUrlOrPath: imageUrl!,
+                          width: 68,
+                          height: 68,
+                          fit: BoxFit.cover,
+                        )
+                      : Center(
+                          child: AppIcon(
+                            Icons.image_outlined,
+                            color: c.textMuted,
+                            size: 28,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(width: 14),
@@ -76,7 +92,11 @@ class ItemCard extends StatelessWidget {
                       name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: c.textPrimary),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: c.textPrimary,
+                      ),
                     ),
                     if (description.isNotEmpty) ...[
                       const SizedBox(height: 3),
@@ -84,12 +104,20 @@ class ItemCard extends StatelessWidget {
                         description,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 12, height: 1.3, color: c.textSecondary),
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.3,
+                          color: c.textSecondary,
+                        ),
                       ),
                     ],
                     if (hasChips) ...[
                       const SizedBox(height: 8),
-                      Wrap(spacing: 6, runSpacing: 6, children: [?status, ...tags]),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [?status, ...tags],
+                      ),
                     ],
                   ],
                 ),
@@ -98,15 +126,27 @@ class ItemCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   quantityText!,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: c.textPrimary),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: c.textPrimary,
+                  ),
                 ),
               ],
-              AppIcon(Icons.chevron_right_rounded, color: c.textMuted, size: 22),
+              AppIcon(
+                Icons.chevron_right_rounded,
+                color: c.textMuted,
+                size: 22,
+              ),
             ],
           ),
           if (stockRatio != null) ...[
             const SizedBox(height: 10),
-            SoftBar(value: stockRatio!, color: stockColor ?? c.successStrong, height: 5),
+            SoftBar(
+              value: stockRatio!,
+              color: stockColor ?? c.successStrong,
+              height: 5,
+            ),
           ],
         ],
       ),

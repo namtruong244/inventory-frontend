@@ -6,7 +6,8 @@ extension InventorySettings on InventoryProvider {
   void _applySettings(Map<String, dynamic> m) {
     _currency = m['currencySymbol'] as String? ?? _currency;
     _defaultUnit = m['defaultUnit'] as String? ?? _defaultUnit;
-    _expiryWarningDays = (m['expiryWarningDays'] as num?)?.toInt() ?? _expiryWarningDays;
+    _expiryWarningDays =
+        (m['expiryWarningDays'] as num?)?.toInt() ?? _expiryWarningDays;
     _warrantyWarningDays =
         (m['warrantyWarningDays'] as num?)?.toInt() ?? _warrantyWarningDays;
     _timezone = m['timezone'] as String? ?? _timezone;
@@ -24,12 +25,9 @@ extension InventorySettings on InventoryProvider {
     if (store != null) {
       await store.saveSettings({...?await store.loadSettings(), ...delta});
     }
-    await _commit(
-      PendingOp('updateSettings', {'delta': delta}),
-      () async {
-        await _apiService.updateSettings(delta);
-      },
-    );
+    await _commit(PendingOp('updateSettings', {'delta': delta}), () async {
+      await _apiService.updateSettings(delta);
+    });
   }
 
   // ==========================================

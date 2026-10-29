@@ -7,8 +7,11 @@ extension InventoryReports on InventoryProvider {
     final now = DateTime.now();
     buffer.writeln('========================================');
     buffer.writeln('       ${AppL10n.current.reportTitle}');
-    buffer.writeln(AppL10n.current.reportGenerated(
-        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}'));
+    buffer.writeln(
+      AppL10n.current.reportGenerated(
+        '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+      ),
+    );
     buffer.writeln(AppL10n.current.commonManager(_userName, _userRole));
     buffer.writeln(AppL10n.current.serverBackend(_apiService.baseUrl));
     buffer.writeln('========================================\n');
@@ -16,12 +19,15 @@ extension InventoryReports on InventoryProvider {
     buffer.writeln(AppL10n.current.reportOverview);
     buffer.writeln(AppL10n.current.reportTotalContainers(_boxes.length));
     buffer.writeln(AppL10n.current.reportTotalItems(_items.length));
-    buffer.writeln(AppL10n.current.reportTotalValue(formatPrice(totalInventoryValue)));
+    buffer.writeln(
+      AppL10n.current.reportTotalValue(formatPrice(totalInventoryValue)),
+    );
     buffer.writeln(AppL10n.current.reportActiveLent(getActiveLoans().length));
     buffer.writeln(AppL10n.current.reportOverdueLent(getOverdueLoans().length));
     buffer.writeln(AppL10n.current.reportExpired(getExpiredItems().length));
     buffer.writeln(
-        '${AppL10n.current.reportExpiringSoon(_expiryWarningDays, getExpiringItems(withinDays: _expiryWarningDays).length)}\n');
+      '${AppL10n.current.reportExpiringSoon(_expiryWarningDays, getExpiringItems(withinDays: _expiryWarningDays).length)}\n',
+    );
 
     buffer.writeln(AppL10n.current.reportCategories);
     for (final cat in _categories) {
@@ -37,7 +43,8 @@ extension InventoryReports on InventoryProvider {
           ? AppL10n.current.reportPrice(formatPrice(item.purchasePrice))
           : '';
       buffer.writeln(
-          '- ${item.name} (${formatQty(item.quantity, item.unit)}$priceStr) -> [${box?.name ?? AppL10n.current.reportNoLocation}]');
+        '- ${item.name} (${formatQty(item.quantity, item.unit)}$priceStr) -> [${box?.name ?? AppL10n.current.reportNoLocation}]',
+      );
     }
 
     buffer.writeln('\n========================================');

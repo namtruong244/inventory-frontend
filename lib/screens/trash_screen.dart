@@ -132,7 +132,10 @@ class _TrashScreenState extends State<TrashScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(context.l10n.couldNotLoadTheTrash),
-                  TextButton(onPressed: _load, child: Text(context.l10n.commonRetry)),
+                  TextButton(
+                    onPressed: _load,
+                    child: Text(context.l10n.commonRetry),
+                  ),
                 ],
               ),
             )
@@ -160,7 +163,10 @@ class _TrashScreenState extends State<TrashScreen> {
                     _row(
                       icon: Icons.inventory_2_outlined,
                       name: item.name,
-                      subtitle: context.l10n.commonItem2(item.quantity, item.unit),
+                      subtitle: context.l10n.commonItem2(
+                        item.quantity,
+                        item.unit,
+                      ),
                       onRestore: () =>
                           _restore(itemId: item.id, name: item.name),
                       onPurge: () => _purge(itemId: item.id, name: item.name),

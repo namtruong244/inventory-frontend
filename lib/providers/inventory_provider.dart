@@ -273,7 +273,10 @@ class InventoryProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('login error: $e');
-      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTSignInPlease);
+      _errorMessage = friendlyError(
+        e,
+        fallback: AppL10n.current.couldnTSignInPlease,
+      );
       return false;
     } finally {
       _isSyncing = false;
@@ -310,7 +313,10 @@ class InventoryProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('google sign-in error: $e');
-      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTSignInWith);
+      _errorMessage = friendlyError(
+        e,
+        fallback: AppL10n.current.couldnTSignInWith,
+      );
       return false;
     } finally {
       _isSyncing = false;
@@ -334,7 +340,10 @@ class InventoryProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       debugPrint('registration error: $e');
-      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTCreateYourAccount);
+      _errorMessage = friendlyError(
+        e,
+        fallback: AppL10n.current.couldnTCreateYourAccount,
+      );
       return false;
     } finally {
       _isSyncing = false;
@@ -479,7 +488,10 @@ class InventoryProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('fetchAllData error: $e');
       _isConnected = false;
-      _errorMessage = friendlyError(e, fallback: AppL10n.current.couldnTSyncYourData);
+      _errorMessage = friendlyError(
+        e,
+        fallback: AppL10n.current.couldnTSyncYourData,
+      );
     } finally {
       _isSyncing = false;
       notifyListeners();

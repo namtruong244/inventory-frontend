@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+
 import '../models/inventory_models.dart';
 import 'tappable.dart';
 import '../theme/app_theme.dart';
@@ -34,14 +35,12 @@ class BoxCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     final card = Tappable(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-        ),
+        decoration: BoxDecoration(color: context.colors.surface),
         child: Row(
           children: [
             Container(
@@ -65,7 +64,7 @@ class BoxCard extends StatelessWidget {
                   Text(
                     name,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   if (description.isNotEmpty) ...[
@@ -82,7 +81,11 @@ class BoxCard extends StatelessWidget {
                 ],
               ),
             ),
-            AppIcon(Icons.chevron_right_rounded, color: context.colors.textMuted, size: 24),
+            AppIcon(
+              Icons.chevron_right_rounded,
+              color: context.colors.textMuted,
+              size: 24,
+            ),
           ],
         ),
       ),

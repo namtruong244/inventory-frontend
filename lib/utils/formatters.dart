@@ -7,7 +7,8 @@ class AppFormatters {
   /// For USD ($), EUR (€), etc.: uses standard international formatting.
   static String formatCurrency(num? amount, String currencySymbol) {
     if (amount == null) return '';
-    final isVnd = currencySymbol == '₫' || currencySymbol.toUpperCase() == 'VND';
+    final isVnd =
+        currencySymbol == '₫' || currencySymbol.toUpperCase() == 'VND';
 
     if (isVnd) {
       final intVal = amount.round();
@@ -26,7 +27,9 @@ class AppFormatters {
   /// - 1 box -> '1 box'
   /// - 2 box -> '2 boxes' (or keeps unit as-is if customized)
   static String formatQuantity(num quantity, String unit) {
-    final countStr = quantity % 1 == 0 ? quantity.toInt().toString() : quantity.toString();
+    final countStr = quantity % 1 == 0
+        ? quantity.toInt().toString()
+        : quantity.toString();
     final cleanUnit = unit.trim().toLowerCase();
 
     if (cleanUnit == 'pcs' || cleanUnit == 'pc') {

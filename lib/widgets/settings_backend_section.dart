@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+
 import '../screens/login_screen.dart';
 import 'settings_common.dart';
 
@@ -26,7 +27,11 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
         children: [
           Text(
             context.l10n.serverEndpoint,
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+              color: context.colors.textPrimary,
+            ),
           ),
           const SizedBox(width: 8),
           Container(
@@ -36,7 +41,9 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              isOnline ? context.l10n.statusOnlineTag : context.l10n.statusOfflineTag,
+              isOnline
+                  ? context.l10n.statusOnlineTag
+                  : context.l10n.statusOfflineTag,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
@@ -48,9 +55,17 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
       ),
       subtitle: Text(
         serverUrl,
-        style: TextStyle(fontSize: 12, color: context.colors.textSecondary, fontFamily: 'monospace'),
+        style: TextStyle(
+          fontSize: 12,
+          color: context.colors.textSecondary,
+          fontFamily: 'monospace',
+        ),
       ),
-      trailing: AppIcon(Icons.edit_outlined, color: context.colors.textSecondary, size: 20),
+      trailing: AppIcon(
+        Icons.edit_outlined,
+        color: context.colors.textSecondary,
+        size: 20,
+      ),
       onTap: () => showChangeServerUrlDialog(context, provider),
     ),
     const Divider(height: 1),
@@ -64,7 +79,11 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
       ),
       title: Text(
         context.l10n.apiAuthentication,
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          color: context.colors.textPrimary,
+        ),
       ),
       subtitle: Text(
         currentUser != null
@@ -74,30 +93,29 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
       ),
       trailing: TextButton(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-          );
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const LoginScreen()));
         },
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
-        child: Text(context.l10n.loginSwitch, style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+        child: Text(context.l10n.loginSwitch, style: TextStyle(fontSize: 13)),
       ),
     ),
     const Divider(height: 1),
 
     // 3. Sync from Server Tile
     ListTile(
-      leading: buildIconBox(
-        Icons.sync_rounded,
-        AppTones.sky,
-        AppTones.skySoft,
-      ),
+      leading: buildIconBox(Icons.sync_rounded, AppTones.sky, AppTones.skySoft),
       title: Text(
         context.l10n.syncWithServer,
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.colors.textPrimary),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+          color: context.colors.textPrimary,
+        ),
       ),
       subtitle: Text(
         provider.isSyncing
@@ -109,18 +127,31 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
           ? SizedBox(
               width: 20,
               height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2, color: context.colors.textPrimary),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: context.colors.textPrimary,
+              ),
             )
-          : AppIcon(Icons.refresh_rounded, color: context.colors.textSecondary, size: 20),
+          : AppIcon(
+              Icons.refresh_rounded,
+              color: context.colors.textSecondary,
+              size: 20,
+            ),
       onTap: provider.isSyncing
           ? null
           : () async {
               await provider.fetchAllData();
               if (context.mounted) {
                 if (provider.isConnected) {
-                  AppFeedback.showSuccess(context, context.l10n.successfullySynchronizedWithBackendServer);
+                  AppFeedback.showSuccess(
+                    context,
+                    context.l10n.successfullySynchronizedWithBackendServer,
+                  );
                 } else {
-                  AppFeedback.showError(context, provider.errorMessage ?? context.l10n.syncFailed);
+                  AppFeedback.showError(
+                    context,
+                    provider.errorMessage ?? context.l10n.syncFailed,
+                  );
                 }
               }
             },
@@ -128,14 +159,19 @@ Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
   ]);
 }
 
-
-void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider) {
+void showChangeServerUrlDialog(
+  BuildContext context,
+  InventoryProvider provider,
+) {
   final controller = TextEditingController(text: provider.serverUrl);
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      title: Text(context.l10n.backendApiUrl, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+      title: Text(
+        context.l10n.backendApiUrl,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +186,9 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
             decoration: InputDecoration(
               hintText: kDebugMode ? 'http://localhost:8080' : 'https://',
               prefixIcon: const AppIcon(Icons.link_rounded),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             keyboardType: TextInputType.url,
           ),
@@ -161,11 +199,17 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
               spacing: 8,
               children: [
                 ActionChip(
-                  label: const Text('localhost:8080', style: TextStyle(fontSize: 11)),
+                  label: const Text(
+                    'localhost:8080',
+                    style: TextStyle(fontSize: 11),
+                  ),
                   onPressed: () => controller.text = 'http://localhost:8080',
                 ),
                 ActionChip(
-                  label: const Text('10.0.2.2:8080 (Android)', style: TextStyle(fontSize: 11)),
+                  label: const Text(
+                    '10.0.2.2:8080 (Android)',
+                    style: TextStyle(fontSize: 11),
+                  ),
                   onPressed: () => controller.text = 'http://10.0.2.2:8080',
                 ),
               ],
@@ -185,7 +229,10 @@ void showChangeServerUrlDialog(BuildContext context, InventoryProvider provider)
               Navigator.pop(ctx);
               await provider.setServerUrl(newUrl);
               if (context.mounted) {
-                AppFeedback.showSuccess(context, context.l10n.serverUrlUpdatedTo(newUrl));
+                AppFeedback.showSuccess(
+                  context,
+                  context.l10n.serverUrlUpdatedTo(newUrl),
+                );
               }
             }
           },

@@ -3,8 +3,5 @@ class BoxBarcodeEntry {
   final String name; // Box Name
   final String code; // QR Code string
 
-  BoxBarcodeEntry({
-    required this.name,
-    required this.code,
-  });
+  BoxBarcodeEntry({required this.name, required this.code});
 }

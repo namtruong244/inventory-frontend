@@ -9,7 +9,8 @@ import 'app_icon.dart';
 import 'soft_ui.dart';
 import 'tappable.dart';
 
-String _fmt(double v, {int digits = 1}) => v % 1 == 0 ? v.toInt().toString() : v.toStringAsFixed(digits);
+String _fmt(double v, {int digits = 1}) =>
+    v % 1 == 0 ? v.toInt().toString() : v.toStringAsFixed(digits);
 
 /// Shared sheet chrome: rounded top, grabber, tinted icon + title + stock line.
 class _StockSheetFrame extends StatelessWidget {
@@ -31,7 +32,12 @@ class _StockSheetFrame extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return Container(
-      padding: EdgeInsets.fromLTRB(24, 12, 24, MediaQuery.of(context).viewInsets.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        12,
+        24,
+        MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
       decoration: BoxDecoration(
         color: c.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
@@ -45,7 +51,10 @@ class _StockSheetFrame extends StatelessWidget {
               child: Container(
                 width: 40,
                 height: 4,
-                decoration: BoxDecoration(color: c.border, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(
+                  color: c.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -61,10 +70,17 @@ class _StockSheetFrame extends StatelessWidget {
                         title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: c.textPrimary),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: c.textPrimary,
+                        ),
                       ),
                       const SizedBox(height: 2),
-                      Text(subtitle, style: TextStyle(fontSize: 13, color: c.textSecondary)),
+                      Text(
+                        subtitle,
+                        style: TextStyle(fontSize: 13, color: c.textSecondary),
+                      ),
                     ],
                   ),
                 ),
@@ -97,13 +113,21 @@ class _RoundStep extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: onTap == null ? null : c.cardShadow,
         ),
-        child: AppIcon(icon, size: 22, color: onTap == null ? c.textMuted : c.textPrimary),
+        child: AppIcon(
+          icon,
+          size: 22,
+          color: onTap == null ? c.textMuted : c.textPrimary,
+        ),
       ),
     );
   }
 }
 
-void showConsumeSheet(BuildContext context, Item item, InventoryProvider provider) {
+void showConsumeSheet(
+  BuildContext context,
+  Item item,
+  InventoryProvider provider,
+) {
   double consumeAmount = 1.0;
   if (item.quantity < 1.0 && item.quantity > 0) {
     consumeAmount = item.quantity;
@@ -118,19 +142,25 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
         builder: (context, setSheetState) {
           final c = context.colors;
           final currentQty = item.quantity;
-          final remainingAfter = (currentQty - consumeAmount).clamp(0.0, double.infinity);
+          final remainingAfter = (currentQty - consumeAmount).clamp(
+            0.0,
+            double.infinity,
+          );
           final formattedCurrent = _fmt(currentQty, digits: 2);
           final formattedConsume = _fmt(consumeAmount, digits: 2);
           final formattedRemain = _fmt(remainingAfter);
           final isEmpty = remainingAfter == 0;
-          final isLow = item.minQuantity != null && remainingAfter <= item.minQuantity!;
-          final tone = isEmpty ? AppTones.coral : (isLow ? AppTones.amber : AppTones.matcha);
+          final isLow =
+              item.minQuantity != null && remainingAfter <= item.minQuantity!;
+          final tone = isEmpty
+              ? AppTones.coral
+              : (isLow ? AppTones.amber : AppTones.matcha);
 
           Widget quick(String label, double value) => SoftFilterChip(
-                label: label,
-                selected: consumeAmount == value,
-                onTap: () => setSheetState(() => consumeAmount = value),
-              );
+            label: label,
+            selected: consumeAmount == value,
+            onTap: () => setSheetState(() => consumeAmount = value),
+          );
 
           return _StockSheetFrame(
             icon: Icons.remove_circle_outline,
@@ -142,12 +172,23 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _RoundStep(Icons.remove, consumeAmount > 1 ? () => setSheetState(() => consumeAmount -= 1) : null),
+                  _RoundStep(
+                    Icons.remove,
+                    consumeAmount > 1
+                        ? () => setSheetState(() => consumeAmount -= 1)
+                        : null,
+                  ),
                   Column(
                     children: [
                       Text(
                         formattedConsume,
-                        style: TextStyle(fontSize: 44, fontWeight: FontWeight.w800, letterSpacing: -1.5, color: c.textPrimary, height: 1),
+                        style: TextStyle(
+                          fontSize: 44,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -1.5,
+                          color: c.textPrimary,
+                          height: 1,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -156,7 +197,12 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                       ),
                     ],
                   ),
-                  _RoundStep(Icons.add, consumeAmount < currentQty ? () => setSheetState(() => consumeAmount += 1) : null),
+                  _RoundStep(
+                    Icons.add,
+                    consumeAmount < currentQty
+                        ? () => setSheetState(() => consumeAmount += 1)
+                        : null,
+                  ),
                 ],
               ),
               const SizedBox(height: 20),
@@ -174,16 +220,27 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
               const SizedBox(height: 20),
 
               // What is left: bar + tinted verdict
-              SoftBar(value: currentQty > 0 ? remainingAfter / currentQty : 0, color: tone, height: 8),
+              SoftBar(
+                value: currentQty > 0 ? remainingAfter / currentQty : 0,
+                color: tone,
+                height: 8,
+              ),
               const SizedBox(height: 10),
               Align(
                 alignment: Alignment.centerLeft,
                 child: SoftChip.tone(
-                  isEmpty ? context.l10n.willBeOutOfStock : context.l10n.remainingAfterUse(formattedRemain, item.unit),
+                  isEmpty
+                      ? context.l10n.willBeOutOfStock
+                      : context.l10n.remainingAfterUse(
+                          formattedRemain,
+                          item.unit,
+                        ),
                   tone,
                   icon: isEmpty
                       ? Icons.error_outline_rounded
-                      : (isLow ? Icons.warning_amber_rounded : Icons.check_circle_outline_rounded),
+                      : (isLow
+                            ? Icons.warning_amber_rounded
+                            : Icons.check_circle_outline_rounded),
                 ),
               ),
               const SizedBox(height: 24),
@@ -200,25 +257,44 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
                       Navigator.pop(sheetCtx);
                       showRestockSheet(context, item, provider);
                     },
-                    icon: const AppIcon(Icons.add_shopping_cart_outlined, size: 18),
+                    icon: const AppIcon(
+                      Icons.add_shopping_cart_outlined,
+                      size: 18,
+                    ),
                     label: Text(context.l10n.commonRestock),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: FilledButton.icon(
-                      style: FilledButton.styleFrom(backgroundColor: c.accent, foregroundColor: c.onAccent),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: c.accent,
+                        foregroundColor: c.onAccent,
+                      ),
                       onPressed: () async {
                         Navigator.pop(sheetCtx);
-                        final ok = await provider.updateItemQuantity(item.id, remainingAfter, reason: 'consume');
+                        final ok = await provider.updateItemQuantity(
+                          item.id,
+                          remainingAfter,
+                          reason: 'consume',
+                        );
                         if (ok && context.mounted) {
                           AppFeedback.showSuccess(
                             context,
-                            context.l10n.usedRemaining(formattedConsume, item.unit, formattedRemain, item.unit),
+                            context.l10n.usedRemaining(
+                              formattedConsume,
+                              item.unit,
+                              formattedRemain,
+                              item.unit,
+                            ),
                           );
-                          if (item.minQuantity != null && remainingAfter <= item.minQuantity!) {
+                          if (item.minQuantity != null &&
+                              remainingAfter <= item.minQuantity!) {
                             AppFeedback.showWarning(
                               context,
-                              context.l10n.warningQuantityHasDroppedTo(item.minQuantity ?? 0, item.unit),
+                              context.l10n.warningQuantityHasDroppedTo(
+                                item.minQuantity ?? 0,
+                                item.unit,
+                              ),
                             );
                           }
                         }
@@ -237,8 +313,11 @@ void showConsumeSheet(BuildContext context, Item item, InventoryProvider provide
   );
 }
 
-
-void showRestockSheet(BuildContext context, Item item, InventoryProvider provider) {
+void showRestockSheet(
+  BuildContext context,
+  Item item,
+  InventoryProvider provider,
+) {
   double addAmount = 1.0;
   final controller = TextEditingController(text: '1');
 
@@ -260,9 +339,14 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
             children: [
               TextField(
                 controller: controller,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 autofocus: true,
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w800,
+                ),
                 decoration: InputDecoration(
                   labelText: context.l10n.quantityToAdd(item.unit),
                   suffixText: item.unit,
@@ -289,17 +373,29 @@ void showRestockSheet(BuildContext context, Item item, InventoryProvider provide
               ),
               const SizedBox(height: 24),
               FilledButton.icon(
-                style: FilledButton.styleFrom(backgroundColor: c.accent, foregroundColor: c.onAccent),
+                style: FilledButton.styleFrom(
+                  backgroundColor: c.accent,
+                  foregroundColor: c.onAccent,
+                ),
                 onPressed: addAmount > 0
                     ? () async {
                         Navigator.pop(sheetCtx);
                         final newQty = item.quantity + addAmount;
-                        final ok = await provider.updateItemQuantity(item.id, newQty, reason: 'restock');
+                        final ok = await provider.updateItemQuantity(
+                          item.id,
+                          newQty,
+                          reason: 'restock',
+                        );
                         if (ok && context.mounted) {
                           final formattedNew = _fmt(newQty, digits: 2);
                           AppFeedback.showSuccess(
                             context,
-                            context.l10n.addedTotal(addAmount, item.unit, formattedNew, item.unit),
+                            context.l10n.addedTotal(
+                              addAmount,
+                              item.unit,
+                              formattedNew,
+                              item.unit,
+                            ),
                           );
                         }
                       }

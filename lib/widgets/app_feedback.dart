@@ -1,5 +1,7 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
+
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
@@ -24,7 +26,10 @@ class AppFeedback {
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, anim1, anim2) => const SizedBox(),
       transitionBuilder: (context, anim1, anim2, child) {
-        final curvedValue = CurvedAnimation(parent: anim1, curve: Curves.easeOutBack).value;
+        final curvedValue = CurvedAnimation(
+          parent: anim1,
+          curve: Curves.easeOutBack,
+        ).value;
         return Transform.scale(
           scale: 0.8 + (0.2 * curvedValue),
           child: Opacity(
@@ -47,7 +52,9 @@ class AppFeedback {
                       height: 64,
                       decoration: BoxDecoration(
                         color: isDestructive
-                            ? context.colors.dangerSoft // Light red
+                            ? context
+                                  .colors
+                                  .dangerSoft // Light red
                             : context.colors.border, // Light slate
                         shape: BoxShape.circle,
                       ),
@@ -55,7 +62,8 @@ class AppFeedback {
                         icon,
                         size: 32,
                         color: isDestructive
-                            ? AppTones.coral // Strong red
+                            ? AppTones
+                                  .coral // Strong red
                             : theme.colorScheme.primary,
                       ),
                     ),
@@ -97,8 +105,7 @@ class AppFeedback {
                             ),
                             child: Text(
                               cancelLabel ?? context.l10n.commonCancel,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
-                            ),
+                              ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -118,8 +125,7 @@ class AppFeedback {
                               confirmLabel ?? context.l10n.commonConfirm,
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                ),
                             ),
                           ),
                         ),
@@ -188,11 +194,7 @@ class AppFeedback {
                         ),
                       ],
                     ),
-                    child: AppIcon(
-                      icon,
-                      color: iconColor,
-                      size: 18,
-                    ),
+                    child: AppIcon(icon, color: iconColor, size: 18),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -218,8 +220,7 @@ class AppFeedback {
                       ),
                       child: Text(
                         actionLabel,
-                        style: const TextStyle(fontWeight: FontWeight.w800),
-                      ),
+                        ),
                     ),
                 ],
               ),

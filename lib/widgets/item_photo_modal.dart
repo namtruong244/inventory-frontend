@@ -7,7 +7,6 @@ import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
 
-
 void showAddPhotoModal(
   BuildContext context, {
   required bool isReceipt,
@@ -68,7 +67,12 @@ void showAddPhotoModal(
       color: context.colors.surface,
       borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       child: Padding(
-        padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
+        padding: EdgeInsets.fromLTRB(
+          24,
+          16,
+          24,
+          MediaQuery.of(ctx).viewInsets.bottom + 24,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +81,10 @@ void showAddPhotoModal(
               child: Container(
                 width: 44,
                 height: 4,
-                decoration: BoxDecoration(color: context.colors.border, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(
+                  color: context.colors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             const SizedBox(height: 18),
@@ -85,11 +92,16 @@ void showAddPhotoModal(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  isReceipt ? context.l10n.addReceiptPhoto : context.l10n.addProductPhoto,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  isReceipt
+                      ? context.l10n.addReceiptPhoto
+                      : context.l10n.addProductPhoto,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
- tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                  tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                   icon: const AppIcon(Icons.close_rounded),
                   onPressed: () => Navigator.pop(ctx),
                 ),
@@ -115,7 +127,11 @@ void showAddPhotoModal(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Column(
                           children: [
-                            AppIcon(Icons.camera_alt_rounded, color: Colors.white, size: 26),
+                            AppIcon(
+                              Icons.camera_alt_rounded,
+                              color: Colors.white,
+                              size: 26,
+                            ),
                             SizedBox(height: 6),
                             Text(
                               context.l10n.commonCamera,
@@ -148,7 +164,11 @@ void showAddPhotoModal(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         child: Column(
                           children: [
-                            AppIcon(Icons.photo_library_rounded, color: context.colors.textPrimary, size: 26),
+                            AppIcon(
+                              Icons.photo_library_rounded,
+                              color: context.colors.textPrimary,
+                              size: 26,
+                            ),
                             SizedBox(height: 6),
                             Text(
                               context.l10n.commonGallery,
@@ -202,7 +222,9 @@ void showAddPhotoModal(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.colors.primary,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 onPressed: () {
                   final text = urlController.text.trim();
@@ -220,7 +242,11 @@ void showAddPhotoModal(
             // Quick preset photos
             Text(
               context.l10n.orChooseSamplePhoto,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: context.colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 10),
             SizedBox(
@@ -234,7 +260,10 @@ void showAddPhotoModal(
                     onTap: () {
                       onPhotoAdded(p['url']!);
                       Navigator.pop(ctx);
-                      AppFeedback.showSuccess(context, context.l10n.samplePhotoSelected);
+                      AppFeedback.showSuccess(
+                        context,
+                        context.l10n.samplePhotoSelected,
+                      );
                     },
                     child: Container(
                       width: 76,
@@ -253,12 +282,18 @@ void showAddPhotoModal(
                               left: 0,
                               right: 0,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 2,
+                                ),
                                 color: Colors.black.withValues(alpha: 0.6),
                                 child: Text(
                                   p['title']!,
                                   textAlign: TextAlign.center,
-                                  style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),

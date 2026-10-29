@@ -10,7 +10,9 @@ extension _LocationPickerParts on _LocationPickerSheetState {
     final isAtRoot = _currentLevelParentId == null;
     crumbs.add(
       InkWell(
-        onTap: isAtRoot ? null : () => _update(() => _currentLevelParentId = null),
+        onTap: isAtRoot
+            ? null
+            : () => _update(() => _currentLevelParentId = null),
         borderRadius: BorderRadius.circular(8),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -24,7 +26,9 @@ extension _LocationPickerParts on _LocationPickerSheetState {
               AppIcon(
                 Icons.home_outlined,
                 size: 14,
-                color: isAtRoot ? context.colors.onAccent : context.colors.textSecondary,
+                color: isAtRoot
+                    ? context.colors.onAccent
+                    : context.colors.textSecondary,
               ),
               const SizedBox(width: 4),
               Text(
@@ -32,7 +36,9 @@ extension _LocationPickerParts on _LocationPickerSheetState {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: isAtRoot ? context.colors.onAccent : context.colors.textSecondary,
+                  color: isAtRoot
+                      ? context.colors.onAccent
+                      : context.colors.textSecondary,
                 ),
               ),
             ],
@@ -50,13 +56,19 @@ extension _LocationPickerParts on _LocationPickerSheetState {
         crumbs.add(
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: AppIcon(Icons.chevron_right_rounded, size: 16, color: context.colors.textMuted),
+            child: AppIcon(
+              Icons.chevron_right_rounded,
+              size: 16,
+              color: context.colors.textMuted,
+            ),
           ),
         );
 
         crumbs.add(
           InkWell(
-            onTap: isCurrent ? null : () => _update(() => _currentLevelParentId = box.id),
+            onTap: isCurrent
+                ? null
+                : () => _update(() => _currentLevelParentId = box.id),
             borderRadius: BorderRadius.circular(8),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -69,7 +81,9 @@ extension _LocationPickerParts on _LocationPickerSheetState {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: isCurrent ? FontWeight.bold : FontWeight.w600,
-                  color: isCurrent ? context.colors.onAccent : context.colors.textSecondary,
+                  color: isCurrent
+                      ? context.colors.onAccent
+                      : context.colors.textSecondary,
                 ),
               ),
             ),
@@ -93,7 +107,11 @@ extension _LocationPickerParts on _LocationPickerSheetState {
                   color: context.colors.fill,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: AppIcon(Icons.arrow_upward_rounded, size: 14, color: context.colors.textPrimary),
+                child: AppIcon(
+                  Icons.arrow_upward_rounded,
+                  size: 14,
+                  color: context.colors.textPrimary,
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -110,7 +128,10 @@ extension _LocationPickerParts on _LocationPickerSheetState {
   }
 
   /// Option to select current parent container directly
-  Widget _buildCurrentParentDirectSelectCard(Box currentParentBox, InventoryProvider provider) {
+  Widget _buildCurrentParentDirectSelectCard(
+    Box currentParentBox,
+    InventoryProvider provider,
+  ) {
     final isSelected = _selectedBoxId == currentParentBox.id;
     final isCurrent = widget.currentBoxId == currentParentBox.id;
     final c = context.colors;
@@ -136,12 +157,19 @@ extension _LocationPickerParts on _LocationPickerSheetState {
                         Flexible(
                           child: Text(
                             context.l10n.storeDirectlyIn(currentParentBox.name),
-                            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                         if (isCurrent) ...[
                           const SizedBox(width: 6),
-                          SoftChip(label: context.l10n.commonCurrent, background: c.surface, foreground: c.textPrimary),
+                          SoftChip(
+                            label: context.l10n.commonCurrent,
+                            background: c.surface,
+                            foreground: c.textPrimary,
+                          ),
                         ],
                       ],
                     ),
@@ -182,7 +210,12 @@ extension _LocationPickerParts on _LocationPickerSheetState {
               children: [
                 _buildRadioCircle(isSelected),
                 const SizedBox(width: 10),
-                SoftIconTile(box.type.icon, color: c.textPrimary, background: c.surface, size: 40),
+                SoftIconTile(
+                  box.type.icon,
+                  color: c.textPrimary,
+                  background: c.surface,
+                  size: 40,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -193,13 +226,20 @@ extension _LocationPickerParts on _LocationPickerSheetState {
                           Flexible(
                             child: Text(
                               box.name,
-                              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           if (isCurrent) ...[
                             const SizedBox(width: 6),
-                            SoftChip(label: context.l10n.commonCurrent, background: c.surface, foreground: c.textPrimary),
+                            SoftChip(
+                              label: context.l10n.commonCurrent,
+                              background: c.surface,
+                              foreground: c.textPrimary,
+                            ),
                           ],
                         ],
                       ),
@@ -208,9 +248,20 @@ extension _LocationPickerParts on _LocationPickerSheetState {
                         spacing: 6,
                         runSpacing: 4,
                         children: [
-                          SoftChip(label: box.type.displayName, background: c.surface, foreground: c.textSecondary),
-                          SoftChip.tone(context.l10n.itemsCountLabel(itemCount), AppTones.sky),
-                          if (hasChildren) SoftChip.tone(context.l10n.nestedCountLabel(childBoxes.length), AppTones.lilac),
+                          SoftChip(
+                            label: box.type.displayName,
+                            background: c.surface,
+                            foreground: c.textSecondary,
+                          ),
+                          SoftChip.tone(
+                            context.l10n.itemsCountLabel(itemCount),
+                            AppTones.sky,
+                          ),
+                          if (hasChildren)
+                            SoftChip.tone(
+                              context.l10n.nestedCountLabel(childBoxes.length),
+                              AppTones.lilac,
+                            ),
                         ],
                       ),
                     ],
@@ -224,8 +275,15 @@ extension _LocationPickerParts on _LocationPickerSheetState {
                     child: Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(color: c.surface, shape: BoxShape.circle),
-                      child: AppIcon(Icons.chevron_right_rounded, size: 22, color: c.textPrimary),
+                      decoration: BoxDecoration(
+                        color: c.surface,
+                        shape: BoxShape.circle,
+                      ),
+                      child: AppIcon(
+                        Icons.chevron_right_rounded,
+                        size: 22,
+                        color: c.textPrimary,
+                      ),
                     ),
                   ),
               ],
@@ -246,7 +304,9 @@ extension _LocationPickerParts on _LocationPickerSheetState {
         shape: BoxShape.circle,
         color: isSelected ? c.primary : c.surface,
       ),
-      child: isSelected ? AppIcon(Icons.check_rounded, size: 15, color: c.accent) : null,
+      child: isSelected
+          ? AppIcon(Icons.check_rounded, size: 15, color: c.accent)
+          : null,
     );
   }
 }

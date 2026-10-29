@@ -227,6 +227,13 @@
   "moreOptions": "Thêm tùy chọn",
   "showQrCode": "Hiện mã QR",
   "commonOverview": "Tổng quan",
+  "boxSummary": "{items, plural, other{{items} món đồ}} • {nested} ngăn con",
+  "@boxSummary": {
+    "placeholders": {
+      "items": {"type": "int"},
+      "nested": {"type": "int"}
+    }
+  },
   "nestedContainers": "Ngăn chứa con ({count})",
   "@nestedContainers": {
     "placeholders": {
@@ -782,6 +789,7 @@
   "moveToThisBox": "Chuyển vào hộp này",
   "testWithPresets": "Thử với mẫu có sẵn",
   "enterCode": "Nhập mã",
+  "switchCamera": "Đổi camera",
   "boxScanTitle": "Quét hộp",
   "boxScanHint": "Đặt mã QR vào trong khung để tự động quét.",
   "pickFromGallery": "Chọn từ thư viện ảnh",

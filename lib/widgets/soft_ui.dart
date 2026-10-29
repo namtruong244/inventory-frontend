@@ -35,7 +35,9 @@ class SoftCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(radius),
-        child: padding == null ? child : Padding(padding: padding!, child: child),
+        child: padding == null
+            ? child
+            : Padding(padding: padding!, child: child),
       ),
     );
   }
@@ -59,25 +61,39 @@ class SoftChip extends StatelessWidget {
   });
 
   /// Tinted chip derived from a single status color.
-  factory SoftChip.tone(String label, Color tone, {IconData? icon, bool dot = false}) =>
-      SoftChip(
-        label: label,
-        background: tone.withValues(alpha: 0.14),
-        foreground: tone,
-        icon: icon,
-        dot: dot,
-      );
+  factory SoftChip.tone(
+    String label,
+    Color tone, {
+    IconData? icon,
+    bool dot = false,
+  }) => SoftChip(
+    label: label,
+    background: tone.withValues(alpha: 0.14),
+    foreground: tone,
+    icon: icon,
+    dot: dot,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration: BoxDecoration(color: background, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (dot) ...[
-            Container(width: 6, height: 6, decoration: BoxDecoration(color: foreground, shape: BoxShape.circle)),
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: foreground,
+                shape: BoxShape.circle,
+              ),
+            ),
             const SizedBox(width: 5),
           ] else if (icon != null) ...[
             AppIcon(icon, size: 12, color: foreground),
@@ -88,7 +104,11 @@ class SoftChip extends StatelessWidget {
               label,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: foreground),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: foreground,
+              ),
             ),
           ),
         ],
@@ -103,7 +123,12 @@ class SoftFilterChip extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
 
-  const SoftFilterChip({super.key, required this.label, required this.selected, required this.onTap});
+  const SoftFilterChip({
+    super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +170,12 @@ class SoftBar extends StatelessWidget {
   final Color color;
   final double height;
 
-  const SoftBar({super.key, required this.value, required this.color, this.height = 6});
+  const SoftBar({
+    super.key,
+    required this.value,
+    required this.color,
+    this.height = 6,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +214,12 @@ class SoftRing extends StatelessWidget {
       width: size,
       height: size,
       child: CustomPaint(
-        painter: _RingPainter(value.clamp(0.0, 1.0), color, context.colors.fill, stroke),
+        painter: _RingPainter(
+          value.clamp(0.0, 1.0),
+          color,
+          context.colors.fill,
+          stroke,
+        ),
         child: center == null ? null : Center(child: center),
       ),
     );
@@ -201,20 +236,34 @@ class _RingPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromLTWH(stroke / 2, stroke / 2, size.width - stroke, size.height - stroke);
+    final rect = Rect.fromLTWH(
+      stroke / 2,
+      stroke / 2,
+      size.width - stroke,
+      size.height - stroke,
+    );
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = stroke;
     canvas.drawArc(rect, 0, math.pi * 2, false, paint..color = track);
     if (value > 0) {
-      canvas.drawArc(rect, -math.pi / 2, math.pi * 2 * value, false, paint..color = color);
+      canvas.drawArc(
+        rect,
+        -math.pi / 2,
+        math.pi * 2 * value,
+        false,
+        paint..color = color,
+      );
     }
   }
 
   @override
   bool shouldRepaint(_RingPainter old) =>
-      old.value != value || old.color != color || old.track != track || old.stroke != stroke;
+      old.value != value ||
+      old.color != color ||
+      old.track != track ||
+      old.stroke != stroke;
 }
 
 /// Icon in a soft rounded tile (list leading, settings rows).
@@ -224,7 +273,13 @@ class SoftIconTile extends StatelessWidget {
   final Color? background;
   final double size;
 
-  const SoftIconTile(this.icon, {super.key, required this.color, this.background, this.size = 44});
+  const SoftIconTile(
+    this.icon, {
+    super.key,
+    required this.color,
+    this.background,
+    this.size = 44,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +325,11 @@ class SoftSearchField extends StatelessWidget {
         decoration: InputDecoration(
           hintText: hint,
           filled: false,
-          prefixIcon: AppIcon(Icons.search_rounded, size: 22, color: c.textMuted),
+          prefixIcon: AppIcon(
+            Icons.search_rounded,
+            size: 22,
+            color: c.textMuted,
+          ),
           suffixIcon: value.isNotEmpty
               ? IconButton(
                   tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
@@ -278,7 +337,10 @@ class SoftSearchField extends StatelessWidget {
                   onPressed: onClear,
                 )
               : null,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
       ),
     );

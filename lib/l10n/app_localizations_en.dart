@@ -365,6 +365,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonOverview => 'Overview';
 
   @override
+  String boxSummary(int items, int nested) {
+    String _temp0 = intl.Intl.pluralLogic(
+      items,
+      locale: localeName,
+      other: '$items total items',
+      one: '1 total item',
+    );
+    return '$_temp0 • $nested nested';
+  }
+
+  @override
   String nestedContainers(Object count) {
     return 'Nested Containers ($count)';
   }
@@ -1303,6 +1314,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get enterCode => 'Enter Code';
+
+  @override
+  String get switchCamera => 'Switch camera';
 
   @override
   String get boxScanTitle => 'Box Scan';

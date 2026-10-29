@@ -1,5 +1,7 @@
 import '../theme/app_theme.dart';
+
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -74,7 +76,9 @@ class _SplashScreenState extends State<SplashScreen>
     final initFuture = provider.initializationFuture.timeout(
       const Duration(milliseconds: 4000),
       onTimeout: () {
-        debugPrint('Splash: provider initialization timeout, proceeding to next screen.');
+        debugPrint(
+          'Splash: provider initialization timeout, proceeding to next screen.',
+        );
       },
     );
 
@@ -93,7 +97,9 @@ class _SplashScreenState extends State<SplashScreen>
     _manualContinueTimer?.cancel();
 
     final provider = context.read<InventoryProvider>();
-    final targetWidget = provider.isAuthenticated ? const HomeScreen() : const LoginScreen();
+    final targetWidget = provider.isAuthenticated
+        ? const HomeScreen()
+        : const LoginScreen();
 
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
@@ -127,8 +133,12 @@ class _SplashScreenState extends State<SplashScreen>
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.dark : Brightness.light,
-        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.dark
+            : Brightness.light,
+        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
+            ? Brightness.light
+            : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: c.background,
@@ -249,7 +259,8 @@ class _SplashScreenState extends State<SplashScreen>
                                     vertical: 6,
                                   ),
                                   minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: Text(
                                   context.l10n.continueToApp,

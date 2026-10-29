@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../utils/date_format.dart';
+
 import 'package:provider/provider.dart';
+
 import '../widgets/item_category_sheets.dart';
 import '../widgets/item_form_attributes.dart';
 import '../widgets/item_photo_modal.dart';
@@ -96,10 +99,15 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
   /// The category of the newest item if it still exists, else the first category.
   String _suggestedCategory(InventoryProvider provider) {
     if (provider.items.isNotEmpty) {
-      final newest = provider.items.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
-      if (provider.categories.contains(newest.categoryId)) return newest.categoryId;
+      final newest = provider.items.reduce(
+        (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
+      );
+      if (provider.categories.contains(newest.categoryId))
+        return newest.categoryId;
     }
-    return provider.categories.isNotEmpty ? provider.categories.first : 'General';
+    return provider.categories.isNotEmpty
+        ? provider.categories.first
+        : 'General';
   }
 
   List<String> _getCommonUnits(String defaultUnit) {
@@ -107,7 +115,19 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
     if (defaultUnit.trim().isNotEmpty) {
       list.add(defaultUnit.trim());
     }
-    const standard = ["pcs", "box", "pack", "set", "kg", "g", "pair", "bottle", "m", "can", "roll"];
+    const standard = [
+      "pcs",
+      "box",
+      "pack",
+      "set",
+      "kg",
+      "g",
+      "pair",
+      "bottle",
+      "m",
+      "can",
+      "roll",
+    ];
     for (final s in standard) {
       if (!list.any((item) => item.toLowerCase() == s.toLowerCase())) {
         list.add(s);
@@ -126,7 +146,9 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
       _currentBoxId = i.boxId;
       _nameController.text = i.name;
       _descriptionController.text = i.description;
-      _quantityController.text = i.quantity % 1 == 0 ? i.quantity.toInt().toString() : i.quantity.toString();
+      _quantityController.text = i.quantity % 1 == 0
+          ? i.quantity.toInt().toString()
+          : i.quantity.toString();
       if (i.minQuantity != null) {
         _minQuantityController.text = i.minQuantity! % 1 == 0
             ? i.minQuantity!.toInt().toString()
@@ -135,7 +157,9 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
       _unitController.text = i.unit;
       _serialController.text = i.serialNumber ?? '';
       _barcodeController.text = i.barcode ?? '';
-      _priceController.text = i.purchasePrice != null ? i.purchasePrice!.toStringAsFixed(2) : '';
+      _priceController.text = i.purchasePrice != null
+          ? i.purchasePrice!.toStringAsFixed(2)
+          : '';
       _selectedCategory = i.categoryId;
       _selectedStatus = i.status;
       _isConsumable = i.isConsumable;
@@ -187,7 +211,8 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
       isReceipt: isReceipt,
       onCamera: () => _captureFromCamera(isReceipt),
       onGallery: () => _pickFromGallery(isReceipt),
-      onPhotoAdded: (url) => _update(() => (isReceipt ? _receiptPhotos : _photos).add(url)),
+      onPhotoAdded: (url) =>
+          _update(() => (isReceipt ? _receiptPhotos : _photos).add(url)),
     );
   }
 
@@ -201,7 +226,10 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
         final created = await showAddCategoryDialog(context, provider);
         if (created != null && mounted) {
           _update(() => _selectedCategory = created);
-          AppFeedback.showSuccess(context, context.l10n.categoryCreated(created));
+          AppFeedback.showSuccess(
+            context,
+            context.l10n.categoryCreated(created),
+          );
         }
       },
     );
@@ -228,11 +256,17 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
           boxId: _currentBoxId,
           categoryId: _selectedCategory,
           quantity: qty,
-          unit: _unitController.text.trim().isEmpty ? 'pcs' : _unitController.text.trim(),
+          unit: _unitController.text.trim().isEmpty
+              ? 'pcs'
+              : _unitController.text.trim(),
           minQuantity: minQty,
           clearMinQuantity: minQty == null,
-          serialNumber: _serialController.text.trim().isEmpty ? null : _serialController.text.trim(),
-          barcode: _barcodeController.text.trim().isEmpty ? null : _barcodeController.text.trim(),
+          serialNumber: _serialController.text.trim().isEmpty
+              ? null
+              : _serialController.text.trim(),
+          barcode: _barcodeController.text.trim().isEmpty
+              ? null
+              : _barcodeController.text.trim(),
           purchasePrice: price,
           purchaseDate: _purchaseDate,
           warrantyExpiryDate: _warrantyExpiryDate,
@@ -251,10 +285,16 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
           boxId: _currentBoxId,
           categoryId: _selectedCategory,
           quantity: qty,
-          unit: _unitController.text.trim().isEmpty ? 'pcs' : _unitController.text.trim(),
+          unit: _unitController.text.trim().isEmpty
+              ? 'pcs'
+              : _unitController.text.trim(),
           minQuantity: minQty,
-          serialNumber: _serialController.text.trim().isEmpty ? null : _serialController.text.trim(),
-          barcode: _barcodeController.text.trim().isEmpty ? null : _barcodeController.text.trim(),
+          serialNumber: _serialController.text.trim().isEmpty
+              ? null
+              : _serialController.text.trim(),
+          barcode: _barcodeController.text.trim().isEmpty
+              ? null
+              : _barcodeController.text.trim(),
           purchasePrice: price,
           purchaseDate: _purchaseDate,
           warrantyExpiryDate: _warrantyExpiryDate,
@@ -273,15 +313,23 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
         Navigator.pop(context);
         AppFeedback.showSuccess(
           context,
-          isEditing ? context.l10n.itemUpdatedSuccessfully(itemName) : context.l10n.itemAddedSuccessfully(itemName),
+          isEditing
+              ? context.l10n.itemUpdatedSuccessfully(itemName)
+              : context.l10n.itemAddedSuccessfully(itemName),
         );
       } else {
         // The provider already undid the change; stay on the form so nothing typed is lost.
         setState(() => _isLoading = false);
-        AppFeedback.showError(context, context.l10n.somethingWentWrongPleaseTry);
+        AppFeedback.showError(
+          context,
+          context.l10n.somethingWentWrongPleaseTry,
+        );
       }
     } else {
-      AppFeedback.showError(context, context.l10n.pleaseFixTheHighlightedFields);
+      AppFeedback.showError(
+        context,
+        context.l10n.pleaseFixTheHighlightedFields,
+      );
     }
   }
 
@@ -306,172 +354,205 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
         if (leave && context.mounted) Navigator.pop(context);
       },
       child: Scaffold(
-      backgroundColor: context.colors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: IconButton(
- tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                shape: BoxShape.circle,
-              ),
-              child: AppIcon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 16,
-                color: context.colors.textPrimary,
-              ),
-            ),
-            onPressed: () => Navigator.maybePop(context),
-          ),
-        ),
-        title: Text(
-          isEditing ? context.l10n.editItem : context.l10n.newItem,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: context.colors.textPrimary,
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          if (isEditing)
-            Padding(
-              padding: const EdgeInsets.only(right: 4.0),
-              child: IconButton(
- tooltip: context.l10n.commonDelete,
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: context.colors.surface,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const AppIcon(Icons.delete_outline, size: 20, color: AppTones.coral),
+        backgroundColor: context.colors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: IconButton(
+              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  shape: BoxShape.circle,
                 ),
-                onPressed: () async {
-                  final name = widget.existingItem!.name;
-                  final itemId = widget.existingItem!.id;
-                  final confirmed = await TrashActions.confirm(context, name: name);
-                  if (confirmed && context.mounted) {
-                    final ok = await provider.deleteItem(itemId);
-                    if (!context.mounted) return;
-                    if (ok) {
-                      Navigator.pop(context);
-                      TrashActions.showMoved(context, provider, name: name, itemId: itemId);
-                    } else {
-                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(name));
-                    }
-                  }
-                },
+                child: AppIcon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 16,
+                  color: context.colors.textPrimary,
+                ),
               ),
+              onPressed: () => Navigator.maybePop(context),
             ),
-          Padding(
-            padding: const EdgeInsets.only(right: 12.0),
-            child: FilledButton(
-              onPressed: _isLoading ? null : _saveItem,
-              style: FilledButton.styleFrom(
-                backgroundColor: context.colors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                minimumSize: Size.zero,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      width: 14,
-                      height: 14,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                    )
-                  : Text(
-                      isEditing ? context.l10n.commonSave : context.l10n.commonCreate,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          title: Text(
+            isEditing ? context.l10n.editItem : context.l10n.newItem,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: context.colors.textPrimary,
+            ),
+          ),
+          centerTitle: true,
+          actions: [
+            if (isEditing)
+              Padding(
+                padding: const EdgeInsets.only(right: 4.0),
+                child: IconButton(
+                  tooltip: context.l10n.commonDelete,
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: context.colors.surface,
+                      shape: BoxShape.circle,
                     ),
-            ),
-          ),
-        ],
-      ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
-          children: [
-            // The name and the few fields everyone fills in come first.
-            ..._basicInfoSection(provider, currentBox, breadcrumb),
-
-            _buildSectionTitle(context.l10n.productPhotos),
-            const SizedBox(height: 12),
-            _buildPhotosGallery(false),
-            const SizedBox(height: 24),
-
-            // Everything else is optional: collapsed for a new item, open when editing.
-            Theme(
-              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-              child: ExpansionTile(
-                initiallyExpanded: isEditing,
-                tilePadding: EdgeInsets.zero,
-                childrenPadding: EdgeInsets.zero,
-                title: Text(
-                  context.l10n.moreDetails,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: context.colors.textPrimary,
+                    child: const AppIcon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: AppTones.coral,
+                    ),
                   ),
+                  onPressed: () async {
+                    final name = widget.existingItem!.name;
+                    final itemId = widget.existingItem!.id;
+                    final confirmed = await TrashActions.confirm(
+                      context,
+                      name: name,
+                    );
+                    if (confirmed && context.mounted) {
+                      final ok = await provider.deleteItem(itemId);
+                      if (!context.mounted) return;
+                      if (ok) {
+                        Navigator.pop(context);
+                        TrashActions.showMoved(
+                          context,
+                          provider,
+                          name: name,
+                          itemId: itemId,
+                        );
+                      } else {
+                        AppFeedback.showError(
+                          context,
+                          context.l10n.couldNotDeletePleaseTry2(name),
+                        );
+                      }
+                    }
+                  },
                 ),
-                children: [
-                  const SizedBox(height: 8),
-                  ..._statusSection(provider, currentBox, breadcrumb),
-
-                  ..._assetDetailsSection(provider, currentBox, breadcrumb),
-
-                  ..._specificationsSection(provider, currentBox, breadcrumb),
-
-                  // Receipts & Invoices
-                  _buildSectionTitle(context.l10n.receiptsWarrantyProof),
-                  const SizedBox(height: 12),
-                  _buildPhotosGallery(true),
-                  const SizedBox(height: 24),
-                ],
               ),
-            ),
-            const SizedBox(height: 12),
-
-            // Save Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
+            Padding(
+              padding: const EdgeInsets.only(right: 12.0),
               child: FilledButton(
                 onPressed: _isLoading ? null : _saveItem,
                 style: FilledButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: Colors.white,
+                  backgroundColor: context.colors.accent,
+                  foregroundColor: context.colors.onAccent,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  minimumSize: Size.zero,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  isEditing ? context.l10n.saveChanges : context.l10n.saveItem,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                child: _isLoading
+                    ? SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: context.colors.onAccent,
+                        ),
+                      )
+                    : Text(
+                        isEditing
+                            ? context.l10n.commonSave
+                            : context.l10n.commonCreate,
+                        style: const TextStyle(
+                          fontSize: 13,
+                        ),
+                      ),
               ),
             ),
           ],
         ),
+        body: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+              children: [
+                // The name and the few fields everyone fills in come first.
+                ..._basicInfoSection(provider, currentBox, breadcrumb),
+
+                _buildSectionTitle(context.l10n.productPhotos),
+                const SizedBox(height: 12),
+                _buildPhotosGallery(false),
+                const SizedBox(height: 24),
+
+                // Everything else is optional: collapsed for a new item, open when editing.
+                Theme(
+                  data: Theme.of(context)
+                      .copyWith(dividerColor: Colors.transparent),
+                  child: ExpansionTile(
+                    initiallyExpanded: isEditing,
+                    tilePadding: EdgeInsets.zero,
+                    childrenPadding: EdgeInsets.zero,
+                    title: Text(
+                      context.l10n.moreDetails,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: context.colors.textPrimary,
+                      ),
+                    ),
+                    children: [
+                      const SizedBox(height: 8),
+                      ..._statusSection(provider, currentBox, breadcrumb),
+
+                      ..._assetDetailsSection(provider, currentBox, breadcrumb),
+
+                      ..._specificationsSection(
+                        provider,
+                        currentBox,
+                        breadcrumb,
+                      ),
+
+                      // Receipts & Invoices
+                      _buildSectionTitle(context.l10n.receiptsWarrantyProof),
+                      const SizedBox(height: 12),
+                      _buildPhotosGallery(true),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Save Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: FilledButton(
+                    onPressed: _isLoading ? null : _saveItem,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: context.colors.accent,
+                      foregroundColor: context.colors.onAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      isEditing
+                          ? context.l10n.saveChanges
+                          : context.l10n.saveItem,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-    ),
-    ),
-  );
-}
+    );
+  }
 }

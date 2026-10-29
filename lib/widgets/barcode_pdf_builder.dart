@@ -168,18 +168,28 @@ Future<Uint8List> generateBarcodePdf({
           margin: const pw.EdgeInsets.only(top: 10),
           padding: const pw.EdgeInsets.only(top: 8),
           decoration: const pw.BoxDecoration(
-            border: pw.Border(top: pw.BorderSide(color: PdfColors.grey300, width: 0.5)),
+            border: pw.Border(
+              top: pw.BorderSide(color: PdfColors.grey300, width: 0.5),
+            ),
           ),
           child: pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
                 'Personal Inventory - Storage QR Labels',
-                style: pw.TextStyle(font: regularFont, fontSize: 8, color: PdfColors.grey600),
+                style: pw.TextStyle(
+                  font: regularFont,
+                  fontSize: 8,
+                  color: PdfColors.grey600,
+                ),
               ),
               pw.Text(
                 'Page ${context.pageNumber} of ${context.pagesCount}',
-                style: pw.TextStyle(font: regularFont, fontSize: 8, color: PdfColors.grey600),
+                style: pw.TextStyle(
+                  font: regularFont,
+                  fontSize: 8,
+                  color: PdfColors.grey600,
+                ),
               ),
             ],
           ),
@@ -193,7 +203,10 @@ Future<Uint8List> generateBarcodePdf({
             children: entries.map((entry) {
               return pw.Container(
                 width: 172,
-                padding: const pw.EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 12,
+                ),
                 decoration: pw.BoxDecoration(
                   color: PdfColors.white,
                   borderRadius: pw.BorderRadius.circular(8),

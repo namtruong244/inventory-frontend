@@ -39,7 +39,9 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
       _selectedType = widget.existingBox!.type;
     } else {
       _label = 'loc_${const Uuid().v4().substring(0, 8)}';
-      _selectedType = widget.parentId == null ? StorageType.room : StorageType.box;
+      _selectedType = widget.parentId == null
+          ? StorageType.room
+          : StorageType.box;
     }
   }
 
@@ -88,7 +90,9 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
       Navigator.pop(context);
       AppFeedback.showSuccess(
         context,
-        isEditing ? context.l10n.locationUpdatedSuccessfully(boxName) : context.l10n.locationCreatedSuccessfully(boxName),
+        isEditing
+            ? context.l10n.locationUpdatedSuccessfully(boxName)
+            : context.l10n.locationCreatedSuccessfully(boxName),
       );
     } else {
       setState(() => _saving = false);
@@ -100,7 +104,9 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
   Widget build(BuildContext context) {
     final isEditing = widget.existingBox != null;
     final provider = Provider.of<InventoryProvider>(context, listen: false);
-    final parentBox = widget.parentId != null ? provider.getBoxById(widget.parentId!) : null;
+    final parentBox = widget.parentId != null
+        ? provider.getBoxById(widget.parentId!)
+        : null;
 
     return Scaffold(
       backgroundColor: context.colors.background,
@@ -110,14 +116,18 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: IconButton(
- tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: AppIcon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
+              child: AppIcon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
+                color: context.colors.textPrimary,
+              ),
             ),
             onPressed: () => Navigator.pop(context),
           ),
@@ -125,7 +135,9 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
         title: Text(
           isEditing
               ? context.l10n.editLocation
-              : (widget.parentId == null ? context.l10n.createRootLocation : context.l10n.createNestedContainer),
+              : (widget.parentId == null
+                    ? context.l10n.createRootLocation
+                    : context.l10n.createNestedContainer),
           style: TextStyle(
             color: context.colors.textPrimary,
             fontWeight: FontWeight.bold,
@@ -138,14 +150,18 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 8.0),
               child: IconButton(
- tooltip: context.l10n.commonDelete,
+                tooltip: context.l10n.commonDelete,
                 icon: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: context.colors.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: const AppIcon(Icons.delete_outline, size: 20, color: AppTones.coral),
+                  child: const AppIcon(
+                    Icons.delete_outline,
+                    size: 20,
+                    color: AppTones.coral,
+                  ),
                 ),
                 onPressed: () async {
                   final confirmed = await TrashActions.confirm(
@@ -157,13 +173,24 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                   if (confirmed && context.mounted) {
                     final boxName = widget.existingBox!.name;
                     final boxId = widget.existingBox!.id;
-                    final ok = await provider.deleteBox(widget.existingBox!.id, cascade: true);
+                    final ok = await provider.deleteBox(
+                      widget.existingBox!.id,
+                      cascade: true,
+                    );
                     if (!context.mounted) return;
                     if (ok) {
                       Navigator.pop(context);
-                      TrashActions.showMoved(context, provider, name: boxName, boxId: boxId);
+                      TrashActions.showMoved(
+                        context,
+                        provider,
+                        name: boxName,
+                        boxId: boxId,
+                      );
                     } else {
-                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry(boxName));
+                      AppFeedback.showError(
+                        context,
+                        context.l10n.couldNotDeletePleaseTry(boxName),
+                      );
                     }
                   }
                 },
@@ -179,83 +206,145 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
           child: ListView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-          children: [
-            // Storage Type Selector
-            Text(
-              context.l10n.storageType,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: context.colors.textPrimary,
-                letterSpacing: -0.2,
+            children: [
+              // Storage Type Selector
+              Text(
+                context.l10n.storageType,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.textPrimary,
+                  letterSpacing: -0.2,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: StorageType.values.map((type) {
-                  final isSelected = _selectedType == type;
-                  return Tappable(
-                    onTap: () => setState(() => _selectedType = type),
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              const SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: StorageType.values.map((type) {
+                    final isSelected = _selectedType == type;
+                    return Tappable(
+                      onTap: () => setState(() => _selectedType = type),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? context.colors.accent
+                              : context.colors.surface,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Row(
+                          children: [
+                            AppIcon(
+                              type.icon,
+                              size: 16,
+                              color: isSelected
+                                  ? context.colors.onAccent
+                                  : context.colors.textPrimary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              type.displayName,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
+                                color: isSelected
+                                    ? context.colors.onAccent
+                                    : context.colors.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Location Name
+              AppFormField(
+                label: context.l10n.commonName,
+                hintText: context.l10n.eGLivingRoomOak,
+                controller: _nameController,
+                validator: (value) => value == null || value.trim().isEmpty
+                    ? context.l10n.pleaseEnterAName
+                    : null,
+              ),
+              const SizedBox(height: 20),
+
+              // Description
+              AppFormField(
+                label: context.l10n.commonDescription,
+                hintText: context.l10n.eGUpperShelfLeft,
+                controller: _descriptionController,
+                maxLines: 3,
+              ),
+              const SizedBox(height: 20),
+
+              // Parent Location Info if nested
+              if (parentBox != null) ...[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.l10n.parentContainer,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: context.colors.textPrimary,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 14,
+                      ),
                       decoration: BoxDecoration(
-                        color: isSelected ? context.colors.accent : context.colors.surface,
-                        borderRadius: BorderRadius.circular(14),
+                        color: context.colors.surface,
+                        borderRadius: BorderRadius.circular(18),
+                        boxShadow: context.colors.cardShadow,
                       ),
                       child: Row(
                         children: [
                           AppIcon(
-                            type.icon,
-                            size: 16,
-                            color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
+                            parentBox.type.icon,
+                            size: 20,
+                            color: context.colors.textPrimary,
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            type.displayName,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              parentBox.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: context.colors.textPrimary,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 20),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
 
-            // Location Name
-            AppFormField(
-              label: context.l10n.commonName,
-              hintText: context.l10n.eGLivingRoomOak,
-              controller: _nameController,
-              validator: (value) =>
-                  value == null || value.trim().isEmpty ? context.l10n.pleaseEnterAName : null,
-            ),
-            const SizedBox(height: 20),
-
-            // Description
-            AppFormField(
-              label: context.l10n.commonDescription,
-              hintText: context.l10n.eGUpperShelfLeft,
-              controller: _descriptionController,
-              maxLines: 3,
-            ),
-            const SizedBox(height: 20),
-
-            // Parent Location Info if nested
-            if (parentBox != null) ...[
+              // Label ID section
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    context.l10n.parentContainer,
+                    context.l10n.qrLabelId,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -265,21 +354,30 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 15,
+                    ),
                     decoration: BoxDecoration(
-                      color: context.colors.fill,
-                      borderRadius: BorderRadius.circular(16),
+                      color: context.colors.surface,
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: context.colors.cardShadow,
                     ),
                     child: Row(
                       children: [
-                        AppIcon(parentBox.type.icon, size: 20, color: context.colors.textPrimary),
-                        const SizedBox(width: 12),
+                        AppIcon(
+                          Icons.qr_code_2_rounded,
+                          size: 24,
+                          color: context.colors.textPrimary,
+                        ),
+                        const SizedBox(width: 14),
                         Expanded(
                           child: Text(
-                            parentBox.name,
+                            _label,
                             style: TextStyle(
+                              fontFamily: 'monospace',
                               fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              fontSize: 15,
                               color: context.colors.textPrimary,
                             ),
                           ),
@@ -289,82 +387,36 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-            ],
+              const SizedBox(height: 36),
 
-            // Label ID section
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.qrLabelId,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textPrimary,
-                    letterSpacing: -0.2,
+              // Submit Button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: FilledButton(
+                  onPressed: _saving ? null : _saveBox,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: context.colors.accent,
+                    foregroundColor: context.colors.onAccent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 0,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
-                  decoration: BoxDecoration(
-                    color: context.colors.fill,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    children: [
-                      AppIcon(
-                        Icons.qr_code_2_rounded,
-                        size: 24,
-                        color: context.colors.textPrimary,
+                  child: Text(
+                    isEditing
+                        ? context.l10n.saveChanges
+                        : context.l10n.saveLocation,
+                    style: const TextStyle(
+                      fontSize: 16,
                       ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Text(
-                          _label,
-                          style: TextStyle(
-                            fontFamily: 'monospace',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 36),
-
-            // Submit Button
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: FilledButton(
-                onPressed: _saving ? null : _saveBox,
-                style: FilledButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  isEditing ? context.l10n.saveChanges : context.l10n.saveLocation,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

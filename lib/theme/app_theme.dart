@@ -5,41 +5,59 @@ import 'package:google_fonts/google_fonts.dart';
 /// Semantic colors that differ between light and dark. Read with
 /// `context.colors`; use these instead of raw `Color(0x...)` / `Colors.white`.
 @immutable
-class AppColors extends ThemeExtension<AppColors> {  /// Page background behind cards.
+class AppColors extends ThemeExtension<AppColors> {
+  /// Page background behind cards.
   final Color background;
+
   /// Cards, sheets, dialogs.
   final Color surface;
+
   /// Filled inputs, chips, segmented backgrounds.
   final Color fill;
+
   /// Hairlines and borders.
   final Color border;
+
   /// Main text and icons.
   final Color textPrimary;
+
   /// Secondary text.
   final Color textSecondary;
+
   /// Placeholders and disabled hints.
   final Color textMuted;
+
   /// Primary buttons and selected chips; always carries white content.
   final Color primary;
+
   /// Tinted background for error / overdue content.
   final Color dangerSoft;
+
   /// Text on [dangerSoft].
   final Color dangerStrong;
+
   /// Tinted background for warnings.
   final Color warningSoft;
+
   /// Text on [warningSoft].
   final Color warningStrong;
+
   /// Tinted background for success / in-stock content.
   final Color successSoft;
+
   /// Text on [successSoft].
   final Color successStrong;
+
   /// Tinted background for informational content.
   final Color infoSoft;
+
   /// Text on [infoSoft].
   final Color infoStrong;
+
   /// Lime/matcha highlight: active states, primary call-to-action, progress.
   /// Always carries [onAccent] content, never white.
   final Color accent;
+
   /// Content color on [accent].
   final Color onAccent;
   const AppColors({
@@ -99,17 +117,21 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
     infoSoft: Color(0xFF16233B),
     infoStrong: Color(0xFF93C5FD),
   );
+
   /// Soft, wide drop shadow for white cards; no borders.
   List<BoxShadow> get cardShadow => [
-        BoxShadow(
-          color: (surface.computeLuminance() > 0.5
+    BoxShadow(
+      color:
+          (surface.computeLuminance() > 0.5
                   ? const Color(0xFF1F2A44)
                   : Colors.black)
-              .withValues(alpha: surface.computeLuminance() > 0.5 ? 0.06 : 0.35),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
-        ),
-      ];
+              .withValues(
+                alpha: surface.computeLuminance() > 0.5 ? 0.06 : 0.35,
+              ),
+      blurRadius: 24,
+      offset: const Offset(0, 8),
+    ),
+  ];
   static AppColors of(BuildContext context) =>
       Theme.of(context).extension<AppColors>() ?? light;
   @override
@@ -154,6 +176,7 @@ class AppColors extends ThemeExtension<AppColors> {  /// Page background behind 
       onAccent: onAccent ?? this.onAccent,
     );
   }
+
   @override
   AppColors lerp(ThemeExtension<AppColors>? other, double t) {
     if (other is! AppColors) return this;
@@ -193,18 +216,21 @@ ThemeData buildAppTheme(Brightness brightness) {
   const onPrimary = Colors.white;
 
   final base = ThemeData(brightness: brightness, useMaterial3: true);
-  final scheme = ColorScheme.fromSeed(
-    seedColor: const Color(0xFF18181B),
-    brightness: brightness,
-  ).copyWith(
-    primary: primary,
-    onPrimary: onPrimary,
-    secondary: colors.fill,
-    onSecondary: colors.textPrimary,
-    surface: colors.surface,
-    onSurface: colors.textPrimary,
-    surfaceContainerHighest: isDark ? colors.border : const Color(0xFFE2E8F0),
-  );
+  final scheme =
+      ColorScheme.fromSeed(
+        seedColor: const Color(0xFF18181B),
+        brightness: brightness,
+      ).copyWith(
+        primary: primary,
+        onPrimary: onPrimary,
+        secondary: colors.fill,
+        onSecondary: colors.textPrimary,
+        surface: colors.surface,
+        onSurface: colors.textPrimary,
+        surfaceContainerHighest: isDark
+            ? colors.border
+            : const Color(0xFFE2E8F0),
+      );
 
   OutlineInputBorder outline([Color? color, double width = 1.5]) =>
       OutlineInputBorder(
@@ -231,7 +257,7 @@ ThemeData buildAppTheme(Brightness brightness) {
       titleTextStyle: TextStyle(
         color: colors.textPrimary,
         fontSize: 18,
-        fontWeight: FontWeight.w800,
+        fontWeight: FontWeight.w600,
       ),
     ),
     textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme)
@@ -259,7 +285,7 @@ ThemeData buildAppTheme(Brightness brightness) {
         foregroundColor: onPrimary,
         minimumSize: const Size(0, 52),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+        textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -267,7 +293,7 @@ ThemeData buildAppTheme(Brightness brightness) {
         elevation: 0,
         minimumSize: const Size(0, 52),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+        textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -275,7 +301,10 @@ ThemeData buildAppTheme(Brightness brightness) {
       foregroundColor: colors.onAccent,
       elevation: 0,
       highlightElevation: 0,
-      extendedTextStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+      extendedTextStyle: const TextStyle(
+        fontWeight: FontWeight.w500,
+        fontSize: 15,
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
     ),
     popupMenuTheme: PopupMenuThemeData(

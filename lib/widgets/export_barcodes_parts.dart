@@ -2,11 +2,9 @@ part of 'export_barcodes_sheet.dart';
 
 /// Format option, barcode card and image export helpers.
 extension _ExportBarcodesParts on _ExportBarcodesSheetState {
-
   Widget _buildPrintFormatOption({
     required int index,
     required String title,
-    required String subtitle,
     required IconData icon,
   }) {
     final isSelected = _selectedPrintFormat == index;
@@ -14,7 +12,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
       onTap: () => _update(() => _selectedPrintFormat = index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? context.colors.accent : context.colors.fill,
           borderRadius: BorderRadius.circular(18),
@@ -24,29 +22,21 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
             AppIcon(
               icon,
               size: 20,
-              color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
+              color: isSelected
+                  ? context.colors.onAccent
+                  : context.colors.textPrimary,
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: isSelected ? context.colors.onAccent.withValues(alpha: 0.7) : context.colors.textSecondary,
-                    ),
-                  ),
-                ],
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: isSelected
+                      ? context.colors.onAccent
+                      : context.colors.textPrimary,
+                ),
               ),
             ),
           ],
@@ -55,7 +45,6 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
     );
   }
 
-
   Widget _buildBarcodeCard(BoxBarcodeEntry entry) {
     return Container(
       width: 162,
@@ -63,34 +52,11 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: context.colors.border,
-          width: 1.2,
-        ),
-        boxShadow: context.colors.cardShadow,
+        border: Border.all(color: context.colors.border, width: 1.2),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Cut guide indicator
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AppIcon(Icons.content_cut_rounded, size: 10, color: context.colors.textMuted),
-              const SizedBox(width: 4),
-              Text(
-                context.l10n.cutGuide,
-                style: TextStyle(
-                  fontSize: 8.5,
-                  letterSpacing: 0.8,
-                  fontWeight: FontWeight.w600,
-                  color: context.colors.textMuted,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-
           // Crisp QR Code
           Container(
             padding: const EdgeInsets.all(4),
@@ -112,7 +78,7 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
             entry.name,
             style: TextStyle(
               fontSize: 13,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: context.colors.textPrimary,
               height: 1.25,
             ),
@@ -124,7 +90,6 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
       ),
     );
   }
-
 
   void _showExportedImagePreview(Uint8List pngBytes) {
     showDialog(
@@ -147,17 +112,16 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
               const SizedBox(height: 8),
               Text(
                 context.l10n.highResolutionPngImageOf,
-                style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: context.colors.textSecondary,
+                ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.memory(
-                  pngBytes,
-                  fit: BoxFit.contain,
-                  height: 280,
-                ),
+                child: Image.memory(pngBytes, fit: BoxFit.contain, height: 280),
               ),
               const SizedBox(height: 16),
               SizedBox(
@@ -165,14 +129,19 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
                 child: FilledButton.icon(
                   onPressed: () {
                     Navigator.pop(ctx);
-                    AppFeedback.showSuccess(context, context.l10n.barcodeImageCaptured);
+                    AppFeedback.showSuccess(
+                      context,
+                      context.l10n.barcodeImageCaptured,
+                    );
                   },
                   icon: const AppIcon(Icons.check_rounded, size: 18),
                   label: Text(context.l10n.commonDone),
                   style: FilledButton.styleFrom(
                     backgroundColor: context.colors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                   ),
                 ),
               ),
@@ -188,10 +157,15 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
     _update(() => _isExportingImage = true);
 
     try {
-      final boundary = _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      final boundary =
+          _repaintKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
       if (boundary == null) {
         if (mounted) {
-          AppFeedback.showError(context, context.l10n.failedToCaptureBarcodeGrid);
+          AppFeedback.showError(
+            context,
+            context.l10n.failedToCaptureBarcodeGrid,
+          );
         }
         return;
       }

@@ -60,19 +60,29 @@ class _BarcodeScanSheetState extends State<_BarcodeScanSheet> {
               Container(
                 width: 44,
                 height: 4,
-                decoration: BoxDecoration(color: c.border, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(
+                  color: c.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
               const SizedBox(height: 14),
               Text(
                 context.l10n.scanBarcode,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: c.textPrimary),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: c.textPrimary,
+                ),
               ),
               const SizedBox(height: 14),
               ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: SizedBox(
                   height: 260,
-                  child: MobileScanner(controller: _controller, onDetect: _onDetect),
+                  child: MobileScanner(
+                    controller: _controller,
+                    onDetect: _onDetect,
+                  ),
                 ),
               ),
             ],

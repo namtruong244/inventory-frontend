@@ -685,6 +685,12 @@ abstract class AppLocalizations {
   /// **'Overview'**
   String get commonOverview;
 
+  /// No description provided for @boxSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{items, plural, =1{1 total item} other{{items} total items}} • {nested} nested'**
+  String boxSummary(int items, int nested);
+
   /// No description provided for @nestedContainers.
   ///
   /// In en, this message translates to:
@@ -2340,6 +2346,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter Code'**
   String get enterCode;
+
+  /// No description provided for @switchCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch camera'**
+  String get switchCamera;
 
   /// No description provided for @boxScanTitle.
   ///

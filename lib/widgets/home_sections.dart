@@ -22,7 +22,8 @@ class HomeSections {
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
         // Offline mode is covered by the app-wide SyncStatusBar.
-        if (provider.isConnected || provider.isOffline) return const SizedBox.shrink();
+        if (provider.isConnected || provider.isOffline)
+          return const SizedBox.shrink();
 
         return Container(
           margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
@@ -60,7 +61,7 @@ class HomeSections {
                 ),
                 child: Text(
                   context.l10n.commonRetry,
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 12, ),
                 ),
               ),
             ],
@@ -89,8 +90,8 @@ class HomeSections {
         }
 
         return Container(
-          margin: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: context.colors.dangerSoft,
             borderRadius: BorderRadius.circular(24),
@@ -127,6 +128,8 @@ class HomeSections {
                     const SizedBox(height: 2),
                     Text(
                       alertMessage,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 12,
                         height: 1.25,
@@ -141,8 +144,8 @@ class HomeSections {
                 onTap: () => navigate(const AlertsScreen()),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
+                    horizontal: 12,
+                    vertical: 6,
                   ),
                   decoration: BoxDecoration(
                     color: context.colors.primary,
@@ -169,7 +172,6 @@ class HomeSections {
     final provider = Provider.of<InventoryProvider>(context);
     final c = context.colors;
     final activeLoans = provider.getActiveLoans().length;
-    final overdueLoans = provider.getOverdueLoans().length;
     final totalAlerts = provider.totalAlertCount;
 
     return Padding(
@@ -184,24 +186,25 @@ class HomeSections {
               iconFg: c.infoStrong,
               title: context.l10n.commonLending,
               stat: '$activeLoans',
-              caption: activeLoans > 0 ? '$activeLoans Active' : context.l10n.noLoans,
-              // Share of active loans that are on time.
-              progress: activeLoans == 0 ? null : (activeLoans - overdueLoans) / activeLoans,
-              progressColor: overdueLoans > 0 ? c.dangerStrong : c.infoStrong,
+              caption: activeLoans > 0
+                  ? '$activeLoans Active'
+                  : context.l10n.noLoans,
               onTap: () => navigate(const LendingTrackerScreen()),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: _QuickCard(
-              icon: totalAlerts > 0 ? Icons.notifications_active_outlined : Icons.shield_outlined,
+              icon: totalAlerts > 0
+                  ? Icons.notifications_active_outlined
+                  : Icons.shield_outlined,
               iconBg: totalAlerts > 0 ? c.dangerSoft : c.successSoft,
               iconFg: totalAlerts > 0 ? c.dangerStrong : c.successStrong,
               title: context.l10n.commonAlerts,
               stat: '$totalAlerts',
-              caption: totalAlerts > 0 ? '$totalAlerts Issues' : context.l10n.allClear,
-              progress: totalAlerts == 0 ? 1 : null,
-              progressColor: c.successStrong,
+              caption: totalAlerts > 0
+                  ? '$totalAlerts Issues'
+                  : context.l10n.allClear,
               onTap: () => navigate(const AlertsScreen()),
             ),
           ),
@@ -211,8 +214,7 @@ class HomeSections {
   }
 }
 
-/// White 24px card: bold stat, muted caption, thin progress bar and a
-/// trailing chevron that signals drill-down.
+/// Slim white pill: icon, title with caption, count and a drill-down chevron.
 class _QuickCard extends StatelessWidget {
   final IconData icon;
   final Color iconBg;
@@ -220,8 +222,6 @@ class _QuickCard extends StatelessWidget {
   final String title;
   final String stat;
   final String caption;
-  final double? progress;
-  final Color progressColor;
   final VoidCallback onTap;
 
   const _QuickCard({
@@ -231,8 +231,6 @@ class _QuickCard extends StatelessWidget {
     required this.title,
     required this.stat,
     required this.caption,
-    required this.progress,
-    required this.progressColor,
     required this.onTap,
   });
 
@@ -243,62 +241,56 @@ class _QuickCard extends StatelessWidget {
       semanticLabel: title,
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: c.surface,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: c.cardShadow,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(14)),
-                  child: AppIcon(icon, color: iconFg, size: 20),
-                ),
-                const Spacer(),
-                AppIcon(Icons.chevron_right_rounded, color: c.textMuted, size: 22),
-              ],
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: iconBg,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: AppIcon(icon, color: iconFg, size: 18),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    caption,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 11, color: c.textSecondary),
+                  ),
+                ],
+              ),
+            ),
             Text(
               stat,
               style: TextStyle(
-                fontSize: 30,
+                fontSize: 16,
                 fontWeight: FontWeight.w800,
-                height: 1,
-                letterSpacing: -1,
                 color: c.textPrimary,
               ),
             ),
-            const SizedBox(height: 6),
-            Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: c.textPrimary),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              caption,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 12, color: c.textSecondary),
-            ),
-            const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: LinearProgressIndicator(
-                value: progress ?? 0,
-                minHeight: 6,
-                backgroundColor: c.fill,
-                valueColor: AlwaysStoppedAnimation(progressColor),
-              ),
-            ),
+            AppIcon(Icons.chevron_right_rounded, color: c.textMuted, size: 18),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../screens/box_details_screen.dart';
@@ -63,15 +64,19 @@ class BreadcrumbBar extends StatelessWidget {
           AppIcon(
             box.type.icon,
             size: 13,
-            color: isLast ? context.colors.onAccent : context.colors.textPrimary,
+            color: isLast
+                ? context.colors.onAccent
+                : context.colors.textPrimary,
           ),
           const SizedBox(width: 5),
           Text(
             box.name,
             style: TextStyle(
               fontSize: 12,
-              fontWeight: isLast ? FontWeight.bold : FontWeight.w500,
-              color: isLast ? context.colors.onAccent : context.colors.textPrimary,
+              fontWeight: isLast ? FontWeight.w600 : FontWeight.w500,
+              color: isLast
+                  ? context.colors.onAccent
+                  : context.colors.textPrimary,
             ),
           ),
         ],

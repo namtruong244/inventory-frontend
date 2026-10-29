@@ -18,10 +18,7 @@ part 'login_screen_parts.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool autoOpenGoogle;
-  const LoginScreen({
-    super.key,
-    this.autoOpenGoogle = false,
-  });
+  const LoginScreen({super.key, this.autoOpenGoogle = false});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -61,7 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.of(context).pushAndRemoveUntil(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 300),
-        pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const HomeScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -92,16 +90,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final idToken = account.authentication.idToken;
       final email = account.email;
-      final name = (account.displayName != null && account.displayName!.trim().isNotEmpty)
+      final name =
+          (account.displayName != null &&
+              account.displayName!.trim().isNotEmpty)
           ? account.displayName!
           : email.split('@').first;
       final avatarUrl = account.photoUrl;
 
       String? accessToken;
       try {
-        final clientAuth = await account.authorizationClient.authorizationForScopes(
-          const ['email', 'https://www.googleapis.com/auth/userinfo.profile'],
-        );
+        final clientAuth = await account.authorizationClient
+            .authorizationForScopes(const [
+              'email',
+              'https://www.googleapis.com/auth/userinfo.profile',
+            ]);
         accessToken = clientAuth?.accessToken;
       } catch (_) {}
 
@@ -126,7 +128,10 @@ class _LoginScreenState extends State<LoginScreen> {
       debugPrint('google sign-in error: $e');
       if (mounted) {
         setState(() => _isLoading = false);
-        AppFeedback.showError(context, friendlyError(e, fallback: context.l10n.couldnTSignInWith));
+        AppFeedback.showError(
+          context,
+          friendlyError(e, fallback: context.l10n.couldnTSignInWith),
+        );
       }
     }
   }
@@ -219,7 +224,10 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 20.0,
+              ),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 440),
                 child: Form(
@@ -292,9 +300,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Divider with "or continue with email"
                       Row(
                         children: [
-                          Expanded(child: Divider(color: context.colors.border)),
+                          Expanded(
+                            child: Divider(color: context.colors.border),
+                          ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0,
+                            ),
                             child: Text(
                               'or continue with email',
                               style: GoogleFonts.plusJakartaSans(
@@ -304,7 +316,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          Expanded(child: Divider(color: context.colors.border)),
+                          Expanded(
+                            child: Divider(color: context.colors.border),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -316,16 +330,22 @@ class _LoginScreenState extends State<LoginScreen> {
                           decoration: InputDecoration(
                             labelText: context.l10n.fullName,
                             hintText: 'John Doe',
-                            prefixIcon: const AppIcon(Icons.person_outline_rounded, size: 20),
+                            prefixIcon: const AppIcon(
+                              Icons.person_outline_rounded,
+                              size: 20,
+                            ),
                             fillColor: context.colors.surface,
                             filled: true,
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(color: context.colors.border),
+                              borderSide: BorderSide(
+                                color: context.colors.border,
+                              ),
                             ),
                           ),
                           validator: (val) {
-                            if (_isRegisterMode && (val == null || val.trim().isEmpty)) {
+                            if (_isRegisterMode &&
+                                (val == null || val.trim().isEmpty)) {
                               return context.l10n.pleaseEnterYourName;
                             }
                             return null;
@@ -341,12 +361,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: context.l10n.emailAddress,
                           hintText: 'name@example.com',
-                          prefixIcon: const AppIcon(Icons.mail_outline_rounded, size: 20),
+                          prefixIcon: const AppIcon(
+                            Icons.mail_outline_rounded,
+                            size: 20,
+                          ),
                           fillColor: context.colors.surface,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: context.colors.border),
+                            borderSide: BorderSide(
+                              color: context.colors.border,
+                            ),
                           ),
                         ),
                         validator: (val) {
@@ -368,9 +393,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: InputDecoration(
                           labelText: context.l10n.commonPassword,
                           hintText: '••••••••',
-                          prefixIcon: const AppIcon(Icons.lock_outline_rounded, size: 20),
+                          prefixIcon: const AppIcon(
+                            Icons.lock_outline_rounded,
+                            size: 20,
+                          ),
                           suffixIcon: IconButton(
- tooltip: context.l10n.showOrHidePassword,
+                            tooltip: context.l10n.showOrHidePassword,
                             icon: AppIcon(
                               _obscurePassword
                                   ? Icons.visibility_outlined
@@ -379,14 +407,18 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: context.colors.textSecondary,
                             ),
                             onPressed: () {
-                              setState(() => _obscurePassword = !_obscurePassword);
+                              setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              );
                             },
                           ),
                           fillColor: context.colors.surface,
                           filled: true,
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: context.colors.border),
+                            borderSide: BorderSide(
+                              color: context.colors.border,
+                            ),
                           ),
                         ),
                         validator: (val) {
@@ -406,7 +438,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       SizedBox(
                         height: 52,
                         child: FilledButton(
-                          onPressed: _isLoading ? null : _handleEmailPasswordAuth,
+                          onPressed: _isLoading
+                              ? null
+                              : _handleEmailPasswordAuth,
                           style: FilledButton.styleFrom(
                             backgroundColor: context.colors.primary,
                             foregroundColor: Colors.white,
@@ -420,15 +454,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                   height: 22,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
                                   ),
                                 )
                               : Text(
-                                  _isRegisterMode ? context.l10n.createAccount : context.l10n.signIn,
+                                  _isRegisterMode
+                                      ? context.l10n.createAccount
+                                      : context.l10n.signIn,
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                    ),
                                 ),
                         ),
                       ),

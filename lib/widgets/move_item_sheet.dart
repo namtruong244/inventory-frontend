@@ -31,7 +31,10 @@ class MoveItemSheet {
           context.l10n.movedTo(item.name, pickedBox.name),
         );
       } else {
-        AppFeedback.showError(context, context.l10n.somethingWentWrongPleaseTry);
+        AppFeedback.showError(
+          context,
+          context.l10n.somethingWentWrongPleaseTry,
+        );
       }
       return ok;
     }

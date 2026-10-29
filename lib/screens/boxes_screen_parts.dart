@@ -2,37 +2,6 @@ part of 'boxes_screen.dart';
 
 /// Box card, empty state and filter chip builders.
 extension _BoxesScreenParts on _BoxesScreenState {
-
-  Widget _roundAction({
-    required String tooltip,
-    required IconData icon,
-    required VoidCallback? onTap,
-    bool accent = false,
-  }) {
-    final c = context.colors;
-    return Tooltip(
-      message: tooltip,
-      child: Tappable(
-        semanticLabel: tooltip,
-        onTap: onTap,
-        child: Container(
-          width: 46,
-          height: 46,
-          decoration: BoxDecoration(
-            color: accent ? c.accent : c.surface,
-            shape: BoxShape.circle,
-            boxShadow: accent ? null : c.cardShadow,
-          ),
-          child: AppIcon(
-            icon,
-            size: 22,
-            color: onTap == null ? c.textMuted : (accent ? c.onAccent : c.textPrimary),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildFlatBoxCard(Box box, InventoryProvider provider) {
     final itemCount = provider.countTotalItemsIn(box.id);
     final subBoxCount = provider.getBoxesIn(box.id).length;
@@ -80,9 +49,17 @@ extension _BoxesScreenParts on _BoxesScreenState {
                     final ok = await provider.deleteBox(box.id, cascade: true);
                     if (!mounted) return;
                     if (ok) {
-                      TrashActions.showMoved(context, provider, name: box.name, boxId: box.id);
+                      TrashActions.showMoved(
+                        context,
+                        provider,
+                        name: box.name,
+                        boxId: box.id,
+                      );
                     } else {
-                      AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(box.name));
+                      AppFeedback.showError(
+                        context,
+                        context.l10n.couldNotDeletePleaseTry2(box.name),
+                      );
                     }
                   }
                 },
@@ -116,7 +93,9 @@ extension _BoxesScreenParts on _BoxesScreenState {
                           width: 48,
                           height: 48,
                           decoration: BoxDecoration(
-                            color: context.colors.accent.withValues(alpha: 0.45),
+                            color: context.colors.accent.withValues(
+                              alpha: 0.45,
+                            ),
                             borderRadius: BorderRadius.circular(17),
                           ),
                           child: AppIcon(
@@ -133,7 +112,7 @@ extension _BoxesScreenParts on _BoxesScreenState {
                               Text(
                                 box.name,
                                 style: GoogleFonts.plusJakartaSans(
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                   fontSize: 16,
                                   color: context.colors.textPrimary,
                                 ),
@@ -148,15 +127,29 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                     background: context.colors.fill,
                                     foreground: context.colors.textSecondary,
                                   ),
-                                  SoftChip.tone(context.l10n.itemsCountLabel(itemCount), AppTones.sky, icon: Icons.category_outlined),
+                                  SoftChip.tone(
+                                    context.l10n.itemsCountLabel(itemCount),
+                                    AppTones.sky,
+                                    icon: Icons.category_outlined,
+                                  ),
                                   if (subBoxCount > 0)
-                                    SoftChip.tone(context.l10n.nestedCountLabel(subBoxCount), AppTones.lilac, icon: Icons.inventory_2_outlined),
+                                    SoftChip.tone(
+                                      context.l10n.nestedCountLabel(
+                                        subBoxCount,
+                                      ),
+                                      AppTones.lilac,
+                                      icon: Icons.inventory_2_outlined,
+                                    ),
                                 ],
                               ),
                             ],
                           ),
                         ),
-                        AppIcon(Icons.chevron_right_rounded, color: context.colors.textMuted, size: 24),
+                        AppIcon(
+                          Icons.chevron_right_rounded,
+                          color: context.colors.textMuted,
+                          size: 24,
+                        ),
                       ],
                     ),
 
@@ -164,7 +157,10 @@ extension _BoxesScreenParts on _BoxesScreenState {
                     if (box.parentId != null && breadcrumbList.isNotEmpty) ...[
                       const SizedBox(height: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: context.colors.fill,
                           borderRadius: BorderRadius.circular(10),
@@ -173,7 +169,11 @@ extension _BoxesScreenParts on _BoxesScreenState {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             children: [
-                              AppIcon(Icons.route_outlined, size: 14, color: context.colors.textSecondary),
+                              AppIcon(
+                                Icons.route_outlined,
+                                size: 14,
+                                color: context.colors.textSecondary,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 context.l10n.commonPath,
@@ -183,10 +183,16 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                   color: context.colors.textSecondary,
                                 ),
                               ),
-                              for (int i = 0; i < breadcrumbList.length; i++) ...[
+                              for (
+                                int i = 0;
+                                i < breadcrumbList.length;
+                                i++
+                              ) ...[
                                 if (i > 0)
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 4.0,
+                                    ),
                                     child: AppIcon(
                                       Icons.chevron_right_rounded,
                                       size: 14,
@@ -197,8 +203,12 @@ extension _BoxesScreenParts on _BoxesScreenState {
                                   breadcrumbList[i].name,
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
-                                    fontWeight: i == breadcrumbList.length - 1 ? FontWeight.w600 : FontWeight.w400,
-                                    color: i == breadcrumbList.length - 1 ? context.colors.textPrimary : context.colors.textSecondary,
+                                    fontWeight: i == breadcrumbList.length - 1
+                                        ? FontWeight.w600
+                                        : FontWeight.w400,
+                                    color: i == breadcrumbList.length - 1
+                                        ? context.colors.textPrimary
+                                        : context.colors.textSecondary,
                                   ),
                                 ),
                               ],
@@ -217,8 +227,12 @@ extension _BoxesScreenParts on _BoxesScreenState {
     );
   }
 
-
-  Widget _buildEmptyState({required String title, required String subtitle, VoidCallback? onAction, String? actionLabel}) {
+  Widget _buildEmptyState({
+    required String title,
+    required String subtitle,
+    VoidCallback? onAction,
+    String? actionLabel,
+  }) {
     return Container(
       margin: const EdgeInsets.only(top: 40),
       padding: const EdgeInsets.all(32),
@@ -229,12 +243,17 @@ extension _BoxesScreenParts on _BoxesScreenState {
       ),
       child: Column(
         children: [
-          SoftIconTile(Icons.inventory_2_outlined, color: context.colors.textPrimary, background: context.colors.accent.withValues(alpha: 0.45), size: 72),
+          SoftIconTile(
+            Icons.inventory_2_outlined,
+            color: context.colors.textPrimary,
+            background: context.colors.accent.withValues(alpha: 0.45),
+            size: 72,
+          ),
           const SizedBox(height: 16),
           Text(
             title,
             style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               fontSize: 16,
               color: context.colors.textPrimary,
             ),
@@ -243,7 +262,10 @@ extension _BoxesScreenParts on _BoxesScreenState {
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.plusJakartaSans(fontSize: 13, color: context.colors.textSecondary),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              color: context.colors.textSecondary,
+            ),
           ),
           if (onAction != null && actionLabel != null) ...[
             const SizedBox(height: 16),
@@ -254,7 +276,9 @@ extension _BoxesScreenParts on _BoxesScreenState {
     );
   }
 
-
-  Widget _buildFilterChip(int index, String label) =>
-      SoftFilterChip(label: label, selected: _filterIndex == index, onTap: () => _update(() => _filterIndex = index));
+  Widget _buildFilterChip(int index, String label) => SoftFilterChip(
+    label: label,
+    selected: _filterIndex == index,
+    onTap: () => _update(() => _filterIndex = index),
+  );
 }

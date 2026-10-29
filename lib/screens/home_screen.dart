@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../providers/inventory_provider.dart';
 import '../widgets/add_item_flow.dart';
+import 'box_create_screen.dart';
 import '../widgets/first_rooms_card.dart';
 import '../widgets/home_recent_section.dart';
 import '../widgets/home_sections.dart';
-import '../widgets/home_storage_section.dart';
 import '../widgets/home_tab_support.dart';
 import 'alerts_screen.dart';
 import 'boxes_screen.dart';
@@ -15,11 +15,11 @@ import 'items_screen.dart';
 import 'qr_scanner_tab.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
-import 'login_screen.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import '../widgets/app_icon.dart';
+import '../widgets/inventory_metrics_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   final int initialIndex;
@@ -30,7 +30,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late final ScrollController _homeScrollController;
   int _currentIndex = 0;
@@ -44,7 +45,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     _currentIndex = widget.initialIndex;
-    _tabController = TabController(length: 4, vsync: this, initialIndex: widget.initialIndex);
+    _tabController = TabController(
+      length: 4,
+      vsync: this,
+      initialIndex: widget.initialIndex,
+    );
     _tabController.addListener(_handleTabChange);
     _homeScrollController = ScrollController();
   }
@@ -109,7 +114,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     switch (index) {
       case 0:
         if (_homeScrollController.hasClients) {
-          _homeScrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+          _homeScrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
         }
         break;
       case 1:
@@ -137,9 +146,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 controller: _tabController,
                 children: [
                   KeepAliveTab(child: _buildHomeTab(context)),
-                  KeepAliveTab(child: ScrollToTopHost(key: _boxesKey, child: const BoxesScreen())),
-                  KeepAliveTab(child: ScrollToTopHost(key: _itemsKey, child: const ItemsScreen())),
-                  KeepAliveTab(child: ScrollToTopHost(key: _settingsKey, child: const SettingsScreen())),
+                  KeepAliveTab(
+                    child: ScrollToTopHost(
+                      key: _boxesKey,
+                      child: const BoxesScreen(),
+                    ),
+                  ),
+                  KeepAliveTab(
+                    child: ScrollToTopHost(
+                      key: _itemsKey,
+                      child: const ItemsScreen(),
+                    ),
+                  ),
+                  KeepAliveTab(
+                    child: ScrollToTopHost(
+                      key: _settingsKey,
+                      child: const SettingsScreen(),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -157,10 +181,10 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   HomeSections _sections(BuildContext context) => HomeSections(
-        context,
-        navigate: (page) => _navigateWithOverlayRestore(page),
-        selectTab: _onTabSelected,
-      );
+    context,
+    navigate: (page) => _navigateWithOverlayRestore(page),
+    selectTab: _onTabSelected,
+  );
 
   Widget _buildHomeTab(BuildContext context) {
     final provider = Provider.of<InventoryProvider>(context, listen: false);
@@ -179,15 +203,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             const SizedBox(height: 20),
             _sections(context).buildConnectionBanner(),
             _sections(context).buildAlertBanner(),
-            _sections(context).buildQuickModulesSection(),
-            const SizedBox(height: 28),
             Consumer<InventoryProvider>(
               builder: (context, p, _) {
                 // A brand-new account: ask where things are kept instead of showing empty lists.
-                final firstRun = p.boxes.isEmpty && !p.isLoading && !p.isSyncing;
-                return firstRun ? const FirstRoomsCard() : _sections(context).buildStorageSpacesSection();
+                final firstRun =
+                    p.boxes.isEmpty && !p.isLoading && !p.isSyncing;
+                return firstRun
+                    ? const FirstRoomsCard()
+                    : const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: InventoryMetricsBanner(),
+                      );
               },
             ),
+            const SizedBox(height: 16),
+            _sections(context).buildQuickModulesSection(),
             const SizedBox(height: 32),
             _sections(context).buildRecentItemsSection(),
           ],
@@ -212,19 +242,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   final initial = provider.userName.trim().isNotEmpty
                       ? provider.userName.trim()[0].toUpperCase()
                       : 'U';
-                  return Tappable(
-                    semanticLabel: provider.userName,
-                    onTap: () => _navigateWithOverlayRestore(const LoginScreen()),
-                    child: CircleAvatar(
-                      radius: 22,
-                      backgroundColor: c.accent,
-                      child: Text(
-                        initial,
-                        style: TextStyle(
-                          color: c.onAccent,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
+                  return CircleAvatar(
+                    radius: 22,
+                    backgroundColor: c.accent,
+                    child: Text(
+                      initial,
+                      style: TextStyle(
+                        color: c.onAccent,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                   );
@@ -236,7 +262,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   builder: (context, provider, _) {
                     final firstName = provider.userName.trim().split(' ').first;
                     return Text(
-                      context.l10n.heyName(firstName.isNotEmpty ? firstName : context.l10n.heyFallbackName),
+                      context.l10n.heyName(
+                        firstName.isNotEmpty
+                            ? firstName
+                            : context.l10n.heyFallbackName,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -253,7 +283,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   final alertCount = provider.totalAlertCount;
                   return Tappable(
                     semanticLabel: context.l10n.commonAlerts,
-                    onTap: () => _navigateWithOverlayRestore(const AlertsScreen()),
+                    onTap: () =>
+                        _navigateWithOverlayRestore(const AlertsScreen()),
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
@@ -265,15 +296,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                             shape: BoxShape.circle,
                             boxShadow: c.cardShadow,
                           ),
-                          child: AppIcon(Icons.notifications_none_rounded, color: c.textPrimary, size: 22),
+                          child: AppIcon(
+                            Icons.notifications_none_rounded,
+                            color: c.textPrimary,
+                            size: 22,
+                          ),
                         ),
                         if (alertCount > 0)
                           Positioned(
                             top: -2,
                             right: -2,
                             child: Container(
-                              constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-                              padding: const EdgeInsets.symmetric(horizontal: 5),
+                              constraints: const BoxConstraints(
+                                minWidth: 18,
+                                minHeight: 18,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 5,
+                              ),
                               decoration: BoxDecoration(
                                 color: c.dangerStrong,
                                 borderRadius: BorderRadius.circular(9),
@@ -327,14 +367,25 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   Expanded(
                     child: Text(
                       context.l10n.commonSearch,
-                      style: TextStyle(color: c.textMuted, fontSize: 15, fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        color: c.textMuted,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                   Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(color: c.fill, borderRadius: BorderRadius.circular(16)),
-                    child: AppIcon(Icons.tune_rounded, color: c.textPrimary, size: 18),
+                    decoration: BoxDecoration(
+                      color: c.fill,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: AppIcon(
+                      Icons.tune_rounded,
+                      color: c.textPrimary,
+                      size: 18,
+                    ),
                   ),
                 ],
               ),
@@ -347,14 +398,29 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
   Widget _buildBottomNav(BuildContext context) {
     final c = context.colors;
-    return Positioned(
-      bottom: _navBottomInset(context),
-      left: 20,
-      right: 20,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+    final bottom = _navBottomInset(context);
+    final showAdd = _currentIndex == 1 || _currentIndex == 2;
+    return Positioned.fill(
+      child: Stack(
         children: [
-          Expanded(
+          // Floating add button, only on the Box (1) and Item (2) tabs.
+          Positioned(
+            right: 20,
+            bottom: bottom + 68 + 16,
+            child: IgnorePointer(
+              ignoring: !showAdd,
+              child: AnimatedScale(
+                scale: showAdd ? 1 : 0,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutBack,
+                child: _buildQuickAddButton(),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: bottom,
+            left: 20,
+            right: 20,
             child: Container(
               height: 68,
               padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -364,7 +430,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 boxShadow: c.cardShadow,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 25,
                 children: [
                   _buildNavItem(
                     index: 0,
@@ -395,25 +462,28 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          _buildQuickAddButton(),
         ],
       ),
     );
   }
 
-  /// Quick add sits next to the nav pill so it stays under the thumb.
+  /// Quick add floats at the right edge above the nav pill: a new
+  /// location on the Box tab, a new item on the Item tab.
   Widget _buildQuickAddButton() {
     final c = context.colors;
+    final isBoxTab = _currentIndex == 1;
+    final label = isBoxTab ? context.l10n.newLocation : context.l10n.addItem;
     return Tooltip(
-      message: context.l10n.addItem,
+      message: label,
       child: Tappable(
-        semanticLabel: context.l10n.addItem,
-        onTap: () => startAddItemFlow(context),
+        semanticLabel: label,
+        onTap: () => isBoxTab
+            ? _navigateWithOverlayRestore(const BoxCreateScreen())
+            : startAddItemFlow(context),
         behavior: HitTestBehavior.opaque,
         child: Container(
-          width: 68,
-          height: 68,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
             color: c.accent,
             shape: BoxShape.circle,
@@ -471,7 +541,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       message: context.l10n.scanQrCode,
       child: Tappable(
         semanticLabel: context.l10n.scanQrCode,
-        onTap: () => _navigateWithOverlayRestore(const QRScannerTab(isFullScreen: true)),
+        onTap: () =>
+            _navigateWithOverlayRestore(const QRScannerTab(isFullScreen: true)),
         behavior: HitTestBehavior.opaque,
         child: Container(
           width: 52,
@@ -487,7 +558,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               ),
             ],
           ),
-          child: AppIcon(Icons.qr_code_scanner_rounded, color: c.accent, size: 24),
+          child: AppIcon(
+            Icons.qr_code_scanner_rounded,
+            color: c.accent,
+            size: 24,
+          ),
         ),
       ),
     );

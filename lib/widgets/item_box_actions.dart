@@ -20,70 +20,118 @@ import 'app_icon.dart';
 /// stays as a shortcut, but nothing is only reachable by swiping.
 Future<void> showItemActionsSheet(BuildContext context, Item item) {
   final provider = context.read<InventoryProvider>();
-  final loan = item.status == ItemStatus.lent ? provider.getActiveLoanForItem(item.id) : null;
-  return _showActions(context, title: item.name, actions: [
-    _Action(Icons.drive_file_move_outlined, context.l10n.commonMove, () => MoveItemSheet.show(context, item)),
-    if (loan != null)
-      _Action(Icons.assignment_turned_in_outlined, context.l10n.commonReturn,
-          () => confirmAndReturnLoan(context, loan, itemName: item.name))
-    else if (item.status != ItemStatus.lent)
-      _Action(Icons.assignment_ind_outlined, context.l10n.commonLend,
-          () => LendItemSheet.show(context, initialItem: item)),
-    _Action(
-      Icons.edit_outlined,
-      context.l10n.commonEdit,
-      () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => ItemCreateScreen(boxId: item.boxId, existingItem: item)),
+  final loan = item.status == ItemStatus.lent
+      ? provider.getActiveLoanForItem(item.id)
+      : null;
+  return _showActions(
+    context,
+    title: item.name,
+    actions: [
+      _Action(
+        Icons.drive_file_move_outlined,
+        context.l10n.commonMove,
+        () => MoveItemSheet.show(context, item),
       ),
-    ),
-    _Action(Icons.delete_outline, context.l10n.commonDelete, () async {
-      final confirmed = await TrashActions.confirm(context, name: item.name);
-      if (!confirmed || !context.mounted) return;
-      final ok = await provider.deleteItem(item.id);
-      if (!context.mounted) return;
-      if (ok) {
-        TrashActions.showMoved(context, provider, name: item.name, itemId: item.id);
-      } else {
-        AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(item.name));
-      }
-    }, destructive: true),
-  ]);
+      if (loan != null)
+        _Action(
+          Icons.assignment_turned_in_outlined,
+          context.l10n.commonReturn,
+          () => confirmAndReturnLoan(context, loan, itemName: item.name),
+        )
+      else if (item.status != ItemStatus.lent)
+        _Action(
+          Icons.assignment_ind_outlined,
+          context.l10n.commonLend,
+          () => LendItemSheet.show(context, initialItem: item),
+        ),
+      _Action(
+        Icons.edit_outlined,
+        context.l10n.commonEdit,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) =>
+                ItemCreateScreen(boxId: item.boxId, existingItem: item),
+          ),
+        ),
+      ),
+      _Action(Icons.delete_outline, context.l10n.commonDelete, () async {
+        final confirmed = await TrashActions.confirm(context, name: item.name);
+        if (!confirmed || !context.mounted) return;
+        final ok = await provider.deleteItem(item.id);
+        if (!context.mounted) return;
+        if (ok) {
+          TrashActions.showMoved(
+            context,
+            provider,
+            name: item.name,
+            itemId: item.id,
+          );
+        } else {
+          AppFeedback.showError(
+            context,
+            context.l10n.couldNotDeletePleaseTry2(item.name),
+          );
+        }
+      }, destructive: true),
+    ],
+  );
 }
 
 /// The same menu for a location.
 Future<void> showBoxActionsSheet(BuildContext context, Box box) {
   final provider = context.read<InventoryProvider>();
-  return _showActions(context, title: box.name, actions: [
-    _Action(
-      Icons.add_box_outlined,
-      context.l10n.addSubContainer,
-      () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => BoxCreateScreen(parentId: box.id)),
+  return _showActions(
+    context,
+    title: box.name,
+    actions: [
+      _Action(
+        Icons.add_box_outlined,
+        context.l10n.addSubContainer,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BoxCreateScreen(parentId: box.id)),
+        ),
       ),
-    ),
-    _Action(Icons.drive_file_move_outlined, context.l10n.commonMove, () => MoveLocationDialog.show(context, box)),
-    _Action(
-      Icons.edit_outlined,
-      context.l10n.commonEdit,
-      () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => BoxCreateScreen(existingBox: box)),
+      _Action(
+        Icons.drive_file_move_outlined,
+        context.l10n.commonMove,
+        () => MoveLocationDialog.show(context, box),
       ),
-    ),
-    _Action(Icons.delete_outline, context.l10n.commonDelete, () async {
-      final confirmed = await TrashActions.confirm(context, name: box.name, isBox: true, hasContents: true);
-      if (!confirmed || !context.mounted) return;
-      final ok = await provider.deleteBox(box.id, cascade: true);
-      if (!context.mounted) return;
-      if (ok) {
-        TrashActions.showMoved(context, provider, name: box.name, boxId: box.id);
-      } else {
-        AppFeedback.showError(context, context.l10n.couldNotDeletePleaseTry2(box.name));
-      }
-    }, destructive: true),
-  ]);
+      _Action(
+        Icons.edit_outlined,
+        context.l10n.commonEdit,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => BoxCreateScreen(existingBox: box)),
+        ),
+      ),
+      _Action(Icons.delete_outline, context.l10n.commonDelete, () async {
+        final confirmed = await TrashActions.confirm(
+          context,
+          name: box.name,
+          isBox: true,
+          hasContents: true,
+        );
+        if (!confirmed || !context.mounted) return;
+        final ok = await provider.deleteBox(box.id, cascade: true);
+        if (!context.mounted) return;
+        if (ok) {
+          TrashActions.showMoved(
+            context,
+            provider,
+            name: box.name,
+            boxId: box.id,
+          );
+        } else {
+          AppFeedback.showError(
+            context,
+            context.l10n.couldNotDeletePleaseTry2(box.name),
+          );
+        }
+      }, destructive: true),
+    ],
+  );
 }
 
 class _Action {
@@ -115,7 +163,10 @@ Future<void> _showActions(
             Container(
               width: 44,
               height: 4,
-              decoration: BoxDecoration(color: c.border, borderRadius: BorderRadius.circular(2)),
+              decoration: BoxDecoration(
+                color: c.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
@@ -125,16 +176,25 @@ Future<void> _showActions(
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: c.textPrimary),
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: c.textPrimary,
+                  ),
                 ),
               ),
             ),
             for (final action in actions)
               ListTile(
-                leading: AppIcon(action.icon, color: action.destructive ? c.dangerStrong : c.textPrimary),
+                leading: AppIcon(
+                  action.icon,
+                  color: action.destructive ? c.dangerStrong : c.textPrimary,
+                ),
                 title: Text(
                   action.label,
-                  style: TextStyle(color: action.destructive ? c.dangerStrong : c.textPrimary),
+                  style: TextStyle(
+                    color: action.destructive ? c.dangerStrong : c.textPrimary,
+                  ),
                 ),
                 onTap: () {
                   // Close the menu first so the action opens on the screen underneath.

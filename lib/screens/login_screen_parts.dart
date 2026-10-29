@@ -2,7 +2,6 @@ part of 'login_screen.dart';
 
 /// OAuth button builder.
 extension _LoginScreenParts on _LoginScreenState {
-
   Widget _buildOAuthButton({
     required VoidCallback? onPressed,
     required Widget leading,

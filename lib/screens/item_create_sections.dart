@@ -158,9 +158,8 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         hintText: context.l10n.eG2AlertWhen,
         controller: _minQuantityController,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        validator: (v) => _isValidAmount(v)
-            ? null
-            : context.l10n.pleaseEnterAValidQuantity,
+        validator: (v) =>
+            _isValidAmount(v) ? null : context.l10n.pleaseEnterAValidQuantity,
       ),
       const SizedBox(height: 16),
 
@@ -222,7 +221,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                         const SizedBox(width: 4),
                         Expanded(
                           child: Text(
-                            breadcrumb.isNotEmpty ? breadcrumb : context.l10n.commonUnassigned,
+                            breadcrumb.isNotEmpty
+                                ? breadcrumb
+                                : context.l10n.commonUnassigned,
                             style: TextStyle(
                               color: context.colors.textSecondary,
                               fontSize: 12,
@@ -284,7 +285,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
               ),
               child: AppIcon(
                 Icons.shopping_basket_outlined,
-                color: _isConsumable ? Colors.white : context.colors.textSecondary,
+                color: _isConsumable
+                    ? Colors.white
+                    : context.colors.textSecondary,
                 size: 22,
               ),
             ),
@@ -300,7 +303,10 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   const SizedBox(height: 2),
                   Text(
                     context.l10n.consumableItemsBatteriesMasksFood,
-                    style: TextStyle(color: context.colors.textSecondary, fontSize: 11),
+                    style: TextStyle(
+                      color: context.colors.textSecondary,
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),
@@ -341,7 +347,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   vertical: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: isSelected ? context.colors.accent : context.colors.surface,
+                  color: isSelected
+                      ? context.colors.accent
+                      : context.colors.surface,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
@@ -349,7 +357,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                     AppIcon(
                       status.icon,
                       size: 16,
-                      color: isSelected ? context.colors.onAccent : status.color,
+                      color: isSelected
+                          ? context.colors.onAccent
+                          : status.color,
                     ),
                     const SizedBox(width: 6),
                     Text(
@@ -519,8 +529,12 @@ extension _ItemCreateSections on _ItemCreateScreenState {
     AppFeedback.showSuccess(
       context,
       source == ImageSource.camera
-          ? (isReceipt ? context.l10n.receiptCaptured : context.l10n.photoCaptured)
-          : (isReceipt ? context.l10n.receiptSelected : context.l10n.photoSelected),
+          ? (isReceipt
+                ? context.l10n.receiptCaptured
+                : context.l10n.photoCaptured)
+          : (isReceipt
+                ? context.l10n.receiptSelected
+                : context.l10n.photoSelected),
     );
   }
 
@@ -546,8 +560,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
             child: Container(
               width: 90,
               decoration: BoxDecoration(
-                color: context.colors.fill,
+                color: context.colors.surface,
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: context.colors.cardShadow,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -620,7 +635,8 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                     top: 4,
                     right: 4,
                     child: Tappable(
-                      semanticLabel: MaterialLocalizations.of(context).deleteButtonTooltip,
+                      semanticLabel: MaterialLocalizations.of(context)
+                          .deleteButtonTooltip,
                       onTap: () {
                         _update(() {
                           list.removeAt(idx);
@@ -653,8 +669,8 @@ extension _ItemCreateSections on _ItemCreateScreenState {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.bold,
+        fontSize: 17,
+        fontWeight: FontWeight.w800,
         color: context.colors.textPrimary,
         letterSpacing: -0.3,
       ),
@@ -692,15 +708,18 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             decoration: BoxDecoration(
-              color: context.colors.fill,
-              borderRadius: BorderRadius.circular(16),
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: context.colors.cardShadow,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
-                    date != null ? formatDate(context, date) : context.l10n.notSet,
+                    date != null
+                        ? formatDate(context, date)
+                        : context.l10n.notSet,
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: date != null
@@ -716,7 +735,8 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                 ),
                 if (date != null)
                   Tappable(
-                    semanticLabel: MaterialLocalizations.of(context).clearButtonTooltip,
+                    semanticLabel: MaterialLocalizations.of(context)
+                        .clearButtonTooltip,
                     onTap: () => onSelected(null),
                     child: AppIcon(
                       Icons.clear,

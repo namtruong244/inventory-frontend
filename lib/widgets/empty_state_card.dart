@@ -38,7 +38,11 @@ class EmptyStateCard extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: c.textPrimary),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+              color: c.textPrimary,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -53,10 +57,15 @@ class EmptyStateCard extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: c.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
-              child: Text(actionLabel!, style: const TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(actionLabel!),
             ),
           ],
         ],

@@ -14,7 +14,6 @@ import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
 
 extension HomeRecentSection on HomeSections {
-
   Widget buildRecentItemsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +143,6 @@ extension HomeRecentSection on HomeSections {
     );
   }
 
-
   Widget buildRecentItemRowCard({required Item item, required String boxName}) {
     final provider = Provider.of<InventoryProvider>(context, listen: false);
     final qtyText = provider.formatQty(item.quantity, item.unit);
@@ -272,14 +270,14 @@ extension HomeRecentSection on HomeSections {
                   ),
                   decoration: BoxDecoration(
                     color:
-                        (item.isLowStock
-                                ? AppTones.amber
-                                : item.status.color)
+                        (item.isLowStock ? AppTones.amber : item.status.color)
                             .withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    item.isLowStock ? context.l10n.settingsLowStock : item.status.displayName,
+                    item.isLowStock
+                        ? context.l10n.settingsLowStock
+                        : item.status.displayName,
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,

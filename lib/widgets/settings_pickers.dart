@@ -78,7 +78,6 @@ void showExpiryDaysPicker(BuildContext context, InventoryProvider provider) {
   );
 }
 
-
 void showWarrantyDaysPicker(BuildContext context, InventoryProvider provider) {
   showSelectionSheet<int>(
     context: context,
@@ -89,11 +88,13 @@ void showWarrantyDaysPicker(BuildContext context, InventoryProvider provider) {
     displayBuilder: (days) => '$days days before warranty ends',
     onSelected: (days) {
       provider.setWarrantyWarningDays(days);
-      AppFeedback.showSuccess(context, context.l10n.warrantyWindowSetToDays(days));
+      AppFeedback.showSuccess(
+        context,
+        context.l10n.warrantyWindowSetToDays(days),
+      );
     },
   );
 }
-
 
 void showTimezonePicker(BuildContext context, InventoryProvider provider) {
   const zones = [
@@ -114,7 +115,9 @@ void showTimezonePicker(BuildContext context, InventoryProvider provider) {
     title: context.l10n.timeZone,
     subtitle: context.l10n.alertsTreatTodayInThis,
     items: zones,
-    currentValue: zones.contains(provider.timezone) ? provider.timezone : zones.first,
+    currentValue: zones.contains(provider.timezone)
+        ? provider.timezone
+        : zones.first,
     displayBuilder: (tz) => tz,
     onSelected: (tz) {
       provider.setTimezone(tz);
@@ -149,7 +152,12 @@ void showSelectionSheet<T>({
         child: SafeArea(
           top: false,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(20, 16, 20, bottomPadding > 0 ? 8 : 24),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              16,
+              20,
+              bottomPadding > 0 ? 8 : 24,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,12 +175,19 @@ void showSelectionSheet<T>({
                 const SizedBox(height: 18),
                 Text(
                   title,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: context.colors.textPrimary,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Flexible(
@@ -185,26 +200,39 @@ void showSelectionSheet<T>({
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
                           child: Material(
-                            color: isSelected ? context.colors.fill : context.colors.surface,
+                            color: isSelected
+                                ? context.colors.fill
+                                : context.colors.surface,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(14),
                               side: BorderSide(
-                                color: isSelected ? context.colors.primary : context.colors.border,
+                                color: isSelected
+                                    ? context.colors.primary
+                                    : context.colors.border,
                               ),
                             ),
                             child: ListTile(
                               dense: true,
-                              visualDensity: const VisualDensity(horizontal: 0, vertical: -2),
+                              visualDensity: const VisualDensity(
+                                horizontal: 0,
+                                vertical: -2,
+                              ),
                               title: Text(
                                 displayBuilder(item),
                                 style: TextStyle(
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.w500,
                                   color: context.colors.textPrimary,
                                   fontSize: 14,
                                 ),
                               ),
                               trailing: isSelected
-                                  ? AppIcon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
+                                  ? AppIcon(
+                                      Icons.check_circle_rounded,
+                                      color: context.colors.textPrimary,
+                                      size: 20,
+                                    )
                                   : null,
                               onTap: () {
                                 Navigator.pop(sheetContext);

@@ -10,7 +10,9 @@ import 'location_picker_sheet.dart';
 /// The box the user filed something into most recently: the best guess for the next item.
 String? lastUsedBoxId(InventoryProvider provider) {
   if (provider.items.isEmpty) return null;
-  final newest = provider.items.reduce((a, b) => a.createdAt.isAfter(b.createdAt) ? a : b);
+  final newest = provider.items.reduce(
+    (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
+  );
   return provider.getBoxById(newest.boxId) != null ? newest.boxId : null;
 }
 
@@ -20,7 +22,9 @@ Future<void> startAddItemFlow(BuildContext context) async {
   final provider = context.read<InventoryProvider>();
   final navigator = Navigator.of(context);
   if (provider.boxes.isEmpty) {
-    await navigator.push(MaterialPageRoute(builder: (_) => const BoxCreateScreen()));
+    await navigator.push(
+      MaterialPageRoute(builder: (_) => const BoxCreateScreen()),
+    );
     return;
   }
   final box = await LocationPickerSheet.show(
@@ -31,5 +35,7 @@ Future<void> startAddItemFlow(BuildContext context) async {
     confirmButtonText: context.l10n.addItemHere,
   );
   if (box == null) return;
-  await navigator.push(MaterialPageRoute(builder: (_) => ItemCreateScreen(boxId: box.id)));
+  await navigator.push(
+    MaterialPageRoute(builder: (_) => ItemCreateScreen(boxId: box.id)),
+  );
 }

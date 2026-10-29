@@ -52,7 +52,10 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
       _selected.clear();
     });
     if (created > 0) {
-      AppFeedback.showSuccess(context, context.l10n.locationsCreatedCount(created));
+      AppFeedback.showSuccess(
+        context,
+        context.l10n.locationsCreatedCount(created),
+      );
     } else {
       AppFeedback.showError(context, context.l10n.somethingWentWrongPleaseTry);
     }
@@ -75,7 +78,11 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
         children: [
           Text(
             context.l10n.firstRoomsTitle,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: c.textPrimary),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: c.textPrimary,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
@@ -93,7 +100,9 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
                   selected: _selected.contains(i),
                   onSelected: _creating
                       ? null
-                      : (on) => setState(() => on ? _selected.add(i) : _selected.remove(i)),
+                      : (on) => setState(
+                          () => on ? _selected.add(i) : _selected.remove(i),
+                        ),
                 ),
             ],
           ),
@@ -101,23 +110,29 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
           SizedBox(
             width: double.infinity,
             child: FilledButton(
-              onPressed: _selected.isEmpty || _creating ? null : () => _create(names),
+              onPressed: _selected.isEmpty || _creating
+                  ? null
+                  : () => _create(names),
               style: FilledButton.styleFrom(
                 backgroundColor: c.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
               child: _creating
                   ? const SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : Text(
                       context.l10n.createSelectedRooms(_selected.length),
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                      ),
             ),
           ),
           Align(
@@ -126,7 +141,9 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
               onPressed: _creating
                   ? null
                   : () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const BoxCreateScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const BoxCreateScreen(),
+                      ),
                     ),
               child: Text(context.l10n.addMyOwnLocation),
             ),

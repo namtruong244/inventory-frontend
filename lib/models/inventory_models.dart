@@ -148,8 +148,8 @@ class Box {
     this.icon,
     DateTime? createdAt,
     this.updatedAt,
-  })  : id = id ?? const Uuid().v4(),
-        createdAt = createdAt ?? DateTime.now();
+  }) : id = id ?? const Uuid().v4(),
+       createdAt = createdAt ?? DateTime.now();
 
   Box copyWith({
     String? id,
@@ -177,35 +177,35 @@ class Box {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'type': type.name,
-        'description': description,
-        'label': label,
-        'parentId': parentId,
-        'icon': icon,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt?.toIso8601String(),
-      };
+    'id': id,
+    'name': name,
+    'type': type.name,
+    'description': description,
+    'label': label,
+    'parentId': parentId,
+    'icon': icon,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
+  };
 
   factory Box.fromJson(Map<String, dynamic> json) => Box(
-        id: json['id'] ?? '',
-        name: json['name'] ?? '',
-        type: StorageType.values.firstWhere(
-          (t) => t.name.toLowerCase() == (json['type']?.toString().toLowerCase()),
-          orElse: () => StorageType.box,
-        ),
-        description: json['description'] ?? '',
-        label: json['label'] ?? '',
-        parentId: json['parentId'],
-        icon: json['icon'],
-        createdAt: json['createdAt'] != null
-            ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-            : DateTime.now(),
-        updatedAt: json['updatedAt'] != null
-            ? DateTime.tryParse(json['updatedAt'])
-            : null,
-      );
+    id: json['id'] ?? '',
+    name: json['name'] ?? '',
+    type: StorageType.values.firstWhere(
+      (t) => t.name.toLowerCase() == (json['type']?.toString().toLowerCase()),
+      orElse: () => StorageType.box,
+    ),
+    description: json['description'] ?? '',
+    label: json['label'] ?? '',
+    parentId: json['parentId'],
+    icon: json['icon'],
+    createdAt: json['createdAt'] != null
+        ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+        : DateTime.now(),
+    updatedAt: json['updatedAt'] != null
+        ? DateTime.tryParse(json['updatedAt'])
+        : null,
+  );
 }
 
 /// Item Catalog & Asset Tracking Model
@@ -218,7 +218,7 @@ class Item {
   final double quantity;
   final String unit; // pcs, set, box, kg, pack, etc.
   final List<String> photos;
-  
+
   // Asset & Warranty
   final DateTime? purchaseDate;
   final double? purchasePrice;
@@ -226,14 +226,17 @@ class Item {
   final String? barcode; // UPC / EAN code
   final DateTime? warrantyExpiryDate;
   final List<String> receiptPhotos;
-  
+
   // Status & Lifecycle
   final ItemStatus status;
   final bool isConsumable; // Consumable/perishable items consumed over time
-  final DateTime? expiryDate; // Perishable expiration date (food, medicine, batteries)
-  final double? minQuantity; // Minimum stock threshold before triggering low stock alert
-  final Map<String, dynamic> customAttributes; // Flexible metadata (color, specs, size)
-  
+  final DateTime?
+  expiryDate; // Perishable expiration date (food, medicine, batteries)
+  final double?
+  minQuantity; // Minimum stock threshold before triggering low stock alert
+  final Map<String, dynamic>
+  customAttributes; // Flexible metadata (color, specs, size)
+
   /// Quantity currently out on partial loans (still owned, so it counts for stock).
   final double lentQuantity;
 
@@ -265,12 +268,12 @@ class Item {
     DateTime? createdAt,
     this.updatedAt,
     String? imageUrl,
-  })  : id = id ?? const Uuid().v4(),
-        photos = photos ?? (imageUrl != null ? [imageUrl] : []),
-        receiptPhotos = receiptPhotos ?? [],
-        customAttributes = customAttributes ?? {},
-        minQuantity = minQuantity ?? lowStockThreshold,
-        createdAt = createdAt ?? DateTime.now();
+  }) : id = id ?? const Uuid().v4(),
+       photos = photos ?? (imageUrl != null ? [imageUrl] : []),
+       receiptPhotos = receiptPhotos ?? [],
+       customAttributes = customAttributes ?? {},
+       minQuantity = minQuantity ?? lowStockThreshold,
+       createdAt = createdAt ?? DateTime.now();
 
   /// Backwards compatibility getter
   String? get imageUrl => photos.isNotEmpty ? photos.first : null;
@@ -284,8 +287,7 @@ class Item {
 
   /// Expiry calculations work on calendar days: an item expiring today is
   /// not expired yet and has 0 days left.
-  bool get isExpired =>
-      expiryDate != null && daysBetweenToday(expiryDate!) < 0;
+  bool get isExpired => expiryDate != null && daysBetweenToday(expiryDate!) < 0;
 
   int? get daysUntilExpiry =>
       expiryDate == null ? null : daysBetweenToday(expiryDate!);
@@ -293,9 +295,8 @@ class Item {
   bool get isWarrantyExpired =>
       warrantyExpiryDate != null && daysBetweenToday(warrantyExpiryDate!) < 0;
 
-  int? get daysUntilWarrantyExpiry => warrantyExpiryDate == null
-      ? null
-      : daysBetweenToday(warrantyExpiryDate!);
+  int? get daysUntilWarrantyExpiry =>
+      warrantyExpiryDate == null ? null : daysBetweenToday(warrantyExpiryDate!);
 
   Item copyWith({
     String? id,
@@ -340,7 +341,9 @@ class Item {
       status: status ?? this.status,
       isConsumable: isConsumable ?? this.isConsumable,
       expiryDate: expiryDate ?? this.expiryDate,
-      minQuantity: clearMinQuantity ? null : (minQuantity ?? lowStockThreshold ?? this.minQuantity),
+      minQuantity: clearMinQuantity
+          ? null
+          : (minQuantity ?? lowStockThreshold ?? this.minQuantity),
       customAttributes: customAttributes ?? this.customAttributes,
       lentQuantity: lentQuantity,
       createdAt: createdAt ?? this.createdAt,
@@ -349,75 +352,76 @@ class Item {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'description': description,
-        'boxId': boxId,
-        'categoryId': categoryId,
-        'quantity': quantity,
-        'unit': unit,
-        'photos': photos,
-        'purchaseDate': purchaseDate?.toIso8601String(),
-        'purchasePrice': purchasePrice,
-        'serialNumber': serialNumber,
-        'barcode': barcode,
-        'warrantyExpiryDate': warrantyExpiryDate?.toIso8601String(),
-        'receiptPhotos': receiptPhotos,
-        'status': status.name,
-        'isConsumable': isConsumable,
-        'expiryDate': expiryDate?.toIso8601String(),
-        'minQuantity': minQuantity,
-        'customAttributes': customAttributes,
-        'lentQuantity': lentQuantity,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt?.toIso8601String(),
-        'imageUrl': imageUrl,
-      };
+    'id': id,
+    'name': name,
+    'description': description,
+    'boxId': boxId,
+    'categoryId': categoryId,
+    'quantity': quantity,
+    'unit': unit,
+    'photos': photos,
+    'purchaseDate': purchaseDate?.toIso8601String(),
+    'purchasePrice': purchasePrice,
+    'serialNumber': serialNumber,
+    'barcode': barcode,
+    'warrantyExpiryDate': warrantyExpiryDate?.toIso8601String(),
+    'receiptPhotos': receiptPhotos,
+    'status': status.name,
+    'isConsumable': isConsumable,
+    'expiryDate': expiryDate?.toIso8601String(),
+    'minQuantity': minQuantity,
+    'customAttributes': customAttributes,
+    'lentQuantity': lentQuantity,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt?.toIso8601String(),
+    'imageUrl': imageUrl,
+  };
 
   factory Item.fromJson(Map<String, dynamic> json) => Item(
-        id: json['id'] ?? '',
-        name: json['name'] ?? '',
-        description: json['description'] ?? '',
-        boxId: json['boxId'] ?? json['locationId'] ?? '',
-        categoryId: json['categoryId'] ?? 'General',
-        quantity: (json['quantity'] as num?)?.toDouble() ?? 1.0,
-        unit: json['unit'] ?? 'pcs',
-        photos: (json['photos'] as List?)?.map((e) => e.toString()).toList() ??
-            (json['imageUrl'] != null ? [json['imageUrl'].toString()] : []),
-        purchaseDate: json['purchaseDate'] != null
-            ? DateTime.tryParse(json['purchaseDate'])
-            : null,
-        purchasePrice: (json['purchasePrice'] as num?)?.toDouble(),
-        serialNumber: json['serialNumber'],
-        barcode: json['barcode'],
-        warrantyExpiryDate: json['warrantyExpiryDate'] != null
-            ? DateTime.tryParse(json['warrantyExpiryDate'])
-            : null,
-        receiptPhotos: (json['receiptPhotos'] as List?)
-                ?.map((e) => e.toString())
-                .toList() ??
-            [],
-        status: ItemStatus.values.firstWhere(
-          (s) => s.name == json['status'],
-          orElse: () => ItemStatus.stored,
-        ),
-        isConsumable: json['isConsumable'] as bool? ?? false,
-        expiryDate: json['expiryDate'] != null
-            ? DateTime.tryParse(json['expiryDate'])
-            : null,
-        minQuantity: (json['minQuantity'] as num?)?.toDouble() ??
-            (json['lowStockThreshold'] as num?)?.toDouble(),
-        customAttributes: json['customAttributes'] is Map
-            ? Map<String, dynamic>.from(json['customAttributes'])
-            : {},
-        lentQuantity: (json['lentQuantity'] as num?)?.toDouble() ?? 0,
-        createdAt: json['createdAt'] != null
-            ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-            : DateTime.now(),
-        updatedAt: json['updatedAt'] != null
-            ? DateTime.tryParse(json['updatedAt'])
-            : null,
-      );
+    id: json['id'] ?? '',
+    name: json['name'] ?? '',
+    description: json['description'] ?? '',
+    boxId: json['boxId'] ?? json['locationId'] ?? '',
+    categoryId: json['categoryId'] ?? 'General',
+    quantity: (json['quantity'] as num?)?.toDouble() ?? 1.0,
+    unit: json['unit'] ?? 'pcs',
+    photos:
+        (json['photos'] as List?)?.map((e) => e.toString()).toList() ??
+        (json['imageUrl'] != null ? [json['imageUrl'].toString()] : []),
+    purchaseDate: json['purchaseDate'] != null
+        ? DateTime.tryParse(json['purchaseDate'])
+        : null,
+    purchasePrice: (json['purchasePrice'] as num?)?.toDouble(),
+    serialNumber: json['serialNumber'],
+    barcode: json['barcode'],
+    warrantyExpiryDate: json['warrantyExpiryDate'] != null
+        ? DateTime.tryParse(json['warrantyExpiryDate'])
+        : null,
+    receiptPhotos:
+        (json['receiptPhotos'] as List?)?.map((e) => e.toString()).toList() ??
+        [],
+    status: ItemStatus.values.firstWhere(
+      (s) => s.name == json['status'],
+      orElse: () => ItemStatus.stored,
+    ),
+    isConsumable: json['isConsumable'] as bool? ?? false,
+    expiryDate: json['expiryDate'] != null
+        ? DateTime.tryParse(json['expiryDate'])
+        : null,
+    minQuantity:
+        (json['minQuantity'] as num?)?.toDouble() ??
+        (json['lowStockThreshold'] as num?)?.toDouble(),
+    customAttributes: json['customAttributes'] is Map
+        ? Map<String, dynamic>.from(json['customAttributes'])
+        : {},
+    lentQuantity: (json['lentQuantity'] as num?)?.toDouble() ?? 0,
+    createdAt: json['createdAt'] != null
+        ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+        : DateTime.now(),
+    updatedAt: json['updatedAt'] != null
+        ? DateTime.tryParse(json['updatedAt'])
+        : null,
+  );
 }
 
 /// Lending & Borrowing Record
@@ -444,8 +448,8 @@ class LendingRecord {
     this.notes = '',
     this.quantity = 1,
     this.isPartial = false,
-  })  : id = id ?? const Uuid().v4(),
-        lentDate = lentDate ?? DateTime.now();
+  }) : id = id ?? const Uuid().v4(),
+       lentDate = lentDate ?? DateTime.now();
 
   bool get isActive => actualReturnDate == null;
   bool get isOverdue =>
@@ -480,34 +484,34 @@ class LendingRecord {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'itemId': itemId,
-        'borrowerName': borrowerName,
-        'borrowerContact': borrowerContact,
-        'lentDate': lentDate.toIso8601String(),
-        'expectedReturnDate': expectedReturnDate?.toIso8601String(),
-        'actualReturnDate': actualReturnDate?.toIso8601String(),
-        'notes': notes,
-        'quantity': quantity,
-        'isPartial': isPartial,
-      };
+    'id': id,
+    'itemId': itemId,
+    'borrowerName': borrowerName,
+    'borrowerContact': borrowerContact,
+    'lentDate': lentDate.toIso8601String(),
+    'expectedReturnDate': expectedReturnDate?.toIso8601String(),
+    'actualReturnDate': actualReturnDate?.toIso8601String(),
+    'notes': notes,
+    'quantity': quantity,
+    'isPartial': isPartial,
+  };
 
   factory LendingRecord.fromJson(Map<String, dynamic> json) => LendingRecord(
-        id: json['id'] ?? '',
-        itemId: json['itemId'] ?? '',
-        borrowerName: json['borrowerName'] ?? '',
-        borrowerContact: json['borrowerContact'] ?? '',
-        lentDate: json['lentDate'] != null
-            ? DateTime.tryParse(json['lentDate']) ?? DateTime.now()
-            : DateTime.now(),
-        expectedReturnDate: _calendarDay(json['expectedReturnDate']),
-        actualReturnDate: json['actualReturnDate'] != null
-            ? DateTime.tryParse(json['actualReturnDate'])
-            : null,
-        notes: json['notes'] ?? '',
-        quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
-        isPartial: json['isPartial'] == true,
-      );
+    id: json['id'] ?? '',
+    itemId: json['itemId'] ?? '',
+    borrowerName: json['borrowerName'] ?? '',
+    borrowerContact: json['borrowerContact'] ?? '',
+    lentDate: json['lentDate'] != null
+        ? DateTime.tryParse(json['lentDate']) ?? DateTime.now()
+        : DateTime.now(),
+    expectedReturnDate: _calendarDay(json['expectedReturnDate']),
+    actualReturnDate: json['actualReturnDate'] != null
+        ? DateTime.tryParse(json['actualReturnDate'])
+        : null,
+    notes: json['notes'] ?? '',
+    quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
+    isPartial: json['isPartial'] == true,
+  );
 }
 
 /// Category Helper for asset categorization and dynamic icon resolution
@@ -602,10 +606,14 @@ class CategoryHelper {
     if (lower.contains('music') || lower.contains('instrument')) {
       return Icons.music_note_outlined;
     }
-    if (lower.contains('art') || lower.contains('craft') || lower.contains('paint')) {
+    if (lower.contains('art') ||
+        lower.contains('craft') ||
+        lower.contains('paint')) {
       return Icons.palette_outlined;
     }
-    if (lower.contains('jewelry') || lower.contains('watch') || lower.contains('gold')) {
+    if (lower.contains('jewelry') ||
+        lower.contains('watch') ||
+        lower.contains('gold')) {
       return Icons.watch_outlined;
     }
     return Icons.category_outlined;
@@ -629,20 +637,20 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-        id: json['id'] ?? '',
-        name: json['name'] ?? '',
-        email: json['email'] ?? '',
-        role: json['role'] ?? 'Owner',
-        avatarUrl: json['avatarUrl'] ?? json['avatar_url'],
-      );
+    id: json['id'] ?? '',
+    name: json['name'] ?? '',
+    email: json['email'] ?? '',
+    role: json['role'] ?? 'Owner',
+    avatarUrl: json['avatarUrl'] ?? json['avatar_url'],
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'email': email,
-        'role': role,
-        if (avatarUrl != null) 'avatarUrl': avatarUrl,
-      };
+    'id': id,
+    'name': name,
+    'email': email,
+    'role': role,
+    if (avatarUrl != null) 'avatarUrl': avatarUrl,
+  };
 }
 
 /// Inventory Health summary for Reports & Audit
@@ -692,10 +700,7 @@ class ScanLookupResult {
   final String type; // 'box' or 'item' or 'unknown'
   final Map<String, dynamic> payload;
 
-  ScanLookupResult({
-    required this.type,
-    required this.payload,
-  });
+  ScanLookupResult({required this.type, required this.payload});
 
   bool get isBox => type == 'box';
   bool get isItem => type == 'item';
@@ -710,7 +715,6 @@ class ScanLookupResult {
             : {},
       );
 }
-
 
 /// One row of an item's stock audit trail (`GET /items/:id/movements`).
 class StockMovement {
@@ -731,13 +735,13 @@ class StockMovement {
   });
 
   factory StockMovement.fromJson(Map<String, dynamic> json) => StockMovement(
-        id: json['id'] as String,
-        delta: (json['delta'] as num?)?.toDouble() ?? 0,
-        quantityAfter: (json['quantityAfter'] as num?)?.toDouble() ?? 0,
-        reason: json['reason'] as String? ?? 'adjust',
-        note: json['note'] as String? ?? '',
-        createdAt: DateTime.parse(json['createdAt'] as String).toLocal(),
-      );
+    id: json['id'] as String,
+    delta: (json['delta'] as num?)?.toDouble() ?? 0,
+    quantityAfter: (json['quantityAfter'] as num?)?.toDouble() ?? 0,
+    reason: json['reason'] as String? ?? 'adjust',
+    note: json['note'] as String? ?? '',
+    createdAt: DateTime.parse(json['createdAt'] as String).toLocal(),
+  );
 }
 
 class StockHistory {
@@ -752,11 +756,11 @@ class StockHistory {
   });
 
   factory StockHistory.fromJson(Map<String, dynamic> json) => StockHistory(
-        movements: ((json['movements'] as List?) ?? const [])
-            .map((e) => StockMovement.fromJson(e as Map<String, dynamic>))
-            .toList(),
-        avgDailyConsumption30d:
-            (json['avgDailyConsumption30d'] as num?)?.toDouble() ?? 0,
-        estimatedDaysLeft: (json['estimatedDaysLeft'] as num?)?.toDouble(),
-      );
+    movements: ((json['movements'] as List?) ?? const [])
+        .map((e) => StockMovement.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    avgDailyConsumption30d:
+        (json['avgDailyConsumption30d'] as num?)?.toDouble() ?? 0,
+    estimatedDaysLeft: (json['estimatedDaysLeft'] as num?)?.toDouble(),
+  );
 }

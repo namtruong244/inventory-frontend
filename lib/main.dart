@@ -57,20 +57,22 @@ class InventoryApp extends StatelessWidget {
       ],
       builder: (context, child) {
         return SessionGuard(
-          child: AutoSync(child: SyncStatusBar(
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              // Below Localizations: lets context-free code (provider, models,
-              // error mapping) use the language currently shown.
-              child: Builder(
-                builder: (ctx) {
-                  AppL10n.sync(ctx);
-                  return child ?? const SizedBox.shrink();
-                },
+          child: AutoSync(
+            child: SyncStatusBar(
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                // Below Localizations: lets context-free code (provider, models,
+                // error mapping) use the language currently shown.
+                child: Builder(
+                  builder: (ctx) {
+                    AppL10n.sync(ctx);
+                    return child ?? const SizedBox.shrink();
+                  },
+                ),
               ),
             ),
-          )),
+          ),
         );
       },
       theme: buildAppTheme(Brightness.light),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_refresh.dart';
@@ -18,7 +19,8 @@ class LendingTrackerScreen extends StatefulWidget {
   State<LendingTrackerScreen> createState() => _LendingTrackerScreenState();
 }
 
-class _LendingTrackerScreenState extends State<LendingTrackerScreen> with SingleTickerProviderStateMixin {
+class _LendingTrackerScreenState extends State<LendingTrackerScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -53,14 +55,18 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
         leading: Padding(
           padding: const EdgeInsets.only(left: 8.0),
           child: IconButton(
- tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: context.colors.surface,
                 shape: BoxShape.circle,
               ),
-              child: AppIcon(Icons.arrow_back_ios_new_rounded, size: 18, color: context.colors.textPrimary),
+              child: AppIcon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 18,
+                color: context.colors.textPrimary,
+              ),
             ),
             onPressed: () => Navigator.pop(context),
           ),
@@ -78,7 +84,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showLendItemSheet(context),
         icon: const AppIcon(Icons.add_rounded, size: 22),
-        label: Text(context.l10n.lendItem, style: TextStyle(fontWeight: FontWeight.bold)),
+        label: Text(context.l10n.lendItem),
       ),
       body: Column(
         children: [
@@ -99,7 +105,11 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                       color: AppTones.coral,
                       shape: BoxShape.circle,
                     ),
-                    child: const AppIcon(Icons.warning_amber_rounded, color: Colors.white, size: 20),
+                    child: const AppIcon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -117,7 +127,10 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                         const SizedBox(height: 2),
                         Text(
                           context.l10n.itemsHavePassedTheirExpected,
-                          style: TextStyle(color: context.colors.dangerStrong, fontSize: 12),
+                          style: TextStyle(
+                            color: context.colors.dangerStrong,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -133,7 +146,10 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
               children: [
                 _buildTabChip(0, context.l10n.commonActive(activeLoans.length)),
                 const SizedBox(width: 8),
-                _buildTabChip(1, context.l10n.commonHistory(returnedLoans.length)),
+                _buildTabChip(
+                  1,
+                  context.l10n.commonHistory(returnedLoans.length),
+                ),
               ],
             ),
           ),
@@ -151,14 +167,16 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                         title: context.l10n.noActiveLoans,
                         message: context.l10n.allYourItemsAreSafely,
                       )
-                    : AppRefresh(child: ListView.builder(
- physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                        itemCount: activeLoans.length,
-                        itemBuilder: (context, index) {
-                          return _buildLoanCard(context, activeLoans[index]);
-                        },
-                      )),
+                    : AppRefresh(
+                        child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+                          itemCount: activeLoans.length,
+                          itemBuilder: (context, index) {
+                            return _buildLoanCard(context, activeLoans[index]);
+                          },
+                        ),
+                      ),
 
                 // History
                 returnedLoans.isEmpty
@@ -167,14 +185,19 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                         title: context.l10n.noLendingHistory,
                         message: context.l10n.returnedItemsWillAppearHere,
                       )
-                    : AppRefresh(child: ListView.builder(
- physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                        itemCount: returnedLoans.length,
-                        itemBuilder: (context, index) {
-                          return _buildLoanCard(context, returnedLoans[index]);
-                        },
-                      )),
+                    : AppRefresh(
+                        child: ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
+                          itemCount: returnedLoans.length,
+                          itemBuilder: (context, index) {
+                            return _buildLoanCard(
+                              context,
+                              returnedLoans[index],
+                            );
+                          },
+                        ),
+                      ),
               ],
             ),
           ),
@@ -201,7 +224,9 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
+            color: isSelected
+                ? context.colors.onAccent
+                : context.colors.textPrimary,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
             fontSize: 13,
           ),
@@ -244,7 +269,6 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
     final item = provider.getItemById(record.itemId);
     final isOverdue = record.isOverdue;
     final isActive = record.isActive;
-
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -289,9 +313,11 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
                 isOverdue
                     ? context.l10n.tagOverdue
                     : isActive
-                        ? context.l10n.tagLent
-                        : context.l10n.tagReturned,
-                isOverdue ? AppTones.coral : (isActive ? AppTones.amber : AppTones.matcha),
+                    ? context.l10n.tagLent
+                    : context.l10n.tagReturned,
+                isOverdue
+                    ? AppTones.coral
+                    : (isActive ? AppTones.amber : AppTones.matcha),
                 dot: true,
               ),
             ],
@@ -301,22 +327,37 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
           // Details row
           Row(
             children: [
-              AppIcon(Icons.calendar_today_outlined, size: 14, color: context.colors.textMuted),
+              AppIcon(
+                Icons.calendar_today_outlined,
+                size: 14,
+                color: context.colors.textMuted,
+              ),
               const SizedBox(width: 6),
               Text(
                 context.l10n.commonLent2(formatDate(context, record.lentDate)),
-                style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: context.colors.textSecondary,
+                ),
               ),
               if (record.expectedReturnDate != null) ...[
                 const SizedBox(width: 14),
-                AppIcon(Icons.event_outlined, size: 14, color: isOverdue ? AppTones.coral : context.colors.textMuted),
+                AppIcon(
+                  Icons.event_outlined,
+                  size: 14,
+                  color: isOverdue ? AppTones.coral : context.colors.textMuted,
+                ),
                 const SizedBox(width: 6),
                 Text(
-                  context.l10n.commonDue(formatDate(context, record.expectedReturnDate!)),
+                  context.l10n.commonDue(
+                    formatDate(context, record.expectedReturnDate!),
+                  ),
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: isOverdue ? FontWeight.bold : FontWeight.normal,
-                    color: isOverdue ? AppTones.coral : context.colors.textSecondary,
+                    color: isOverdue
+                        ? AppTones.coral
+                        : context.colors.textSecondary,
                   ),
                 ),
               ],
@@ -326,23 +367,42 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
           // Time elapsed between lend date and due date
           if (isActive && record.expectedReturnDate != null) ...[
             const SizedBox(height: 12),
-            Builder(builder: (context) {
-              final total = record.expectedReturnDate!.difference(record.lentDate).inMinutes;
-              final spent = DateTime.now().difference(record.lentDate).inMinutes;
-              final ratio = total <= 0 ? 1.0 : (spent / total).clamp(0.0, 1.0);
-              return SoftBar(value: ratio, color: isOverdue ? AppTones.coral : AppTones.amber, height: 6);
-            }),
+            Builder(
+              builder: (context) {
+                final total = record.expectedReturnDate!
+                    .difference(record.lentDate)
+                    .inMinutes;
+                final spent = DateTime.now()
+                    .difference(record.lentDate)
+                    .inMinutes;
+                final ratio = total <= 0
+                    ? 1.0
+                    : (spent / total).clamp(0.0, 1.0);
+                return SoftBar(
+                  value: ratio,
+                  color: isOverdue ? AppTones.coral : AppTones.amber,
+                  height: 6,
+                );
+              },
+            ),
           ],
 
           if (record.borrowerContact.isNotEmpty) ...[
             const SizedBox(height: 6),
             Row(
               children: [
-                AppIcon(Icons.phone_outlined, size: 14, color: context.colors.textMuted),
+                AppIcon(
+                  Icons.phone_outlined,
+                  size: 14,
+                  color: context.colors.textMuted,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   record.borrowerContact,
-                  style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: context.colors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -352,7 +412,11 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
             const SizedBox(height: 8),
             Text(
               record.notes,
-              style: TextStyle(fontSize: 12, color: context.colors.textSecondary, fontStyle: FontStyle.italic),
+              style: TextStyle(
+                fontSize: 12,
+                color: context.colors.textSecondary,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ],
 
@@ -363,11 +427,16 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: () => _confirmReturn(context, record, item),
-                icon: const AppIcon(Icons.assignment_turned_in_outlined, size: 18),
+                icon: const AppIcon(
+                  Icons.assignment_turned_in_outlined,
+                  size: 18,
+                ),
                 label: Text(context.l10n.markAsReturned),
                 style: FilledButton.styleFrom(
                   backgroundColor: context.colors.primary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
@@ -379,7 +448,11 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen> with Single
   }
 
   void _confirmReturn(BuildContext context, LendingRecord record, Item? item) =>
-      confirmAndReturnLoan(context, record, itemName: item?.name ?? context.l10n.itemFallbackName);
+      confirmAndReturnLoan(
+        context,
+        record,
+        itemName: item?.name ?? context.l10n.itemFallbackName,
+      );
 
   void _showLendItemSheet(BuildContext context) => LendItemSheet.show(context);
 }

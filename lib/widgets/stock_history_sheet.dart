@@ -66,12 +66,21 @@ class StockHistorySheet extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
             children: [
-              Text(context.l10n.stockHistory, style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                context.l10n.stockHistory,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 4),
               Text(
                 days == null
                     ? context.l10n.noConsumptionDataYet
-                    : context.l10n.avgDayAboutDaysLeft(provider.formatQty(history.avgDailyConsumption30d, item.unit), days.round()),
+                    : context.l10n.avgDayAboutDaysLeft(
+                        provider.formatQty(
+                          history.avgDailyConsumption30d,
+                          item.unit,
+                        ),
+                        days.round(),
+                      ),
                 style: const TextStyle(color: Colors.black54),
               ),
               const SizedBox(height: 12),
@@ -84,8 +93,10 @@ class StockHistorySheet extends StatelessWidget {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(_reasonLabel(context, m.reason)),
-                  subtitle: Text(DateFormat.yMMMd().add_jm().format(m.createdAt) +
-                      (m.note.isEmpty ? '' : ' · ${m.note}')),
+                  subtitle: Text(
+                    DateFormat.yMMMd().add_jm().format(m.createdAt) +
+                        (m.note.isEmpty ? '' : ' · ${m.note}'),
+                  ),
                   trailing: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -95,11 +106,18 @@ class StockHistorySheet extends StatelessWidget {
                           '${m.delta > 0 ? '+' : ''}${provider.formatQty(m.delta, item.unit)}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: m.delta > 0 ? AppTones.matcha : AppTones.coral,
+                            color: m.delta > 0
+                                ? AppTones.matcha
+                                : AppTones.coral,
                           ),
                         ),
-                      Text('→ ${provider.formatQty(m.quantityAfter, item.unit)}',
-                          style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                      Text(
+                        '→ ${provider.formatQty(m.quantityAfter, item.unit)}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.black54,
+                        ),
+                      ),
                     ],
                   ),
                 ),

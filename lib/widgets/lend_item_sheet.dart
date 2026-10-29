@@ -336,7 +336,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
                   ),
                   child: Text(
                     context.l10n.saveLoan,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(fontSize: 16),
                   ),
                 ),
               ),

@@ -14,8 +14,11 @@ import '../l10n/l10n_ext.dart';
 import '../utils/date_format.dart';
 import 'app_icon.dart';
 
-
-Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, LendingRecord loan) {
+Widget buildActiveLoanCard(
+  BuildContext context,
+  InventoryProvider provider,
+  LendingRecord loan,
+) {
   final isOverdue = loan.isOverdue;
 
   return Container(
@@ -33,17 +36,23 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
             Row(
               children: [
                 AppIcon(
-                  isOverdue ? Icons.warning_amber_rounded : Icons.handshake_outlined,
+                  isOverdue
+                      ? Icons.warning_amber_rounded
+                      : Icons.handshake_outlined,
                   color: isOverdue ? AppTones.coral : AppTones.sky,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  isOverdue ? context.l10n.overdueLoan : context.l10n.currentlyLentOut,
+                  isOverdue
+                      ? context.l10n.overdueLoan
+                      : context.l10n.currentlyLentOut,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: isOverdue ? context.colors.dangerStrong : AppTones.sky,
+                    color: isOverdue
+                        ? context.colors.dangerStrong
+                        : AppTones.sky,
                   ),
                 ),
               ],
@@ -57,7 +66,11 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
                 ),
                 child: Text(
                   context.l10n.tagOverdue,
-                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
           ],
@@ -79,7 +92,9 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
         ),
         if (loan.expectedReturnDate != null)
           Text(
-            context.l10n.expectedReturnOn(formatDate(context, loan.expectedReturnDate!)),
+            context.l10n.expectedReturnOn(
+              formatDate(context, loan.expectedReturnDate!),
+            ),
             style: TextStyle(
               color: isOverdue ? AppTones.coral : context.colors.textSecondary,
               fontSize: 12,
@@ -90,7 +105,6 @@ Widget buildActiveLoanCard(BuildContext context, InventoryProvider provider, Len
     ),
   );
 }
-
 
 Widget buildStorageLocationCard(
   BuildContext context,
@@ -114,19 +128,41 @@ Widget buildStorageLocationCard(
           children: [
             Row(
               children: [
-                AppIcon(Icons.location_on_outlined, size: 20, color: context.colors.textPrimary),
+                AppIcon(
+                  Icons.location_on_outlined,
+                  size: 20,
+                  color: context.colors.textPrimary,
+                ),
                 SizedBox(width: 8),
                 Text(
                   context.l10n.storageLocation,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: context.colors.textPrimary,
+                  ),
                 ),
               ],
             ),
             Tappable(
               onTap: () => MoveItemSheet.show(context, item),
-              child: Text(
-                context.l10n.commonChange,
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppTones.sky),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: context.colors.fill,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  context.l10n.commonChange,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: context.colors.textPrimary,
+                  ),
+                ),
               ),
             ),
           ],
@@ -146,12 +182,16 @@ Widget buildStorageLocationCard(
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => BoxDetailsScreen(boxId: breadcrumbs[i].id),
+                          builder: (_) =>
+                              BoxDetailsScreen(boxId: breadcrumbs[i].id),
                         ),
                       );
                     },
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: i == breadcrumbs.length - 1
                             ? context.colors.primary
@@ -164,7 +204,9 @@ Widget buildStorageLocationCard(
                           AppIcon(
                             breadcrumbs[i].type.icon,
                             size: 14,
-                            color: i == breadcrumbs.length - 1 ? Colors.white : context.colors.textPrimary,
+                            color: i == breadcrumbs.length - 1
+                                ? Colors.white
+                                : context.colors.textPrimary,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -172,7 +214,9 @@ Widget buildStorageLocationCard(
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
-                              color: i == breadcrumbs.length - 1 ? Colors.white : context.colors.textPrimary,
+                              color: i == breadcrumbs.length - 1
+                                  ? Colors.white
+                                  : context.colors.textPrimary,
                             ),
                           ),
                         ],
@@ -182,7 +226,11 @@ Widget buildStorageLocationCard(
                   if (i < breadcrumbs.length - 1)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: AppIcon(Icons.chevron_right_rounded, size: 16, color: context.colors.textMuted),
+                      child: AppIcon(
+                        Icons.chevron_right_rounded,
+                        size: 16,
+                        color: context.colors.textMuted,
+                      ),
                     ),
                 ],
               ],
@@ -197,7 +245,6 @@ Widget buildStorageLocationCard(
     ),
   );
 }
-
 
 Widget buildExpiryCard(BuildContext context, Item item) {
   final isExpired = item.isExpired;
@@ -237,12 +284,21 @@ Widget buildExpiryCard(BuildContext context, Item item) {
             children: [
               Text(
                 statusTitle,
-                style: TextStyle(fontWeight: FontWeight.bold, color: textColor, fontSize: 14),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
-                context.l10n.expiryDateOn(formatDateLong(context, item.expiryDate!)),
-                style: TextStyle(color: textColor.withValues(alpha: 0.8), fontSize: 12),
+                context.l10n.expiryDateOn(
+                  formatDateLong(context, item.expiryDate!),
+                ),
+                style: TextStyle(
+                  color: textColor.withValues(alpha: 0.8),
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -252,10 +308,11 @@ Widget buildExpiryCard(BuildContext context, Item item) {
   );
 }
 
-
 Widget buildLowStockCard(BuildContext context, Item item) {
   final qty = item.quantity % 1 == 0 ? item.quantity.toInt() : item.quantity;
-  final minQty = item.minQuantity! % 1 == 0 ? item.minQuantity!.toInt() : item.minQuantity;
+  final minQty = item.minQuantity! % 1 == 0
+      ? item.minQuantity!.toInt()
+      : item.minQuantity;
 
   return Container(
     padding: const EdgeInsets.all(16),
@@ -271,7 +328,11 @@ Widget buildLowStockCard(BuildContext context, Item item) {
             color: context.colors.warningSoft,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const AppIcon(Icons.production_quantity_limits_rounded, color: AppTones.amber, size: 24),
+          child: const AppIcon(
+            Icons.production_quantity_limits_rounded,
+            color: AppTones.amber,
+            size: 24,
+          ),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -280,12 +341,24 @@ Widget buildLowStockCard(BuildContext context, Item item) {
             children: [
               Text(
                 context.l10n.lowStockWarning,
-                style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.warningStrong, fontSize: 14),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: context.colors.warningStrong,
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 2),
               Text(
-                context.l10n.currentThreshold(qty, item.unit, minQty ?? 0, item.unit),
-                style: TextStyle(color: context.colors.warningStrong, fontSize: 12),
+                context.l10n.currentThreshold(
+                  qty,
+                  item.unit,
+                  minQty ?? 0,
+                  item.unit,
+                ),
+                style: TextStyle(
+                  color: context.colors.warningStrong,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -294,7 +367,6 @@ Widget buildLowStockCard(BuildContext context, Item item) {
     ),
   );
 }
-
 
 Widget buildAssetDetailsCard(BuildContext context, Item item) {
   return Container(
@@ -309,11 +381,19 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
       children: [
         Row(
           children: [
-            AppIcon(Icons.receipt_long_outlined, size: 20, color: context.colors.textPrimary),
+            AppIcon(
+              Icons.receipt_long_outlined,
+              size: 20,
+              color: context.colors.textPrimary,
+            ),
             SizedBox(width: 8),
             Text(
               context.l10n.assetPurchaseInformation,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: context.colors.textPrimary,
+              ),
             ),
           ],
         ),
@@ -325,14 +405,19 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
             Expanded(
               child: buildDetailTile(
                 label: context.l10n.purchasePrice2,
-                value: item.purchasePrice != null ? Provider.of<InventoryProvider>(context).formatPrice(item.purchasePrice) : context.l10n.notRecorded,
+                value: item.purchasePrice != null
+                    ? Provider.of<InventoryProvider>(context)
+                          .formatPrice(item.purchasePrice)
+                    : context.l10n.notRecorded,
                 icon: Icons.attach_money_rounded,
               ),
             ),
             Expanded(
               child: buildDetailTile(
                 label: context.l10n.purchaseDate,
-                value: item.purchaseDate != null ? formatDate(context, item.purchaseDate!) : context.l10n.notRecorded,
+                value: item.purchaseDate != null
+                    ? formatDate(context, item.purchaseDate!)
+                    : context.l10n.notRecorded,
                 icon: Icons.calendar_today_outlined,
               ),
             ),
@@ -358,11 +443,21 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
 
         // Barcode & Serial Number
         if (item.barcode != null && item.barcode!.isNotEmpty) ...[
-          buildCopyableRow(context, context.l10n.barcodeUpcEan, item.barcode!, Icons.qr_code_2_rounded),
+          buildCopyableRow(
+            context,
+            context.l10n.barcodeUpcEan,
+            item.barcode!,
+            Icons.qr_code_2_rounded,
+          ),
           const SizedBox(height: 12),
         ],
         if (item.serialNumber != null && item.serialNumber!.isNotEmpty) ...[
-          buildCopyableRow(context, context.l10n.serialNumber, item.serialNumber!, Icons.tag_rounded),
+          buildCopyableRow(
+            context,
+            context.l10n.serialNumber,
+            item.serialNumber!,
+            Icons.tag_rounded,
+          ),
           const SizedBox(height: 12),
         ],
 
@@ -372,9 +467,13 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
           Row(
             children: [
               AppIcon(
-                item.isWarrantyExpired ? Icons.shield_outlined : Icons.verified_user_outlined,
+                item.isWarrantyExpired
+                    ? Icons.shield_outlined
+                    : Icons.verified_user_outlined,
                 size: 20,
-                color: item.isWarrantyExpired ? AppTones.coral : AppTones.matcha,
+                color: item.isWarrantyExpired
+                    ? AppTones.coral
+                    : AppTones.matcha,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -382,16 +481,23 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.isWarrantyExpired ? context.l10n.warrantyExpired : context.l10n.warrantyActive,
+                      item.isWarrantyExpired
+                          ? context.l10n.warrantyExpired
+                          : context.l10n.warrantyActive,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: item.isWarrantyExpired ? AppTones.coral : AppTones.matcha,
+                        color: item.isWarrantyExpired
+                            ? AppTones.coral
+                            : AppTones.matcha,
                       ),
                     ),
                     Text(
                       '${context.l10n.validUntilDate(formatDate(context, item.warrantyExpiryDate!))}${item.daysUntilWarrantyExpiry != null && item.daysUntilWarrantyExpiry! > 0 ? ' (${context.l10n.daysLeftCount(item.daysUntilWarrantyExpiry!)})' : ''}',
-                      style: TextStyle(fontSize: 11, color: context.colors.textSecondary),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.colors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -404,28 +510,43 @@ Widget buildAssetDetailsCard(BuildContext context, Item item) {
   );
 }
 
-
-Widget buildDetailTile({required String label, required String value, required IconData icon}) {
-  return Builder(builder: (context) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
+Widget buildDetailTile({
+  required String label,
+  required String value,
+  required IconData icon,
+}) {
+  return Builder(
+    builder: (context) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppIcon(icon, size: 14, color: context.colors.textMuted),
-          const SizedBox(width: 4),
-          Text(label, style: TextStyle(fontSize: 12, color: context.colors.textMuted)),
+          Row(
+            children: [
+              AppIcon(icon, size: 14, color: context.colors.textMuted),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: TextStyle(fontSize: 12, color: context.colors.textMuted),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          ),
         ],
-      ),
-      const SizedBox(height: 4),
-      Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-    ],
+      );
+    },
   );
-});
 }
 
-
-Widget buildCopyableRow(BuildContext context, String label, String value, IconData icon) {
+Widget buildCopyableRow(
+  BuildContext context,
+  String label,
+  String value,
+  IconData icon,
+) {
   return Row(
     children: [
       AppIcon(icon, size: 18, color: context.colors.textSecondary),
@@ -434,23 +555,35 @@ Widget buildCopyableRow(BuildContext context, String label, String value, IconDa
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: TextStyle(fontSize: 11, color: context.colors.textMuted)),
-            Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'monospace')),
+            Text(
+              label,
+              style: TextStyle(fontSize: 11, color: context.colors.textMuted),
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                fontFamily: 'monospace',
+              ),
+            ),
           ],
         ),
       ),
       IconButton(
- tooltip: context.l10n.commonCopy,
+        tooltip: context.l10n.commonCopy,
         icon: const AppIcon(Icons.copy_rounded, size: 16),
         onPressed: () {
           Clipboard.setData(ClipboardData(text: value));
-          AppFeedback.showSuccess(context, context.l10n.copiedToClipboard(label));
+          AppFeedback.showSuccess(
+            context,
+            context.l10n.copiedToClipboard(label),
+          );
         },
       ),
     ],
   );
 }
-
 
 Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
   return Container(
@@ -465,11 +598,19 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
       children: [
         Row(
           children: [
-            AppIcon(Icons.document_scanner_outlined, size: 20, color: context.colors.textPrimary),
+            AppIcon(
+              Icons.document_scanner_outlined,
+              size: 20,
+              color: context.colors.textPrimary,
+            ),
             SizedBox(width: 8),
             Text(
               context.l10n.receiptsWarrantyProof,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: context.colors.textPrimary,
+              ),
             ),
           ],
         ),
@@ -505,7 +646,6 @@ Widget buildReceiptsCard(BuildContext context, List<String> receiptPhotos) {
   );
 }
 
-
 void showFullScreenImage(BuildContext context, String imageUrl) {
   showDialog(
     context: context,
@@ -530,7 +670,7 @@ void showFullScreenImage(BuildContext context, String imageUrl) {
             child: CircleAvatar(
               backgroundColor: Colors.black.withValues(alpha: 0.6),
               child: IconButton(
- tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 icon: const AppIcon(Icons.close, color: Colors.white),
                 onPressed: () => Navigator.pop(ctx),
               ),

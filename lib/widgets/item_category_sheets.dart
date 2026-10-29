@@ -7,8 +7,10 @@ import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
 
-
-Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider provider) async {
+Future<String?> showAddCategoryDialog(
+  BuildContext context,
+  InventoryProvider provider,
+) async {
   final textController = TextEditingController();
   String? errorText;
 
@@ -20,7 +22,9 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
       return StatefulBuilder(
         builder: (dialogCtx, setSheetState) {
           final categoryName = textController.text.trim();
-          final previewIcon = CategoryHelper.getCategoryIcon(categoryName.isEmpty ? 'General' : categoryName);
+          final previewIcon = CategoryHelper.getCategoryIcon(
+            categoryName.isEmpty ? 'General' : categoryName,
+          );
 
           return Padding(
             padding: EdgeInsets.only(
@@ -56,7 +60,11 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                           color: context.colors.fill,
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: AppIcon(previewIcon, color: context.colors.textPrimary, size: 24),
+                        child: AppIcon(
+                          previewIcon,
+                          color: context.colors.textPrimary,
+                          size: 24,
+                        ),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -74,7 +82,10 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                             SizedBox(height: 2),
                             Text(
                               context.l10n.createACustomCategoryFor,
-                              style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: context.colors.textSecondary,
+                              ),
                             ),
                           ],
                         ),
@@ -96,7 +107,10 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                     const SizedBox(height: 6),
                     Text(
                       errorText!,
-                      style: const TextStyle(color: AppTones.coral, fontSize: 12),
+                      style: const TextStyle(
+                        color: AppTones.coral,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                   const SizedBox(height: 24),
@@ -113,7 +127,7 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: Text(context.l10n.commonCancel, style: TextStyle(fontWeight: FontWeight.w600)),
+                          child: Text(context.l10n.commonCancel),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -124,11 +138,14 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                             final name = textController.text.trim();
                             if (name.isEmpty) {
                               setSheetState(() {
-                                errorText = context.l10n.pleaseEnterACategoryName;
+                                errorText =
+                                    context.l10n.pleaseEnterACategoryName;
                               });
                               return;
                             }
-                            if (provider.categories.any((c) => c.toLowerCase() == name.toLowerCase())) {
+                            if (provider.categories.any(
+                              (c) => c.toLowerCase() == name.toLowerCase(),
+                            )) {
                               setSheetState(() {
                                 errorText = context.l10n.categoryAlreadyExists;
                               });
@@ -144,7 +161,7 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                           ),
-                          child: Text(context.l10n.addSelect, style: TextStyle(fontWeight: FontWeight.bold)),
+                          child: Text(context.l10n.addSelect),
                         ),
                       ),
                     ],
@@ -160,7 +177,6 @@ Future<String?> showAddCategoryDialog(BuildContext context, InventoryProvider pr
 
   return newCategory;
 }
-
 
 void showCategoryPickerSheet(
   BuildContext context,
@@ -201,56 +217,83 @@ void showCategoryPickerSheet(
                     children: [
                       Text(
                         context.l10n.selectCategory,
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: context.colors.textPrimary),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: context.colors.textPrimary,
+                        ),
                       ),
                       TextButton.icon(
                         onPressed: () {
                           Navigator.pop(ctx);
                           onAddNew();
                         },
-                        icon: AppIcon(Icons.add, size: 16, color: context.colors.textPrimary),
+                        icon: AppIcon(
+                          Icons.add,
+                          size: 16,
+                          color: context.colors.textPrimary,
+                        ),
                         label: Text(
                           context.l10n.newCategory,
-                          style: TextStyle(fontWeight: FontWeight.bold, color: context.colors.textPrimary, fontSize: 13),
+                          style: TextStyle(
+                            color: context.colors.textPrimary,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.45),
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.45,
+                    ),
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: provider.categories.length,
-                      separatorBuilder: (_, _) => Divider(height: 1, color: context.colors.border),
+                      separatorBuilder: (_, _) =>
+                          Divider(height: 1, color: context.colors.border),
                       itemBuilder: (context, idx) {
                         final cat = provider.categories[idx];
                         final isSelected = selected == cat;
                         return ListTile(
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           leading: Container(
                             width: 36,
                             height: 36,
                             decoration: BoxDecoration(
-                              color: isSelected ? context.colors.accent : context.colors.fill,
+                              color: isSelected
+                                  ? context.colors.accent
+                                  : context.colors.fill,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: AppIcon(
                               CategoryHelper.getCategoryIcon(cat),
                               size: 18,
-                              color: isSelected ? context.colors.onAccent : context.colors.textPrimary,
+                              color: isSelected
+                                  ? context.colors.onAccent
+                                  : context.colors.textPrimary,
                             ),
                           ),
                           title: Text(
                             cat,
                             style: TextStyle(
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
                               fontSize: 14,
                               color: context.colors.textPrimary,
                             ),
                           ),
                           trailing: isSelected
-                              ? AppIcon(Icons.check_circle_rounded, color: context.colors.textPrimary, size: 20)
+                              ? AppIcon(
+                                  Icons.check_circle_rounded,
+                                  color: context.colors.textPrimary,
+                                  size: 20,
+                                )
                               : null,
                           onTap: () {
                             onSelected(cat);

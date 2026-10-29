@@ -1,5 +1,7 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+
 import '../theme/app_theme.dart';
 import 'app_icon.dart';
 
@@ -26,7 +28,8 @@ class AppImageView extends StatelessWidget {
   });
 
   bool get _isNetwork =>
-      imageUrlOrPath.startsWith('http://') || imageUrlOrPath.startsWith('https://');
+      imageUrlOrPath.startsWith('http://') ||
+      imageUrlOrPath.startsWith('https://');
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +77,7 @@ class AppImageView extends StatelessWidget {
     }
 
     if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius!,
-        child: imageWidget,
-      );
+      return ClipRRect(borderRadius: borderRadius!, child: imageWidget);
     }
 
     return imageWidget;

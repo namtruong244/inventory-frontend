@@ -227,6 +227,13 @@
   "moreOptions": "More Options",
   "showQrCode": "Show QR code",
   "commonOverview": "Overview",
+  "boxSummary": "{items, plural, =1{1 total item} other{{items} total items}} • {nested} nested",
+  "@boxSummary": {
+    "placeholders": {
+      "items": {"type": "int"},
+      "nested": {"type": "int"}
+    }
+  },
   "nestedContainers": "Nested Containers ({count})",
   "@nestedContainers": {
     "placeholders": {
@@ -782,6 +789,7 @@
   "moveToThisBox": "Move to this Box",
   "testWithPresets": "Test with Presets",
   "enterCode": "Enter Code",
+  "switchCamera": "Switch camera",
   "boxScanTitle": "Box Scan",
   "boxScanHint": "Place the QR code inside the frame to scan automatically.",
   "pickFromGallery": "Pick from gallery",

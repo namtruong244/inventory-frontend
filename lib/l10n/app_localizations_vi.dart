@@ -362,6 +362,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonOverview => 'Tổng quan';
 
   @override
+  String boxSummary(int items, int nested) {
+    String _temp0 = intl.Intl.pluralLogic(
+      items,
+      locale: localeName,
+      other: '$items món đồ',
+    );
+    return '$_temp0 • $nested ngăn con';
+  }
+
+  @override
   String nestedContainers(Object count) {
     return 'Ngăn chứa con ($count)';
   }
@@ -1301,6 +1311,9 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get enterCode => 'Nhập mã';
+
+  @override
+  String get switchCamera => 'Đổi camera';
 
   @override
   String get boxScanTitle => 'Quét hộp';

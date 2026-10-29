@@ -65,7 +65,8 @@ extension InventoryOffline on InventoryProvider {
   /// Switches to offline mode: shows the cached data (the lists already hold it when
   /// [_restoreFromCache] ran) and says so in the banner.
   Future<void> _goOffline() async {
-    final hadCache = await _loadSnapshot() || _boxes.isNotEmpty || _items.isNotEmpty;
+    final hadCache =
+        await _loadSnapshot() || _boxes.isNotEmpty || _items.isNotEmpty;
     _isOffline = true;
     _isConnected = false;
     _errorMessage = hadCache
@@ -160,8 +161,7 @@ extension InventoryOffline on InventoryProvider {
           e.statusCode == 409 &&
           op.type.startsWith('update')) {
         // Changed elsewhere: show the latest version instead of the stale edit.
-        _errorMessage =
-            AppL10n.current.thisWasChangedElsewhereShowing;
+        _errorMessage = AppL10n.current.thisWasChangedElsewhereShowing;
         await fetchAllData();
         _reloadedAfterConflict = true;
       }
@@ -195,7 +195,10 @@ extension InventoryOffline on InventoryProvider {
       case 'lend':
         itemId = _map(a['record'])['itemId'] as String?;
       case 'returnLoan':
-        itemId = _lendingRecords.where((l) => l.id == a['id']).firstOrNull?.itemId;
+        itemId = _lendingRecords
+            .where((l) => l.id == a['id'])
+            .firstOrNull
+            ?.itemId;
       default:
         return;
     }
@@ -261,7 +264,10 @@ extension InventoryOffline on InventoryProvider {
             rejected++;
             _syncNotices = [
               ..._syncNotices,
-              AppL10n.current.opRejectedBecause(describePendingOp(op), friendlyError(e)),
+              AppL10n.current.opRejectedBecause(
+                describePendingOp(op),
+                friendlyError(e),
+              ),
             ];
           }
           continue;

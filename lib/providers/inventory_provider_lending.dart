@@ -89,7 +89,9 @@ extension InventoryLending on InventoryProvider {
 
   Future<bool> returnItem(String recordId, {String? newLocationId}) async {
     final recordIndex = _lendingRecords.indexWhere((l) => l.id == recordId);
-    final previousRecord = recordIndex != -1 ? _lendingRecords[recordIndex] : null;
+    final previousRecord = recordIndex != -1
+        ? _lendingRecords[recordIndex]
+        : null;
     Item? previousItem;
     String? itemId;
     if (recordIndex != -1) {
@@ -118,7 +120,8 @@ extension InventoryLending on InventoryProvider {
       () => _apiService.returnItem(recordId),
       () {
         final r = _lendingRecords.indexWhere((l) => l.id == recordId);
-        if (r != -1 && previousRecord != null) _lendingRecords[r] = previousRecord;
+        if (r != -1 && previousRecord != null)
+          _lendingRecords[r] = previousRecord;
         final i = _items.indexWhere((x) => x.id == itemId);
         if (i != -1 && previousItem != null) _items[i] = previousItem;
       },

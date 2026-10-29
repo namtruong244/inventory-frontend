@@ -29,7 +29,8 @@ String friendlyError(Object error, {String? fallback}) {
     }
     // Backend messages for 4xx are written for users (validation, duplicates).
     final message = error.message.trim();
-    if (status >= 400 && message.isNotEmpty && message.length <= 140) return message;
+    if (status >= 400 && message.isNotEmpty && message.length <= 140)
+      return message;
     return fallback;
   }
   if (isNetworkError(error)) {

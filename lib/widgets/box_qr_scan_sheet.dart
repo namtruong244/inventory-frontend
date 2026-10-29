@@ -63,10 +63,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
       });
     } else {
       setState(() => _isProcessing = false);
-      AppFeedback.showError(
-        context,
-        context.l10n.noStorageBoxFoundWith(code),
-      );
+      AppFeedback.showError(context, context.l10n.noStorageBoxFoundWith(code));
     }
   }
 
@@ -104,7 +101,10 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
               const SizedBox(height: 6),
               Text(
                 context.l10n.simulateScanningAPhysicalBox,
-                style: TextStyle(color: context.colors.textSecondary, fontSize: 13),
+                style: TextStyle(
+                  color: context.colors.textSecondary,
+                  fontSize: 13,
+                ),
               ),
               const SizedBox(height: 14),
               ConstrainedBox(
@@ -119,10 +119,23 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                     final breadcrumb = provider.getBreadcrumbString(b.id);
                     return ListTile(
                       dense: true,
-                      leading: AppIcon(b.type.icon, size: 20, color: context.colors.textPrimary),
-                      title: Text(b.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text('$breadcrumb (${b.label})', style: const TextStyle(fontSize: 11)),
-                      trailing: const AppIcon(Icons.qr_code_2_rounded, size: 20),
+                      leading: AppIcon(
+                        b.type.icon,
+                        size: 20,
+                        color: context.colors.textPrimary,
+                      ),
+                      title: Text(
+                        b.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        '$breadcrumb (${b.label})',
+                        style: const TextStyle(fontSize: 11),
+                      ),
+                      trailing: const AppIcon(
+                        Icons.qr_code_2_rounded,
+                        size: 20,
+                      ),
                       onTap: () {
                         Navigator.pop(ctx);
                         _processScannedCode(b.label);
@@ -143,12 +156,19 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text(context.l10n.enterBoxLabelQr, style: TextStyle(fontWeight: FontWeight.bold)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            context.l10n.enterBoxLabelQr,
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           content: TextField(
             controller: _manualInputController,
             autofocus: true,
-            decoration: InputDecoration(hintText: context.l10n.eGLocElectronicsBox),
+            decoration: InputDecoration(
+              hintText: context.l10n.eGLocElectronicsBox,
+            ),
           ),
           actions: [
             TextButton(
@@ -194,7 +214,10 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
               _buildHeader(provider),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   child: _buildViewfinder(),
                 ),
               ),
@@ -207,7 +230,9 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
-                child: _detectedBox == null ? _buildControls() : const SizedBox.shrink(),
+                child: _detectedBox == null
+                    ? _buildControls()
+                    : const SizedBox.shrink(),
               ),
             ],
           ),
@@ -265,7 +290,10 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                   ColoredBox(
                     color: c.background.withValues(alpha: 0.6),
                     child: Center(
-                      child: CircularProgressIndicator(color: c.textPrimary, strokeWidth: 2.5),
+                      child: CircularProgressIndicator(
+                        color: c.textPrimary,
+                        strokeWidth: 2.5,
+                      ),
                     ),
                   ),
               ],
@@ -283,7 +311,11 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
       child: Text(
         context.l10n.boxScanHint,
         textAlign: TextAlign.center,
-        style: TextStyle(color: context.colors.textSecondary, fontSize: 14, height: 1.4),
+        style: TextStyle(
+          color: context.colors.textSecondary,
+          fontSize: 14,
+          height: 1.4,
+        ),
       ),
     );
   }
@@ -338,7 +370,11 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
             padding: const EdgeInsets.all(14),
             child: Row(
               children: [
-                SoftIconTile(box.type.icon, color: c.textPrimary, background: c.accent.withValues(alpha: 0.45)),
+                SoftIconTile(
+                  box.type.icon,
+                  color: c.textPrimary,
+                  background: c.accent.withValues(alpha: 0.45),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -348,7 +384,11 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                         box.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(color: c.textPrimary, fontWeight: FontWeight.w800, fontSize: 16),
+                        style: TextStyle(
+                          color: c.textPrimary,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                        ),
                       ),
                       Text(
                         provider.getBreadcrumbString(box.id),
@@ -359,7 +399,11 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                     ],
                   ),
                 ),
-                AppIcon(Icons.check_circle_rounded, size: 24, color: AppTones.matcha),
+                AppIcon(
+                  Icons.check_circle_rounded,
+                  size: 24,
+                  color: AppTones.matcha,
+                ),
               ],
             ),
           ),
@@ -391,8 +435,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                   onPressed: () => Navigator.pop(context, box),
                   child: Text(
                     context.l10n.moveToThisBox,
-                    style: const TextStyle(fontWeight: FontWeight.w800),
-                  ),
+                    ),
                 ),
               ),
             ],
@@ -408,15 +451,19 @@ class _GlyphButton extends StatelessWidget {
   final VoidCallback onTap;
   final Widget child;
 
-  const _GlyphButton({required this.tooltip, required this.onTap, required this.child});
+  const _GlyphButton({
+    required this.tooltip,
+    required this.onTap,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) => Tappable(
-        behavior: HitTestBehavior.opaque,
-        semanticLabel: tooltip,
-        onTap: onTap,
-        child: SizedBox(width: 48, height: 48, child: Center(child: child)),
-      );
+    behavior: HitTestBehavior.opaque,
+    semanticLabel: tooltip,
+    onTap: onTap,
+    child: SizedBox(width: 48, height: 48, child: Center(child: child)),
+  );
 }
 
 class _RoundButton extends StatelessWidget {
@@ -436,16 +483,13 @@ class _RoundButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Tappable(
-        semanticLabel: tooltip,
-        onTap: onTap,
-        child: Container(
-          width: diameter,
-          height: diameter,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-          child: Center(child: child),
-        ),
-      );
+    semanticLabel: tooltip,
+    onTap: onTap,
+    child: Container(
+      width: diameter,
+      height: diameter,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      child: Center(child: child),
+    ),
+  );
 }

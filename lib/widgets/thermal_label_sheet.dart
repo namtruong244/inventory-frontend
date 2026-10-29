@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
@@ -46,7 +47,12 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
         color: context.colors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
-      padding: EdgeInsets.fromLTRB(24, 16, 24, MediaQuery.of(context).padding.bottom + 24),
+      padding: EdgeInsets.fromLTRB(
+        24,
+        16,
+        24,
+        MediaQuery.of(context).padding.bottom + 24,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -78,12 +84,15 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                   const SizedBox(height: 2),
                   Text(
                     context.l10n.standardPrintableAdhesiveLabel,
-                    style: TextStyle(color: context.colors.textSecondary, fontSize: 13),
+                    style: TextStyle(
+                      color: context.colors.textSecondary,
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),
               IconButton(
- tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                 onPressed: () => Navigator.pop(context),
                 icon: const AppIcon(Icons.close_rounded),
               ),
@@ -103,9 +112,7 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                 Expanded(
                   child: _buildSizeTab('50x30', '50 x 30 mm (Standard)'),
                 ),
-                Expanded(
-                  child: _buildSizeTab('40x30', '40 x 30 mm (Compact)'),
-                ),
+                Expanded(child: _buildSizeTab('40x30', '40 x 30 mm (Compact)')),
               ],
             ),
           ),
@@ -146,7 +153,10 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                       children: [
                         // Storage Type tag
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black,
                             borderRadius: BorderRadius.circular(4),
@@ -210,7 +220,10 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
                 child: OutlinedButton.icon(
                   onPressed: () {
                     Navigator.pop(context);
-                    AppFeedback.showSuccess(context, context.l10n.thermalLabelCopiedToClipboard);
+                    AppFeedback.showSuccess(
+                      context,
+                      context.l10n.thermalLabelCopiedToClipboard,
+                    );
                   },
                   icon: const AppIcon(Icons.copy_rounded, size: 18),
                   label: Text(context.l10n.copyId),
@@ -277,7 +290,9 @@ class _ThermalLabelSheetState extends State<ThermalLabelSheet> {
           style: TextStyle(
             fontSize: 12,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? context.colors.textPrimary : context.colors.textSecondary,
+            color: isSelected
+                ? context.colors.textPrimary
+                : context.colors.textSecondary,
           ),
         ),
       ),

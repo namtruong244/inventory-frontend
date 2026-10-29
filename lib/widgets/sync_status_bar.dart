@@ -20,13 +20,18 @@ class SyncStatusBar extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final needsAttention =
         provider.failedOps.length + (provider.syncNotices.isEmpty ? 0 : 1);
-    final show = !provider.sessionExpired &&
-        (provider.isOffline || provider.pendingChanges > 0 || needsAttention > 0);
+    final show =
+        !provider.sessionExpired &&
+        (provider.isOffline ||
+            provider.pendingChanges > 0 ||
+            needsAttention > 0);
     if (!show) return child;
 
     final warn = needsAttention > 0;
     final bg = warn ? context.colors.warningSoft : context.colors.dangerSoft;
-    final fg = warn ? context.colors.warningStrong : context.colors.dangerStrong;
+    final fg = warn
+        ? context.colors.warningStrong
+        : context.colors.dangerStrong;
     final text = StringBuffer(
       provider.isOffline ? l10n.syncOffline : l10n.syncUnsynced,
     );
@@ -48,7 +53,10 @@ class SyncStatusBar extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(minHeight: 40),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   child: Row(
                     children: [
                       AppIcon(
@@ -64,7 +72,11 @@ class SyncStatusBar extends StatelessWidget {
                           text.toString(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontSize: 12, color: fg, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: fg,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       AppIcon(Icons.chevron_right_rounded, size: 18, color: fg),
@@ -119,7 +131,9 @@ class _SyncDetailsSheet extends StatelessWidget {
           children: [
             Text(
               l10n.syncSheetTitle,
-              style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -129,13 +143,17 @@ class _SyncDetailsSheet extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               l10n.syncPending(provider.pendingChanges),
-              style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
             ),
             if (provider.syncNotices.isNotEmpty) ...[
               const SizedBox(height: 16),
               Text(
                 l10n.syncRejectedTitle,
-                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 6),
               for (final notice in provider.syncNotices)
