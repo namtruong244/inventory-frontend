@@ -128,6 +128,9 @@ void showConsumeSheet(
   Item item,
   InventoryProvider provider,
 ) {
+  // The sheet builder shadows `context` with the sheet's own, which is gone
+  // once the sheet is popped; feedback after the await must use the host.
+  final host = context;
   double consumeAmount = 1.0;
   if (item.quantity < 1.0 && item.quantity > 0) {
     consumeAmount = item.quantity;
@@ -150,8 +153,7 @@ void showConsumeSheet(
           final formattedConsume = _fmt(consumeAmount, digits: 2);
           final formattedRemain = _fmt(remainingAfter);
           final isEmpty = remainingAfter == 0;
-          final isLow =
-              item.minQuantity != null && remainingAfter <= item.minQuantity!;
+          final isLow = item.isLowStockAt(remainingAfter);
           final tone = isEmpty
               ? AppTones.coral
               : (isLow ? AppTones.amber : AppTones.matcha);
@@ -255,7 +257,7 @@ void showConsumeSheet(
                     ),
                     onPressed: () {
                       Navigator.pop(sheetCtx);
-                      showRestockSheet(context, item, provider);
+                      showRestockSheet(host, item, provider);
                     },
                     icon: const AppIcon(
                       Icons.add_shopping_cart_outlined,
@@ -277,26 +279,31 @@ void showConsumeSheet(
                           remainingAfter,
                           reason: 'consume',
                         );
-                        if (ok && context.mounted) {
-                          AppFeedback.showSuccess(
-                            context,
-                            context.l10n.usedRemaining(
-                              formattedConsume,
-                              item.unit,
-                              formattedRemain,
+                        if (!host.mounted) return;
+                        if (!ok) {
+                          AppFeedback.showError(
+                            host,
+                            provider.errorMessage ?? host.l10n.syncFailed,
+                          );
+                          return;
+                        }
+                        AppFeedback.showSuccess(
+                          host,
+                          host.l10n.usedRemaining(
+                            formattedConsume,
+                            item.unit,
+                            formattedRemain,
+                            item.unit,
+                          ),
+                        );
+                        if (item.isLowStockAt(remainingAfter)) {
+                          AppFeedback.showWarning(
+                            host,
+                            host.l10n.warningQuantityHasDroppedTo(
+                              item.minQuantity ?? 0,
                               item.unit,
                             ),
                           );
-                          if (item.minQuantity != null &&
-                              remainingAfter <= item.minQuantity!) {
-                            AppFeedback.showWarning(
-                              context,
-                              context.l10n.warningQuantityHasDroppedTo(
-                                item.minQuantity ?? 0,
-                                item.unit,
-                              ),
-                            );
-                          }
                         }
                       },
                       icon: const AppIcon(Icons.check_rounded, size: 18),
@@ -318,6 +325,7 @@ void showRestockSheet(
   Item item,
   InventoryProvider provider,
 ) {
+  final host = context; // see showConsumeSheet
   double addAmount = 1.0;
   final controller = TextEditingController(text: '1');
 
@@ -386,18 +394,24 @@ void showRestockSheet(
                           newQty,
                           reason: 'restock',
                         );
-                        if (ok && context.mounted) {
-                          final formattedNew = _fmt(newQty, digits: 2);
-                          AppFeedback.showSuccess(
-                            context,
-                            context.l10n.addedTotal(
-                              addAmount,
-                              item.unit,
-                              formattedNew,
-                              item.unit,
-                            ),
+                        if (!host.mounted) return;
+                        if (!ok) {
+                          AppFeedback.showError(
+                            host,
+                            provider.errorMessage ?? host.l10n.syncFailed,
                           );
+                          return;
                         }
+                        final formattedNew = _fmt(newQty, digits: 2);
+                        AppFeedback.showSuccess(
+                          host,
+                          host.l10n.addedTotal(
+                            addAmount,
+                            item.unit,
+                            formattedNew,
+                            item.unit,
+                          ),
+                        );
                       }
                     : null,
                 icon: const AppIcon(Icons.check_rounded, size: 18),

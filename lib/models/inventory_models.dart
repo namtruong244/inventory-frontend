@@ -282,8 +282,21 @@ class Item {
 
   /// Low stock calculation per item
   /// Mirrors the backend: stock lent out on partial loans still counts.
-  bool get isLowStock =>
-      minQuantity != null && quantity + lentQuantity <= minQuantity!;
+  bool get isLowStock => isLowStockAt(quantity);
+
+  /// Low-stock check for a hypothetical on-hand [qty] (e.g. after consuming).
+  bool isLowStockAt(double qty) =>
+      minQuantity != null && qty + lentQuantity <= minQuantity!;
+
+  /// Units that still belong to the user, including those lent out.
+  double get heldQuantity => quantity + lentQuantity;
+
+  /// Fill level for stock bars: 0.5 sits exactly on the minimum threshold.
+  /// Null when the item has no threshold to compare against.
+  double? get stockRatio {
+    final min = minQuantity;
+    return min != null && min > 0 ? heldQuantity / (min * 2) : null;
+  }
 
   /// Expiry calculations work on calendar days: an item expiring today is
   /// not expired yet and has 0 days left.

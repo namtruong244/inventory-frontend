@@ -348,7 +348,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
                             icon: Icons.event_outlined,
                           ),
                       ];
-                      final min = item.minQuantity;
                       final description = [
                         if (breadcrumb.isNotEmpty)
                           context.l10n.inPlacePath(breadcrumb),
@@ -470,10 +469,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                 dot: true,
                               ),
                               tags: tags,
-                              stockRatio: min != null && min > 0
-                                  ? (item.quantity + item.lentQuantity) /
-                                        (min * 2)
-                                  : null,
+                              stockRatio: item.stockRatio,
                               stockColor: item.isLowStock
                                   ? AppTones.amber
                                   : c.successStrong,

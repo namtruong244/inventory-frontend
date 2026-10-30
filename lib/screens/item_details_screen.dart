@@ -90,9 +90,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     InventoryProvider provider,
   ) {
     final c = context.colors;
-    final min = item.minQuantity;
-    final held = item.quantity + item.lentQuantity;
-    final ratio = min != null && min > 0 ? held / (min * 2) : null;
+    final ratio = item.stockRatio;
     return SoftCard(
       child: Tappable(
         semanticLabel: context.l10n.stockHistory,
@@ -681,7 +679,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                             item.quantity <= 0
                                 ? context.l10n.outOfStockRestock
                                 : context.l10n.commonConsume(item.unit),
-                            ),
+                          ),
                         )
                       : ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
@@ -713,7 +711,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                                 : item.status == ItemStatus.stored
                                 ? context.l10n.takeOutToUse
                                 : context.l10n.returnToStorage,
-                            ),
+                          ),
                         ),
                 ),
               ],
