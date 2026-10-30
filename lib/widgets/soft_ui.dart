@@ -296,7 +296,7 @@ class SoftIconTile extends StatelessWidget {
 }
 
 /// White pill search box that floats on the page background.
-class SoftSearchField extends StatelessWidget {
+class SoftSearchField extends StatefulWidget {
   final String hint;
   final String value;
   final ValueChanged<String> onChanged;
@@ -311,6 +311,31 @@ class SoftSearchField extends StatelessWidget {
   });
 
   @override
+  State<SoftSearchField> createState() => _SoftSearchFieldState();
+}
+
+class _SoftSearchFieldState extends State<SoftSearchField> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.value,
+  );
+
+  @override
+  void didUpdateWidget(SoftSearchField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Parent reset the query (e.g. clear): keep the visible text in step.
+    // Compare trimmed since parents store the trimmed query.
+    if (widget.value != _controller.text.trim()) {
+      _controller.text = widget.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final c = context.colors;
     return Container(
@@ -320,21 +345,25 @@ class SoftSearchField extends StatelessWidget {
         boxShadow: c.cardShadow,
       ),
       child: TextField(
-        onChanged: onChanged,
+        controller: _controller,
+        onChanged: widget.onChanged,
         style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
         decoration: InputDecoration(
-          hintText: hint,
+          hintText: widget.hint,
           filled: false,
           prefixIcon: AppIcon(
             Icons.search_rounded,
             size: 22,
             color: c.textMuted,
           ),
-          suffixIcon: value.isNotEmpty
+          suffixIcon: widget.value.isNotEmpty
               ? IconButton(
                   tooltip: MaterialLocalizations.of(context).clearButtonTooltip,
                   icon: const AppIcon(Icons.close_rounded, size: 18),
-                  onPressed: onClear,
+                  onPressed: () {
+                    _controller.clear();
+                    widget.onClear();
+                  },
                 )
               : null,
           contentPadding: const EdgeInsets.symmetric(

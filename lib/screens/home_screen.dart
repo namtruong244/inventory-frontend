@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen>
       context,
       MaterialPageRoute(builder: (_) => page),
     );
-    _updateSystemOverlay();
+    if (mounted) _updateSystemOverlay();
     return result;
   }
 
@@ -430,8 +430,9 @@ class _HomeScreenState extends State<HomeScreen>
                 boxShadow: c.cardShadow,
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 25,
+                // Evenly spaced instead of fixed gaps so the pill never overflows
+                // on narrow phones (5 targets need only ~260dp).
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildNavItem(
                     index: 0,
