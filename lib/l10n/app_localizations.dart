@@ -2485,6 +2485,12 @@ abstract class AppLocalizations {
   /// **'All Containers ({count})'**
   String allContainers(Object count);
 
+  /// No description provided for @boxLabelsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} box labels'**
+  String boxLabelsCount(int count);
+
   /// No description provided for @printSpecsFormat.
   ///
   /// In en, this message translates to:

@@ -819,6 +819,14 @@
       }
     }
   },
+  "boxLabelsCount": "{count} box labels",
+  "@boxLabelsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "printSpecsFormat": "PRINT SPECS / FORMAT",
   "a4TomyDecal": "A4 Tomy Decal",
   "standardGridSheet": "Standard grid sheet",

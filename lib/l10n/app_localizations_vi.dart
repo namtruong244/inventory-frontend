@@ -1388,6 +1388,11 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String boxLabelsCount(int count) {
+    return '$count nhãn ngăn chứa';
+  }
+
+  @override
   String get printSpecsFormat => 'THÔNG SỐ / KHỔ IN';
 
   @override

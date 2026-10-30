@@ -1394,6 +1394,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String boxLabelsCount(int count) {
+    return '$count box labels';
+  }
+
+  @override
   String get printSpecsFormat => 'PRINT SPECS / FORMAT';
 
   @override

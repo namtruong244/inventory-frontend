@@ -216,7 +216,7 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
               ),
             ),
             Text(
-              '${entries.length} box labels',
+              context.l10n.boxLabelsCount(entries.length),
               style: TextStyle(
                 fontSize: 12,
                 color: context.colors.textSecondary,

@@ -819,6 +819,7 @@
       }
     }
   },
+  "boxLabelsCount": "{count} nhãn ngăn chứa",
   "printSpecsFormat": "THÔNG SỐ / KHỔ IN",
   "a4TomyDecal": "Decal A4 Tomy",
   "standardGridSheet": "Tờ lưới tiêu chuẩn",
