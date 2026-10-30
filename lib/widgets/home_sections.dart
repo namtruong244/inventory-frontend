@@ -61,7 +61,7 @@ class HomeSections {
                 ),
                 child: Text(
                   context.l10n.commonRetry,
-                  style: TextStyle(fontSize: 12, ),
+                  style: TextStyle(fontSize: 12),
                 ),
               ),
             ],

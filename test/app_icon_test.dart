@@ -7,9 +7,15 @@ void main() {
   testWidgets('every hand-drawn glyph parses and renders', (tester) async {
     final svgs = appIconSvgs.toList();
     expect(svgs, isNotEmpty);
-    await tester.pumpWidget(MaterialApp(
-      home: Wrap(children: [for (final s in svgs) SvgPicture.string(s, width: 24, height: 24)]),
-    ));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Wrap(
+          children: [
+            for (final s in svgs) SvgPicture.string(s, width: 24, height: 24),
+          ],
+        ),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });

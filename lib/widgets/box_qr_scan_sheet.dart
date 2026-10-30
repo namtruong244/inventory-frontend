@@ -433,9 +433,7 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   onPressed: () => Navigator.pop(context, box),
-                  child: Text(
-                    context.l10n.moveToThisBox,
-                    ),
+                  child: Text(context.l10n.moveToThisBox),
                 ),
               ),
             ],

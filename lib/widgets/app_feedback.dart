@@ -105,7 +105,7 @@ class AppFeedback {
                             ),
                             child: Text(
                               cancelLabel ?? context.l10n.commonCancel,
-                              ),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -123,9 +123,7 @@ class AppFeedback {
                             ),
                             child: Text(
                               confirmLabel ?? context.l10n.commonConfirm,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                ),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -218,9 +216,7 @@ class AppFeedback {
                         foregroundColor: Colors.white,
                         minimumSize: const Size(48, 48),
                       ),
-                      child: Text(
-                        actionLabel,
-                        ),
+                      child: Text(actionLabel),
                     ),
                 ],
               ),

@@ -592,9 +592,7 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
                     const SizedBox(width: 8),
                     Text(
                       widget.confirmButtonText ?? context.l10n.selectLocation,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        ),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ],
                 ),

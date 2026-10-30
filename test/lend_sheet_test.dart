@@ -14,7 +14,12 @@ void main() {
   late InventoryProvider provider;
   final desk = Item(id: 'i1', name: 'Bàn làm việc', boxId: 'b1');
   final lamp = Item(id: 'i2', name: 'Đèn ngủ', boxId: 'b1');
-  final lentChair = Item(id: 'i3', name: 'Ghế', boxId: 'b1', status: ItemStatus.lent);
+  final lentChair = Item(
+    id: 'i3',
+    name: 'Ghế',
+    boxId: 'b1',
+    status: ItemStatus.lent,
+  );
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -43,31 +48,44 @@ void main() {
     );
   }
 
-  testWidgets('opened from an item, that item is already chosen and fixed', (tester) async {
+  testWidgets('opened from an item, that item is already chosen and fixed', (
+    tester,
+  ) async {
     await pumpSheet(tester, initialItem: lamp);
     expect(find.text('Đèn ngủ'), findsOneWidget);
     await tester.tap(find.text('Đèn ngủ'));
     await tester.pumpAndSettle();
-    expect(find.text('Search items, barcodes, serials...'), findsNothing, reason: 'no picker for a fixed item');
+    expect(
+      find.text('Search items, barcodes, serials...'),
+      findsNothing,
+      reason: 'no picker for a fixed item',
+    );
   });
 
-  testWidgets('the item picker searches without regard to accents and skips lent items', (tester) async {
-    await pumpSheet(tester);
-    await tester.tap(find.text('Choose an available item...'));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'the item picker searches without regard to accents and skips lent items',
+    (tester) async {
+      await pumpSheet(tester);
+      await tester.tap(find.text('Choose an available item...'));
+      await tester.pumpAndSettle();
 
-    expect(find.text('Bàn làm việc'), findsOneWidget);
-    expect(find.text('Đèn ngủ'), findsOneWidget);
-    expect(find.text('Ghế'), findsNothing, reason: 'already lent');
+      expect(find.text('Bàn làm việc'), findsOneWidget);
+      expect(find.text('Đèn ngủ'), findsOneWidget);
+      expect(find.text('Ghế'), findsNothing, reason: 'already lent');
 
-    await tester.enterText(find.byType(TextField).last, 'ban lam');
-    await tester.pump();
-    expect(find.text('Bàn làm việc'), findsOneWidget);
-    expect(find.text('Đèn ngủ'), findsNothing);
+      await tester.enterText(find.byType(TextField).last, 'ban lam');
+      await tester.pump();
+      expect(find.text('Bàn làm việc'), findsOneWidget);
+      expect(find.text('Đèn ngủ'), findsNothing);
 
-    await tester.tap(find.text('Bàn làm việc'));
-    await tester.pumpAndSettle();
-    expect(find.text('Bàn làm việc'), findsOneWidget, reason: 'the choice is shown in the form');
-    expect(find.text('Choose an available item...'), findsNothing);
-  });
+      await tester.tap(find.text('Bàn làm việc'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('Bàn làm việc'),
+        findsOneWidget,
+        reason: 'the choice is shown in the form',
+      );
+      expect(find.text('Choose an available item...'), findsNothing);
+    },
+  );
 }

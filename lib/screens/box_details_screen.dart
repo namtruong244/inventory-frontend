@@ -271,7 +271,10 @@ class BoxDetailsScreen extends StatelessWidget {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      context.l10n.boxSummary(totalItemsRecursive, subBoxes.length),
+                                      context.l10n.boxSummary(
+                                        totalItemsRecursive,
+                                        subBoxes.length,
+                                      ),
                                       style: TextStyle(
                                         color: context.colors.textSecondary,
                                         fontSize: 13,

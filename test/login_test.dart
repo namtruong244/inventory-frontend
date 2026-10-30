@@ -20,8 +20,8 @@ void main() {
     return ChangeNotifierProvider(
       create: (_) => InventoryProvider(),
       child: MaterialApp(
-localizationsDelegates: AppLocalizations.localizationsDelegates,
-supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
 
         home: LoginScreen(),
       ),
@@ -29,8 +29,9 @@ supportedLocales: AppLocalizations.supportedLocales,
   }
 
   group('LoginScreen UI & Social Login', () {
-    testWidgets('renders all authentication options (Google, Email)',
-        (WidgetTester tester) async {
+    testWidgets('renders all authentication options (Google, Email)', (
+      WidgetTester tester,
+    ) async {
       tester.view.physicalSize = const Size(1000, 2000);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {
@@ -64,8 +65,9 @@ supportedLocales: AppLocalizations.supportedLocales,
       expect(find.text('Continue as Guest'), findsNothing);
     });
 
-    testWidgets('toggle between Sign In and Sign Up modes',
-        (WidgetTester tester) async {
+    testWidgets('toggle between Sign In and Sign Up modes', (
+      WidgetTester tester,
+    ) async {
       tester.view.physicalSize = const Size(1000, 2000);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {
@@ -90,30 +92,34 @@ supportedLocales: AppLocalizations.supportedLocales,
       expect(find.text('Already have an account? Sign in'), findsOneWidget);
     });
 
-    testWidgets('failed Google sign-in shows an error, never a fake account list',
-        (WidgetTester tester) async {
-      tester.view.physicalSize = const Size(1000, 2000);
-      tester.view.devicePixelRatio = 2.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-      });
+    testWidgets(
+      'failed Google sign-in shows an error, never a fake account list',
+      (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(1000, 2000);
+        tester.view.devicePixelRatio = 2.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-      await tester.pumpWidget(buildTestLoginApp());
-      await tester.pumpAndSettle();
+        await tester.pumpWidget(buildTestLoginApp());
+        await tester.pumpAndSettle();
 
-      // No Google plugin in a widget test, so sign-in fails.
-      await tester.tap(find.text('Continue with Google'));
-      await tester.pumpAndSettle();
+        // No Google plugin in a widget test, so sign-in fails.
+        await tester.tap(find.text('Continue with Google'));
+        await tester.pumpAndSettle();
 
-      expect(find.text('sara.wilson@gmail.com'), findsNothing);
-      expect(find.text('alex.turner@gmail.com'), findsNothing);
-      expect(find.text('Use another Gmail account'), findsNothing);
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.byType(LoginScreen), findsOneWidget);
-    });
+        expect(find.text('sara.wilson@gmail.com'), findsNothing);
+        expect(find.text('alex.turner@gmail.com'), findsNothing);
+        expect(find.text('Use another Gmail account'), findsNothing);
+        expect(find.byType(SnackBar), findsOneWidget);
+        expect(find.byType(LoginScreen), findsOneWidget);
+      },
+    );
 
-    testWidgets('there is no dead "Forgot password" link', (WidgetTester tester) async {
+    testWidgets('there is no dead "Forgot password" link', (
+      WidgetTester tester,
+    ) async {
       tester.view.physicalSize = const Size(1000, 2000);
       tester.view.devicePixelRatio = 2.0;
       addTearDown(() {

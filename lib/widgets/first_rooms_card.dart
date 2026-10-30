@@ -130,9 +130,7 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(
-                      context.l10n.createSelectedRooms(_selected.length),
-                      ),
+                  : Text(context.l10n.createSelectedRooms(_selected.length)),
             ),
           ),
           Align(

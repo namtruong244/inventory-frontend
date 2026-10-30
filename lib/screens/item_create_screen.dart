@@ -461,9 +461,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                         isEditing
                             ? context.l10n.commonSave
                             : context.l10n.commonCreate,
-                        style: const TextStyle(
-                          fontSize: 13,
-                        ),
+                        style: const TextStyle(fontSize: 13),
                       ),
               ),
             ),
@@ -542,9 +540,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                       isEditing
                           ? context.l10n.saveChanges
                           : context.l10n.saveItem,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        ),
+                      style: const TextStyle(fontSize: 16),
                     ),
                   ),
                 ),

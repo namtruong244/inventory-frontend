@@ -407,9 +407,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                     isEditing
                         ? context.l10n.saveChanges
                         : context.l10n.saveLocation,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      ),
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ),
               ),

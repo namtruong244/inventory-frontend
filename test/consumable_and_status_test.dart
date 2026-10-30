@@ -62,7 +62,9 @@ void main() {
   });
 
   group('ItemDetailsScreen Action Buttons', () {
-    testWidgets('Non-consumable stored item displays "Lấy ra dùng" button', (tester) async {
+    testWidgets('Non-consumable stored item displays "Lấy ra dùng" button', (
+      tester,
+    ) async {
       final provider = InventoryProvider();
       final box = Box(id: 'box-1', name: 'Toolbox', label: 'TB-01');
       final item = Item(
@@ -78,8 +80,8 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-localizationsDelegates: AppLocalizations.localizationsDelegates,
-supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
 
           home: ChangeNotifierProvider<InventoryProvider>.value(
             value: provider,
@@ -95,100 +97,109 @@ supportedLocales: AppLocalizations.supportedLocales,
       expect(find.text('Edit Details'), findsNothing);
     });
 
-    testWidgets('Non-consumable inUse item displays "Return to Storage" button', (tester) async {
-      final provider = InventoryProvider();
-      final box = Box(id: 'box-1', name: 'Toolbox', label: 'TB-01');
-      final item = Item(
-        id: 'item-durable-2',
-        name: 'Power Drill',
-        boxId: 'box-1',
-        status: ItemStatus.inUse,
-        isConsumable: false,
-      );
+    testWidgets(
+      'Non-consumable inUse item displays "Return to Storage" button',
+      (tester) async {
+        final provider = InventoryProvider();
+        final box = Box(id: 'box-1', name: 'Toolbox', label: 'TB-01');
+        final item = Item(
+          id: 'item-durable-2',
+          name: 'Power Drill',
+          boxId: 'box-1',
+          status: ItemStatus.inUse,
+          isConsumable: false,
+        );
 
-      provider.addBox(box);
-      provider.addItem(item);
+        provider.addBox(box);
+        provider.addItem(item);
 
-      await tester.pumpWidget(
-        MaterialApp(
-localizationsDelegates: AppLocalizations.localizationsDelegates,
-supportedLocales: AppLocalizations.supportedLocales,
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
 
-          home: ChangeNotifierProvider<InventoryProvider>.value(
-            value: provider,
-            child: const ItemDetailsScreen(itemId: 'item-durable-2'),
+            home: ChangeNotifierProvider<InventoryProvider>.value(
+              value: provider,
+              child: const ItemDetailsScreen(itemId: 'item-durable-2'),
+            ),
           ),
-        ),
-      );
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Return to Storage'), findsOneWidget);
-    });
+        expect(find.text('Return to Storage'), findsOneWidget);
+      },
+    );
 
-    testWidgets('Consumable item displays "Consumable" badge and consume button', (tester) async {
-      final provider = InventoryProvider();
-      final box = Box(id: 'box-1', name: 'Medicine Cabinet', label: 'MC-01');
-      final item = Item(
-        id: 'item-consumable-1',
-        name: 'Face Masks',
-        boxId: 'box-1',
-        quantity: 50,
-        unit: 'pcs',
-        isConsumable: true,
-      );
+    testWidgets(
+      'Consumable item displays "Consumable" badge and consume button',
+      (tester) async {
+        final provider = InventoryProvider();
+        final box = Box(id: 'box-1', name: 'Medicine Cabinet', label: 'MC-01');
+        final item = Item(
+          id: 'item-consumable-1',
+          name: 'Face Masks',
+          boxId: 'box-1',
+          quantity: 50,
+          unit: 'pcs',
+          isConsumable: true,
+        );
 
-      provider.addBox(box);
-      provider.addItem(item);
+        provider.addBox(box);
+        provider.addItem(item);
 
-      await tester.pumpWidget(
-        MaterialApp(
-localizationsDelegates: AppLocalizations.localizationsDelegates,
-supportedLocales: AppLocalizations.supportedLocales,
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
 
-          home: ChangeNotifierProvider<InventoryProvider>.value(
-            value: provider,
-            child: const ItemDetailsScreen(itemId: 'item-consumable-1'),
+            home: ChangeNotifierProvider<InventoryProvider>.value(
+              value: provider,
+              child: const ItemDetailsScreen(itemId: 'item-consumable-1'),
+            ),
           ),
-        ),
-      );
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Consumable'), findsOneWidget);
-      expect(find.text('Consume (pcs)'), findsOneWidget);
-    });
+        expect(find.text('Consumable'), findsOneWidget);
+        expect(find.text('Consume (pcs)'), findsOneWidget);
+      },
+    );
 
-    testWidgets('Consumable item with 0 quantity displays out of stock button', (tester) async {
-      final provider = InventoryProvider();
-      final box = Box(id: 'box-1', name: 'Medicine Cabinet', label: 'MC-01');
-      final item = Item(
-        id: 'item-consumable-2',
-        name: 'AA Batteries',
-        boxId: 'box-1',
-        quantity: 0,
-        unit: 'pcs',
-        isConsumable: true,
-      );
+    testWidgets(
+      'Consumable item with 0 quantity displays out of stock button',
+      (tester) async {
+        final provider = InventoryProvider();
+        final box = Box(id: 'box-1', name: 'Medicine Cabinet', label: 'MC-01');
+        final item = Item(
+          id: 'item-consumable-2',
+          name: 'AA Batteries',
+          boxId: 'box-1',
+          quantity: 0,
+          unit: 'pcs',
+          isConsumable: true,
+        );
 
-      provider.addBox(box);
-      provider.addItem(item);
+        provider.addBox(box);
+        provider.addItem(item);
 
-      await tester.pumpWidget(
-        MaterialApp(
-localizationsDelegates: AppLocalizations.localizationsDelegates,
-supportedLocales: AppLocalizations.supportedLocales,
+        await tester.pumpWidget(
+          MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
 
-          home: ChangeNotifierProvider<InventoryProvider>.value(
-            value: provider,
-            child: const ItemDetailsScreen(itemId: 'item-consumable-2'),
+            home: ChangeNotifierProvider<InventoryProvider>.value(
+              value: provider,
+              child: const ItemDetailsScreen(itemId: 'item-consumable-2'),
+            ),
           ),
-        ),
-      );
-      await tester.pump(const Duration(seconds: 1));
-      await tester.pumpAndSettle();
+        );
+        await tester.pump(const Duration(seconds: 1));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Out of Stock (Restock)'), findsOneWidget);
-    });
+        expect(find.text('Out of Stock (Restock)'), findsOneWidget);
+      },
+    );
   });
 }

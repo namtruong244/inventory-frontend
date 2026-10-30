@@ -616,10 +616,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     label: Text(
                       context.l10n.logOutSwitchAccount,
-                      style: TextStyle(
-                        color: AppTones.coral,
-                        fontSize: 14,
-                        ),
+                      style: TextStyle(color: AppTones.coral, fontSize: 14),
                     ),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide.none,

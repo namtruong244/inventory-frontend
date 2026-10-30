@@ -374,7 +374,7 @@ void showAddEditAttributeSheet(
                     isEditing
                         ? context.l10n.saveSpecification
                         : context.l10n.addSpecification,
-                    ),
+                  ),
                 ),
               ),
             ],

@@ -130,7 +130,9 @@ class FakeApi extends ApiService {
   final settingsSent = <Map<String, dynamic>>[];
 
   @override
-  Future<Map<String, dynamic>> updateSettings(Map<String, dynamic> delta) async {
+  Future<Map<String, dynamic>> updateSettings(
+    Map<String, dynamic> delta,
+  ) async {
     await _guard();
     settingsSent.add(delta);
     return delta;
@@ -240,7 +242,12 @@ void main() {
   );
 
   group('weak connection', () {
-    final cachedBox = Box(id: 'b1', name: 'Garage', type: StorageType.room, label: 'G-1');
+    final cachedBox = Box(
+      id: 'b1',
+      name: 'Garage',
+      type: StorageType.room,
+      label: 'G-1',
+    );
     final cachedItem = Item(id: 'i1', name: 'Drill', boxId: 'b1');
 
     Future<void> cache() => store.saveSnapshot(
@@ -264,16 +271,19 @@ void main() {
       await p.initializationFuture;
     });
 
-    test('a server that never answers ends up offline with the cache', () async {
-      await cache();
-      final slow = FakeApi()..hang = true;
-      final p = InventoryProvider(api: slow);
-      addTearDown(p.dispose);
-      await p.initializationFuture;
-      expect(p.isOffline, isTrue);
-      expect(p.isConnected, isFalse);
-      expect(p.items.map((i) => i.name), ['Drill']);
-    });
+    test(
+      'a server that never answers ends up offline with the cache',
+      () async {
+        await cache();
+        final slow = FakeApi()..hang = true;
+        final p = InventoryProvider(api: slow);
+        addTearDown(p.dispose);
+        await p.initializationFuture;
+        expect(p.isOffline, isTrue);
+        expect(p.isConnected, isFalse);
+        expect(p.items.map((i) => i.name), ['Drill']);
+      },
+    );
 
     test('a failed item fetch keeps the last good snapshot', () async {
       await cache();
@@ -285,15 +295,18 @@ void main() {
       expect(provider.items.map((i) => i.name), ['Drill']);
     });
 
-    test('a rejected item fetch neither overwrites the cache nor seeds', () async {
-      await cache();
-      api.noBoxes = true;
-      api.itemsError = status(400);
-      await provider.fetchAllData();
-      expect(api.boxesCreated, 0);
-      final snap = await store.loadSnapshot();
-      expect(snap!.items.map((i) => i.name), ['Drill']);
-    });
+    test(
+      'a rejected item fetch neither overwrites the cache nor seeds',
+      () async {
+        await cache();
+        api.noBoxes = true;
+        api.itemsError = status(400);
+        await provider.fetchAllData();
+        expect(api.boxesCreated, 0);
+        final snap = await store.loadSnapshot();
+        expect(snap!.items.map((i) => i.name), ['Drill']);
+      },
+    );
 
     test('an empty account stays empty: nothing is seeded', () async {
       api.noBoxes = true;
@@ -347,7 +360,11 @@ void main() {
       final item = Item(id: 'i1', name: 'old', boxId: 'b1');
       await seed(item);
       api.serverItems = [Item(id: 'i1', name: 'from-server', boxId: 'b1')];
-      api.mutationError = ApiException(statusCode: 409, code: 'CONFLICT', message: 'm');
+      api.mutationError = ApiException(
+        statusCode: 409,
+        code: 'CONFLICT',
+        message: 'm',
+      );
       final ok = await provider.updateItem(item.copyWith(name: 'mine'));
       expect(ok, isFalse);
       expect(provider.items.single.name, 'from-server');
@@ -365,22 +382,25 @@ void main() {
   });
 
   group('auto sync and settings', () {
-    test('a setting changed offline is queued, kept, and sent on resume', () async {
-      api.reachable = false;
-      await provider.setCurrency('€');
-      expect(provider.currency, '€');
-      expect(await pending(), 1);
-      expect(api.settingsSent, isEmpty);
-      expect((await store.loadSettings())?['currencySymbol'], '€');
+    test(
+      'a setting changed offline is queued, kept, and sent on resume',
+      () async {
+        api.reachable = false;
+        await provider.setCurrency('€');
+        expect(provider.currency, '€');
+        expect(await pending(), 1);
+        expect(api.settingsSent, isEmpty);
+        expect((await store.loadSettings())?['currencySymbol'], '€');
 
-      api.reachable = true;
-      await provider.onAppResumed();
-      expect(await pending(), 0);
-      expect(api.settingsSent, [
-        {'currencySymbol': '€'},
-      ]);
-      expect(provider.isOffline, isFalse);
-    });
+        api.reachable = true;
+        await provider.onAppResumed();
+        expect(await pending(), 0);
+        expect(api.settingsSent, [
+          {'currencySymbol': '€'},
+        ]);
+        expect(provider.isOffline, isFalse);
+      },
+    );
 
     test('resume does nothing when online with an empty queue', () async {
       final before = api.boxesFetched;

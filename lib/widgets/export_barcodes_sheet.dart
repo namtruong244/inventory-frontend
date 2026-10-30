@@ -375,9 +375,7 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                       backgroundColor: context.colors.fill,
                       foregroundColor: context.colors.textPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      textStyle: const TextStyle(
-                        fontSize: 13,
-                      ),
+                      textStyle: const TextStyle(fontSize: 13),
                     ),
                   ),
                 ),
@@ -409,9 +407,7 @@ class _ExportBarcodesSheetState extends State<ExportBarcodesSheet> {
                       backgroundColor: context.colors.accent,
                       foregroundColor: context.colors.onAccent,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      textStyle: const TextStyle(
-                        fontSize: 13,
-                      ),
+                      textStyle: const TextStyle(fontSize: 13),
                     ),
                   ),
                 ),

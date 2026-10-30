@@ -1,5 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:inventory/models/inventory_models.dart';
@@ -76,7 +78,7 @@ void main() {
             'reason': 'consume',
             'note': '',
             'createdAt': '2026-10-25T05:00:00Z',
-          }
+          },
         ],
         'avgDailyConsumption30d': 0.2,
         'estimatedDaysLeft': null,
@@ -92,81 +94,94 @@ void main() {
 
   // Needs a running backend: flutter test --dart-define=LIVE_API=true
   const liveApi = bool.fromEnvironment('LIVE_API');
-  group('Backend Live API Integration', skip: liveApi ? false : 'set --dart-define=LIVE_API=true with the backend running', () {
-    final api = ApiService();
+  group(
+    'Backend Live API Integration',
+    skip: liveApi
+        ? false
+        : 'set --dart-define=LIVE_API=true with the backend running',
+    () {
+      final api = ApiService();
 
-    setUpAll(() {
-      TestWidgetsFlutterBinding.ensureInitialized();
-      SharedPreferences.setMockInitialValues({});
-      FlutterSecureStorage.setMockInitialValues({});
-      HttpOverrides.global = null;
-    });
+      setUpAll(() {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        SharedPreferences.setMockInitialValues({});
+        FlutterSecureStorage.setMockInitialValues({});
+        HttpOverrides.global = null;
+      });
 
-    test('Login Sara Wilson on live backend', () async {
-      try {
-        final res = await api.login('sara.wilson@example.com', 'SecurePassword123!');
-        expect(res['token'], isNotNull);
-        expect(api.isAuthenticated, isTrue);
-      } catch (_) {
-        // If not registered yet, register
-        final res = await api.register('Sara Wilson', 'sara.wilson@example.com', 'SecurePassword123!');
-        expect(res['token'], isNotNull);
-        expect(api.isAuthenticated, isTrue);
-      }
-    });
+      test('Login Sara Wilson on live backend', () async {
+        try {
+          final res = await api.login(
+            'sara.wilson@example.com',
+            'SecurePassword123!',
+          );
+          expect(res['token'], isNotNull);
+          expect(api.isAuthenticated, isTrue);
+        } catch (_) {
+          // If not registered yet, register
+          final res = await api.register(
+            'Sara Wilson',
+            'sara.wilson@example.com',
+            'SecurePassword123!',
+          );
+          expect(res['token'], isNotNull);
+          expect(api.isAuthenticated, isTrue);
+        }
+      });
 
-    test('Fetch categories from backend', () async {
-      final categories = await api.getCategories();
-      expect(categories, isNotEmpty);
-      expect(categories.any((c) => c['name'] == 'Electronics'), isTrue);
-    });
+      test('Fetch categories from backend', () async {
+        final categories = await api.getCategories();
+        expect(categories, isNotEmpty);
+        expect(categories.any((c) => c['name'] == 'Electronics'), isTrue);
+      });
 
-    test('Fetch and update settings from backend', () async {
-      final settings = await api.getSettings();
-      expect(settings, isNotNull);
+      test('Fetch and update settings from backend', () async {
+        final settings = await api.getSettings();
+        expect(settings, isNotNull);
 
-      final updated = await api.updateSettings({'defaultUnit': 'pcs'});
-      expect(updated['defaultUnit'], 'pcs');
-    });
+        final updated = await api.updateSettings({'defaultUnit': 'pcs'});
+        expect(updated['defaultUnit'], 'pcs');
+      });
 
-    test('Box & Item CRUD on live backend', () async {
-      // 1. Create a test box
-      final testBox = Box(
-        name: 'Unit Test Storage',
-        type: StorageType.box,
-        label: 'test_box_label_${DateTime.now().millisecondsSinceEpoch}',
-        description: 'Temporary unit test box',
-      );
-      final createdBox = await api.createBox(testBox);
-      expect(createdBox.name, 'Unit Test Storage');
+      test('Box & Item CRUD on live backend', () async {
+        // 1. Create a test box
+        final testBox = Box(
+          name: 'Unit Test Storage',
+          type: StorageType.box,
+          label: 'test_box_label_${DateTime.now().millisecondsSinceEpoch}',
+          description: 'Temporary unit test box',
+        );
+        final createdBox = await api.createBox(testBox);
+        expect(createdBox.name, 'Unit Test Storage');
 
-      // 2. Create a test item in the box
-      final testItem = Item(
-        name: 'Unit Test Widget',
-        boxId: createdBox.id,
-        categoryId: 'Electronics',
-        quantity: 5.0,
-        unit: 'pcs',
-        minQuantity: 2.0,
-      );
-      final createdItem = await api.createItem(testItem);
-      expect(createdItem.name, 'Unit Test Widget');
-      expect(createdItem.quantity, 5.0);
+        // 2. Create a test item in the box
+        final testItem = Item(
+          name: 'Unit Test Widget',
+          boxId: createdBox.id,
+          categoryId: 'Electronics',
+          quantity: 5.0,
+          unit: 'pcs',
+          minQuantity: 2.0,
+        );
+        final createdItem = await api.createItem(testItem);
+        expect(createdItem.name, 'Unit Test Widget');
+        expect(createdItem.quantity, 5.0);
 
-      // 3. Update quantity
-      await api.updateItemQuantity(createdItem.id, 1.0);
-      final updatedItem = await api.getItemById(createdItem.id);
-      expect(updatedItem.quantity, 1.0);
-      expect(updatedItem.isLowStock, isTrue); // 1 <= 2
+        // 3. Update quantity
+        await api.updateItemQuantity(createdItem.id, 1.0);
+        final updatedItem = await api.getItemById(createdItem.id);
+        expect(updatedItem.quantity, 1.0);
+        expect(updatedItem.isLowStock, isTrue); // 1 <= 2
 
-      // 4. Test scan lookup
-      final scanResult = await api.lookupScan(createdBox.label);
-      expect(scanResult, isNotNull);
-      expect(scanResult!['type'], 'box');
+        // 4. Test scan lookup
+        final scanResult = await api.lookupScan(createdBox.label);
+        expect(scanResult, isNotNull);
+        expect(scanResult!['type'], 'box');
 
-      // 5. Cleanup
-      await api.deleteItem(createdItem.id);
-      await api.deleteBox(createdBox.id);
-    });
-  });
+        // 5. Cleanup
+        await api.deleteItem(createdItem.id);
+        await api.deleteBox(createdBox.id);
+      });
+    },
+  );
 }

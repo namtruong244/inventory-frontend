@@ -20,19 +20,25 @@ Widget app(Widget home, {InventoryProvider? provider, double scale = 1}) {
     localizationsDelegates: AppLocalizations.localizationsDelegates,
     supportedLocales: AppLocalizations.supportedLocales,
     builder: (context, child) => MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(scale)),
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: TextScaler.linear(scale)),
       child: child!,
     ),
     home: home,
   );
   return provider == null
       ? app
-      : ChangeNotifierProvider<InventoryProvider>.value(value: provider, child: app);
+      : ChangeNotifierProvider<InventoryProvider>.value(
+          value: provider,
+          child: app,
+        );
 }
 
 /// Lets the provider's real async work (prefs, fake API) finish inside a widget test.
 Future<void> settle(WidgetTester tester) async {
-  await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+  await tester.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 200)),
+  );
   await tester.pump(const Duration(seconds: 1)); // provider start-up delay
 }
 
@@ -44,16 +50,34 @@ void main() {
 
   group('friendlyError', () {
     test('never leaks raw exception text', () {
-      expect(friendlyError(apiError(401, 'AUTH_FAILED')), 'Incorrect email or password.');
-      expect(friendlyError(apiError(500, 'INTERNAL_ERROR', 'pq: deadlock')), isNot(contains('pq')));
+      expect(
+        friendlyError(apiError(401, 'AUTH_FAILED')),
+        'Incorrect email or password.',
+      );
+      expect(
+        friendlyError(apiError(500, 'INTERNAL_ERROR', 'pq: deadlock')),
+        isNot(contains('pq')),
+      );
       expect(friendlyError(apiError(429, 'X')), contains('Too many'));
-      expect(friendlyError(apiError(404, 'NOT_FOUND')), contains('no longer exists'));
-      expect(friendlyError(Exception('boom')), 'Something went wrong. Please try again.');
+      expect(
+        friendlyError(apiError(404, 'NOT_FOUND')),
+        contains('no longer exists'),
+      );
+      expect(
+        friendlyError(Exception('boom')),
+        'Something went wrong. Please try again.',
+      );
     });
 
     test('short 4xx backend messages are kept, long ones are not', () {
-      expect(friendlyError(apiError(400, 'INVALID_INPUT', 'Name is required')), 'Name is required');
-      expect(friendlyError(apiError(400, 'INVALID_INPUT', 'x' * 300)), isNot(contains('xxxx')));
+      expect(
+        friendlyError(apiError(400, 'INVALID_INPUT', 'Name is required')),
+        'Name is required',
+      );
+      expect(
+        friendlyError(apiError(400, 'INVALID_INPUT', 'x' * 300)),
+        isNot(contains('xxxx')),
+      );
     });
   });
 
@@ -84,15 +108,19 @@ void main() {
   });
 
   group('SyncStatusBar', () {
-    testWidgets('is hidden online and shown offline on any screen', (tester) async {
+    testWidgets('is hidden online and shown offline on any screen', (
+      tester,
+    ) async {
       final api = FakeApi();
       final provider = InventoryProvider(api: api);
       await settle(tester);
 
-      await tester.pumpWidget(app(
-        const SyncStatusBar(child: Scaffold(body: Text('screen'))),
-        provider: provider,
-      ));
+      await tester.pumpWidget(
+        app(
+          const SyncStatusBar(child: Scaffold(body: Text('screen'))),
+          provider: provider,
+        ),
+      );
       expect(find.text('Offline'), findsNothing);
 
       api.reachable = false;
@@ -110,15 +138,19 @@ void main() {
     testWidgets('Tappable is announced as a labelled button', (tester) async {
       final handle = tester.ensureSemantics();
       var taps = 0;
-      await tester.pumpWidget(app(Scaffold(
-        body: Center(
-          child: Tappable(
-            semanticLabel: 'Open filters',
-            onTap: () => taps++,
-            child: const Icon(Icons.tune),
+      await tester.pumpWidget(
+        app(
+          Scaffold(
+            body: Center(
+              child: Tappable(
+                semanticLabel: 'Open filters',
+                onTap: () => taps++,
+                child: const Icon(Icons.tune),
+              ),
+            ),
           ),
         ),
-      )));
+      );
 
       final node = tester.getSemantics(find.bySemanticsLabel('Open filters'));
       expect(node.flagsCollection.isButton, isTrue);
@@ -127,17 +159,21 @@ void main() {
       handle.dispose();
     });
 
-    testWidgets('layout survives 2x text scale without overflow', (tester) async {
+    testWidgets('layout survives 2x text scale without overflow', (
+      tester,
+    ) async {
       final provider = InventoryProvider(api: FakeApi());
       await settle(tester);
       await tester.binding.setSurfaceSize(const Size(360, 740));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(app(
-        const SyncStatusBar(child: Scaffold(body: Text('screen'))),
-        provider: provider,
-        scale: 2,
-      ));
+      await tester.pumpWidget(
+        app(
+          const SyncStatusBar(child: Scaffold(body: Text('screen'))),
+          provider: provider,
+          scale: 2,
+        ),
+      );
       await tester.pump();
       expect(tester.takeException(), isNull);
       provider.dispose();

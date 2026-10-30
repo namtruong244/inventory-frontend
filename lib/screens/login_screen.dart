@@ -465,7 +465,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       : context.l10n.signIn,
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 15,
-                                    ),
+                                  ),
                                 ),
                         ),
                       ),

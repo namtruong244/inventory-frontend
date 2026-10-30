@@ -8,42 +8,49 @@ import 'package:inventory/screens/item_create_screen.dart';
 import 'package:inventory/screens/item_details_screen.dart';
 
 void main() {
-  testWidgets('ItemCreateScreen receives and displays defaultUnit and currency from settings', (tester) async {
-    final provider = InventoryProvider();
-    await provider.setCurrency('₫');
-    await provider.setDefaultUnit('cái');
+  testWidgets(
+    'ItemCreateScreen receives and displays defaultUnit and currency from settings',
+    (tester) async {
+      final provider = InventoryProvider();
+      await provider.setCurrency('₫');
+      await provider.setDefaultUnit('cái');
 
-    await tester.pumpWidget(
-      ChangeNotifierProvider<InventoryProvider>.value(
-        value: provider,
-        child: MaterialApp(
-localizationsDelegates: AppLocalizations.localizationsDelegates,
-supportedLocales: AppLocalizations.supportedLocales,
+      await tester.pumpWidget(
+        ChangeNotifierProvider<InventoryProvider>.value(
+          value: provider,
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
 
-          home: Scaffold(
-            body: ItemCreateScreen(boxId: 'box-1'),
+            home: Scaffold(body: ItemCreateScreen(boxId: 'box-1')),
           ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    // Check that unit text field is pre-filled with 'cái'
-    final unitField = find.widgetWithText(TextFormField, 'cái');
-    expect(unitField, findsWidgets);
+      // Check that unit text field is pre-filled with 'cái'
+      final unitField = find.widgetWithText(TextFormField, 'cái');
+      expect(unitField, findsWidgets);
 
-    // The price lives under "More details"
-    await tester.scrollUntilVisible(find.text('More details'), 300, scrollable: find.byType(Scrollable).first);
-    await tester.tap(find.text('More details'));
-    await tester.pumpAndSettle();
+      // The price lives under "More details"
+      await tester.scrollUntilVisible(
+        find.text('More details'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(find.text('More details'));
+      await tester.pumpAndSettle();
 
-    // Scroll down to check Price field uses currency symbol '₫'
-    await tester.drag(find.byType(ListView).first, const Offset(0, -1000));
-    await tester.pumpAndSettle();
-    expect(find.text('Purchase Price (₫)'), findsOneWidget);
-  });
+      // Scroll down to check Price field uses currency symbol '₫'
+      await tester.drag(find.byType(ListView).first, const Offset(0, -1000));
+      await tester.pumpAndSettle();
+      expect(find.text('Purchase Price (₫)'), findsOneWidget);
+    },
+  );
 
-  testWidgets('ItemDetailsScreen formats price with currency from settings', (tester) async {
+  testWidgets('ItemDetailsScreen formats price with currency from settings', (
+    tester,
+  ) async {
     final provider = InventoryProvider();
     await provider.setCurrency('€');
 
@@ -61,12 +68,10 @@ supportedLocales: AppLocalizations.supportedLocales,
       ChangeNotifierProvider<InventoryProvider>.value(
         value: provider,
         child: MaterialApp(
-localizationsDelegates: AppLocalizations.localizationsDelegates,
-supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
 
-          home: Scaffold(
-            body: ItemDetailsScreen(itemId: 'item-eur'),
-          ),
+          home: Scaffold(body: ItemDetailsScreen(itemId: 'item-eur')),
         ),
       ),
     );

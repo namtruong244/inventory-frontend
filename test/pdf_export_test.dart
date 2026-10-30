@@ -64,7 +64,10 @@ void main() {
                       pw.SizedBox(height: 2),
                       pw.Text(
                         DateFormat('yyyy-MM-dd').format(DateTime.now()),
-                        style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey600),
+                        style: const pw.TextStyle(
+                          fontSize: 9,
+                          color: PdfColors.grey600,
+                        ),
                       ),
                     ],
                   ),
@@ -81,13 +84,27 @@ void main() {
             margin: const pw.EdgeInsets.only(top: 10),
             padding: const pw.EdgeInsets.only(top: 8),
             decoration: const pw.BoxDecoration(
-              border: pw.Border(top: pw.BorderSide(color: PdfColors.grey300, width: 0.5)),
+              border: pw.Border(
+                top: pw.BorderSide(color: PdfColors.grey300, width: 0.5),
+              ),
             ),
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.Text('Personal Inventory', style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
-                pw.Text('Page ${context.pageNumber} of ${context.pagesCount}', style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
+                pw.Text(
+                  'Personal Inventory',
+                  style: const pw.TextStyle(
+                    fontSize: 8,
+                    color: PdfColors.grey600,
+                  ),
+                ),
+                pw.Text(
+                  'Page ${context.pageNumber} of ${context.pagesCount}',
+                  style: const pw.TextStyle(
+                    fontSize: 8,
+                    color: PdfColors.grey600,
+                  ),
+                ),
               ],
             ),
           );
@@ -110,7 +127,10 @@ void main() {
                     mainAxisSize: pw.MainAxisSize.min,
                     children: [
                       pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const pw.EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: pw.BoxDecoration(
                           color: PdfColors.grey100,
                           borderRadius: pw.BorderRadius.circular(4),

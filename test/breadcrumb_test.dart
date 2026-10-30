@@ -13,9 +13,26 @@ import 'offline_flush_test.dart' show FakeApi;
 
 void main() {
   late InventoryProvider provider;
-  final root = Box(id: 'root', name: 'House', type: StorageType.room, label: 'R');
-  final cabinet = Box(id: 'cab', name: 'Cabinet', type: StorageType.cabinet, label: 'C', parentId: 'root');
-  final shelf = Box(id: 'shelf', name: 'Top shelf', type: StorageType.shelf, label: 'S', parentId: 'cab');
+  final root = Box(
+    id: 'root',
+    name: 'House',
+    type: StorageType.room,
+    label: 'R',
+  );
+  final cabinet = Box(
+    id: 'cab',
+    name: 'Cabinet',
+    type: StorageType.cabinet,
+    label: 'C',
+    parentId: 'root',
+  );
+  final shelf = Box(
+    id: 'shelf',
+    name: 'Top shelf',
+    type: StorageType.shelf,
+    label: 'S',
+    parentId: 'cab',
+  );
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -39,35 +56,66 @@ void main() {
   );
 
   testWidgets('a root location shows its own breadcrumb chip', (tester) async {
-    await tester.pumpWidget(app(Scaffold(body: BreadcrumbBar(locationId: 'root'))));
+    await tester.pumpWidget(
+      app(Scaffold(body: BreadcrumbBar(locationId: 'root'))),
+    );
     expect(find.text('House'), findsOneWidget);
   });
 
-  testWidgets('tapping an ancestor goes back to its open screen', (tester) async {
+  testWidgets('tapping an ancestor goes back to its open screen', (
+    tester,
+  ) async {
     await tester.pumpWidget(app(const BoxDetailsScreen(boxId: 'root')));
     final nav = tester.state<NavigatorState>(find.byType(Navigator));
-    nav.push(MaterialPageRoute(builder: (_) => const BoxDetailsScreen(boxId: 'cab')));
+    nav.push(
+      MaterialPageRoute(builder: (_) => const BoxDetailsScreen(boxId: 'cab')),
+    );
     await tester.pumpAndSettle();
-    nav.push(MaterialPageRoute(builder: (_) => const BoxDetailsScreen(boxId: 'shelf')));
+    nav.push(
+      MaterialPageRoute(builder: (_) => const BoxDetailsScreen(boxId: 'shelf')),
+    );
     await tester.pumpAndSettle();
-    expect(find.byType(BoxDetailsScreen, skipOffstage: false), findsNWidgets(3));
+    expect(
+      find.byType(BoxDetailsScreen, skipOffstage: false),
+      findsNWidgets(3),
+    );
     expect(OpenBoxRoutes.of('root'), isNotNull);
 
     // In the breadcrumb of the shelf screen, tap "House".
-    await tester.tap(find.descendant(of: find.byType(BreadcrumbBar), matching: find.text('House')).last);
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byType(BreadcrumbBar),
+            matching: find.text('House'),
+          )
+          .last,
+    );
     await tester.pumpAndSettle();
 
-    expect(find.byType(BoxDetailsScreen, skipOffstage: false), findsOneWidget, reason: 'popped back, nothing stacked');
+    expect(
+      find.byType(BoxDetailsScreen, skipOffstage: false),
+      findsOneWidget,
+      reason: 'popped back, nothing stacked',
+    );
     expect(find.text('House'), findsWidgets);
     expect(OpenBoxRoutes.of('shelf'), isNull);
     expect(OpenBoxRoutes.of('cab'), isNull);
   });
 
-  testWidgets('an ancestor that is not open replaces the current screen', (tester) async {
+  testWidgets('an ancestor that is not open replaces the current screen', (
+    tester,
+  ) async {
     await tester.pumpWidget(app(const BoxDetailsScreen(boxId: 'shelf')));
     await tester.pumpAndSettle();
     // Only the shelf screen exists (opened e.g. from search): "Cabinet" is not on the stack.
-    await tester.tap(find.descendant(of: find.byType(BreadcrumbBar), matching: find.text('Cabinet')).first);
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byType(BreadcrumbBar),
+            matching: find.text('Cabinet'),
+          )
+          .first,
+    );
     await tester.pumpAndSettle();
     expect(find.byType(BoxDetailsScreen, skipOffstage: false), findsOneWidget);
     expect(OpenBoxRoutes.of('cab'), isNotNull);

@@ -40,10 +40,16 @@ void main() {
   FilledButton createButton(WidgetTester tester) =>
       tester.widget<FilledButton>(find.byType(FilledButton));
 
-  testWidgets('picking rooms creates them as top-level locations', (tester) async {
+  testWidgets('picking rooms creates them as top-level locations', (
+    tester,
+  ) async {
     await pumpCard(tester);
     expect(find.text('Where do you keep your things?'), findsOneWidget);
-    expect(createButton(tester).onPressed, isNull, reason: 'nothing picked yet');
+    expect(
+      createButton(tester).onPressed,
+      isNull,
+      reason: 'nothing picked yet',
+    );
 
     await tester.tap(find.text('Kitchen'));
     await tester.tap(find.text('Garage'));
@@ -54,13 +60,28 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
 
     expect(provider.boxes.map((b) => b.name).toSet(), {'Kitchen', 'Garage'});
-    expect(provider.boxes.every((b) => b.type == StorageType.room && b.parentId == null), isTrue);
-    expect(provider.boxes.map((b) => b.label).toSet().length, 2, reason: 'labels must be unique');
+    expect(
+      provider.boxes.every(
+        (b) => b.type == StorageType.room && b.parentId == null,
+      ),
+      isTrue,
+    );
+    expect(
+      provider.boxes.map((b) => b.label).toSet().length,
+      2,
+      reason: 'labels must be unique',
+    );
     expect(api.boxesCreated, 2);
-    expect(createButton(tester).onPressed, isNull, reason: 'selection is cleared for the next round');
+    expect(
+      createButton(tester).onPressed,
+      isNull,
+      reason: 'selection is cleared for the next round',
+    );
   });
 
-  testWidgets('a room the server rejects is not left in the list', (tester) async {
+  testWidgets('a room the server rejects is not left in the list', (
+    tester,
+  ) async {
     api.boxError = Exception('boom');
     await pumpCard(tester);
     await tester.tap(find.text('Kitchen'));

@@ -7,9 +7,11 @@ import 'package:inventory/l10n/app_localizations.dart';
 import 'package:inventory/theme/app_theme.dart';
 
 Map<String, dynamic> _arb(String l) =>
-    jsonDecode(File('lib/l10n/app_$l.arb').readAsStringSync()) as Map<String, dynamic>;
+    jsonDecode(File('lib/l10n/app_$l.arb').readAsStringSync())
+        as Map<String, dynamic>;
 
-Set<String> _ph(String s) => RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.group(1)!).toSet();
+Set<String> _ph(String s) =>
+    RegExp(r'\{(\w+)\}').allMatches(s).map((m) => m.group(1)!).toSet();
 
 void main() {
   test('en and vi ARB have the same keys and placeholders', () {
@@ -19,7 +21,11 @@ void main() {
     expect(viKeys.difference(enKeys), isEmpty, reason: 'extra vi keys');
     expect(enKeys.difference(viKeys), isEmpty, reason: 'untranslated keys');
     for (final k in enKeys) {
-      expect(_ph(vi[k] as String), _ph(en[k] as String), reason: 'placeholders of $k');
+      expect(
+        _ph(vi[k] as String),
+        _ph(en[k] as String),
+        reason: 'placeholders of $k',
+      );
     }
   });
 
