@@ -1,0 +1,49 @@
+# Tab Item (Light/Dark), trạng thái lọc, tìm không có kết quả. Ảnh: .maestro/visual/out/items/*.png
+# Chạy: .maestro/visual/run.sh .maestro/visual/items.yaml
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: item
+- extendedWaitUntil:
+    visible:
+      id: items_search
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: out/items/items_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/items/items_light_2
+- scrollUntilVisible:
+    element:
+      id: items_search
+    direction: UP
+- tapOn:
+    id: items_filter_lent
+- waitForAnimationToEnd
+- takeScreenshot: out/items/items_filtered
+- tapOn:
+    id: items_filter_all
+- tapOn:
+    id: items_search
+- inputText: zzzzqq
+- hideKeyboard
+- waitForAnimationToEnd
+- takeScreenshot: out/items/items_no_results
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: item
+- waitForAnimationToEnd
+- takeScreenshot: out/items/items_dark
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light
