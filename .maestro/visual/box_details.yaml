@@ -1,0 +1,18 @@
+# Box details, New/Edit storage, QR display, Export barcodes (Light + Dark).
+# Chạy: .maestro/visual/run.sh box_details   → ảnh: .maestro/visual/out/box_details/*.png
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: subflows/box_details_shots.yaml
+    env:
+      THEME: light
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/box_details_shots.yaml
+    env:
+      THEME: dark

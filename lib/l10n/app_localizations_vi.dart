@@ -301,10 +301,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get editLocation => 'Sửa vị trí';
 
   @override
-  String get createRootLocation => 'Tạo vị trí gốc';
+  String get createRootLocation => 'Vị trí mới';
 
   @override
-  String get createNestedContainer => 'Tạo ngăn chứa con';
+  String get createNestedContainer => 'Ngăn chứa mới';
 
   @override
   String get commonDelete => 'Xóa';
@@ -983,7 +983,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonContinue => 'Tiếp tục';
 
   @override
-  String get boxQrCode => 'Mã QR của hộp';
+  String get boxQrCode => 'QR vị trí';
 
   @override
   String commonLabel(Object label) {
@@ -2747,4 +2747,111 @@ class AppLocalizationsVi extends AppLocalizations {
   String locationsCountLabel(int count) {
     return '$count vị trí';
   }
+
+  @override
+  String get statItems => 'Món đồ';
+
+  @override
+  String get statExpiring => 'Sắp hết hạn';
+
+  @override
+  String get sectionNestedContainers => 'Vị trí con';
+
+  @override
+  String get sectionItemsInContainer => 'Món đồ trong vị trí này';
+
+  @override
+  String seeAllCount(int count) {
+    return 'Xem tất cả $count';
+  }
+
+  @override
+  String insideParent(String name) {
+    return 'Bên trong $name';
+  }
+
+  @override
+  String get parentNoneTopLevel => 'Không có (cấp cao nhất)';
+
+  @override
+  String get parentHelperTopLevel => 'Đây là vị trí cấp cao nhất';
+
+  @override
+  String get qrLabelHelper => 'Tạo tự động';
+
+  @override
+  String get thermalLabelPreview => 'Xem trước tem nhiệt';
+
+  @override
+  String get labelSizeMm => '50 × 30 mm';
+
+  @override
+  String get savePdf => 'Lưu PDF';
+
+  @override
+  String get qrShare => 'Chia sẻ tem QR';
+
+  @override
+  String get exportSheetTitle => 'Xuất mã vạch';
+
+  @override
+  String get exportSheetSubtitle => 'PDF tem QR có thể in';
+
+  @override
+  String get exportWhatToExport => 'Xuất gì';
+
+  @override
+  String get exportFormat => 'Định dạng';
+
+  @override
+  String get exportAllLocations => 'Tất cả vị trí';
+
+  @override
+  String exportLabelsCount(int count) {
+    return '$count tem';
+  }
+
+  @override
+  String exportInsideLabels(int inside, int labels) {
+    return '+ $inside bên trong · $labels tem';
+  }
+
+  @override
+  String get exportA4Sheet => 'Tờ decal A4';
+
+  @override
+  String get exportA4PerPage => '3 × 8 mỗi trang';
+
+  @override
+  String get exportThermalTitle => 'Nhiệt 50×30';
+
+  @override
+  String get exportThermalPer => '1 tem mỗi nhãn';
+
+  @override
+  String get exportPrintPreview => 'Xem trước khi in';
+
+  @override
+  String get exportSaveShare => 'Lưu & chia sẻ';
+
+  @override
+  String get storageShortRoom => 'Phòng';
+
+  @override
+  String get storageShortCabinet => 'Tủ';
+
+  @override
+  String get storageShortShelf => 'Kệ';
+
+  @override
+  String get storageShortBox => 'Hộp';
+
+  @override
+  String get storageShortDrawer => 'Ngăn kéo';
+
+  @override
+  String get storageShortOther => 'Khác';
+
+  @override
+  String get labelPreviewPlaceholder => 'Vị trí mới';
 }

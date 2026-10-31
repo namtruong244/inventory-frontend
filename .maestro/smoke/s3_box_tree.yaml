@@ -18,7 +18,8 @@ tags: [smoke]
 - tapOn:
     id: box_name
 - inputText: Cabinet A
-- runFlow: ../subflows/dismiss_keyboard.yaml
+- tapOn:
+    point: 50%,24%
 - scrollUntilVisible:
     element:
       id: box_save
@@ -38,7 +39,8 @@ tags: [smoke]
 - tapOn:
     id: box_name
 - inputText: Shelf 1
-- runFlow: ../subflows/dismiss_keyboard.yaml
+- tapOn:
+    point: 50%,24%
 - scrollUntilVisible:
     element:
       id: box_save
@@ -53,16 +55,13 @@ tags: [smoke]
     id: box_card_Shelf 1
 - tapOn:
     id: box_add_child
-- scrollUntilVisible:
-    element:
-      id: box_type_box
-    direction: RIGHT
 - tapOn:
     id: box_type_box
 - tapOn:
     id: box_name
 - inputText: Box X
-- runFlow: ../subflows/dismiss_keyboard.yaml
+- tapOn:
+    point: 50%,24%
 - scrollUntilVisible:
     element:
       id: box_save
@@ -74,6 +73,9 @@ tags: [smoke]
     timeout: 10000
 - tapOn:
     id: box_card_Box X
-- assertVisible: Box X
+- extendedWaitUntil:
+    visible:
+      id: box_qr
+    timeout: 10000
 # Breadcrumb hiển thị cha
 - assertVisible: Shelf 1

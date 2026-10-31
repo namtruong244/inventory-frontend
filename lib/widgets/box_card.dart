@@ -9,6 +9,7 @@ import 'tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
+import 'box_tree.dart';
 import 'soft_ui.dart';
 
 class BoxCard extends StatelessWidget {
@@ -50,8 +51,10 @@ class BoxCard extends StatelessWidget {
           children: [
             SoftIconTile(
               icon ?? type?.icon ?? Icons.inventory_2_outlined,
-              color: AppTones.sky,
-              background: AppTones.skySoft,
+              color: type == null ? AppTones.sky : boxTypeTone(type!).fg,
+              background: type == null
+                  ? AppTones.skySoft
+                  : boxTypeTone(type!).bg,
             ),
             const SizedBox(width: 12),
             Expanded(

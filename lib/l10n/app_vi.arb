@@ -201,8 +201,8 @@
   },
   "pleaseEnterAValidLocation": "Vui lòng nhập tên vị trí hợp lệ",
   "editLocation": "Sửa vị trí",
-  "createRootLocation": "Tạo vị trí gốc",
-  "createNestedContainer": "Tạo ngăn chứa con",
+  "createRootLocation": "Vị trí mới",
+  "createNestedContainer": "Ngăn chứa mới",
   "commonDelete": "Xóa",
   "couldNotDeletePleaseTry": "Không thể xóa \"{boxName}\". Vui lòng thử lại.",
   "@couldNotDeletePleaseTry": {
@@ -622,7 +622,7 @@
   "byContinuingYouAgreeTo": "Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư.",
   "commonCancel": "Hủy",
   "commonContinue": "Tiếp tục",
-  "boxQrCode": "Mã QR của hộp",
+  "boxQrCode": "QR vị trí",
   "commonLabel": "Nhãn: {label}",
   "@commonLabel": {
     "placeholders": {
@@ -1821,7 +1821,86 @@
   "loginHaveAccountQ": "Đã có tài khoản?",
   "loginSignInLink": "Đăng nhập",
   "locationsItemsSubtitle": "{locations} vị trí · {items} món đồ",
-  "@locationsItemsSubtitle": {"placeholders": {"locations": {"type": "int"}, "items": {"type": "int"}}},
+  "@locationsItemsSubtitle": {
+    "placeholders": {
+      "locations": {
+        "type": "int"
+      },
+      "items": {
+        "type": "int"
+      }
+    }
+  },
   "locationsCountLabel": "{count} vị trí",
-  "@locationsCountLabel": {"placeholders": {"count": {"type": "int"}}}
+  "@locationsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statItems": "Món đồ",
+  "statExpiring": "Sắp hết hạn",
+  "sectionNestedContainers": "Vị trí con",
+  "sectionItemsInContainer": "Món đồ trong vị trí này",
+  "seeAllCount": "Xem tất cả {count}",
+  "@seeAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insideParent": "Bên trong {name}",
+  "@insideParent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentNoneTopLevel": "Không có (cấp cao nhất)",
+  "parentHelperTopLevel": "Đây là vị trí cấp cao nhất",
+  "qrLabelHelper": "Tạo tự động",
+  "thermalLabelPreview": "Xem trước tem nhiệt",
+  "labelSizeMm": "50 × 30 mm",
+  "savePdf": "Lưu PDF",
+  "qrShare": "Chia sẻ tem QR",
+  "exportSheetTitle": "Xuất mã vạch",
+  "exportSheetSubtitle": "PDF tem QR có thể in",
+  "exportWhatToExport": "Xuất gì",
+  "exportFormat": "Định dạng",
+  "exportAllLocations": "Tất cả vị trí",
+  "exportLabelsCount": "{count} tem",
+  "@exportLabelsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportInsideLabels": "+ {inside} bên trong · {labels} tem",
+  "@exportInsideLabels": {
+    "placeholders": {
+      "inside": {
+        "type": "int"
+      },
+      "labels": {
+        "type": "int"
+      }
+    }
+  },
+  "exportA4Sheet": "Tờ decal A4",
+  "exportA4PerPage": "3 × 8 mỗi trang",
+  "exportThermalTitle": "Nhiệt 50×30",
+  "exportThermalPer": "1 tem mỗi nhãn",
+  "exportPrintPreview": "Xem trước khi in",
+  "exportSaveShare": "Lưu & chia sẻ",
+  "storageShortRoom": "Phòng",
+  "storageShortCabinet": "Tủ",
+  "storageShortShelf": "Kệ",
+  "storageShortBox": "Hộp",
+  "storageShortDrawer": "Ngăn kéo",
+  "storageShortOther": "Khác",
+  "labelPreviewPlaceholder": "Vị trí mới"
 }

@@ -38,10 +38,10 @@ class BreadcrumbBar extends StatelessWidget {
             _buildNode(context, path[i], isLast: i == path.length - 1),
             if (i < path.length - 1)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                padding: const EdgeInsets.symmetric(horizontal: 2),
                 child: AppIcon(
                   Icons.chevron_right_rounded,
-                  size: 16,
+                  size: 14,
                   color: context.colors.textMuted,
                 ),
               ),
@@ -52,31 +52,29 @@ class BreadcrumbBar extends StatelessWidget {
   }
 
   Widget _buildNode(BuildContext context, Box box, {required bool isLast}) {
+    final c = context.colors;
     final child = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isLast ? context.colors.accent : context.colors.fill,
-        borderRadius: BorderRadius.circular(10),
+        color: isLast ? c.surface : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: isLast ? c.cardShadow : null,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           AppIcon(
             box.type.icon,
-            size: 13,
-            color: isLast
-                ? context.colors.onAccent
-                : context.colors.textPrimary,
+            size: 14,
+            color: isLast ? c.textPrimary : c.textSecondary,
           ),
-          const SizedBox(width: 5),
+          const SizedBox(width: 6),
           Text(
             box.name,
             style: TextStyle(
-              fontSize: 12,
-              fontWeight: isLast ? FontWeight.w600 : FontWeight.w500,
-              color: isLast
-                  ? context.colors.onAccent
-                  : context.colors.textPrimary,
+              fontSize: 13,
+              fontWeight: isLast ? FontWeight.w800 : FontWeight.w600,
+              color: isLast ? c.textPrimary : c.textSecondary,
             ),
           ),
         ],

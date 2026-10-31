@@ -70,6 +70,7 @@ class AppFormField extends StatelessWidget {
         _tag(
           TextFormField(
             controller: controller,
+            onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
             validator: validator,
             maxLines: maxLines,
             obscureText: obscureText,

@@ -301,13 +301,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterAValidLocation => 'Please enter a valid location name';
 
   @override
-  String get editLocation => 'Edit Location';
+  String get editLocation => 'Edit location';
 
   @override
-  String get createRootLocation => 'Create Root Location';
+  String get createRootLocation => 'New location';
 
   @override
-  String get createNestedContainer => 'Create Nested Container';
+  String get createNestedContainer => 'New container';
 
   @override
   String get commonDelete => 'Delete';
@@ -985,7 +985,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonContinue => 'Continue';
 
   @override
-  String get boxQrCode => 'Box QR Code';
+  String get boxQrCode => 'Location QR';
 
   @override
   String commonLabel(Object label) {
@@ -2830,4 +2830,123 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get statItems => 'Items';
+
+  @override
+  String get statExpiring => 'Expiring';
+
+  @override
+  String get sectionNestedContainers => 'Nested containers';
+
+  @override
+  String get sectionItemsInContainer => 'Items in this container';
+
+  @override
+  String seeAllCount(int count) {
+    return 'See all $count';
+  }
+
+  @override
+  String insideParent(String name) {
+    return 'Inside $name';
+  }
+
+  @override
+  String get parentNoneTopLevel => 'None (top level)';
+
+  @override
+  String get parentHelperTopLevel => 'This is a top-level location';
+
+  @override
+  String get qrLabelHelper => 'Generated automatically';
+
+  @override
+  String get thermalLabelPreview => 'Thermal label preview';
+
+  @override
+  String get labelSizeMm => '50 × 30 mm';
+
+  @override
+  String get savePdf => 'Save PDF';
+
+  @override
+  String get qrShare => 'Share QR label';
+
+  @override
+  String get exportSheetTitle => 'Export barcodes';
+
+  @override
+  String get exportSheetSubtitle => 'Printable PDF of QR labels';
+
+  @override
+  String get exportWhatToExport => 'What to export';
+
+  @override
+  String get exportFormat => 'Format';
+
+  @override
+  String get exportAllLocations => 'All locations';
+
+  @override
+  String exportLabelsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count labels',
+      one: '1 label',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String exportInsideLabels(int inside, int labels) {
+    String _temp0 = intl.Intl.pluralLogic(
+      labels,
+      locale: localeName,
+      other: '$labels labels',
+      one: '1 label',
+    );
+    return '+ $inside inside · $_temp0';
+  }
+
+  @override
+  String get exportA4Sheet => 'A4 decal sheet';
+
+  @override
+  String get exportA4PerPage => '3 × 8 per page';
+
+  @override
+  String get exportThermalTitle => 'Thermal 50×30';
+
+  @override
+  String get exportThermalPer => '1 per label';
+
+  @override
+  String get exportPrintPreview => 'Print preview';
+
+  @override
+  String get exportSaveShare => 'Save & share';
+
+  @override
+  String get storageShortRoom => 'Room';
+
+  @override
+  String get storageShortCabinet => 'Cabinet';
+
+  @override
+  String get storageShortShelf => 'Shelf';
+
+  @override
+  String get storageShortBox => 'Box';
+
+  @override
+  String get storageShortDrawer => 'Drawer';
+
+  @override
+  String get storageShortOther => 'Other';
+
+  @override
+  String get labelPreviewPlaceholder => 'New location';
 }

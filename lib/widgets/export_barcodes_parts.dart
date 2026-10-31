@@ -1,42 +1,107 @@
-part of 'export_barcodes_sheet.dart';
+import 'package:flutter/material.dart';
 
-/// Format option, barcode card and image export helpers.
-extension _ExportBarcodesParts on _ExportBarcodesSheetState {
-  Widget _buildPrintFormatOption({
-    required int index,
-    required String title,
-    required IconData icon,
-  }) {
-    final isSelected = _selectedPrintFormat == index;
+import '../theme/app_theme.dart';
+import 'app_icon.dart';
+import 'tappable.dart';
+
+/// Uppercase section label ("WHAT TO EXPORT" / "FORMAT").
+class ExportSectionLabel extends StatelessWidget {
+  final String text;
+
+  const ExportSectionLabel(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text.toUpperCase(),
+      style: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 1,
+        color: context.colors.textSecondary,
+      ),
+    );
+  }
+}
+
+/// Selectable card: selected = surface + 2px primary stroke + filled radio,
+/// unselected = fill + empty radio. Optional [leading] thumbnail.
+class ExportOptionCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final bool selected;
+  final VoidCallback onTap;
+  final Widget? leading;
+
+  const ExportOptionCard({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.selected,
+    required this.onTap,
+    this.leading,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
     return Tappable(
-      onTap: () => _update(() => _selectedPrintFormat = index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      semanticLabel: title,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? context.colors.accent : context.colors.fill,
-          borderRadius: BorderRadius.circular(18),
+          color: selected ? c.surface : c.fill,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected ? c.primary : Colors.transparent,
+            width: 2,
+          ),
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppIcon(
-              icon,
-              size: 20,
-              color: isSelected
-                  ? context.colors.onAccent
-                  : context.colors.textPrimary,
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: isSelected
-                      ? context.colors.onAccent
-                      : context.colors.textPrimary,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ?leading,
+                const Spacer(),
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: selected ? c.primary : Colors.transparent,
+                    border: selected
+                        ? null
+                        : Border.all(color: c.border, width: 2),
+                  ),
+                  child: selected
+                      ? AppIcon(Icons.check_rounded, size: 14, color: c.surface)
+                      : null,
                 ),
+              ],
+            ),
+            SizedBox(height: leading == null ? 8 : 10),
+            Text(
+              title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w800,
+                color: c.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: c.textSecondary,
               ),
             ),
           ],
@@ -44,156 +109,143 @@ extension _ExportBarcodesParts on _ExportBarcodesSheetState {
       ),
     );
   }
+}
 
-  Widget _buildBarcodeCard(BoxBarcodeEntry entry) {
+/// Mini page thumbnail for the A4 decal format (3 x 4 grid of dots).
+class A4Thumb extends StatelessWidget {
+  const A4Thumb({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
     return Container(
-      width: 162,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      width: 40,
+      height: 54,
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.colors.border, width: 1.2),
+        color: c.surface,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: c.border),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Crisp QR Code
-          Container(
-            padding: const EdgeInsets.all(4),
+      child: GridView.count(
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 3,
+        mainAxisSpacing: 3,
+        crossAxisSpacing: 3,
+        children: List.generate(
+          12,
+          (_) => DecoratedBox(
             decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(10),
+              color: c.fill,
+              borderRadius: BorderRadius.circular(1.5),
             ),
-            child: QrImageView(
-              data: entry.code,
-              version: QrVersions.auto,
-              size: 108,
-              padding: EdgeInsets.zero,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Box Name ONLY (No ID)
-          Text(
-            entry.name,
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: context.colors.textPrimary,
-              height: 1.25,
-            ),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showExportedImagePreview(Uint8List pngBytes) {
-    showDialog(
-      context: context,
-      builder: (ctx) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                context.l10n.barcodeImageReady,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                context.l10n.highResolutionPngImageOf,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: context.colors.textSecondary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.memory(pngBytes, fit: BoxFit.contain, height: 280),
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    AppFeedback.showSuccess(
-                      context,
-                      context.l10n.barcodeImageCaptured,
-                    );
-                  },
-                  icon: const AppIcon(Icons.check_rounded, size: 18),
-                  label: Text(context.l10n.commonDone),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
         ),
       ),
     );
   }
+}
 
-  /// Captures on-screen grid as PNG image
-  Future<void> _exportAsImage() async {
-    _update(() => _isExportingImage = true);
+/// Mini label thumbnail for the thermal format.
+class ThermalThumb extends StatelessWidget {
+  const ThermalThumb({super.key});
 
-    try {
-      final boundary =
-          _repaintKey.currentContext?.findRenderObject()
-              as RenderRepaintBoundary?;
-      if (boundary == null) {
-        if (mounted) {
-          AppFeedback.showError(
-            context,
-            context.l10n.failedToCaptureBarcodeGrid,
-          );
-        }
-        return;
-      }
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      width: 54,
+      height: 34,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: c.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 20,
+            decoration: BoxDecoration(
+              color: c.fill,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (var i = 0; i < 3; i++)
+                  Container(
+                    height: 3,
+                    margin: const EdgeInsets.symmetric(vertical: 1.5),
+                    decoration: BoxDecoration(
+                      color: c.fill,
+                      borderRadius: BorderRadius.circular(1),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-      final image = await boundary.toImage(pixelRatio: 3.0);
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+/// Indeterminate "Generating PDF..." status card.
+class ExportProgressCard extends StatelessWidget {
+  final String label;
 
-      if (byteData == null) {
-        if (mounted) {
-          AppFeedback.showError(context, context.l10n.failedToGenerateImage);
-        }
-        return;
-      }
+  const ExportProgressCard({super.key, required this.label});
 
-      final pngBytes = byteData.buffer.asUint8List();
-
-      if (mounted) {
-        _showExportedImagePreview(pngBytes);
-      }
-    } catch (e) {
-      debugPrint('export_barcodes_parts.dart error: $e');
-      if (mounted) {
-        AppFeedback.showError(context, context.l10n.couldnTExportTheLabels);
-      }
-    } finally {
-      if (mounted) {
-        _update(() => _isExportingImage = false);
-      }
-    }
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: c.infoSoft,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: c.infoStrong,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: c.infoStrong,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              minHeight: 6,
+              color: c.infoStrong,
+              backgroundColor: c.surface.withValues(alpha: 0.6),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

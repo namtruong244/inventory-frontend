@@ -658,12 +658,16 @@ class SoftTopAppBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> actions;
   final bool showBack;
 
+  /// Icon of the leading button (a close X on create forms).
+  final IconData leadingIcon;
+
   const SoftTopAppBar({
     super.key,
     required this.title,
     this.onBack,
     this.actions = const [],
     this.showBack = true,
+    this.leadingIcon = Icons.arrow_back_rounded,
   });
 
   @override
@@ -682,8 +686,10 @@ class SoftTopAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               if (showBack) ...[
                 SoftCircleButton(
-                  icon: Icons.arrow_back_rounded,
-                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                  icon: leadingIcon,
+                  tooltip: leadingIcon == Icons.close_rounded
+                      ? MaterialLocalizations.of(context).closeButtonTooltip
+                      : MaterialLocalizations.of(context).backButtonTooltip,
                   onTap: onBack ?? () => Navigator.of(context).maybePop(),
                 ),
                 const SizedBox(width: 12),

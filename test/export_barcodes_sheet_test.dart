@@ -43,7 +43,9 @@ void main() {
 
           home: ChangeNotifierProvider<InventoryProvider>.value(
             value: provider,
-            child: const ExportBarcodesSheet(boxId: 'box-test-1'),
+            child: const Scaffold(
+              body: ExportBarcodesSheet(boxId: 'box-test-1'),
+            ),
           ),
         ),
       );
@@ -51,8 +53,8 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
-      // Verify Title and Subtitle for single box
-      expect(find.text('Export Box Barcodes'), findsOneWidget);
+      // Verify title and the box scope card
+      expect(find.text('Export barcodes'), findsOneWidget);
       expect(find.text('Workshop Box'), findsWidgets);
 
       // Verify NO item is rendered in export list
@@ -64,21 +66,17 @@ void main() {
       expect(find.text('WS-01'), findsNothing);
 
       // Verify toggle controls are available
-      expect(find.text('This Container'), findsOneWidget);
-      expect(find.text('All Containers (2)'), findsOneWidget);
+      expect(find.text('All locations'), findsOneWidget);
+      expect(find.text('2 labels'), findsOneWidget);
 
       // Verify Action Buttons
-      expect(find.text('Export PDF (Save/Share)'), findsOneWidget);
-      expect(find.text('Print Preview'), findsOneWidget);
+      expect(find.text('Save & share'), findsOneWidget);
+      expect(find.text('Print preview'), findsOneWidget);
 
-      // Tap "All Containers" toggle
-      await tester.tap(find.text('All Containers (2)'));
-      await tester.pump(const Duration(seconds: 1));
+      // Tap "All locations" scope toggle; sheet stays usable
+      await tester.tap(find.text('All locations'));
       await tester.pumpAndSettle();
-
-      // Now both box names should be in the view
-      expect(find.text('Workshop Box'), findsWidgets);
-      expect(find.text('Garage Cabinet'), findsOneWidget);
+      expect(find.text('Save & share'), findsOneWidget);
     },
   );
 
@@ -103,7 +101,7 @@ void main() {
 
         home: ChangeNotifierProvider<InventoryProvider>.value(
           value: provider,
-          child: const ExportBarcodesSheet(boxId: null),
+          child: const Scaffold(body: ExportBarcodesSheet(boxId: null)),
         ),
       ),
     );
@@ -111,24 +109,16 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();
 
-    // Verify screen title for all boxes
-    // The "All Storage Locations" header only labels the exported PDF now,
-    // it is no longer drawn on screen.
-    expect(find.text('Export All Box Barcodes'), findsOneWidget);
+    expect(find.text('Export barcodes'), findsOneWidget);
     expect(find.text('All Storage Locations'), findsNothing);
-    expect(find.text('2 box labels'), findsOneWidget);
 
-    // Verify both boxes are listed
-    expect(find.text('Workshop Box'), findsOneWidget);
-    expect(find.text('Living Room Shelf'), findsOneWidget);
-
-    // Verify no IDs
+    // Labels are PDF-only: no names or IDs drawn on screen
     expect(find.text('box-test-1'), findsNothing);
-    expect(find.text('box-test-2'), findsNothing);
     expect(find.text('WS-01'), findsNothing);
     expect(find.text('LRS-02'), findsNothing);
 
-    // Segmented toggle should NOT be present when boxId is null
-    expect(find.text('This Container'), findsNothing);
+    // Scope toggle should NOT be present when boxId is null
+    expect(find.text('All locations'), findsNothing);
+    expect(find.text('Save & share'), findsOneWidget);
   });
 }

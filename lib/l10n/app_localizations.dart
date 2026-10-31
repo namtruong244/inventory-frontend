@@ -568,19 +568,19 @@ abstract class AppLocalizations {
   /// No description provided for @editLocation.
   ///
   /// In en, this message translates to:
-  /// **'Edit Location'**
+  /// **'Edit location'**
   String get editLocation;
 
   /// No description provided for @createRootLocation.
   ///
   /// In en, this message translates to:
-  /// **'Create Root Location'**
+  /// **'New location'**
   String get createRootLocation;
 
   /// No description provided for @createNestedContainer.
   ///
   /// In en, this message translates to:
-  /// **'Create Nested Container'**
+  /// **'New container'**
   String get createNestedContainer;
 
   /// No description provided for @commonDelete.
@@ -1762,7 +1762,7 @@ abstract class AppLocalizations {
   /// No description provided for @boxQrCode.
   ///
   /// In en, this message translates to:
-  /// **'Box QR Code'**
+  /// **'Location QR'**
   String get boxQrCode;
 
   /// No description provided for @commonLabel.
@@ -4732,6 +4732,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 location} other{{count} locations}}'**
   String locationsCountLabel(int count);
+
+  /// No description provided for @statItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get statItems;
+
+  /// No description provided for @statExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring'**
+  String get statExpiring;
+
+  /// No description provided for @sectionNestedContainers.
+  ///
+  /// In en, this message translates to:
+  /// **'Nested containers'**
+  String get sectionNestedContainers;
+
+  /// No description provided for @sectionItemsInContainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Items in this container'**
+  String get sectionItemsInContainer;
+
+  /// No description provided for @seeAllCount.
+  ///
+  /// In en, this message translates to:
+  /// **'See all {count}'**
+  String seeAllCount(int count);
+
+  /// No description provided for @insideParent.
+  ///
+  /// In en, this message translates to:
+  /// **'Inside {name}'**
+  String insideParent(String name);
+
+  /// No description provided for @parentNoneTopLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'None (top level)'**
+  String get parentNoneTopLevel;
+
+  /// No description provided for @parentHelperTopLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a top-level location'**
+  String get parentHelperTopLevel;
+
+  /// No description provided for @qrLabelHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated automatically'**
+  String get qrLabelHelper;
+
+  /// No description provided for @thermalLabelPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermal label preview'**
+  String get thermalLabelPreview;
+
+  /// No description provided for @labelSizeMm.
+  ///
+  /// In en, this message translates to:
+  /// **'50 × 30 mm'**
+  String get labelSizeMm;
+
+  /// No description provided for @savePdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Save PDF'**
+  String get savePdf;
+
+  /// No description provided for @qrShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share QR label'**
+  String get qrShare;
+
+  /// No description provided for @exportSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export barcodes'**
+  String get exportSheetTitle;
+
+  /// No description provided for @exportSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Printable PDF of QR labels'**
+  String get exportSheetSubtitle;
+
+  /// No description provided for @exportWhatToExport.
+  ///
+  /// In en, this message translates to:
+  /// **'What to export'**
+  String get exportWhatToExport;
+
+  /// No description provided for @exportFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get exportFormat;
+
+  /// No description provided for @exportAllLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'All locations'**
+  String get exportAllLocations;
+
+  /// No description provided for @exportLabelsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 label} other{{count} labels}}'**
+  String exportLabelsCount(int count);
+
+  /// No description provided for @exportInsideLabels.
+  ///
+  /// In en, this message translates to:
+  /// **'+ {inside} inside · {labels, plural, =1{1 label} other{{labels} labels}}'**
+  String exportInsideLabels(int inside, int labels);
+
+  /// No description provided for @exportA4Sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'A4 decal sheet'**
+  String get exportA4Sheet;
+
+  /// No description provided for @exportA4PerPage.
+  ///
+  /// In en, this message translates to:
+  /// **'3 × 8 per page'**
+  String get exportA4PerPage;
+
+  /// No description provided for @exportThermalTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thermal 50×30'**
+  String get exportThermalTitle;
+
+  /// No description provided for @exportThermalPer.
+  ///
+  /// In en, this message translates to:
+  /// **'1 per label'**
+  String get exportThermalPer;
+
+  /// No description provided for @exportPrintPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Print preview'**
+  String get exportPrintPreview;
+
+  /// No description provided for @exportSaveShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & share'**
+  String get exportSaveShare;
+
+  /// No description provided for @storageShortRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Room'**
+  String get storageShortRoom;
+
+  /// No description provided for @storageShortCabinet.
+  ///
+  /// In en, this message translates to:
+  /// **'Cabinet'**
+  String get storageShortCabinet;
+
+  /// No description provided for @storageShortShelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Shelf'**
+  String get storageShortShelf;
+
+  /// No description provided for @storageShortBox.
+  ///
+  /// In en, this message translates to:
+  /// **'Box'**
+  String get storageShortBox;
+
+  /// No description provided for @storageShortDrawer.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawer'**
+  String get storageShortDrawer;
+
+  /// No description provided for @storageShortOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get storageShortOther;
+
+  /// No description provided for @labelPreviewPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'New location'**
+  String get labelPreviewPlaceholder;
 }
 
 class _AppLocalizationsDelegate

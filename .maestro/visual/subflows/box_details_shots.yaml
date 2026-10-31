@@ -1,0 +1,74 @@
+# Env: THEME = light | dark. Chụp Box details, New/Edit storage, QR display, Export barcodes.
+appId: ${APP_ID}
+---
+- runFlow:
+    file: ../../subflows/open_tab.yaml
+    env:
+      TAB: box
+- extendedWaitUntil:
+    visible:
+      id: boxes_search
+    timeout: 15000
+- tapOn: "Oak cabinet.*"
+- extendedWaitUntil:
+    visible:
+      id: box_qr
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/box_details/box_details_${THEME}
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/box_details/box_details_${THEME}_2
+# New storage
+- scrollUntilVisible:
+    element:
+      id: box_add_child
+    direction: UP
+- tapOn:
+    id: box_add_child
+- extendedWaitUntil:
+    visible:
+      id: box_save
+    timeout: 10000
+- tapOn:
+    id: box_type_shelf
+- waitForAnimationToEnd
+- takeScreenshot: out/box_details/new_storage_${THEME}
+- tapOn: "Close"
+# Edit storage
+- tapOn:
+    id: box_options
+- tapOn:
+    id: box_menu_edit
+- extendedWaitUntil:
+    visible:
+      id: box_save
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/box_details/edit_storage_${THEME}
+- tapOn: "Back"
+# QR display
+- tapOn:
+    id: box_qr
+- extendedWaitUntil:
+    visible:
+      id: qr_print
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/box_details/qr_display_${THEME}
+- tapOn: "Back"
+# Export barcodes sheet
+- tapOn:
+    id: box_options
+- tapOn:
+    id: box_menu_export
+- extendedWaitUntil:
+    visible:
+      id: export_barcodes_submit
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/box_details/export_barcodes_${THEME}
+- tapOn:
+    point: 50%,10%
+- waitForAnimationToEnd
+- tapOn: "Back"

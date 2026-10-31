@@ -200,9 +200,9 @@
     }
   },
   "pleaseEnterAValidLocation": "Please enter a valid location name",
-  "editLocation": "Edit Location",
-  "createRootLocation": "Create Root Location",
-  "createNestedContainer": "Create Nested Container",
+  "editLocation": "Edit location",
+  "createRootLocation": "New location",
+  "createNestedContainer": "New container",
   "commonDelete": "Delete",
   "couldNotDeletePleaseTry": "Could not delete \"{boxName}\". Please try again.",
   "@couldNotDeletePleaseTry": {
@@ -622,7 +622,7 @@
   "byContinuingYouAgreeTo": "By continuing you agree to the Terms of Service and Privacy Policy.",
   "commonCancel": "Cancel",
   "commonContinue": "Continue",
-  "boxQrCode": "Box QR Code",
+  "boxQrCode": "Location QR",
   "commonLabel": "Label: {label}",
   "@commonLabel": {
     "placeholders": {
@@ -1884,7 +1884,86 @@
   "loginHaveAccountQ": "Already have an account?",
   "loginSignInLink": "Sign in",
   "locationsItemsSubtitle": "{locations, plural, =1{1 location} other{{locations} locations}} · {items, plural, =1{1 item} other{{items} items}}",
-  "@locationsItemsSubtitle": {"placeholders": {"locations": {"type": "int"}, "items": {"type": "int"}}},
+  "@locationsItemsSubtitle": {
+    "placeholders": {
+      "locations": {
+        "type": "int"
+      },
+      "items": {
+        "type": "int"
+      }
+    }
+  },
   "locationsCountLabel": "{count, plural, =1{1 location} other{{count} locations}}",
-  "@locationsCountLabel": {"placeholders": {"count": {"type": "int"}}}
+  "@locationsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statItems": "Items",
+  "statExpiring": "Expiring",
+  "sectionNestedContainers": "Nested containers",
+  "sectionItemsInContainer": "Items in this container",
+  "seeAllCount": "See all {count}",
+  "@seeAllCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "insideParent": "Inside {name}",
+  "@insideParent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentNoneTopLevel": "None (top level)",
+  "parentHelperTopLevel": "This is a top-level location",
+  "qrLabelHelper": "Generated automatically",
+  "thermalLabelPreview": "Thermal label preview",
+  "labelSizeMm": "50 × 30 mm",
+  "savePdf": "Save PDF",
+  "qrShare": "Share QR label",
+  "exportSheetTitle": "Export barcodes",
+  "exportSheetSubtitle": "Printable PDF of QR labels",
+  "exportWhatToExport": "What to export",
+  "exportFormat": "Format",
+  "exportAllLocations": "All locations",
+  "exportLabelsCount": "{count, plural, =1{1 label} other{{count} labels}}",
+  "@exportLabelsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportInsideLabels": "+ {inside} inside · {labels, plural, =1{1 label} other{{labels} labels}}",
+  "@exportInsideLabels": {
+    "placeholders": {
+      "inside": {
+        "type": "int"
+      },
+      "labels": {
+        "type": "int"
+      }
+    }
+  },
+  "exportA4Sheet": "A4 decal sheet",
+  "exportA4PerPage": "3 × 8 per page",
+  "exportThermalTitle": "Thermal 50×30",
+  "exportThermalPer": "1 per label",
+  "exportPrintPreview": "Print preview",
+  "exportSaveShare": "Save & share",
+  "storageShortRoom": "Room",
+  "storageShortCabinet": "Cabinet",
+  "storageShortShelf": "Shelf",
+  "storageShortBox": "Box",
+  "storageShortDrawer": "Drawer",
+  "storageShortOther": "Other",
+  "labelPreviewPlaceholder": "New location"
 }
