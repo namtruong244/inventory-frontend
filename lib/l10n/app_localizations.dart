@@ -5432,6 +5432,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sub-containers inside'**
   String get locationSubKicker;
+
+  /// No description provided for @scanChipFoundContainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Found container'**
+  String get scanChipFoundContainer;
+
+  /// No description provided for @scanChipFoundItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Found item'**
+  String get scanChipFoundItem;
+
+  /// No description provided for @scanChipUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown code'**
+  String get scanChipUnknown;
+
+  /// No description provided for @scanUnknownHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Not linked to any item or location yet'**
+  String get scanUnknownHint;
+
+  /// No description provided for @scanPointHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Point at a QR or barcode'**
+  String get scanPointHint;
+
+  /// No description provided for @scanKeepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get scanKeepLabel;
+
+  /// No description provided for @scanCameraUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera unavailable'**
+  String get scanCameraUnavailable;
+
+  /// No description provided for @scanCameraUnavailableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the gallery to pick a photo of the code instead.'**
+  String get scanCameraUnavailableHint;
+
+  /// No description provided for @scanCameraDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera access is off'**
+  String get scanCameraDenied;
+
+  /// No description provided for @scanCameraDeniedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow camera access in Settings to scan, or pick a photo from the gallery.'**
+  String get scanCameraDeniedHint;
+
+  /// No description provided for @scanManualEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code manually'**
+  String get scanManualEntry;
 }
 
 class _AppLocalizationsDelegate

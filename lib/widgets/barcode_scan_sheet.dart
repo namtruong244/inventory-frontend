@@ -3,6 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import '../l10n/l10n_ext.dart';
 import '../theme/app_theme.dart';
+import 'scan_viewport.dart';
 
 /// Opens the camera and returns the first barcode or QR value it reads, or null if closed.
 Future<String?> showBarcodeScanSheet(BuildContext context) {
@@ -75,14 +76,12 @@ class _BarcodeScanSheetState extends State<_BarcodeScanSheet> {
                 ),
               ),
               const SizedBox(height: 14),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: SizedBox(
-                  height: 260,
-                  child: MobileScanner(
-                    controller: _controller,
-                    onDetect: _onDetect,
-                  ),
+              SizedBox(
+                height: 260,
+                child: ScanViewport(
+                  controller: _controller,
+                  onDetect: _onDetect,
+                  radius: 24,
                 ),
               ),
             ],

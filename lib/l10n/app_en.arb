@@ -2190,5 +2190,16 @@
   "@locationInsideCount": {"placeholders": {"count": {"type": "int"}}},
   "locationPickerUp": "Up one level",
   "locationCurrentKicker": "Current location",
-  "locationSubKicker": "Sub-containers inside"
+  "locationSubKicker": "Sub-containers inside",
+  "scanChipFoundContainer": "Found container",
+  "scanChipFoundItem": "Found item",
+  "scanChipUnknown": "Unknown code",
+  "scanUnknownHint": "Not linked to any item or location yet",
+  "scanPointHint": "Point at a QR or barcode",
+  "scanKeepLabel": "Keep",
+  "scanCameraUnavailable": "Camera unavailable",
+  "scanCameraUnavailableHint": "Use the gallery to pick a photo of the code instead.",
+  "scanCameraDenied": "Camera access is off",
+  "scanCameraDeniedHint": "Allow camera access in Settings to scan, or pick a photo from the gallery.",
+  "scanManualEntry": "Enter code manually"
 }

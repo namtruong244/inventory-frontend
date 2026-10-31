@@ -9,6 +9,7 @@ import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'scan_glyphs.dart';
+import 'scan_viewport.dart';
 import 'tappable.dart';
 import 'app_icon.dart';
 import 'soft_ui.dart';
@@ -273,37 +274,14 @@ class _BoxQRScanSheetState extends State<BoxQRScanSheet> {
     );
   }
 
-  Widget _buildViewfinder() {
-    final c = context.colors;
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(14),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                MobileScanner(controller: _controller, onDetect: _onDetect),
-                if (_isProcessing)
-                  ColoredBox(
-                    color: c.background.withValues(alpha: 0.6),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: c.textPrimary,
-                        strokeWidth: 2.5,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        IgnorePointer(child: ScanFrameBrackets(color: c.textPrimary)),
-      ],
-    );
-  }
+  Widget _buildViewfinder() => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: ScanViewport(
+      controller: _controller,
+      onDetect: _onDetect,
+      processing: _isProcessing,
+    ),
+  );
 
   Widget _buildHint() {
     return Padding(

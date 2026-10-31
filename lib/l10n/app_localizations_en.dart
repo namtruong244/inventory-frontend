@@ -3253,4 +3253,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get locationSubKicker => 'Sub-containers inside';
+
+  @override
+  String get scanChipFoundContainer => 'Found container';
+
+  @override
+  String get scanChipFoundItem => 'Found item';
+
+  @override
+  String get scanChipUnknown => 'Unknown code';
+
+  @override
+  String get scanUnknownHint => 'Not linked to any item or location yet';
+
+  @override
+  String get scanPointHint => 'Point at a QR or barcode';
+
+  @override
+  String get scanKeepLabel => 'Keep';
+
+  @override
+  String get scanCameraUnavailable => 'Camera unavailable';
+
+  @override
+  String get scanCameraUnavailableHint =>
+      'Use the gallery to pick a photo of the code instead.';
+
+  @override
+  String get scanCameraDenied => 'Camera access is off';
+
+  @override
+  String get scanCameraDeniedHint =>
+      'Allow camera access in Settings to scan, or pick a photo from the gallery.';
+
+  @override
+  String get scanManualEntry => 'Enter code manually';
 }

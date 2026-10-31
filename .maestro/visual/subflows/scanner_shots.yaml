@@ -1,0 +1,63 @@
+# Env: THEME = light | dark. Chụp Scanner tab, unknown code, found box (Keep scanning), rồi quét nhãn có thật.
+appId: ${APP_ID}
+---
+- waitForAnimationToEnd
+- tapOn:
+    id: nav_scan
+- extendedWaitUntil:
+    visible:
+      id: scan_torch
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/scanner/scanner_tab_${THEME}
+# Unknown code
+- tapOn:
+    id: scan_manual
+- tapOn:
+    id: scan_manual_input
+- inputText: UNKNOWN-12345
+- tapOn:
+    id: scan_manual_submit
+- extendedWaitUntil:
+    visible:
+      id: scan_unknown_create
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/scanner/scan_unknown_${THEME}
+- tapOn:
+    id: scan_again
+# Known label with "Keep" on -> result card
+- tapOn:
+    id: scan_keep
+- tapOn:
+    id: scan_manual
+- tapOn:
+    id: scan_manual_input
+- inputText: OAK-CABINET
+- tapOn:
+    id: scan_manual_submit
+- extendedWaitUntil:
+    visible:
+      id: scan_open
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/scanner/scan_found_${THEME}
+- tapOn:
+    id: scan_again
+# Keep off again -> known label navigates straight to the box
+- tapOn:
+    id: scan_keep
+- tapOn:
+    id: scan_manual
+- tapOn:
+    id: scan_manual_input
+- inputText: OAK-CABINET
+- tapOn:
+    id: scan_manual_submit
+- extendedWaitUntil:
+    visible:
+      id: box_add_child
+    timeout: 10000
+- assertVisible: "Oak cabinet"
+- tapOn: "Back"
+- waitForAnimationToEnd

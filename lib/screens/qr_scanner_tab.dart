@@ -1,6 +1,5 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +13,10 @@ import 'box_details_screen.dart';
 import 'item_create_screen.dart';
 import 'item_details_screen.dart';
 import '../widgets/app_icon.dart';
-import '../widgets/scan_glyphs.dart';
+import '../widgets/scan_result_sheet.dart';
+import '../widgets/scan_viewport.dart';
+import '../widgets/soft_ui.dart';
+import '../utils/e2e.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
@@ -31,6 +33,14 @@ class QRScannerTab extends StatefulWidget {
 class _QRScannerTabState extends State<QRScannerTab> {
   final MobileScannerController _controller = MobileScannerController();
   bool _isProcessing = false;
+
+  /// Result docked at the bottom: a matched box/item or an unknown code.
+  Box? _foundBox;
+  Item? _foundItem;
+  String? _unknownCode;
+
+  bool get _hasResult =>
+      _foundBox != null || _foundItem != null || _unknownCode != null;
 
   @override
   void dispose() {
@@ -71,7 +81,13 @@ class _QRScannerTabState extends State<QRScannerTab> {
   }
 
   void _resume() {
-    if (mounted) setState(() => _isProcessing = false);
+    if (!mounted) return;
+    setState(() {
+      _isProcessing = false;
+      _foundBox = null;
+      _foundItem = null;
+      _unknownCode = null;
+    });
   }
 
   Future<void> _processCode(String rawCode) async {
@@ -127,17 +143,12 @@ class _QRScannerTabState extends State<QRScannerTab> {
         box != null ? l10n.scanFoundContainer(name) : l10n.scanFoundItem(name),
       );
     } else {
-      final open = await AppFeedback.showConfirmDialog(
-        context,
-        title: box != null
-            ? l10n.scanFoundContainer(name)
-            : l10n.scanFoundItem(name),
-        message: l10n.scanOpenDetailsPrompt,
-        confirmLabel: l10n.scanOpen,
-        cancelLabel: l10n.scanKeepScanning,
-        icon: Icons.qr_code_scanner_rounded,
-      );
-      if (!open || !mounted) return _resume();
+      // "Keep scanning": show the result card and let the user decide.
+      setState(() {
+        _foundBox = box;
+        _foundItem = item;
+      });
+      return;
     }
     if (box != null) {
       _navigate(BoxDetailsScreen(boxId: box.id));
@@ -155,21 +166,29 @@ class _QRScannerTabState extends State<QRScannerTab> {
     }
   }
 
+  /// Unknown code: show the "unknown code" card; "Add new item" continues
+  /// in [_createFromUnknown], "Scan again" resumes scanning.
   Future<void> _handleUnrecognizedCode(
     String code,
     InventoryProvider provider,
   ) async {
-    final l10n = AppLocalizations.of(context);
-    final shouldCreate = await AppFeedback.showConfirmDialog(
-      context,
-      title: l10n.scanUnknownTitle(code),
-      message: l10n.scanUnknownMessage,
-      confirmLabel: l10n.scanAddNewItem,
-      cancelLabel: l10n.scanKeepScanning,
-      icon: Icons.qr_code_scanner_rounded,
-    );
-    if (!shouldCreate || !mounted) return _resume();
+    setState(() => _unknownCode = code);
+  }
 
+  void _openFound() {
+    final box = _foundBox, item = _foundItem;
+    if (box != null) {
+      _navigate(BoxDetailsScreen(boxId: box.id));
+    } else if (item != null) {
+      _navigate(ItemDetailsScreen(itemId: item.id));
+    }
+  }
+
+  Future<void> _createFromUnknown() async {
+    final code = _unknownCode;
+    if (code == null) return;
+    final provider = Provider.of<InventoryProvider>(context, listen: false);
+    final l10n = AppLocalizations.of(context);
     // Never guess a location: the user picks it, starting from the last one used.
     final suggested =
         _lastBoxId != null && provider.getBoxById(_lastBoxId!) != null
@@ -194,9 +213,6 @@ class _QRScannerTabState extends State<QRScannerTab> {
     _resume();
   }
 
-  static const _blobSize = 150.0;
-  static const _blobCenterX = 62.0;
-
   /// Forgets the last code so the code in front of the camera is read again.
   void _rescan() {
     _lastCode = null;
@@ -219,67 +235,63 @@ class _QRScannerTabState extends State<QRScannerTab> {
     }
   }
 
+  /// E2E-only entry (see `kE2E`): the simulator has no camera to scan with.
+  Future<void> _manualEntry() async {
+    final code = await showDialog<String>(
+      context: context,
+      builder: (_) => const _ManualCodeDialog(),
+    );
+    if (code == null || code.isEmpty || !mounted || _isProcessing) return;
+    _processCode(code);
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     final l10n = context.l10n;
+    final provider = context.watch<InventoryProvider>();
     final canPop = widget.isFullScreen || Navigator.canPop(context);
+    final overlay = Theme.of(context).brightness == Brightness.light
+        ? SystemUiOverlayStyle.dark
+        : SystemUiOverlayStyle.light;
 
-    return Scaffold(
-      backgroundColor: c.background,
-      body: SafeArea(
-        child: Column(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlay,
+      child: Scaffold(
+        backgroundColor: c.background,
+        body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: Row(
-                children: [
-                  _iconButton(
-                    tooltip: MaterialLocalizations.of(context)
-                        .backButtonTooltip,
-                    onTap: canPop ? () => Navigator.pop(context) : null,
-                    child: canPop
-                        ? ScanGlyph(ScanGlyphType.back, color: c.textPrimary)
-                        : null,
-                  ),
-                  Expanded(
-                    child: Text(
-                      l10n.boxScanTitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: c.textPrimary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 48),
-                ],
-              ),
-            ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(52, 36, 52, 36),
-                child: Stack(
-                  fit: StackFit.expand,
+              child: SafeArea(
+                bottom: !_hasResult,
+                child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(30),
+                    _buildAppBar(c, l10n, provider, canPop),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
-                            MobileScanner(
+                            ScanViewport(
                               controller: _controller,
                               onDetect: _onDetect,
+                              processing: _isProcessing && !_hasResult,
                             ),
-                            if (_isProcessing)
-                              const ColoredBox(
-                                color: Colors.black45,
-                                child: Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
+                            if (kE2E)
+                              Positioned(
+                                left: 0,
+                                top: 0,
+                                child: e2eId(
+                                  'scan_manual',
+                                  Tappable(
+                                    semanticLabel: l10n.scanManualEntry,
+                                    onTap: _manualEntry,
+                                    behavior: HitTestBehavior.opaque,
+                                    child: const SizedBox(
+                                      width: 56,
+                                      height: 56,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -287,183 +299,246 @@ class _QRScannerTabState extends State<QRScannerTab> {
                         ),
                       ),
                     ),
-                    IgnorePointer(
-                      child: ScanFrameBrackets(color: c.textPrimary),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: _buildControls(c, l10n),
                     ),
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                l10n.boxScanHint,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: c.textSecondary,
-                  fontSize: 18,
-                  height: 1.4,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: _blobSize,
-              child: Stack(
-                children: [
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    bottom: 0,
-                    width: _blobSize,
-                    child: Tappable(
-                      semanticLabel: l10n.scanAgain,
-                      onTap: _rescan,
-                      child: CustomPaint(
-                        painter: _ScanBlobPainter(
-                          accent: c.primary,
-                          inner: c.surface,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            right: _blobSize - 2 * _blobCenterX,
-                          ),
-                          child: Center(
-                            child: AppIcon(
-                              Icons.qr_code_scanner_rounded,
-                              color: c.primary,
-                              size: 36,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 24,
-                    top: 0,
-                    bottom: 0,
-                    child: Row(
-                      children: [
-                        _roundButton(
-                          tooltip: l10n.commonGallery,
-                          onTap: _pickFromGallery,
-                          child: ScanGlyph(
-                            ScanGlyphType.gallery,
-                            color: c.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        ValueListenableBuilder<MobileScannerState>(
-                          valueListenable: _controller,
-                          builder: (context, state, _) {
-                            if (state.torchState == TorchState.unavailable) {
-                              return const SizedBox.shrink();
-                            }
-                            final on = state.torchState == TorchState.on;
-                            return _roundButton(
-                              tooltip: l10n.flashlight,
-                              onTap: _controller.toggleTorch,
-                              child: ScanGlyph(
-                                on
-                                    ? ScanGlyphType.flashOn
-                                    : ScanGlyphType.flashOff,
-                                color: c.textPrimary,
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: MediaQuery.of(context).padding.bottom > 0 ? 0 : 8),
+            if (_hasResult) _buildResult(provider, l10n),
           ],
         ),
       ),
     );
   }
 
-  Widget _iconButton({
-    required String tooltip,
-    required VoidCallback? onTap,
-    required Widget? child,
-  }) {
+  Widget _buildAppBar(
+    AppColors c,
+    AppLocalizations l10n,
+    InventoryProvider provider,
+    bool canPop,
+  ) {
+    final keep = !provider.autoOpenOnScan;
     return SizedBox(
-      width: 48,
-      height: 48,
-      child: child == null
-          ? null
-          : Tooltip(
-              message: tooltip,
-              child: Tappable(
-                semanticLabel: tooltip,
-                onTap: onTap!,
-                child: Center(child: child),
+      height: 56,
+      width: double.infinity,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            left: 24,
+            child: canPop
+                ? e2eId(
+                    'scan_close',
+                    SoftCircleButton(
+                      icon: Icons.close_rounded,
+                      tooltip: MaterialLocalizations.of(context)
+                          .closeButtonTooltip,
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  )
+                : const SizedBox(width: 44, height: 44),
+          ),
+          Text(
+            l10n.scanQr,
+            style: TextStyle(
+              color: c.textPrimary,
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          Positioned(
+            right: 24,
+            child: e2eId(
+              'scan_keep',
+              Tappable(
+                semanticLabel: l10n.scanKeepScanning,
+                onTap: () => provider.setAutoOpenOnScan(keep),
+                child: Container(
+                  height: 34,
+                  padding: const EdgeInsets.only(left: 10, right: 6),
+                  decoration: BoxDecoration(
+                    color: c.surface,
+                    borderRadius: BorderRadius.circular(999),
+                    boxShadow: c.cardShadow,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.scanKeepLabel,
+                        style: TextStyle(
+                          color: c.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      IgnorePointer(child: SoftToggle(value: keep)),
+                    ],
+                  ),
+                ),
               ),
             ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _roundButton({
-    required String tooltip,
-    required VoidCallback onTap,
-    required Widget child,
-  }) {
-    final c = context.colors;
-    return Tooltip(
-      message: tooltip,
-      child: Tappable(
-        semanticLabel: tooltip,
-        onTap: onTap,
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            color: c.surface,
-            shape: BoxShape.circle,
-            boxShadow: c.cardShadow,
+  Widget _buildControls(AppColors c, AppLocalizations l10n) {
+    Widget control(
+      String id,
+      String label,
+      Widget glyph,
+      VoidCallback? onTap, {
+      Color? bg,
+    }) {
+      return e2eId(
+        id,
+        Tappable(
+          semanticLabel: label,
+          onTap: onTap,
+          child: SizedBox(
+            width: 72,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: bg ?? c.surface,
+                    shape: BoxShape.circle,
+                    boxShadow: c.cardShadow,
+                  ),
+                  child: Center(child: glyph),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: c.textSecondary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
           ),
-          child: Center(child: child),
         ),
-      ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ValueListenableBuilder<MobileScannerState>(
+          valueListenable: _controller,
+          builder: (context, state, _) {
+            final available = state.torchState != TorchState.unavailable;
+            final on = state.torchState == TorchState.on;
+            return Opacity(
+              opacity: available ? 1 : 0.45,
+              child: control(
+                'scan_torch',
+                l10n.flashlight,
+                AppIcon(
+                  Icons.flashlight_on_outlined,
+                  size: 22,
+                  color: on ? c.onAccent : c.textPrimary,
+                ),
+                available ? _controller.toggleTorch : null,
+                bg: on ? c.accent : null,
+              ),
+            );
+          },
+        ),
+        const SizedBox(width: 12),
+        control(
+          'scan_gallery',
+          l10n.commonGallery,
+          AppIcon(Icons.image_outlined, size: 22, color: c.textPrimary),
+          _pickFromGallery,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResult(InventoryProvider provider, AppLocalizations l10n) {
+    final box = _foundBox, item = _foundItem;
+    if (box != null || item != null) {
+      final isBox = box != null;
+      return ScanResultSheet(
+        icon: isBox ? box.type.icon : Icons.inventory_2_outlined,
+        chipLabel: isBox ? l10n.scanChipFoundContainer : l10n.scanChipFoundItem,
+        chipIcon: Icons.check_circle_rounded,
+        found: true,
+        title: isBox ? box.name : item!.name,
+        subtitle: provider.getBreadcrumbString(isBox ? box.id : item!.boxId),
+        primaryLabel: l10n.scanOpen,
+        primaryIcon: Icons.arrow_forward_rounded,
+        primaryId: 'scan_open',
+        onPrimary: _openFound,
+        onScanAgain: _rescan,
+      );
+    }
+    return ScanResultSheet(
+      icon: Icons.qr_code_scanner_rounded,
+      chipLabel: l10n.scanChipUnknown,
+      chipIcon: Icons.help_outline_rounded,
+      found: false,
+      title: _unknownCode!,
+      monoTitle: true,
+      subtitle: l10n.scanUnknownHint,
+      primaryLabel: l10n.addItem,
+      primaryIcon: Icons.add_rounded,
+      primaryId: 'scan_unknown_create',
+      onPrimary: _createFromUnknown,
+      onScanAgain: _rescan,
     );
   }
 }
 
-/// Accent disc that flows into the right screen edge, with a surface-colored
-/// disc inside it that holds the scan icon.
-class _ScanBlobPainter extends CustomPainter {
-  final Color accent;
-  final Color inner;
-  _ScanBlobPainter({required this.accent, required this.inner});
+class _ManualCodeDialog extends StatefulWidget {
+  const _ManualCodeDialog();
 
   @override
-  void paint(Canvas canvas, Size size) {
-    // Ring (r - ri = 12) whose outline eases out of the circle with a slight
-    // curve that keeps bending until it meets the screen edge (no straight run).
-    const cx = 62.0, r = 56.0, ri = 44.0;
-    const joinDy = 48.0; // where the ring outline starts easing into the neck
-    final w = size.width, h = size.height, cy = h / 2;
-    final joinDx = math.sqrt(r * r - joinDy * joinDy);
-    final blob = Path()
-      ..moveTo(cx + joinDx, cy - joinDy)
-      ..arcToPoint(
-        Offset(cx + joinDx, cy + joinDy),
-        radius: const Radius.circular(r),
-        largeArc: true,
-        clockwise: false,
-      )
-      ..cubicTo(cx + 46, cy + 40.5, cx + 78, cy + 50, w, h)
-      ..lineTo(w, 0)
-      ..cubicTo(cx + 78, cy - 50, cx + 46, cy - 40.5, cx + joinDx, cy - joinDy)
-      ..close();
-    canvas.drawPath(blob, Paint()..color = accent);
-    canvas.drawCircle(Offset(cx, cy), ri, Paint()..color = inner);
+  State<_ManualCodeDialog> createState() => _ManualCodeDialogState();
+}
+
+class _ManualCodeDialogState extends State<_ManualCodeDialog> {
+  final _ctrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
   }
 
   @override
-  bool shouldRepaint(_ScanBlobPainter old) =>
-      old.accent != accent || old.inner != inner;
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(context.l10n.scanManualTitle),
+    content: e2eId(
+      'scan_manual_input',
+      TextField(
+        controller: _ctrl,
+        autofocus: true,
+        decoration: InputDecoration(labelText: context.l10n.scanManualLabel),
+      ),
+    ),
+    actions: [
+      e2eId(
+        'scan_manual_submit',
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _ctrl.text.trim()),
+          child: Text(context.l10n.commonSubmit),
+        ),
+      ),
+    ],
+  );
 }

@@ -1985,5 +1985,16 @@
   "locationInsideCount": "{count} bên trong",
   "locationPickerUp": "Lên một cấp",
   "locationCurrentKicker": "Vị trí hiện tại",
-  "locationSubKicker": "Ngăn chứa bên trong"
+  "locationSubKicker": "Ngăn chứa bên trong",
+  "scanChipFoundContainer": "Đã tìm thấy vị trí",
+  "scanChipFoundItem": "Đã tìm thấy vật phẩm",
+  "scanChipUnknown": "Mã chưa biết",
+  "scanUnknownHint": "Chưa gắn với vật phẩm hay vị trí nào",
+  "scanPointHint": "Hướng vào mã QR hoặc mã vạch",
+  "scanKeepLabel": "Giữ",
+  "scanCameraUnavailable": "Không dùng được camera",
+  "scanCameraUnavailableHint": "Hãy chọn ảnh chứa mã từ thư viện.",
+  "scanCameraDenied": "Chưa cấp quyền camera",
+  "scanCameraDeniedHint": "Cho phép camera trong Cài đặt để quét, hoặc chọn ảnh từ thư viện.",
+  "scanManualEntry": "Nhập mã thủ công"
 }

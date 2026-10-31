@@ -3157,4 +3157,38 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get locationSubKicker => 'Ngăn chứa bên trong';
+
+  @override
+  String get scanChipFoundContainer => 'Đã tìm thấy vị trí';
+
+  @override
+  String get scanChipFoundItem => 'Đã tìm thấy vật phẩm';
+
+  @override
+  String get scanChipUnknown => 'Mã chưa biết';
+
+  @override
+  String get scanUnknownHint => 'Chưa gắn với vật phẩm hay vị trí nào';
+
+  @override
+  String get scanPointHint => 'Hướng vào mã QR hoặc mã vạch';
+
+  @override
+  String get scanKeepLabel => 'Giữ';
+
+  @override
+  String get scanCameraUnavailable => 'Không dùng được camera';
+
+  @override
+  String get scanCameraUnavailableHint => 'Hãy chọn ảnh chứa mã từ thư viện.';
+
+  @override
+  String get scanCameraDenied => 'Chưa cấp quyền camera';
+
+  @override
+  String get scanCameraDeniedHint =>
+      'Cho phép camera trong Cài đặt để quét, hoặc chọn ảnh từ thư viện.';
+
+  @override
+  String get scanManualEntry => 'Nhập mã thủ công';
 }

@@ -38,10 +38,10 @@ output.token = token;
   });
 });
 
-function box(name, type, parent) {
+function box(name, type, parent, label) {
   var b = post('/boxes', {
     id: uuid(), name: name, type: type, parentId: parent || null,
-    label: 'loc_' + uuid().substring(0, 8),
+    label: label || 'loc_' + uuid().substring(0, 8),
   }, token);
   return b.id;
 }
@@ -57,7 +57,7 @@ var kitchen = box('Kitchen', 'room');
 var bedroom = box('Bedroom', 'room');
 var garage = box('Garage', 'room');
 
-var cabinet = box('Oak cabinet', 'cabinet', living);
+var cabinet = box('Oak cabinet', 'cabinet', living, 'OAK-CABINET');
 var topShelf = box('Top shelf', 'shelf', cabinet);
 var cables = box('Cables & chargers', 'shelf', cabinet);
 var bottomShelf = box('Bottom shelf', 'shelf', cabinet);
