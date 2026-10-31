@@ -40,6 +40,7 @@ appId: ${APP_ID}
 - scrollUntilVisible:
     element:
       id: item_card_AA Batteries .*
+    centerElement: true
 - tapOn:
     id: item_card_AA Batteries .*
 - extendedWaitUntil:

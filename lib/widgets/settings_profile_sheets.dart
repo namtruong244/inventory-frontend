@@ -8,113 +8,66 @@ import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
+import 'soft_sheet.dart';
+import 'soft_ui.dart';
+import 'tappable.dart';
 
 void showEditProfileDialog(BuildContext context, InventoryProvider provider) {
   final nameController = TextEditingController(text: provider.userName);
   final roleController = TextEditingController(text: provider.userRole);
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (sheetContext) => Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: context.colors.border,
-                  borderRadius: BorderRadius.circular(2),
+  showSoftSheet(
+    context,
+    title: context.l10n.editProfile,
+    subtitle: context.l10n.updateYourDisplayNameAnd,
+    builder: (sheetContext) => SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppFormField(
+            label: context.l10n.displayName,
+            hintText: context.l10n.eGSaraWilson,
+            controller: nameController,
+          ),
+          const SizedBox(height: 14),
+          AppFormField(
+            label: context.l10n.roleDepartment,
+            hintText: context.l10n.eGAssetManagerHome,
+            controller: roleController,
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: SoftButton(
+                  label: context.l10n.commonCancel,
+                  style: SoftButtonStyle.secondary,
+                  expand: true,
+                  onPressed: () => Navigator.pop(sheetContext),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              context.l10n.editProfile,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: context.colors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.updateYourDisplayNameAnd,
-              style: TextStyle(
-                fontSize: 12,
-                color: context.colors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 20),
-            AppFormField(
-              label: context.l10n.displayName,
-              hintText: context.l10n.eGSaraWilson,
-              controller: nameController,
-            ),
-            const SizedBox(height: 14),
-            AppFormField(
-              label: context.l10n.roleDepartment,
-              hintText: context.l10n.eGAssetManagerHome,
-              controller: roleController,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pop(sheetContext),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: context.colors.textPrimary,
-                      side: BorderSide(color: context.colors.border),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: Text(context.l10n.commonCancel),
-                  ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SoftButton(
+                  label: context.l10n.saveChanges,
+                  expand: true,
+                  onPressed: () {
+                    provider.updateUserProfile(
+                      nameController.text,
+                      roleController.text,
+                    );
+                    Navigator.pop(sheetContext);
+                    AppFeedback.showSuccess(
+                      context,
+                      context.l10n.profileUpdatedSuccessfully,
+                    );
+                  },
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: () {
-                      provider.updateUserProfile(
-                        nameController.text,
-                        roleController.text,
-                      );
-                      Navigator.pop(sheetContext);
-                      AppFeedback.showSuccess(
-                        context,
-                        context.l10n.profileUpdatedSuccessfully,
-                      );
-                    },
-                    style: FilledButton.styleFrom(
-                      backgroundColor: context.colors.primary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: Text(context.l10n.saveChanges),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     ),
   );
@@ -124,229 +77,171 @@ void showCategoryManagementSheet(
   BuildContext context,
   InventoryProvider provider,
 ) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+  var searchQuery = '';
+  showSoftSheet(
+    context,
+    title: context.l10n.manageCategories,
+    subtitle: '${provider.categories.length} total categories configured',
     builder: (sheetContext) {
-      String searchQuery = '';
       return StatefulBuilder(
         builder: (dialogCtx, setSheetState) {
+          final c = dialogCtx.colors;
           final filteredCategories = provider.categories
               .where((c) => c.toLowerCase().contains(searchQuery.toLowerCase()))
               .toList();
+          final maxListHeight = MediaQuery.sizeOf(dialogCtx).height * 0.45;
 
-          return DraggableScrollableSheet(
-            initialChildSize: 0.8,
-            minChildSize: 0.5,
-            maxChildSize: 0.95,
-            builder: (_, scrollController) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: SoftButton(
+                  label: context.l10n.commonNew,
+                  icon: Icons.add,
+                  onPressed: () {
+                    showAddCategorySubDialog(context, provider, (newCat) {
+                      setSheetState(() {});
+                    });
+                  },
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: context.colors.border,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
+              ),
+              const SizedBox(height: 12),
+              SoftSearchField(
+                hint: context.l10n.searchCategories,
+                value: searchQuery,
+                onChanged: (val) => setSheetState(() => searchQuery = val),
+                onClear: () => setSheetState(() => searchQuery = ''),
+              ),
+              const SizedBox(height: 12),
+              if (filteredCategories.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Center(
+                    child: Text(
+                      context.l10n.noCategoriesMatch(searchQuery),
+                      style: TextStyle(color: c.textMuted),
                     ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              context.l10n.manageCategories,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: context.colors.textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${provider.categories.length} total categories configured',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: context.colors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        FilledButton.icon(
-                          onPressed: () {
-                            showAddCategorySubDialog(context, provider, (
-                              newCat,
-                            ) {
-                              setSheetState(() {});
-                            });
-                          },
-                          icon: const AppIcon(Icons.add, size: 16),
-                          label: Text(
-                            context.l10n.commonNew,
-                            style: TextStyle(fontSize: 13),
-                          ),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Search bar
-                    TextField(
-                      onChanged: (val) =>
-                          setSheetState(() => searchQuery = val),
-                      decoration: InputDecoration(
-                        hintText: context.l10n.searchCategories,
-                        hintStyle: TextStyle(
-                          color: context.colors.textMuted,
-                          fontSize: 14,
-                        ),
-                        prefixIcon: AppIcon(
-                          Icons.search,
-                          size: 20,
-                          color: context.colors.textSecondary,
-                        ),
-                        filled: true,
-                        fillColor: context.colors.fill,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 10,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Expanded(
-                      child: filteredCategories.isEmpty
-                          ? Center(
-                              child: Text(
-                                context.l10n.noCategoriesMatch(searchQuery),
-                                style: TextStyle(
-                                  color: context.colors.textMuted,
-                                ),
-                              ),
-                            )
-                          : ListView.separated(
-                              controller: scrollController,
-                              itemCount: filteredCategories.length,
-                              separatorBuilder: (_, _) =>
-                                  const Divider(height: 1),
-                              itemBuilder: (context, index) {
-                                final cat = filteredCategories[index];
-                                final count = provider.getItemCountForCategory(
-                                  cat,
-                                );
-                                final isDefault = CategoryHelper
-                                    .defaultCategories
-                                    .contains(cat);
-
-                                return ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 4,
-                                    vertical: 2,
-                                  ),
-                                  leading: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: context.colors.fill,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: AppIcon(
-                                      CategoryHelper.getCategoryIcon(cat),
-                                      color: context.colors.textPrimary,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    cat,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14,
-                                      color: context.colors.textPrimary,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    '$count ${count == 1 ? "item" : "items"}${isDefault ? " • Built-in" : " • Custom"}',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: context.colors.textSecondary,
-                                    ),
-                                  ),
-                                  trailing: !isDefault
-                                      ? IconButton(
-                                          tooltip: context.l10n.commonDelete,
-                                          icon: AppIcon(
-                                            Icons.delete_outline,
-                                            size: 20,
-                                            color: AppTones.coral,
-                                          ),
-                                          onPressed: () async {
-                                            final confirmed =
-                                                await AppFeedback.showConfirmDialog(
-                                                  dialogCtx,
-                                                  title: context
-                                                      .l10n
-                                                      .deleteCategory,
-                                                  message: context.l10n
-                                                      .deleteCategoryAnyItemsIn(
-                                                        cat,
-                                                      ),
-                                                  confirmLabel:
-                                                      context.l10n.commonDelete,
-                                                  isDestructive: true,
-                                                  icon: Icons.delete_outline,
-                                                );
-                                            if (confirmed &&
-                                                dialogCtx.mounted) {
-                                              provider.deleteCategory(cat);
-                                              setSheetState(() {});
-                                              AppFeedback.showSuccess(
-                                                dialogCtx,
-                                                context.l10n.categoryRemoved(
-                                                  cat,
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        )
-                                      : null,
-                                );
+                  ),
+                )
+              else
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: maxListHeight),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: filteredCategories.length,
+                    itemBuilder: (context, index) {
+                      final cat = filteredCategories[index];
+                      final count = provider.getItemCountForCategory(cat);
+                      final isDefault = CategoryHelper.defaultCategories
+                          .contains(cat);
+                      return _CategoryRow(
+                        name: cat,
+                        subtitle:
+                            '$count ${count == 1 ? "item" : "items"}${isDefault ? " • Built-in" : " • Custom"}',
+                        onDelete: isDefault
+                            ? null
+                            : () async {
+                                final confirmed =
+                                    await AppFeedback.showConfirmDialog(
+                                      dialogCtx,
+                                      title: context.l10n.deleteCategory,
+                                      message: context.l10n
+                                          .deleteCategoryAnyItemsIn(cat),
+                                      confirmLabel: context.l10n.commonDelete,
+                                      isDestructive: true,
+                                      icon: Icons.delete_outline,
+                                    );
+                                if (confirmed && dialogCtx.mounted) {
+                                  provider.deleteCategory(cat);
+                                  setSheetState(() {});
+                                  AppFeedback.showSuccess(
+                                    dialogCtx,
+                                    context.l10n.categoryRemoved(cat),
+                                  );
+                                }
                               },
-                            ),
-                    ),
-                  ],
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
+            ],
           );
         },
       );
     },
   );
+}
+
+class _CategoryRow extends StatelessWidget {
+  final String name;
+  final String subtitle;
+  final VoidCallback? onDelete;
+
+  const _CategoryRow({
+    required this.name,
+    required this.subtitle,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          SoftIconTile(CategoryHelper.getCategoryIcon(name), size: 40),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: c.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: c.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (onDelete != null)
+            Tappable(
+              semanticLabel: context.l10n.commonDelete,
+              onTap: onDelete,
+              child: Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: c.dangerSoft,
+                  shape: BoxShape.circle,
+                ),
+                child: AppIcon(
+                  Icons.delete_outline,
+                  size: 18,
+                  color: c.dangerStrong,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 void showAddCategorySubDialog(
@@ -357,158 +252,98 @@ void showAddCategorySubDialog(
   final textController = TextEditingController();
   String? errorText;
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+  showSoftSheet(
+    context,
+    title: context.l10n.addNewCategory,
+    subtitle: context.l10n.enterACategoryNameFor,
     builder: (subSheetContext) {
       return StatefulBuilder(
         builder: (dialogCtx, setSubState) {
+          final c = dialogCtx.colors;
           final catName = textController.text.trim();
           final previewIcon = CategoryHelper.getCategoryIcon(
             catName.isEmpty ? 'General' : catName,
           );
 
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(subSheetContext).viewInsets.bottom,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-              ),
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: context.colors.border,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: SoftIconTile(previewIcon, size: 44),
                     ),
-                  ),
-                  const SizedBox(height: 18),
-                  Row(
-                    children: [
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: context.colors.fill,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: AppIcon(
-                          previewIcon,
-                          color: context.colors.textPrimary,
-                          size: 22,
-                        ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: AppFormField(
+                        label: context.l10n.categoryName,
+                        hintText: context.l10n.eGPhotographyBoardGames,
+                        controller: textController,
+                        onChanged: (_) {
+                          setSubState(() => errorText = null);
+                        },
                       ),
-                      const SizedBox(width: 14),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.l10n.addNewCategory,
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: context.colors.textPrimary,
-                            ),
-                          ),
-                          SizedBox(height: 2),
-                          Text(
-                            context.l10n.enterACategoryNameFor,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: context.colors.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  AppFormField(
-                    label: context.l10n.categoryName,
-                    hintText: context.l10n.eGPhotographyBoardGames,
-                    controller: textController,
-                    onChanged: (_) {
-                      setSubState(() => errorText = null);
-                    },
-                  ),
-                  if (errorText != null) ...[
-                    const SizedBox(height: 6),
-                    Text(
-                      errorText!,
-                      style: TextStyle(color: AppTones.coral, fontSize: 12),
                     ),
                   ],
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(subSheetContext),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: context.colors.textPrimary,
-                            side: BorderSide(color: context.colors.border),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: Text(context.l10n.commonCancel),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: () {
-                            final name = textController.text.trim();
-                            if (name.isEmpty) {
-                              setSubState(
-                                () => errorText =
-                                    context.l10n.pleaseEnterACategoryName,
-                              );
-                              return;
-                            }
-                            if (provider.categories.any(
-                              (c) => c.toLowerCase() == name.toLowerCase(),
-                            )) {
-                              setSubState(
-                                () => errorText =
-                                    context.l10n.categoryAlreadyExists,
-                              );
-                              return;
-                            }
-                            provider.addCategory(name);
-                            Navigator.pop(subSheetContext);
-                            onAdded(name);
-                            AppFeedback.showSuccess(
-                              context,
-                              context.l10n.categoryCreated2(name),
-                            );
-                          },
-                          style: FilledButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                          ),
-                          child: Text(context.l10n.addCategory),
-                        ),
-                      ),
-                    ],
+                ),
+                if (errorText != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    errorText!,
+                    style: TextStyle(color: c.dangerStrong, fontSize: 12),
                   ),
                 ],
-              ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SoftButton(
+                        label: context.l10n.commonCancel,
+                        style: SoftButtonStyle.secondary,
+                        expand: true,
+                        onPressed: () => Navigator.pop(subSheetContext),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SoftButton(
+                        label: context.l10n.addCategory,
+                        expand: true,
+                        onPressed: () {
+                          final name = textController.text.trim();
+                          if (name.isEmpty) {
+                            setSubState(
+                              () => errorText =
+                                  context.l10n.pleaseEnterACategoryName,
+                            );
+                            return;
+                          }
+                          if (provider.categories.any(
+                            (c) => c.toLowerCase() == name.toLowerCase(),
+                          )) {
+                            setSubState(
+                              () => errorText =
+                                  context.l10n.categoryAlreadyExists,
+                            );
+                            return;
+                          }
+                          provider.addCategory(name);
+                          Navigator.pop(subSheetContext);
+                          onAdded(name);
+                          AppFeedback.showSuccess(
+                            context,
+                            context.l10n.categoryCreated2(name),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           );
         },

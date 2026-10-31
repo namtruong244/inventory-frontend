@@ -138,40 +138,52 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final outerMedia = MediaQuery.of(context);
+    final showAdd = _currentIndex == 1 || _currentIndex == 2;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: _currentOverlayStyle,
       child: Scaffold(
         backgroundColor: context.colors.background,
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  KeepAliveTab(child: _buildHomeTab(context)),
-                  KeepAliveTab(
-                    child: ScrollToTopHost(
-                      key: _boxesKey,
-                      child: const BoxesScreen(),
+        // Invisible placeholder so floating toasts (SnackBars) sit above the
+        // floating nav (and its quick-add button) instead of under it.
+        extendBody: true,
+        bottomNavigationBar: SizedBox(
+          height: AppBottomNav.bottomInset(context) + 64 + (showAdd ? 76 : 0),
+        ),
+        body: MediaQuery(
+          // extendBody grows padding.bottom; children expect the real inset.
+          data: outerMedia,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    KeepAliveTab(child: _buildHomeTab(context)),
+                    KeepAliveTab(
+                      child: ScrollToTopHost(
+                        key: _boxesKey,
+                        child: const BoxesScreen(),
+                      ),
                     ),
-                  ),
-                  KeepAliveTab(
-                    child: ScrollToTopHost(
-                      key: _itemsKey,
-                      child: const ItemsScreen(),
+                    KeepAliveTab(
+                      child: ScrollToTopHost(
+                        key: _itemsKey,
+                        child: const ItemsScreen(),
+                      ),
                     ),
-                  ),
-                  KeepAliveTab(
-                    child: ScrollToTopHost(
-                      key: _settingsKey,
-                      child: const SettingsScreen(),
+                    KeepAliveTab(
+                      child: ScrollToTopHost(
+                        key: _settingsKey,
+                        child: const SettingsScreen(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Positioned.fill(child: _buildNav(context)),
-          ],
+              Positioned.fill(child: _buildNav(context)),
+            ],
+          ),
         ),
       ),
     );

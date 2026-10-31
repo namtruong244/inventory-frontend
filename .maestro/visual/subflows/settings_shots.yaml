@@ -51,3 +51,46 @@ appId: ${APP_ID}
     notVisible:
       id: delete_account_input
     timeout: 5000
+# Restyled sheets: health breakdown, report, categories, add category, edit profile.
+- scrollUntilVisible:
+    element:
+      id: settings_health
+    centerElement: true
+- tapOn:
+    id: settings_health
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/health_sheet_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- tapOn:
+    id: settings_report
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/report_sheet_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings_categories
+    direction: UP
+    centerElement: true
+- tapOn:
+    id: settings_categories
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/categories_sheet_${THEME}
+- tapOn: "New"
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/add_category_sheet_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- tapOn: "Close"
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: settings_profile
+    direction: UP
+- tapOn:
+    id: settings_profile
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/edit_profile_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd

@@ -8,155 +8,97 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import 'app_form_field.dart';
 import 'app_icon.dart';
+import 'soft_sheet.dart';
+import 'soft_ui.dart';
 
 Widget buildBackendSection(BuildContext context, InventoryProvider provider) {
+  final c = context.colors;
   final isOnline = provider.isConnected;
   final serverUrl = provider.serverUrl;
   final currentUser = provider.currentUser;
 
-  return buildCardContainer([
-    // 1. Connection Status Tile
-    ListTile(
-      leading: buildIconBox(
-        Icons.dns_rounded,
-        isOnline ? AppTones.matcha : AppTones.coral,
-        isOnline ? context.colors.successSoft : context.colors.dangerSoft,
-      ),
-      title: Row(
-        children: [
-          Text(
-            context.l10n.serverEndpoint,
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-              color: context.colors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: isOnline ? AppTones.limeSoft : context.colors.dangerSoft,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              isOnline
+  return SettingsGroup(
+    children: [
+      // 1. Connection status
+      SettingsRow(
+        icon: Icons.dns_rounded,
+        iconColor: isOnline ? c.successStrong : c.dangerStrong,
+        iconBackground: isOnline ? c.successSoft : c.dangerSoft,
+        label: context.l10n.serverEndpoint,
+        subtitle: serverUrl,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SoftChip(
+              label: isOnline
                   ? context.l10n.statusOnlineTag
                   : context.l10n.statusOfflineTag,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: isOnline ? AppTones.matcha : context.colors.dangerStrong,
-              ),
+              background: isOnline ? c.successSoft : c.dangerSoft,
+              foreground: isOnline ? c.successStrong : c.dangerStrong,
             ),
-          ),
-        ],
-      ),
-      subtitle: Text(
-        serverUrl,
-        style: TextStyle(
-          fontSize: 12,
-          color: context.colors.textSecondary,
-          fontFamily: 'monospace',
+            const SizedBox(width: 8),
+            AppIcon(Icons.edit_outlined, color: c.textSecondary, size: 18),
+          ],
         ),
+        onTap: () => showChangeServerUrlDialog(context, provider),
       ),
-      trailing: AppIcon(
-        Icons.edit_outlined,
-        color: context.colors.textSecondary,
-        size: 20,
-      ),
-      onTap: () => showChangeServerUrlDialog(context, provider),
-    ),
-    const Divider(height: 1),
-
-    // 2. Authenticated Account Tile
-    ListTile(
-      leading: buildIconBox(
-        Icons.verified_user_outlined,
-        AppTones.lilac,
-        context.colors.infoSoft,
-      ),
-      title: Text(
-        context.l10n.apiAuthentication,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          color: context.colors.textPrimary,
-        ),
-      ),
-      subtitle: Text(
-        currentUser != null
+      // 2. Authenticated account
+      SettingsRow(
+        icon: Icons.verified_user_outlined,
+        iconColor: c.infoStrong,
+        iconBackground: c.infoSoft,
+        label: context.l10n.apiAuthentication,
+        subtitle: currentUser != null
             ? '${currentUser.email} (${currentUser.role})'
             : context.l10n.authenticatedAs(provider.userName),
-        style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
-      ),
-      trailing: TextButton(
-        onPressed: () {
+        value: context.l10n.loginSwitch,
+        onTap: () {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => const LoginScreen()));
         },
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          minimumSize: Size.zero,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
-        child: Text(context.l10n.loginSwitch, style: TextStyle(fontSize: 13)),
       ),
-    ),
-    const Divider(height: 1),
-
-    // 3. Sync from Server Tile
-    ListTile(
-      leading: buildIconBox(Icons.sync_rounded, AppTones.sky, AppTones.skySoft),
-      title: Text(
-        context.l10n.syncWithServer,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          color: context.colors.textPrimary,
-        ),
-      ),
-      subtitle: Text(
-        provider.isSyncing
+      // 3. Sync from server
+      SettingsRow(
+        icon: Icons.sync_rounded,
+        iconColor: AppTones.sky,
+        iconBackground: AppTones.skySoft,
+        label: context.l10n.syncWithServer,
+        subtitle: provider.isSyncing
             ? context.l10n.synchronizingBoxesItemsAlerts
             : context.l10n.pullLatestInventoryLendingRecords,
-        style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
-      ),
-      trailing: provider.isSyncing
-          ? SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: context.colors.textPrimary,
-              ),
-            )
-          : AppIcon(
-              Icons.refresh_rounded,
-              color: context.colors.textSecondary,
-              size: 20,
-            ),
-      onTap: provider.isSyncing
-          ? null
-          : () async {
-              await provider.fetchAllData();
-              if (context.mounted) {
-                if (provider.isConnected) {
-                  AppFeedback.showSuccess(
-                    context,
-                    context.l10n.successfullySynchronizedWithBackendServer,
-                  );
-                } else {
-                  AppFeedback.showError(
-                    context,
-                    provider.errorMessage ?? context.l10n.syncFailed,
-                  );
+        trailing: provider.isSyncing
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: c.textPrimary,
+                ),
+              )
+            : AppIcon(Icons.refresh_rounded, color: c.textSecondary, size: 20),
+        onTap: provider.isSyncing
+            ? null
+            : () async {
+                await provider.fetchAllData();
+                if (context.mounted) {
+                  if (provider.isConnected) {
+                    AppFeedback.showSuccess(
+                      context,
+                      context.l10n.successfullySynchronizedWithBackendServer,
+                    );
+                  } else {
+                    AppFeedback.showError(
+                      context,
+                      provider.errorMessage ?? context.l10n.syncFailed,
+                    );
+                  }
                 }
-              }
-            },
-    ),
-  ]);
+              },
+      ),
+    ],
+  );
 }
 
 void showChangeServerUrlDialog(
@@ -164,81 +106,77 @@ void showChangeServerUrlDialog(
   InventoryProvider provider,
 ) {
   final controller = TextEditingController(text: provider.serverUrl);
-  showDialog(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      title: Text(
-        context.l10n.backendApiUrl,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-      ),
-      content: Column(
+  showSoftSheet(
+    context,
+    title: context.l10n.backendApiUrl,
+    subtitle: context.l10n.enterTheBackendBaseUrl,
+    builder: (ctx) => SingleChildScrollView(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            context.l10n.enterTheBackendBaseUrl,
-            style: TextStyle(fontSize: 13, color: context.colors.textSecondary),
-          ),
-          const SizedBox(height: 12),
-          TextField(
+          AppFormField(
+            label: context.l10n.backendApiUrl,
+            hintText: kDebugMode ? 'http://localhost:8080' : 'https://',
             controller: controller,
-            decoration: InputDecoration(
-              hintText: kDebugMode ? 'http://localhost:8080' : 'https://',
-              prefixIcon: const AppIcon(Icons.link_rounded),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
             keyboardType: TextInputType.url,
+            prefixIcon: const AppIcon(Icons.link_rounded),
           ),
           // Local development shortcuts mean nothing to end users.
           if (kDebugMode) ...[
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
+              runSpacing: 8,
               children: [
-                ActionChip(
-                  label: const Text(
-                    'localhost:8080',
-                    style: TextStyle(fontSize: 11),
-                  ),
-                  onPressed: () => controller.text = 'http://localhost:8080',
+                SoftFilterChip(
+                  label: 'localhost:8080',
+                  selected: false,
+                  onTap: () => controller.text = 'http://localhost:8080',
                 ),
-                ActionChip(
-                  label: const Text(
-                    '10.0.2.2:8080 (Android)',
-                    style: TextStyle(fontSize: 11),
-                  ),
-                  onPressed: () => controller.text = 'http://10.0.2.2:8080',
+                SoftFilterChip(
+                  label: '10.0.2.2:8080 (Android)',
+                  selected: false,
+                  onTap: () => controller.text = 'http://10.0.2.2:8080',
                 ),
               ],
             ),
           ],
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: SoftButton(
+                  label: context.l10n.commonCancel,
+                  style: SoftButtonStyle.secondary,
+                  expand: true,
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: SoftButton(
+                  label: context.l10n.saveConnect,
+                  expand: true,
+                  onPressed: () async {
+                    final newUrl = controller.text.trim();
+                    if (newUrl.isNotEmpty) {
+                      Navigator.pop(ctx);
+                      await provider.setServerUrl(newUrl);
+                      if (context.mounted) {
+                        AppFeedback.showSuccess(
+                          context,
+                          context.l10n.serverUrlUpdatedTo(newUrl),
+                        );
+                      }
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
         ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: Text(context.l10n.commonCancel),
-        ),
-        FilledButton(
-          onPressed: () async {
-            final newUrl = controller.text.trim();
-            if (newUrl.isNotEmpty) {
-              Navigator.pop(ctx);
-              await provider.setServerUrl(newUrl);
-              if (context.mounted) {
-                AppFeedback.showSuccess(
-                  context,
-                  context.l10n.serverUrlUpdatedTo(newUrl),
-                );
-              }
-            }
-          },
-          child: Text(context.l10n.saveConnect),
-        ),
-      ],
     ),
   );
 }

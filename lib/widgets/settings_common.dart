@@ -130,6 +130,9 @@ class SettingsRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String? value;
+
+  /// Small secondary line under the label.
+  final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
   final Color? iconColor;
@@ -142,6 +145,7 @@ class SettingsRow extends StatelessWidget {
     required this.icon,
     required this.label,
     this.value,
+    this.subtitle,
     this.trailing,
     this.onTap,
     this.iconColor,
@@ -165,15 +169,33 @@ class SettingsRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Expanded(
-            child: Text(
-              label,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: labelColor ?? c.textPrimary,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: labelColor ?? c.textPrimary,
+                  ),
+                ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle!,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: c.textSecondary,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
           if (value != null) ...[

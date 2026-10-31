@@ -23,9 +23,7 @@ appId: ${APP_ID}
     timeout: 10000
 - waitForAnimationToEnd
 - takeScreenshot: out/item_create/item_create_top_${THEME}
-- scrollUntilVisible:
-    element:
-      id: category_chip_Electronics
+- waitForAnimationToEnd
 - swipe:
     start: 80%,68%
     end: 12%,68%
@@ -118,6 +116,10 @@ appId: ${APP_ID}
     visible:
       id: items_search
     timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: item_card_Bosch GSR 18V-55 cordless drill
+    centerElement: true
 - tapOn:
     id: item_card_Bosch GSR 18V-55 cordless drill
 - extendedWaitUntil:

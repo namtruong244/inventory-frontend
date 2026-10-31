@@ -221,7 +221,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
             const SizedBox(height: 6),
             Container(
               height: 48,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               alignment: Alignment.centerLeft,
               decoration: BoxDecoration(
                 color: c.fill,
@@ -250,6 +250,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                   ),
                   decoration: const InputDecoration(
                     isCollapsed: true,
+                    contentPadding: EdgeInsets.zero,
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,

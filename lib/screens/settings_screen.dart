@@ -203,20 +203,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SettingsGroup(
                   label: l10n.reportsInventoryAudit,
                   children: [
-                    SettingsRow(
-                      icon: Icons.donut_large_outlined,
-                      label: l10n.inventoryHealthBreakdown,
-                      onTap: () => showInventoryStatusSheet(context, provider),
+                    e2eId(
+                      'settings_health',
+                      SettingsRow(
+                        icon: Icons.donut_large_outlined,
+                        label: l10n.inventoryHealthBreakdown,
+                        onTap: () =>
+                            showInventoryStatusSheet(context, provider),
+                      ),
                     ),
                     SettingsRow(
                       icon: Icons.qr_code_2_rounded,
                       label: l10n.exportAllBoxBarcodesPdf,
                       onTap: () => ExportBarcodesSheet.showAll(context),
                     ),
-                    SettingsRow(
-                      icon: Icons.summarize_outlined,
-                      label: l10n.exportInventoryReport,
-                      onTap: () => showExportReportSheet(context, provider),
+                    e2eId(
+                      'settings_report',
+                      SettingsRow(
+                        icon: Icons.summarize_outlined,
+                        label: l10n.exportInventoryReport,
+                        onTap: () => showExportReportSheet(context, provider),
+                      ),
                     ),
                     e2eId(
                       'settings_trash',
@@ -320,47 +327,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                 ),
                 const SizedBox(height: 20),
-                Tappable(
-                  onTap: _handleVersionTap,
-                  behavior: HitTestBehavior.opaque,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            '${l10n.applicationVersion} 1.0.0 (Build 2026)',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: c.textMuted,
-                            ),
-                          ),
-                        ),
-                        if (_developerModeUnlocked) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppTones.limeSoft,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
+                e2eId(
+                  'settings_version',
+                  Tappable(
+                    onTap: _handleVersionTap,
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
                             child: Text(
-                              l10n.developerBadge,
+                              '${l10n.applicationVersion} 1.0.0 (Build 2026)',
+                              textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                color: AppTones.matcha,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: c.textMuted,
                               ),
                             ),
                           ),
+                          if (_developerModeUnlocked) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTones.limeSoft,
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                l10n.developerBadge,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTones.matcha,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                 ),

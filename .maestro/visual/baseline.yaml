@@ -17,6 +17,10 @@ tags: [visual]
       TAB: item
 - waitForAnimationToEnd
 - takeScreenshot: out/baseline/item
+- scrollUntilVisible:
+    element:
+      id: item_card_Bosch GSR 18V-55 cordless drill
+    centerElement: true
 - tapOn:
     id: item_card_Bosch GSR 18V-55 cordless drill
 - waitForAnimationToEnd
@@ -30,9 +34,14 @@ tags: [visual]
 - takeScreenshot: out/baseline/settings
 - tapOn:
     id: nav_scan
+- extendedWaitUntil:
+    visible:
+      id: scan_torch
+    timeout: 10000
 - waitForAnimationToEnd
 - takeScreenshot: out/baseline/scanner
-- tapOn: Back
+- tapOn:
+    id: scan_close
 - runFlow:
     file: subflows/set_theme.yaml
     env:
