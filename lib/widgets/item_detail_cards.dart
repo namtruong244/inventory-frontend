@@ -328,7 +328,7 @@ Widget buildLowStockCard(BuildContext context, Item item) {
             color: context.colors.warningSoft,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const AppIcon(
+          child: AppIcon(
             Icons.production_quantity_limits_rounded,
             color: AppTones.amber,
             size: 24,

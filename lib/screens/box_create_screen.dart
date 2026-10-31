@@ -158,7 +158,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                     color: context.colors.surface,
                     shape: BoxShape.circle,
                   ),
-                  child: const AppIcon(
+                  child: AppIcon(
                     Icons.delete_outline,
                     size: 20,
                     color: AppTones.coral,

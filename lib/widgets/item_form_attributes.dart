@@ -240,7 +240,7 @@ Widget buildCustomAttributesSection(
                       ),
                     ),
                     IconButton(
-                      icon: const AppIcon(
+                      icon: AppIcon(
                         Icons.close_rounded,
                         size: 18,
                         color: AppTones.coral,

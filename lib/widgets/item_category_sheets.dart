@@ -107,10 +107,7 @@ Future<String?> showAddCategoryDialog(
                     const SizedBox(height: 6),
                     Text(
                       errorText!,
-                      style: const TextStyle(
-                        color: AppTones.coral,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: AppTones.coral, fontSize: 12),
                     ),
                   ],
                   const SizedBox(height: 24),

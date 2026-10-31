@@ -56,6 +56,7 @@ class InventoryApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       builder: (context, child) {
+        AppTones.sync(Theme.of(context).brightness);
         return SessionGuard(
           child: AutoSync(
             child: SyncStatusBar(

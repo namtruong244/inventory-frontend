@@ -349,7 +349,7 @@ void showManageAttributesSheet(
                                   IconButton(
                                     tooltip: MaterialLocalizations.of(context)
                                         .closeButtonTooltip,
-                                    icon: const AppIcon(
+                                    icon: AppIcon(
                                       Icons.close_rounded,
                                       size: 18,
                                       color: AppTones.coral,

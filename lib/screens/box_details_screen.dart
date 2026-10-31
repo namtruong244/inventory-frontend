@@ -763,7 +763,7 @@ class BoxDetailsScreen extends StatelessWidget {
               e2eId(
                 'box_menu_delete',
                 ListTile(
-                  leading: const AppIcon(
+                  leading: AppIcon(
                     Icons.delete_outline_rounded,
                     color: AppTones.coral,
                   ),

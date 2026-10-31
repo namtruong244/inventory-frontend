@@ -115,17 +115,11 @@ class AppFormField extends StatelessWidget {
                 ),
                 errorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(18),
-                  borderSide: const BorderSide(
-                    color: AppTones.coral,
-                    width: 1.5,
-                  ),
+                  borderSide: BorderSide(color: AppTones.coral, width: 1.5),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(18),
-                  borderSide: const BorderSide(
-                    color: AppTones.coral,
-                    width: 1.5,
-                  ),
+                  borderSide: BorderSide(color: AppTones.coral, width: 1.5),
                 ),
               ),
             ),

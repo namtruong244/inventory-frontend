@@ -271,7 +271,7 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               e2eId(
                 'item_menu_delete',
                 ListTile(
-                  leading: const AppIcon(
+                  leading: AppIcon(
                     Icons.delete_outline_rounded,
                     color: AppTones.coral,
                   ),

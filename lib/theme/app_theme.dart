@@ -60,6 +60,15 @@ class AppColors extends ThemeExtension<AppColors> {
 
   /// Content color on [accent].
   final Color onAccent;
+
+  /// Accent-colored text/icons on a plain surface (lime in dark, matcha in light).
+  final Color accentStrong;
+
+  /// Switch/toggle track when off.
+  final Color trackOff;
+
+  /// Card shadow color (design variable `shadow`).
+  final Color shadow;
   const AppColors({
     required this.background,
     required this.surface,
@@ -79,6 +88,9 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.infoStrong,
     this.accent = const Color(0xFFC8F169),
     this.onAccent = const Color(0xFF1B2406),
+    this.accentStrong = const Color(0xFF4D7C0F),
+    this.trackOff = const Color(0xFFD4D8DE),
+    this.shadow = const Color(0x0F18181B),
   });
   static const light = AppColors(
     background: Color(0xFFF7F8FA),
@@ -98,6 +110,9 @@ class AppColors extends ThemeExtension<AppColors> {
     successStrong: Color(0xFF3F6212),
     infoSoft: Color(0xFFE4F0FF),
     infoStrong: Color(0xFF1D4ED8),
+    accentStrong: Color(0xFF4D7C0F),
+    trackOff: Color(0xFFD4D8DE),
+    shadow: Color(0x0F18181B),
   );
   static const dark = AppColors(
     background: Color(0xFF0B0B0D),
@@ -116,24 +131,22 @@ class AppColors extends ThemeExtension<AppColors> {
     successStrong: Color(0xFF6EE7B7),
     infoSoft: Color(0xFF16233B),
     infoStrong: Color(0xFF93C5FD),
+    accentStrong: Color(0xFFC8F169),
+    trackOff: Color(0xFF3F3F46),
+    shadow: Color(0x59000000),
   );
 
   /// Soft, wide drop shadow for white cards; no borders.
   List<BoxShadow> get cardShadow => [
-    BoxShadow(
-      color:
-          (surface.computeLuminance() > 0.5
-                  ? const Color(0xFF1F2A44)
-                  : Colors.black)
-              .withValues(
-                alpha: surface.computeLuminance() > 0.5 ? 0.06 : 0.35,
-              ),
-      blurRadius: 24,
-      offset: const Offset(0, 8),
-    ),
+    BoxShadow(color: shadow, blurRadius: 24, offset: const Offset(0, 8)),
   ];
-  static AppColors of(BuildContext context) =>
-      Theme.of(context).extension<AppColors>() ?? light;
+  static AppColors of(BuildContext context) {
+    final theme = Theme.of(context);
+    // Keep the static [AppTones] in step with the theme being built.
+    AppTones.sync(theme.brightness);
+    return theme.extension<AppColors>() ?? light;
+  }
+
   @override
   AppColors copyWith({
     Color? background,
@@ -154,6 +167,9 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? infoStrong,
     Color? accent,
     Color? onAccent,
+    Color? accentStrong,
+    Color? trackOff,
+    Color? shadow,
   }) {
     return AppColors(
       background: background ?? this.background,
@@ -174,6 +190,9 @@ class AppColors extends ThemeExtension<AppColors> {
       infoStrong: infoStrong ?? this.infoStrong,
       accent: accent ?? this.accent,
       onAccent: onAccent ?? this.onAccent,
+      accentStrong: accentStrong ?? this.accentStrong,
+      trackOff: trackOff ?? this.trackOff,
+      shadow: shadow ?? this.shadow,
     );
   }
 
@@ -199,6 +218,9 @@ class AppColors extends ThemeExtension<AppColors> {
       infoStrong: Color.lerp(infoStrong, other.infoStrong, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
       onAccent: Color.lerp(onAccent, other.onAccent, t)!,
+      accentStrong: Color.lerp(accentStrong, other.accentStrong, t)!,
+      trackOff: Color.lerp(trackOff, other.trackOff, t)!,
+      shadow: Color.lerp(shadow, other.shadow, t)!,
     );
   }
 }
@@ -254,14 +276,13 @@ ThemeData buildAppTheme(Brightness brightness) {
       foregroundColor: colors.textPrimary,
       elevation: 0,
       scrolledUnderElevation: 0,
-      titleTextStyle: TextStyle(
+      titleTextStyle: GoogleFonts.plusJakartaSans(
         color: colors.textPrimary,
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
+        fontSize: 17,
+        fontWeight: FontWeight.w800,
       ),
     ),
-    textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme)
-        .apply(bodyColor: colors.textPrimary, displayColor: colors.textPrimary),
+    textTheme: _textTheme(base.textTheme, colors),
     cardTheme: CardThemeData(
       shadowColor: const Color(0xFF1F2A44).withValues(alpha: 0.08),
       color: colors.surface,
@@ -271,7 +292,17 @@ ThemeData buildAppTheme(Brightness brightness) {
     ),
     dialogTheme: DialogThemeData(
       backgroundColor: colors.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: colors.primary,
+      contentTextStyle: GoogleFonts.plusJakartaSans(
+        color: onPrimary,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     ),
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: colors.surface,
@@ -281,19 +312,37 @@ ThemeData buildAppTheme(Brightness brightness) {
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: primary,
-        foregroundColor: onPrimary,
+        backgroundColor: colors.accent,
+        foregroundColor: colors.onAccent,
+        disabledBackgroundColor: colors.fill,
+        disabledForegroundColor: colors.textMuted,
         minimumSize: const Size(0, 52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
       ),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         elevation: 0,
         minimumSize: const Size(0, 52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        textStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: colors.textPrimary,
+        side: BorderSide(color: colors.border, width: 1.5),
+        minimumSize: const Size(0, 52),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: colors.textPrimary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
       ),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
@@ -326,11 +375,16 @@ ThemeData buildAppTheme(Brightness brightness) {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: colors.fill,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       hintStyle: TextStyle(
         color: colors.textMuted,
         fontSize: 15,
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
+      ),
+      labelStyle: TextStyle(
+        color: colors.textSecondary,
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
       ),
       border: outline(),
       enabledBorder: outline(),
@@ -340,32 +394,99 @@ ThemeData buildAppTheme(Brightness brightness) {
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected) ? onPrimary : null,
+        (states) => states.contains(WidgetState.selected)
+            ? colors.onAccent
+            : Colors.white,
       ),
       trackColor: WidgetStateProperty.resolveWith(
-        (states) => states.contains(WidgetState.selected) ? primary : null,
+        (states) => states.contains(WidgetState.selected)
+            ? colors.accent
+            : colors.trackOff,
       ),
       trackOutlineColor: WidgetStateProperty.resolveWith(
-        (states) =>
-            states.contains(WidgetState.selected) ? Colors.transparent : null,
+        (states) => Colors.transparent,
       ),
     ),
   );
 }
 
-/// Muted accent tones for icons, tags and progress. Use [AppColors] soft/strong
-/// pairs when a theme-aware background is needed; these are fixed hues that
-/// stay legible on white and on dark surfaces.
+TextTheme _textTheme(TextTheme base, AppColors c) {
+  TextStyle s(
+    double size,
+    FontWeight w, {
+    double? ls,
+    double? h,
+    Color? color,
+  }) => GoogleFonts.plusJakartaSans(
+    fontSize: size,
+    fontWeight: w,
+    letterSpacing: ls,
+    height: h,
+    color: color ?? c.textPrimary,
+  );
+  // Sizes/weights are the ones used by the design frames.
+  return GoogleFonts.plusJakartaSansTextTheme(base)
+      .apply(bodyColor: c.textPrimary, displayColor: c.textPrimary)
+      .copyWith(
+        displaySmall: s(40, FontWeight.w800, ls: -1.5, h: 1.1), // hero stat
+        headlineMedium: s(26, FontWeight.w800, ls: -0.6), // screen title
+        headlineSmall: s(22, FontWeight.w800, ls: -0.4), // greeting / metric
+        titleLarge: s(18, FontWeight.w800), // section / sheet title
+        titleMedium: s(15, FontWeight.w700), // card / row title
+        titleSmall: s(14, FontWeight.w700),
+        bodyLarge: s(15, FontWeight.w600), // input value, settings row
+        bodyMedium: s(14, FontWeight.w500),
+        bodySmall: s(13, FontWeight.w500, color: c.textSecondary),
+        labelLarge: s(15, FontWeight.w700), // button label
+        labelMedium: s(12, FontWeight.w600, color: c.textSecondary), // caption
+        labelSmall: s(
+          11,
+          FontWeight.w800,
+          ls: 1,
+          color: c.textSecondary,
+        ), // overline
+      );
+}
+
+/// Muted accent tones for icons, tags and progress, with the dark values from
+/// the design. They are getters backed by the active theme brightness, which
+/// [AppColors.of] (`context.colors`) and `MaterialApp.builder` keep in sync, so
+/// existing `AppTones.xxx` call sites follow light/dark automatically (they
+/// cannot be `const`).
 abstract final class AppTones {
-  static const coral = Color(0xFFD64535);
-  static const amber = Color(0xFFB86E00);
-  static const matcha = Color(0xFF4D7C0F);
-  static const sky = Color(0xFF2F6FCB);
-  static const lilac = Color(0xFF7C5CD6);
-  static const slate = Color(0xFF64748B);
+  static bool _dark = false;
+  static void sync(Brightness b) => _dark = b == Brightness.dark;
+
+  static Color get coral =>
+      _dark ? const Color(0xFFFCA5A5) : const Color(0xFFD64535);
+  static Color get amber =>
+      _dark ? const Color(0xFFFCD34D) : const Color(0xFFB86E00);
+  static Color get matcha =>
+      _dark ? const Color(0xFFBEF264) : const Color(0xFF4D7C0F);
+  static Color get sky =>
+      _dark ? const Color(0xFF93C5FD) : const Color(0xFF2F6FCB);
+  static Color get lilac =>
+      _dark ? const Color(0xFFC4B5FD) : const Color(0xFF7C5CD6);
+  static Color get slate =>
+      _dark ? const Color(0xFFA1A1AA) : const Color(0xFF64748B);
+
+  static Color get coralSoft =>
+      _dark ? const Color(0xFF3A1A1C) : const Color(0xFFFFE9E4);
+  static Color get amberSoft =>
+      _dark ? const Color(0xFF3A2B0E) : const Color(0xFFFFF3C4);
+  static Color get matchaSoft =>
+      _dark ? const Color(0xFF1E2A0C) : const Color(0xFFEAF8CC);
+  static Color get skySoft =>
+      _dark ? const Color(0xFF16233B) : const Color(0xFFE4F0FF);
+  static Color get lilacSoft =>
+      _dark ? const Color(0xFF251E3B) : const Color(0xFFEFEAFF);
+  static Color get slateSoft =>
+      _dark ? const Color(0xFF27272A) : const Color(0xFFEEF1F5);
+
+  /// Aliases kept for existing call sites.
+  static Color get limeSoft => matchaSoft;
+  static Color get sandSoft => amberSoft;
+
   static const ink = Color(0xFF1E293B);
-  static const limeSoft = Color(0xFFEAF8CC);
-  static const skySoft = Color(0xFFE4F0FF);
-  static const sandSoft = Color(0xFFFFF3C4);
   static const mist = Color(0xFFF1F3F6);
 }

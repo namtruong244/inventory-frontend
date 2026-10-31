@@ -22,10 +22,7 @@ class FailedOpsTile extends StatelessWidget {
       child: ListTile(
         tileColor: context.colors.warningSoft,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        leading: const AppIcon(
-          Icons.sync_problem_rounded,
-          color: AppTones.amber,
-        ),
+        leading: AppIcon(Icons.sync_problem_rounded, color: AppTones.amber),
         title: Text(context.l10n.changesNeedAttention(count)),
         subtitle: Text(context.l10n.tapToKeepYourVersion),
         onTap: () => showDialog<void>(

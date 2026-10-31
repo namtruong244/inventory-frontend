@@ -205,7 +205,7 @@ class _TrashScreenState extends State<TrashScreen> {
             ),
             IconButton(
               tooltip: context.l10n.deletePermanently2,
-              icon: const AppIcon(
+              icon: AppIcon(
                 Icons.delete_forever_outlined,
                 color: AppTones.coral,
               ),

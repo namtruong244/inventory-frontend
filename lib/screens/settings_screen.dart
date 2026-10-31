@@ -588,7 +588,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                                 child: Text(
                                   context.l10n.developerBadge,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                     color: AppTones.matcha,
@@ -612,7 +612,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'settings_logout',
                     OutlinedButton.icon(
                       onPressed: () => _confirmSignOut(context, provider),
-                      icon: const AppIcon(
+                      icon: AppIcon(
                         Icons.logout_rounded,
                         size: 18,
                         color: AppTones.coral,

@@ -37,11 +37,7 @@ class HomeSections {
           ),
           child: Row(
             children: [
-              const AppIcon(
-                Icons.cloud_off_rounded,
-                color: AppTones.coral,
-                size: 20,
-              ),
+              AppIcon(Icons.cloud_off_rounded, color: AppTones.coral, size: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -108,7 +104,7 @@ class HomeSections {
                   color: AppTones.coral.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const AppIcon(
+                child: AppIcon(
                   Icons.warning_amber_rounded,
                   color: AppTones.coral,
                   size: 20,

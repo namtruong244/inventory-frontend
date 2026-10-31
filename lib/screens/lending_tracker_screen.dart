@@ -104,7 +104,7 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen>
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: AppTones.coral,
                       shape: BoxShape.circle,
                     ),
