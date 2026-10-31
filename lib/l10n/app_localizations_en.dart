@@ -228,6 +228,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncRejectedTitle => 'Rejected by the server';
 
   @override
+  String get syncAllSyncedBody =>
+      'Everything is up to date. Nothing is waiting to sync.';
+
+  @override
+  String syncPendingLabel(int count) {
+    return 'WAITING TO SYNC · $count';
+  }
+
+  @override
+  String get settingsSyncRowValueSynced => 'Up to date';
+
+  @override
+  String get settingsAccountHeader => 'ACCOUNT';
+
+  @override
   String get syncDismiss => 'Dismiss';
 
   @override

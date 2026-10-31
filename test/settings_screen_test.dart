@@ -28,7 +28,7 @@ void main() {
       expect(find.text('Seed Demo Data to Server'), findsNothing);
 
       // Scroll down to find Application Version row
-      final versionFinder = find.text('Application Version');
+      final versionFinder = find.textContaining('Application Version');
       await tester.scrollUntilVisible(versionFinder, 200);
       await tester.ensureVisible(versionFinder);
       await tester.pump();
@@ -47,6 +47,7 @@ void main() {
 
       // Now developer section is revealed
       expect(find.text('DEVELOPER OPTIONS & BACKEND API'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('DEVELOPER'), 200);
       expect(find.text('DEVELOPER'), findsOneWidget);
 
       // Demo data seeding is gone, even from the developer section

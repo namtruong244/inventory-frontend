@@ -4,18 +4,19 @@ import '../theme/app_theme.dart';
 import 'app_icon.dart';
 import 'soft_ui.dart';
 
+/// Design "Group Label": 11/800, letter-spacing 1, secondary text.
 Widget buildSectionHeader(String title) {
   return Builder(
     builder: (context) {
       return Padding(
         padding: const EdgeInsets.only(left: 4.0),
         child: Text(
-          title,
+          title.toUpperCase(),
           style: TextStyle(
-            fontSize: 13,
+            fontSize: 11,
             fontWeight: FontWeight.w800,
             color: context.colors.textSecondary,
-            letterSpacing: 0.2,
+            letterSpacing: 1,
           ),
         ),
       );
@@ -55,107 +56,72 @@ Widget buildIconBox(IconData icon, Color color, Color bg) {
   );
 }
 
-Widget buildPreferenceTile({
-  required IconData icon,
-  required Color iconColor,
-  required Color iconBg,
-  required String title,
-  required String subtitle,
-  required String valueText,
-  required VoidCallback onTap,
-}) {
-  return Builder(
-    builder: (context) {
-      return ListTile(
-        leading: buildIconBox(icon, iconColor, iconBg),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: context.colors.fill,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                valueText,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-            ),
-            const SizedBox(width: 4),
-            AppIcon(
-              Icons.chevron_right_rounded,
-              color: context.colors.textSecondary,
-              size: 20,
-            ),
-          ],
-        ),
-        onTap: onTap,
-      );
-    },
-  );
-}
+/// Design settings group: small caps label above a white card whose rows are
+/// separated by inset dividers.
+class SettingsGroup extends StatelessWidget {
+  final String? label;
+  final List<Widget> children;
 
-Widget buildInfoRow(
-  String label,
-  String value, {
-  VoidCallback? onTap,
-  Widget? trailingBadge,
-}) {
-  return Builder(
-    builder: (context) {
-      final rowContent = Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (trailingBadge != null) ...[
-                trailingBadge,
-                const SizedBox(width: 6),
-              ],
-              Text(
-                value,
-                style: TextStyle(
-                  color: context.colors.textSecondary,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ],
-      );
+  const SettingsGroup({super.key, this.label, required this.children});
 
-      if (onTap != null) {
-        return InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: rowContent,
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final rows = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      if (i > 0) {
+        rows.add(
+          Padding(
+            padding: const EdgeInsets.fromLTRB(64, 0, 16, 0),
+            child: Container(height: 1, color: c.border),
           ),
         );
       }
-      return rowContent;
-    },
-  );
+      rows.add(children[i]);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (label != null) ...[
+          buildSectionHeader(label!),
+          const SizedBox(height: 8),
+        ],
+        SoftCard(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Material(
+            color: Colors.transparent,
+            child: Column(children: rows),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// A [SettingsRow] with a [SoftToggle]; the whole row flips the value.
+class SettingsToggleRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  const SettingsToggleRow({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SettingsRow(
+      icon: icon,
+      label: label,
+      onTap: () => onChanged(!value),
+      trailing: SoftToggle(value: value, onChanged: onChanged),
+    );
+  }
 }
 
 /// Design SettingsRow: 36px icon tile, 15/600 label, optional value, chevron or

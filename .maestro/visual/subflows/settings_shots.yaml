@@ -1,0 +1,53 @@
+# Env: THEME = light | dark. Chụp Settings (đầu/giữa/cuối), Sync status sheet, Delete Account dialog (rồi HUỶ — không bao giờ xoá thật).
+appId: ${APP_ID}
+---
+- runFlow:
+    file: ../../subflows/open_tab.yaml
+    env:
+      TAB: setting
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/settings_${THEME}
+- scrollUntilVisible:
+    element:
+      id: settings_trash
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/settings_${THEME}_2
+- scrollUntilVisible:
+    element:
+      id: settings_delete_account
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/settings_${THEME}_3
+# Sync status sheet
+- tapOn:
+    id: settings_sync
+- extendedWaitUntil:
+    visible:
+      id: sync_sheet_sync_now
+    timeout: 5000
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/sync_${THEME}
+- tapOn:
+    id: sync_sheet_close
+- extendedWaitUntil:
+    notVisible:
+      id: sync_sheet_close
+    timeout: 5000
+# Delete account dialog: gõ dở rồi huỷ.
+- tapOn:
+    id: settings_delete_account
+- extendedWaitUntil:
+    visible:
+      id: delete_account_input
+    timeout: 5000
+- tapOn:
+    id: delete_account_input
+- inputText: "DELE"
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/delete_account_${THEME}
+- tapOn:
+    id: delete_account_cancel
+- extendedWaitUntil:
+    notVisible:
+      id: delete_account_input
+    timeout: 5000

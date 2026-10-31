@@ -4,7 +4,8 @@ import '../providers/inventory_provider.dart';
 import 'app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
-import 'app_icon.dart';
+import 'settings_common.dart';
+import 'soft_sheet.dart';
 
 void showCurrencyPicker(BuildContext context, InventoryProvider provider) {
   final currencies = [
@@ -135,118 +136,38 @@ void showSelectionSheet<T>({
   required String Function(T) displayBuilder,
   required Function(T) onSelected,
 }) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
+  showSoftSheet<void>(
+    context,
+    title: title,
+    subtitle: subtitle,
     builder: (sheetContext) {
-      final bottomPadding = MediaQuery.of(sheetContext).padding.bottom;
-      final maxHeight = MediaQuery.of(sheetContext).size.height * 0.75;
-
-      return Container(
+      final maxHeight = MediaQuery.of(sheetContext).size.height * 0.6;
+      return ConstrainedBox(
         constraints: BoxConstraints(maxHeight: maxHeight),
-        decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(
-              20,
-              16,
-              20,
-              bottomPadding > 0 ? 8 : 24,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: context.colors.border,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final item in items)
+                SettingsRow(
+                  icon: item == currentValue
+                      ? Icons.check_circle_rounded
+                      : Icons.circle_outlined,
+                  label: displayBuilder(item),
+                  showChevron: false,
+                  iconColor: item == currentValue
+                      ? sheetContext.colors.onAccent
+                      : null,
+                  iconBackground: item == currentValue
+                      ? sheetContext.colors.accent
+                      : null,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    onSelected(item);
+                  },
                 ),
-                const SizedBox(height: 18),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: context.colors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Flexible(
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: items.map((item) {
-                        final isSelected = item == currentValue;
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Material(
-                            color: isSelected
-                                ? context.colors.fill
-                                : context.colors.surface,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              side: BorderSide(
-                                color: isSelected
-                                    ? context.colors.primary
-                                    : context.colors.border,
-                              ),
-                            ),
-                            child: ListTile(
-                              dense: true,
-                              visualDensity: const VisualDensity(
-                                horizontal: 0,
-                                vertical: -2,
-                              ),
-                              title: Text(
-                                displayBuilder(item),
-                                style: TextStyle(
-                                  fontWeight: isSelected
-                                      ? FontWeight.bold
-                                      : FontWeight.w500,
-                                  color: context.colors.textPrimary,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              trailing: isSelected
-                                  ? AppIcon(
-                                      Icons.check_circle_rounded,
-                                      color: context.colors.textPrimary,
-                                      size: 20,
-                                    )
-                                  : null,
-                              onTap: () {
-                                Navigator.pop(sheetContext);
-                                onSelected(item);
-                              },
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            ],
           ),
         ),
       );

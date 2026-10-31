@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../l10n/app_localizations.dart';
 import '../providers/inventory_provider.dart';
-import 'failed_ops_tile.dart';
+import 'sync_status_sheet.dart';
 import 'session_guard.dart';
 import '../theme/app_theme.dart';
 import 'app_icon.dart';
@@ -74,93 +74,7 @@ class SyncStatusBar extends StatelessWidget {
   void _showDetails(InventoryProvider provider) {
     final navContext = appNavigatorKey.currentContext;
     if (navContext == null) return;
-    showModalBottomSheet<void>(
-      context: navContext,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (_) => ChangeNotifierProvider<InventoryProvider>.value(
-        value: provider,
-        child: const _SyncDetailsSheet(),
-      ),
-    );
-  }
-}
-
-class _SyncDetailsSheet extends StatelessWidget {
-  const _SyncDetailsSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    final provider = context.watch<InventoryProvider>();
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    return SafeArea(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              l10n.syncSheetTitle,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              provider.isOffline ? l10n.syncOfflineBody : l10n.syncOnlineBody,
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.syncPending(provider.pendingChanges),
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (provider.syncNotices.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(
-                l10n.syncRejectedTitle,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 6),
-              for (final notice in provider.syncNotices)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Text('• $notice', style: theme.textTheme.bodyMedium),
-                ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
-                  onPressed: provider.dismissSyncNotices,
-                  child: Text(l10n.syncDismiss),
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            FailedOpsTile(provider: provider),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: provider.isSyncing ? null : provider.syncNow,
-                icon: provider.isSyncing
-                    ? const SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const AppIcon(Icons.sync_rounded),
-                label: Text(l10n.syncNow),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    showSyncStatusSheet(navContext, provider);
   }
 }
 

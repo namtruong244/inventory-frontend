@@ -446,6 +446,30 @@ abstract class AppLocalizations {
   /// **'Rejected by the server'**
   String get syncRejectedTitle;
 
+  /// No description provided for @syncAllSyncedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything is up to date. Nothing is waiting to sync.'**
+  String get syncAllSyncedBody;
+
+  /// No description provided for @syncPendingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'WAITING TO SYNC · {count}'**
+  String syncPendingLabel(int count);
+
+  /// No description provided for @settingsSyncRowValueSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date'**
+  String get settingsSyncRowValueSynced;
+
+  /// No description provided for @settingsAccountHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'ACCOUNT'**
+  String get settingsAccountHeader;
+
   /// No description provided for @syncDismiss.
   ///
   /// In en, this message translates to:

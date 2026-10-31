@@ -5,7 +5,7 @@ import '../providers/inventory_provider.dart';
 import 'settings_common.dart';
 import '../theme/app_theme.dart';
 import '../utils/e2e.dart';
-import 'app_icon.dart';
+import 'soft_sheet.dart';
 
 /// Theme and language choices (per-device, not synced to the server).
 class SettingsAppearanceSection extends StatelessWidget {
@@ -16,43 +16,35 @@ class SettingsAppearanceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return SettingsGroup(
+      label: l10n.settingsAppearanceHeader,
       children: [
-        buildSectionHeader(l10n.settingsAppearanceHeader),
-        const SizedBox(height: 8),
-        buildCardContainer([
-          e2eId(
-            'settings_theme',
-            buildPreferenceTile(
-              icon: Icons.brightness_6_outlined,
-              iconColor: AppTones.lilac,
-              iconBg: context.colors.infoSoft,
-              title: l10n.settingsTheme,
-              subtitle: l10n.settingsThemeSubtitle,
-              valueText: switch (provider.themeMode) {
-                ThemeMode.system => l10n.themeSystem,
-                ThemeMode.light => l10n.themeLight,
-                ThemeMode.dark => l10n.themeDark,
-              },
-              onTap: () => _pickTheme(context),
-            ),
+        e2eId(
+          'settings_theme',
+          SettingsRow(
+            icon: Icons.brightness_6_outlined,
+            label: l10n.settingsTheme,
+            value: switch (provider.themeMode) {
+              ThemeMode.system => l10n.themeSystem,
+              ThemeMode.light => l10n.themeLight,
+              ThemeMode.dark => l10n.themeDark,
+            },
+            onTap: () => _pickTheme(context),
           ),
-          const Divider(height: 1),
-          buildPreferenceTile(
+        ),
+        e2eId(
+          'settings_language',
+          SettingsRow(
             icon: Icons.language_rounded,
-            iconColor: AppTones.sky,
-            iconBg: AppTones.skySoft,
-            title: l10n.settingsLanguage,
-            subtitle: l10n.settingsLanguageSubtitle,
-            valueText: switch (provider.locale?.languageCode) {
+            label: l10n.settingsLanguage,
+            value: switch (provider.locale?.languageCode) {
               'en' => 'English',
               'vi' => 'Tiếng Việt',
               _ => l10n.languageSystem,
             },
             onTap: () => _pickLanguage(context),
           ),
-        ]),
+        ),
       ],
     );
   }
@@ -96,37 +88,27 @@ class SettingsAppearanceSection extends StatelessWidget {
     required Map<T, String> options,
     required String Function(T) idFor,
   }) {
-    return showModalBottomSheet<T>(
-      context: context,
-      showDragHandle: true,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title,
-                  style: Theme.of(ctx).textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.bold),
-                ),
+    return showSoftSheet<T>(
+      context,
+      title: title,
+      builder: (ctx) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final entry in options.entries)
+            e2eId(
+              idFor(entry.key),
+              SettingsRow(
+                icon: entry.key == current
+                    ? Icons.check_circle_rounded
+                    : Icons.circle_outlined,
+                label: entry.value,
+                showChevron: false,
+                iconColor: entry.key == current ? ctx.colors.onAccent : null,
+                iconBackground: entry.key == current ? ctx.colors.accent : null,
+                onTap: () => Navigator.pop(ctx, entry.key),
               ),
             ),
-            for (final entry in options.entries)
-              e2eId(
-                idFor(entry.key),
-                ListTile(
-                  title: Text(entry.value),
-                  trailing: entry.key == current
-                      ? const AppIcon(Icons.check_rounded)
-                      : null,
-                  onTap: () => Navigator.pop(ctx, entry.key),
-                ),
-              ),
-          ],
-        ),
+        ],
       ),
     );
   }

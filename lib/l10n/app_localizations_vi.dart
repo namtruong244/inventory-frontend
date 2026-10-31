@@ -225,6 +225,21 @@ class AppLocalizationsVi extends AppLocalizations {
   String get syncRejectedTitle => 'Máy chủ đã từ chối';
 
   @override
+  String get syncAllSyncedBody =>
+      'Mọi thứ đã được cập nhật. Không có gì đang chờ đồng bộ.';
+
+  @override
+  String syncPendingLabel(int count) {
+    return 'ĐANG CHỜ ĐỒNG BỘ · $count';
+  }
+
+  @override
+  String get settingsSyncRowValueSynced => 'Đã cập nhật';
+
+  @override
+  String get settingsAccountHeader => 'TÀI KHOẢN';
+
+  @override
   String get syncDismiss => 'Ẩn';
 
   @override

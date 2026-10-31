@@ -1,0 +1,39 @@
+# Settings + Sync status sheet + Delete Account dialog (Light/Dark) + logic công tắc. Ảnh: .maestro/visual/out/settings/*.png
+# Chạy: .maestro/visual/run.sh settings
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: subflows/settings_shots.yaml
+    env:
+      THEME: light
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/settings_shots.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light
+# Logic: bật/tắt công tắc "beep on scan" rồi trả về như cũ.
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: setting
+- scrollUntilVisible:
+    element:
+      id: settings_beep
+- scroll
+- tapOn:
+    id: settings_beep
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/toggle_flipped
+- tapOn:
+    id: settings_beep
+- waitForAnimationToEnd
+- takeScreenshot: out/settings/toggle_restored
