@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
@@ -577,24 +580,27 @@ class _LocationPickerSheetState extends State<LocationPickerSheet> {
             SizedBox(
               width: double.infinity,
               height: 52,
-              child: FilledButton(
-                style: FilledButton.styleFrom(
-                  backgroundColor: context.colors.accent,
-                  foregroundColor: context.colors.onAccent,
-                  disabledBackgroundColor: context.colors.fill,
-                  disabledForegroundColor: context.colors.textMuted,
-                ),
-                onPressed: canConfirm ? _confirmSelection : null,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const AppIcon(Icons.check_rounded, size: 20),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.confirmButtonText ?? context.l10n.selectLocation,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                  ],
+              child: e2eId(
+                'location_confirm',
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: context.colors.accent,
+                    foregroundColor: context.colors.onAccent,
+                    disabledBackgroundColor: context.colors.fill,
+                    disabledForegroundColor: context.colors.textMuted,
+                  ),
+                  onPressed: canConfirm ? _confirmSelection : null,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const AppIcon(Icons.check_rounded, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        widget.confirmButtonText ?? context.l10n.selectLocation,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

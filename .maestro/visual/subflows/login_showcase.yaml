@@ -1,0 +1,15 @@
+# Seed dữ liệu showcase (user "Minh"), mở app sạch, đăng nhập, chờ Home.
+appId: ${APP_ID}
+---
+- runScript: ../../scripts/seed_showcase.js
+- runFlow: ../../subflows/fresh_start.yaml
+- runFlow:
+    file: ../../subflows/login.yaml
+    env:
+      EMAIL: ${output.email}
+      PASSWORD: ${output.password}
+- extendedWaitUntil:
+    visible:
+      id: nav_home
+    timeout: 15000
+- waitForAnimationToEnd

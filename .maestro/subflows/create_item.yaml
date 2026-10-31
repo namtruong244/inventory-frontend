@@ -1,0 +1,27 @@
+# Env: NAME, QTY (mặc định 1), LOCATION (tên box/room đã tồn tại). Bắt đầu từ bất kỳ tab nào.
+appId: ${APP_ID}
+---
+- runFlow:
+    file: open_tab.yaml
+    env:
+      TAB: item
+- tapOn:
+    id: nav_add
+- extendedWaitUntil:
+    visible:
+      id: loc_pick_${LOCATION}
+    timeout: 10000
+- tapOn:
+    id: loc_pick_${LOCATION}
+- tapOn:
+    id: location_confirm
+- tapOn:
+    id: item_name
+- inputText: ${NAME}
+- runFlow: dismiss_keyboard.yaml
+- tapOn:
+    id: item_save
+- extendedWaitUntil:
+    visible:
+      id: item_card_${NAME}
+    timeout: 10000

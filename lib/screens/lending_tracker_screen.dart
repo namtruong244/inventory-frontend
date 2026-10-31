@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:provider/provider.dart';
 
 import '../models/inventory_models.dart';
@@ -425,19 +428,22 @@ class _LendingTrackerScreenState extends State<LendingTrackerScreen>
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: () => _confirmReturn(context, record, item),
-                icon: const AppIcon(
-                  Icons.assignment_turned_in_outlined,
-                  size: 18,
-                ),
-                label: Text(context.l10n.markAsReturned),
-                style: FilledButton.styleFrom(
-                  backgroundColor: context.colors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+              child: e2eId(
+                'loan_return',
+                FilledButton.icon(
+                  onPressed: () => _confirmReturn(context, record, item),
+                  icon: const AppIcon(
+                    Icons.assignment_turned_in_outlined,
+                    size: 18,
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  label: Text(context.l10n.markAsReturned),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: context.colors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
                 ),
               ),
             ),

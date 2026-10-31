@@ -1,0 +1,79 @@
+appId: ${APP_ID}
+tags: [smoke]
+---
+- runFlow:
+    file: ../subflows/login_fresh.yaml
+    env:
+      SEED_ROOMS: 1
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: box
+- tapOn: "Room 1.*"
+# Room → Cabinet
+- tapOn:
+    id: box_add_child
+- tapOn:
+    id: box_type_cabinet
+- tapOn:
+    id: box_name
+- inputText: Cabinet A
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: box_save
+- tapOn:
+    id: box_save
+- extendedWaitUntil:
+    visible:
+      id: box_card_Cabinet A
+    timeout: 10000
+# Cabinet → Shelf
+- tapOn:
+    id: box_card_Cabinet A
+- tapOn:
+    id: box_add_child
+- tapOn:
+    id: box_type_shelf
+- tapOn:
+    id: box_name
+- inputText: Shelf 1
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: box_save
+- tapOn:
+    id: box_save
+- extendedWaitUntil:
+    visible:
+      id: box_card_Shelf 1
+    timeout: 10000
+# Shelf → Box
+- tapOn:
+    id: box_card_Shelf 1
+- tapOn:
+    id: box_add_child
+- scrollUntilVisible:
+    element:
+      id: box_type_box
+    direction: RIGHT
+- tapOn:
+    id: box_type_box
+- tapOn:
+    id: box_name
+- inputText: Box X
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: box_save
+- tapOn:
+    id: box_save
+- extendedWaitUntil:
+    visible:
+      id: box_card_Box X
+    timeout: 10000
+- tapOn:
+    id: box_card_Box X
+- assertVisible: Box X
+# Breadcrumb hiển thị cha
+- assertVisible: Shelf 1

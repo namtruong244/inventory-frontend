@@ -457,6 +457,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                               ],
                             ),
                             child: ItemCard(
+                              id: 'item_card_${item.name}',
                               name: item.name,
                               description: description,
                               quantityText: provider.formatQty(

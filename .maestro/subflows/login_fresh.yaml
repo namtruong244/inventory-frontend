@@ -1,0 +1,16 @@
+# Tạo user mới qua API (seed.js), mở app sạch và đăng nhập. Env tuỳ chọn: SEED_ROOMS.
+# Sau khi chạy: output.email / output.password / output.token dùng được ở flow gọi.
+appId: ${APP_ID}
+---
+- runScript: ../scripts/seed.js
+- runFlow: fresh_start.yaml
+- runFlow:
+    file: login.yaml
+    env:
+      EMAIL: ${output.email}
+      PASSWORD: ${output.password}
+# Chờ Home tải xong dữ liệu; chạm ngay lúc này trên iOS hay bị nuốt.
+- extendedWaitUntil:
+    visible: Recent Items
+    timeout: 15000
+- waitForAnimationToEnd

@@ -50,3 +50,4 @@ app.*.map.json
 # AI agent skills (local only)
 .agents/
 .claude/
+.maestro/visual/out/

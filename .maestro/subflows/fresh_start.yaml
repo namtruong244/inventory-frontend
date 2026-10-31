@@ -1,0 +1,15 @@
+# Mở app sạch, luôn dừng ở màn login. iOS giữ Keychain sau clearState nên phiên cũ
+# có thể còn → đăng xuất nếu vào thẳng Home.
+appId: ${APP_ID}
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: login_email|nav_home
+    timeout: 30000
+- runFlow:
+    when:
+      visible:
+        id: nav_home
+    file: logout.yaml

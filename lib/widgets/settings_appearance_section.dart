@@ -4,6 +4,7 @@ import '../l10n/app_localizations.dart';
 import '../providers/inventory_provider.dart';
 import 'settings_common.dart';
 import '../theme/app_theme.dart';
+import '../utils/e2e.dart';
 import 'app_icon.dart';
 
 /// Theme and language choices (per-device, not synced to the server).
@@ -21,18 +22,21 @@ class SettingsAppearanceSection extends StatelessWidget {
         buildSectionHeader(l10n.settingsAppearanceHeader),
         const SizedBox(height: 8),
         buildCardContainer([
-          buildPreferenceTile(
-            icon: Icons.brightness_6_outlined,
-            iconColor: AppTones.lilac,
-            iconBg: context.colors.infoSoft,
-            title: l10n.settingsTheme,
-            subtitle: l10n.settingsThemeSubtitle,
-            valueText: switch (provider.themeMode) {
-              ThemeMode.system => l10n.themeSystem,
-              ThemeMode.light => l10n.themeLight,
-              ThemeMode.dark => l10n.themeDark,
-            },
-            onTap: () => _pickTheme(context),
+          e2eId(
+            'settings_theme',
+            buildPreferenceTile(
+              icon: Icons.brightness_6_outlined,
+              iconColor: AppTones.lilac,
+              iconBg: context.colors.infoSoft,
+              title: l10n.settingsTheme,
+              subtitle: l10n.settingsThemeSubtitle,
+              valueText: switch (provider.themeMode) {
+                ThemeMode.system => l10n.themeSystem,
+                ThemeMode.light => l10n.themeLight,
+                ThemeMode.dark => l10n.themeDark,
+              },
+              onTap: () => _pickTheme(context),
+            ),
           ),
           const Divider(height: 1),
           buildPreferenceTile(
@@ -59,6 +63,7 @@ class SettingsAppearanceSection extends StatelessWidget {
       context,
       title: l10n.settingsTheme,
       current: provider.themeMode,
+      idFor: (m) => 'settings_theme_${m.name}',
       options: {
         ThemeMode.system: l10n.themeSystem,
         ThemeMode.light: l10n.themeLight,
@@ -74,6 +79,7 @@ class SettingsAppearanceSection extends StatelessWidget {
       context,
       title: l10n.settingsLanguage,
       current: provider.locale?.languageCode ?? 'system',
+      idFor: (code) => 'settings_language_$code',
       options: {
         'system': l10n.languageSystem,
         'en': 'English',
@@ -88,6 +94,7 @@ class SettingsAppearanceSection extends StatelessWidget {
     required String title,
     required T current,
     required Map<T, String> options,
+    required String Function(T) idFor,
   }) {
     return showModalBottomSheet<T>(
       context: context,
@@ -108,12 +115,15 @@ class SettingsAppearanceSection extends StatelessWidget {
               ),
             ),
             for (final entry in options.entries)
-              ListTile(
-                title: Text(entry.value),
-                trailing: entry.key == current
-                    ? const AppIcon(Icons.check_rounded)
-                    : null,
-                onTap: () => Navigator.pop(ctx, entry.key),
+              e2eId(
+                idFor(entry.key),
+                ListTile(
+                  title: Text(entry.value),
+                  trailing: entry.key == current
+                      ? const AppIcon(Icons.check_rounded)
+                      : null,
+                  onTap: () => Navigator.pop(ctx, entry.key),
+                ),
               ),
           ],
         ),

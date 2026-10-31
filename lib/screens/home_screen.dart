@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/inventory_provider.dart';
+import '../utils/e2e.dart';
 import '../widgets/add_item_flow.dart';
 import 'box_create_screen.dart';
 import '../widgets/first_rooms_card.dart';
@@ -474,29 +475,32 @@ class _HomeScreenState extends State<HomeScreen>
     final c = context.colors;
     final isBoxTab = _currentIndex == 1;
     final label = isBoxTab ? context.l10n.newLocation : context.l10n.addItem;
-    return Tooltip(
-      message: label,
-      child: Tappable(
-        semanticLabel: label,
-        onTap: () => isBoxTab
-            ? _navigateWithOverlayRestore(const BoxCreateScreen())
-            : startAddItemFlow(context),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: c.accent,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: c.accent.withValues(alpha: 0.55),
-                blurRadius: 22,
-                offset: const Offset(0, 8),
-              ),
-            ],
+    return e2eId(
+      'nav_add',
+      Tooltip(
+        message: label,
+        child: Tappable(
+          semanticLabel: label,
+          onTap: () => isBoxTab
+              ? _navigateWithOverlayRestore(const BoxCreateScreen())
+              : startAddItemFlow(context),
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: c.accent,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: c.accent.withValues(alpha: 0.55),
+                  blurRadius: 22,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: AppIcon(Icons.add_rounded, color: c.onAccent, size: 32),
           ),
-          child: AppIcon(Icons.add_rounded, color: c.onAccent, size: 32),
         ),
       ),
     );
@@ -511,25 +515,28 @@ class _HomeScreenState extends State<HomeScreen>
     final isSelected = _currentIndex == index;
     final c = context.colors;
 
-    return Tooltip(
-      message: tooltip,
-      child: Tappable(
-        semanticLabel: tooltip,
-        onTap: () => _onTabSelected(index),
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            color: isSelected ? c.accent : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: AppIcon(
-            isSelected ? activeIcon : icon,
-            size: 24,
-            color: isSelected ? c.onAccent : c.textMuted,
+    return e2eId(
+      const ['nav_home', 'nav_box', 'nav_item', 'nav_setting'][index],
+      Tooltip(
+        message: tooltip,
+        child: Tappable(
+          semanticLabel: tooltip,
+          onTap: () => _onTabSelected(index),
+          behavior: HitTestBehavior.opaque,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isSelected ? c.accent : Colors.transparent,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: AppIcon(
+              isSelected ? activeIcon : icon,
+              size: 24,
+              color: isSelected ? c.onAccent : c.textMuted,
+            ),
           ),
         ),
       ),
@@ -538,31 +545,35 @@ class _HomeScreenState extends State<HomeScreen>
 
   Widget _buildCenterQRButton() {
     final c = context.colors;
-    return Tooltip(
-      message: context.l10n.scanQrCode,
-      child: Tappable(
-        semanticLabel: context.l10n.scanQrCode,
-        onTap: () =>
-            _navigateWithOverlayRestore(const QRScannerTab(isFullScreen: true)),
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          width: 52,
-          height: 52,
-          decoration: BoxDecoration(
-            color: c.primary,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.18),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return e2eId(
+      'nav_scan',
+      Tooltip(
+        message: context.l10n.scanQrCode,
+        child: Tappable(
+          semanticLabel: context.l10n.scanQrCode,
+          onTap: () => _navigateWithOverlayRestore(
+            const QRScannerTab(isFullScreen: true),
           ),
-          child: AppIcon(
-            Icons.qr_code_scanner_rounded,
-            color: c.accent,
-            size: 24,
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: c.primary,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.18),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: AppIcon(
+              Icons.qr_code_scanner_rounded,
+              color: c.accent,
+              size: 24,
+            ),
           ),
         ),
       ),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -179,6 +182,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
 
               if (selectedItem != null && selectedItem.quantity > 1) ...[
                 AppFormField(
+                  id: 'lend_quantity',
                   label: context.l10n.quantityToLend,
                   hintText: context.l10n.leaveEmptyToLendAll(
                     provider.formatQty(
@@ -207,6 +211,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
               ],
 
               AppFormField(
+                id: 'lend_borrower',
                 label: context.l10n.borrowerName,
                 hintText: context.l10n.eGJohnDoe,
                 controller: _borrowerNameCtrl,
@@ -217,6 +222,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
               const SizedBox(height: 16),
 
               AppFormField(
+                id: 'lend_contact',
                 label: context.l10n.borrowerContact,
                 hintText: context.l10n.phoneNumberOrEmailOptional,
                 controller: _borrowerContactCtrl,
@@ -276,6 +282,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
               const SizedBox(height: 16),
 
               AppFormField(
+                id: 'lend_notes',
                 label: context.l10n.commonNotes,
                 hintText: context.l10n.eGBorrowedForPhotography,
                 controller: _notesCtrl,
@@ -286,57 +293,61 @@ class _LendItemSheetState extends State<LendItemSheet> {
               SizedBox(
                 width: double.infinity,
                 height: 52,
-                child: FilledButton(
-                  onPressed: _submitting
-                      ? null
-                      : () async {
-                          if (_formKey.currentState!.validate()) {
-                            if (_selectedItemId == null) {
-                              AppFeedback.showError(
-                                context,
-                                context.l10n.pleaseSelectAnItem,
-                              );
-                              return;
-                            }
+                child: e2eId(
+                  'lend_save',
+                  FilledButton(
+                    onPressed: _submitting
+                        ? null
+                        : () async {
+                            if (_formKey.currentState!.validate()) {
+                              if (_selectedItemId == null) {
+                                AppFeedback.showError(
+                                  context,
+                                  context.l10n.pleaseSelectAnItem,
+                                );
+                                return;
+                              }
 
-                            setState(() => _submitting = true);
-                            final ok = await provider.lendItem(
-                              itemId: _selectedItemId!,
-                              borrowerName: _borrowerNameCtrl.text.trim(),
-                              borrowerContact: _borrowerContactCtrl.text.trim(),
-                              lentDate: _lentDate,
-                              expectedReturnDate: _expectedReturnDate,
-                              notes: _notesCtrl.text.trim(),
-                              quantity: double.tryParse(
-                                _quantityCtrl.text.trim(),
-                              ),
-                            );
+                              setState(() => _submitting = true);
+                              final ok = await provider.lendItem(
+                                itemId: _selectedItemId!,
+                                borrowerName: _borrowerNameCtrl.text.trim(),
+                                borrowerContact: _borrowerContactCtrl.text
+                                    .trim(),
+                                lentDate: _lentDate,
+                                expectedReturnDate: _expectedReturnDate,
+                                notes: _notesCtrl.text.trim(),
+                                quantity: double.tryParse(
+                                  _quantityCtrl.text.trim(),
+                                ),
+                              );
 
-                            if (!context.mounted) return;
-                            if (ok) {
-                              Navigator.pop(context);
-                              AppFeedback.showSuccess(
-                                context,
-                                context.l10n.itemMarkedAsLentSuccessfully,
-                              );
-                            } else {
-                              setState(() => _submitting = false);
-                              AppFeedback.showError(
-                                context,
-                                context.l10n.somethingWentWrongPleaseTry,
-                              );
+                              if (!context.mounted) return;
+                              if (ok) {
+                                Navigator.pop(context);
+                                AppFeedback.showSuccess(
+                                  context,
+                                  context.l10n.itemMarkedAsLentSuccessfully,
+                                );
+                              } else {
+                                setState(() => _submitting = false);
+                                AppFeedback.showError(
+                                  context,
+                                  context.l10n.somethingWentWrongPleaseTry,
+                                );
+                              }
                             }
-                          }
-                        },
-                  style: FilledButton.styleFrom(
-                    backgroundColor: context.colors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                          },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: context.colors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                     ),
-                  ),
-                  child: Text(
-                    context.l10n.saveLoan,
-                    style: TextStyle(fontSize: 16),
+                    child: Text(
+                      context.l10n.saveLoan,
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
                 ),
               ),

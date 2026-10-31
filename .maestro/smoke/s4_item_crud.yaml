@@ -1,0 +1,46 @@
+appId: ${APP_ID}
+tags: [smoke]
+---
+- runFlow:
+    file: ../subflows/login_fresh.yaml
+    env:
+      SEED_ROOMS: 1
+- runFlow:
+    file: ../subflows/create_item.yaml
+    env:
+      NAME: Drill
+      LOCATION: Room 1
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: item
+- tapOn:
+    id: item_card_Drill
+- assertVisible: Drill
+# Sửa tên
+- tapOn:
+    id: item_options
+- tapOn:
+    id: item_menu_edit
+- tapOn:
+    id: item_name
+- eraseText: 20
+- inputText: Power Drill
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- tapOn:
+    id: item_save
+- extendedWaitUntil:
+    visible: Power Drill
+    timeout: 10000
+# Xoá → Trash, toast Undo
+- tapOn:
+    id: item_options
+- tapOn:
+    id: item_menu_delete
+- waitForAnimationToEnd
+- tapOn:
+    id: confirm_ok
+- extendedWaitUntil:
+    notVisible:
+      id: item_options
+    timeout: 10000

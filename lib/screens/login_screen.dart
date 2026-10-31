@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/google_logo.dart';
+import '../utils/e2e.dart';
 import '../utils/friendly_error.dart';
 import 'home_screen.dart';
 import '../theme/app_theme.dart';
@@ -325,13 +326,49 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       // Form: Name (Register Mode only)
                       if (_isRegisterMode) ...[
+                        e2eId(
+                          'login_name',
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              labelText: context.l10n.fullName,
+                              hintText: 'John Doe',
+                              prefixIcon: const AppIcon(
+                                Icons.person_outline_rounded,
+                                size: 20,
+                              ),
+                              fillColor: context.colors.surface,
+                              filled: true,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: context.colors.border,
+                                ),
+                              ),
+                            ),
+                            validator: (val) {
+                              if (_isRegisterMode &&
+                                  (val == null || val.trim().isEmpty)) {
+                                return context.l10n.pleaseEnterYourName;
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                      ],
+
+                      // Form: Email Field
+                      e2eId(
+                        'login_email',
                         TextFormField(
-                          controller: _nameController,
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            labelText: context.l10n.fullName,
-                            hintText: 'John Doe',
+                            labelText: context.l10n.emailAddress,
+                            hintText: 'name@example.com',
                             prefixIcon: const AppIcon(
-                              Icons.person_outline_rounded,
+                              Icons.mail_outline_rounded,
                               size: 20,
                             ),
                             fillColor: context.colors.surface,
@@ -344,148 +381,127 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           validator: (val) {
-                            if (_isRegisterMode &&
-                                (val == null || val.trim().isEmpty)) {
-                              return context.l10n.pleaseEnterYourName;
+                            if (val == null || val.trim().isEmpty) {
+                              return context.l10n.pleaseEnterYourEmail;
+                            }
+                            if (!val.contains('@') || !val.contains('.')) {
+                              return context.l10n.pleaseEnterAValidEmail;
                             }
                             return null;
                           },
                         ),
-                        const SizedBox(height: 14),
-                      ],
-
-                      // Form: Email Field
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: context.l10n.emailAddress,
-                          hintText: 'name@example.com',
-                          prefixIcon: const AppIcon(
-                            Icons.mail_outline_rounded,
-                            size: 20,
-                          ),
-                          fillColor: context.colors.surface,
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(
-                              color: context.colors.border,
-                            ),
-                          ),
-                        ),
-                        validator: (val) {
-                          if (val == null || val.trim().isEmpty) {
-                            return context.l10n.pleaseEnterYourEmail;
-                          }
-                          if (!val.contains('@') || !val.contains('.')) {
-                            return context.l10n.pleaseEnterAValidEmail;
-                          }
-                          return null;
-                        },
                       ),
                       const SizedBox(height: 14),
 
                       // Form: Password Field
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: _obscurePassword,
-                        decoration: InputDecoration(
-                          labelText: context.l10n.commonPassword,
-                          hintText: '••••••••',
-                          prefixIcon: const AppIcon(
-                            Icons.lock_outline_rounded,
-                            size: 20,
-                          ),
-                          suffixIcon: IconButton(
-                            tooltip: context.l10n.showOrHidePassword,
-                            icon: AppIcon(
-                              _obscurePassword
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
+                      e2eId(
+                        'login_password',
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.commonPassword,
+                            hintText: '••••••••',
+                            prefixIcon: const AppIcon(
+                              Icons.lock_outline_rounded,
                               size: 20,
-                              color: context.colors.textSecondary,
                             ),
-                            onPressed: () {
-                              setState(
-                                () => _obscurePassword = !_obscurePassword,
-                              );
-                            },
-                          ),
-                          fillColor: context.colors.surface,
-                          filled: true,
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(
-                              color: context.colors.border,
+                            suffixIcon: IconButton(
+                              tooltip: context.l10n.showOrHidePassword,
+                              icon: AppIcon(
+                                _obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                                size: 20,
+                                color: context.colors.textSecondary,
+                              ),
+                              onPressed: () {
+                                setState(
+                                  () => _obscurePassword = !_obscurePassword,
+                                );
+                              },
+                            ),
+                            fillColor: context.colors.surface,
+                            filled: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: context.colors.border,
+                              ),
                             ),
                           ),
+                          validator: (val) {
+                            if (val == null || val.isEmpty) {
+                              return context.l10n.passwordIsRequired;
+                            }
+                            // Login accepts older 6-7 character passwords; only new ones need 8.
+                            if (_isRegisterMode && val.length < 8) {
+                              return context.l10n.passwordMustBeAtLeast;
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (val) {
-                          if (val == null || val.isEmpty) {
-                            return context.l10n.passwordIsRequired;
-                          }
-                          // Login accepts older 6-7 character passwords; only new ones need 8.
-                          if (_isRegisterMode && val.length < 8) {
-                            return context.l10n.passwordMustBeAtLeast;
-                          }
-                          return null;
-                        },
                       ),
                       const SizedBox(height: 24),
 
                       // Primary Submit Button
                       SizedBox(
                         height: 52,
-                        child: FilledButton(
-                          onPressed: _isLoading
-                              ? null
-                              : _handleEmailPasswordAuth,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: context.colors.primary,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                        child: e2eId(
+                          'login_submit',
+                          FilledButton(
+                            onPressed: _isLoading
+                                ? null
+                                : _handleEmailPasswordAuth,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: context.colors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
                             ),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
+                            child: _isLoading
+                                ? const SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : Text(
+                                    _isRegisterMode
+                                        ? context.l10n.createAccount
+                                        : context.l10n.signIn,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 15,
                                     ),
                                   ),
-                                )
-                              : Text(
-                                  _isRegisterMode
-                                      ? context.l10n.createAccount
-                                      : context.l10n.signIn,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 15,
-                                  ),
-                                ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 12),
 
                       // Switch between Sign In / Register
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isRegisterMode = !_isRegisterMode;
-                          });
-                        },
-                        child: Text(
-                          _isRegisterMode
-                              ? context.l10n.alreadyHaveAnAccountSign
-                              : context.l10n.donTHaveAnAccount,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: AppTones.sky,
+                      e2eId(
+                        'login_toggle_mode',
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isRegisterMode = !_isRegisterMode;
+                            });
+                          },
+                          child: Text(
+                            _isRegisterMode
+                                ? context.l10n.alreadyHaveAnAccountSign
+                                : context.l10n.donTHaveAnAccount,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppTones.sky,
+                            ),
                           ),
                         ),
                       ),

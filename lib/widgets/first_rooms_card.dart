@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../utils/e2e.dart';
+
 import '../l10n/app_localizations.dart';
 import '../l10n/l10n_ext.dart';
 import '../models/inventory_models.dart';
@@ -95,42 +97,48 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
             runSpacing: 8,
             children: [
               for (var i = 0; i < names.length; i++)
-                FilterChip(
-                  label: Text(names[i]),
-                  selected: _selected.contains(i),
-                  onSelected: _creating
-                      ? null
-                      : (on) => setState(
-                          () => on ? _selected.add(i) : _selected.remove(i),
-                        ),
+                e2eId(
+                  'first_room_$i',
+                  FilterChip(
+                    label: Text(names[i]),
+                    selected: _selected.contains(i),
+                    onSelected: _creating
+                        ? null
+                        : (on) => setState(
+                            () => on ? _selected.add(i) : _selected.remove(i),
+                          ),
+                  ),
                 ),
             ],
           ),
           const SizedBox(height: 18),
           SizedBox(
             width: double.infinity,
-            child: FilledButton(
-              onPressed: _selected.isEmpty || _creating
-                  ? null
-                  : () => _create(names),
-              style: FilledButton.styleFrom(
-                backgroundColor: c.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
+            child: e2eId(
+              'first_rooms_create',
+              FilledButton(
+                onPressed: _selected.isEmpty || _creating
+                    ? null
+                    : () => _create(names),
+                style: FilledButton.styleFrom(
+                  backgroundColor: c.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
+                child: _creating
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(context.l10n.createSelectedRooms(_selected.length)),
               ),
-              child: _creating
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(context.l10n.createSelectedRooms(_selected.length)),
             ),
           ),
           Align(

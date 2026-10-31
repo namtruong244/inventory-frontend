@@ -1,0 +1,4 @@
+# Chạy: maestro test .maestro/smoke -e APP_ID=... -e API_URL=http://localhost:8080
+flows:
+  - smoke/*
+includeTags: []

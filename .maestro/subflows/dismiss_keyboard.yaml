@@ -1,0 +1,5 @@
+# hideKeyboard không chạy trên iOS với Flutter; app tự bỏ focus khi chạm ra ngoài.
+appId: ${APP_ID}
+---
+- tapOn:
+    point: 50%,6%

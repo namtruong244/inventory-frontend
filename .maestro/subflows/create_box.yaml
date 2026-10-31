@@ -1,0 +1,18 @@
+# Env: NAME, TYPE (room|cabinet|shelf|box|drawer|other). Mở từ tab Box (nút "+").
+appId: ${APP_ID}
+---
+- tapOn:
+    id: nav_box
+- tapOn:
+    id: nav_add
+- tapOn:
+    id: box_type_${TYPE}
+- tapOn:
+    id: box_name
+- inputText: ${NAME}
+- hideKeyboard
+- tapOn:
+    id: box_save
+- extendedWaitUntil:
+    visible: ${NAME}
+    timeout: 10000

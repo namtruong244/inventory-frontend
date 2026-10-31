@@ -1,0 +1,47 @@
+appId: ${APP_ID}
+tags: [smoke]
+---
+- runFlow:
+    file: ../subflows/login_fresh.yaml
+    env:
+      SEED_ROOMS: 1
+- runFlow:
+    file: ../subflows/create_item.yaml
+    env:
+      NAME: Camera
+      LOCATION: Room 1
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: item
+- tapOn:
+    id: item_card_Camera
+- tapOn:
+    id: item_options
+- tapOn:
+    id: item_menu_lend
+- tapOn:
+    id: lend_borrower
+- inputText: Alice
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: lend_save
+- tapOn:
+    id: lend_save
+- extendedWaitUntil:
+    visible: "Lent.*"
+    timeout: 10000
+# Trả lại từ nút chính của màn chi tiết
+- extendedWaitUntil:
+    notVisible: ".*marked as lent.*"
+    timeout: 15000
+- tapOn:
+    id: item_main_action
+- waitForAnimationToEnd
+- tapOn:
+    id: confirm_ok
+- extendedWaitUntil:
+    notVisible:
+      id: confirm_ok
+    timeout: 10000

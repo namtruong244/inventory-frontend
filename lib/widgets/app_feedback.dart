@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import '../utils/e2e.dart';
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
@@ -93,37 +95,47 @@ class AppFeedback {
                     Row(
                       children: [
                         Expanded(
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.of(context).pop(false),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: theme.colorScheme.primary,
-                              side: BorderSide(color: context.colors.border),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                          child: e2eId(
+                            'confirm_cancel',
+                            OutlinedButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: theme.colorScheme.primary,
+                                side: BorderSide(color: context.colors.border),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              cancelLabel ?? context.l10n.commonCancel,
+                              child: Text(
+                                cancelLabel ?? context.l10n.commonCancel,
+                              ),
                             ),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
-                          child: FilledButton(
-                            onPressed: () => Navigator.of(context).pop(true),
-                            style: FilledButton.styleFrom(
-                              backgroundColor: isDestructive
-                                  ? AppTones.coral
-                                  : theme.colorScheme.primary,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
+                          child: e2eId(
+                            'confirm_ok',
+                            FilledButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: isDestructive
+                                    ? AppTones.coral
+                                    : theme.colorScheme.primary,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 14,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              confirmLabel ?? context.l10n.commonConfirm,
-                              style: const TextStyle(color: Colors.white),
+                              child: Text(
+                                confirmLabel ?? context.l10n.commonConfirm,
+                                style: const TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
                         ),

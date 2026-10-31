@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:provider/provider.dart';
 
 import '../providers/inventory_provider.dart';
@@ -180,16 +183,19 @@ class HomeSections {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: _QuickCard(
-              icon: Icons.handshake_outlined,
-              iconBg: c.infoSoft,
-              iconFg: c.infoStrong,
-              title: context.l10n.commonLending,
-              stat: '$activeLoans',
-              caption: activeLoans > 0
-                  ? '$activeLoans Active'
-                  : context.l10n.noLoans,
-              onTap: () => navigate(const LendingTrackerScreen()),
+            child: e2eId(
+              'home_lending',
+              _QuickCard(
+                icon: Icons.handshake_outlined,
+                iconBg: c.infoSoft,
+                iconFg: c.infoStrong,
+                title: context.l10n.commonLending,
+                stat: '$activeLoans',
+                caption: activeLoans > 0
+                    ? '$activeLoans Active'
+                    : context.l10n.noLoans,
+                onTap: () => navigate(const LendingTrackerScreen()),
+              ),
             ),
           ),
           const SizedBox(width: 12),

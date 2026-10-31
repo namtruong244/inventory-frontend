@@ -6,6 +6,7 @@ import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/trash_actions.dart';
+import '../utils/e2e.dart';
 import '../widgets/app_form_field.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
@@ -223,43 +224,46 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
                 child: Row(
                   children: StorageType.values.map((type) {
                     final isSelected = _selectedType == type;
-                    return Tappable(
-                      onTap: () => setState(() => _selectedType = type),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? context.colors.accent
-                              : context.colors.surface,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Row(
-                          children: [
-                            AppIcon(
-                              type.icon,
-                              size: 16,
-                              color: isSelected
-                                  ? context.colors.onAccent
-                                  : context.colors.textPrimary,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              type.displayName,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.w500,
+                    return e2eId(
+                      'box_type_${type.name}',
+                      Tappable(
+                        onTap: () => setState(() => _selectedType = type),
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? context.colors.accent
+                                : context.colors.surface,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
+                            children: [
+                              AppIcon(
+                                type.icon,
+                                size: 16,
                                 color: isSelected
                                     ? context.colors.onAccent
                                     : context.colors.textPrimary,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 6),
+                              Text(
+                                type.displayName,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.w500,
+                                  color: isSelected
+                                      ? context.colors.onAccent
+                                      : context.colors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -270,6 +274,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
 
               // Location Name
               AppFormField(
+                id: 'box_name',
                 label: context.l10n.commonName,
                 hintText: context.l10n.eGLivingRoomOak,
                 controller: _nameController,
@@ -281,6 +286,7 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
 
               // Description
               AppFormField(
+                id: 'box_description',
                 label: context.l10n.commonDescription,
                 hintText: context.l10n.eGUpperShelfLeft,
                 controller: _descriptionController,
@@ -393,21 +399,24 @@ class _BoxCreateScreenState extends State<BoxCreateScreen> {
               SizedBox(
                 width: double.infinity,
                 height: 52,
-                child: FilledButton(
-                  onPressed: _saving ? null : _saveBox,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: context.colors.accent,
-                    foregroundColor: context.colors.onAccent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                child: e2eId(
+                  'box_save',
+                  FilledButton(
+                    onPressed: _saving ? null : _saveBox,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: context.colors.accent,
+                      foregroundColor: context.colors.onAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
                     ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    isEditing
-                        ? context.l10n.saveChanges
-                        : context.l10n.saveLocation,
-                    style: const TextStyle(fontSize: 16),
+                    child: Text(
+                      isEditing
+                          ? context.l10n.saveChanges
+                          : context.l10n.saveLocation,
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ),
                 ),
               ),

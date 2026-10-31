@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../models/inventory_models.dart';
@@ -18,6 +21,7 @@ class BoxCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
   final bool enableClip;
+  final String? id;
 
   const BoxCard({
     super.key,
@@ -30,13 +34,14 @@ class BoxCard extends StatelessWidget {
     this.onDelete,
     this.onEdit,
     this.enableClip = true,
+    this.id,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final card = Tappable(
+    final tappable = Tappable(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -90,6 +95,8 @@ class BoxCard extends StatelessWidget {
         ),
       ),
     );
+
+    final card = id == null ? tappable : e2eId(id!, tappable);
 
     if (onDelete == null && onEdit == null) {
       if (!enableClip) return card;

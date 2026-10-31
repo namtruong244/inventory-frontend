@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -216,79 +219,91 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               ),
               const SizedBox(height: 12),
               Divider(color: c.border),
-              ListTile(
-                leading: AppIcon(Icons.edit_outlined, color: c.textPrimary),
-                title: Text(context.l10n.editItemDetails, style: label()),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ItemCreateScreen(
-                        boxId: item.boxId,
-                        existingItem: item,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: AppIcon(
-                  Icons.drive_file_move_outlined,
-                  color: c.textPrimary,
-                ),
-                title: Text(context.l10n.moveLocation, style: label()),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _showMoveItemDialog(context, item);
-                },
-              ),
-              if (item.status != ItemStatus.lent)
+              e2eId(
+                'item_menu_edit',
                 ListTile(
-                  leading: AppIcon(
-                    Icons.handshake_outlined,
-                    color: c.textPrimary,
-                  ),
-                  title: Text(context.l10n.lendItem, style: label()),
+                  leading: AppIcon(Icons.edit_outlined, color: c.textPrimary),
+                  title: Text(context.l10n.editItemDetails, style: label()),
                   onTap: () {
                     Navigator.pop(sheetContext);
-                    LendItemSheet.show(context, initialItem: item);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ItemCreateScreen(
+                          boxId: item.boxId,
+                          existingItem: item,
+                        ),
+                      ),
+                    );
                   },
                 ),
+              ),
+              e2eId(
+                'item_menu_move',
+                ListTile(
+                  leading: AppIcon(
+                    Icons.drive_file_move_outlined,
+                    color: c.textPrimary,
+                  ),
+                  title: Text(context.l10n.moveLocation, style: label()),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _showMoveItemDialog(context, item);
+                  },
+                ),
+              ),
+              if (item.status != ItemStatus.lent)
+                e2eId(
+                  'item_menu_lend',
+                  ListTile(
+                    leading: AppIcon(
+                      Icons.handshake_outlined,
+                      color: c.textPrimary,
+                    ),
+                    title: Text(context.l10n.lendItem, style: label()),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      LendItemSheet.show(context, initialItem: item);
+                    },
+                  ),
+                ),
               Divider(color: c.border),
-              ListTile(
-                leading: const AppIcon(
-                  Icons.delete_outline_rounded,
-                  color: AppTones.coral,
-                ),
-                title: Text(
-                  context.l10n.deleteItem,
-                  style: label(AppTones.coral, FontWeight.w600),
-                ),
-                onTap: () async {
-                  Navigator.pop(sheetContext);
-                  final confirm = await TrashActions.confirm(
-                    context,
-                    name: item.name,
-                  );
-                  if (!confirm || !context.mounted) return;
-                  final ok = await provider.deleteItem(item.id);
-                  if (!context.mounted) return;
-                  if (ok) {
-                    Navigator.pop(context);
-                    TrashActions.showMoved(
+              e2eId(
+                'item_menu_delete',
+                ListTile(
+                  leading: const AppIcon(
+                    Icons.delete_outline_rounded,
+                    color: AppTones.coral,
+                  ),
+                  title: Text(
+                    context.l10n.deleteItem,
+                    style: label(AppTones.coral, FontWeight.w600),
+                  ),
+                  onTap: () async {
+                    Navigator.pop(sheetContext);
+                    final confirm = await TrashActions.confirm(
                       context,
-                      provider,
                       name: item.name,
-                      itemId: item.id,
                     );
-                  } else {
-                    AppFeedback.showError(
-                      context,
-                      context.l10n.couldNotDeletePleaseTry2(item.name),
-                    );
-                  }
-                },
+                    if (!confirm || !context.mounted) return;
+                    final ok = await provider.deleteItem(item.id);
+                    if (!context.mounted) return;
+                    if (ok) {
+                      Navigator.pop(context);
+                      TrashActions.showMoved(
+                        context,
+                        provider,
+                        name: item.name,
+                        itemId: item.id,
+                      );
+                    } else {
+                      AppFeedback.showError(
+                        context,
+                        context.l10n.couldNotDeletePleaseTry2(item.name),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),
@@ -365,23 +380,26 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                   ),
                 ),
                 actions: [
-                  IconButton(
-                    tooltip: context.l10n.moreOptions,
-                    icon: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: context.colors.surface,
-                        shape: BoxShape.circle,
-                        boxShadow: context.colors.cardShadow,
+                  e2eId(
+                    'item_options',
+                    IconButton(
+                      tooltip: context.l10n.moreOptions,
+                      icon: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: context.colors.surface,
+                          shape: BoxShape.circle,
+                          boxShadow: context.colors.cardShadow,
+                        ),
+                        child: AppIcon(
+                          Icons.more_horiz_rounded,
+                          size: 20,
+                          color: context.colors.textPrimary,
+                        ),
                       ),
-                      child: AppIcon(
-                        Icons.more_horiz_rounded,
-                        size: 20,
-                        color: context.colors.textPrimary,
-                      ),
+                      onPressed: () =>
+                          _showItemOptionsMenu(context, item, provider),
                     ),
-                    onPressed: () =>
-                        _showItemOptionsMenu(context, item, provider),
                   ),
                   const SizedBox(width: 16),
                 ],
@@ -625,24 +643,27 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
               children: [
                 // Move button
                 Expanded(
-                  child: FilledButton.icon(
-                    style: FilledButton.styleFrom(
-                      backgroundColor: context.colors.fill,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  child: e2eId(
+                    'item_move',
+                    FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: context.colors.fill,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
-                    ),
-                    onPressed: () => _showMoveItemDialog(context, item),
-                    icon: AppIcon(
-                      Icons.drive_file_move_outlined,
-                      size: 18,
-                      color: context.colors.textPrimary,
-                    ),
-                    label: Text(
-                      context.l10n.commonMove,
-                      style: TextStyle(color: context.colors.textPrimary),
+                      onPressed: () => _showMoveItemDialog(context, item),
+                      icon: AppIcon(
+                        Icons.drive_file_move_outlined,
+                        size: 18,
+                        color: context.colors.textPrimary,
+                      ),
+                      label: Text(
+                        context.l10n.commonMove,
+                        style: TextStyle(color: context.colors.textPrimary),
+                      ),
                     ),
                   ),
                 ),
@@ -651,68 +672,71 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
                 // Main Action Button (Dynamic based on isConsumable & status)
                 Expanded(
                   flex: 2,
-                  child: item.isConsumable
-                      ? ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colors.accent,
-                            foregroundColor: context.colors.onAccent,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
+                  child: e2eId(
+                    'item_main_action',
+                    item.isConsumable
+                        ? ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: context.colors.accent,
+                              foregroundColor: context.colors.onAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            onPressed: () {
+                              if (item.quantity <= 0) {
+                                showRestockSheet(context, item, provider);
+                              } else {
+                                showConsumeSheet(context, item, provider);
+                              }
+                            },
+                            icon: AppIcon(
+                              item.quantity <= 0
+                                  ? Icons.add_shopping_cart_outlined
+                                  : Icons.remove_circle_outline,
+                              size: 18,
+                            ),
+                            label: Text(
+                              item.quantity <= 0
+                                  ? context.l10n.outOfStockRestock
+                                  : context.l10n.commonConsume(item.unit),
+                            ),
+                          )
+                        : ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: context.colors.accent,
+                              foregroundColor: context.colors.onAccent,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                            onPressed: () => _handleStatusToggle(
+                              context,
+                              item,
+                              provider,
+                              activeLoan,
+                            ),
+                            icon: AppIcon(
+                              item.status == ItemStatus.lent
+                                  ? Icons.assignment_turned_in_outlined
+                                  : item.status == ItemStatus.stored
+                                  ? Icons.outbox_rounded
+                                  : Icons.inventory_2_outlined,
+                              size: 18,
+                            ),
+                            label: Text(
+                              item.status == ItemStatus.lent
+                                  ? context.l10n.returnToStorage
+                                  : item.status == ItemStatus.stored
+                                  ? context.l10n.takeOutToUse
+                                  : context.l10n.returnToStorage,
                             ),
                           ),
-                          onPressed: () {
-                            if (item.quantity <= 0) {
-                              showRestockSheet(context, item, provider);
-                            } else {
-                              showConsumeSheet(context, item, provider);
-                            }
-                          },
-                          icon: AppIcon(
-                            item.quantity <= 0
-                                ? Icons.add_shopping_cart_outlined
-                                : Icons.remove_circle_outline,
-                            size: 18,
-                          ),
-                          label: Text(
-                            item.quantity <= 0
-                                ? context.l10n.outOfStockRestock
-                                : context.l10n.commonConsume(item.unit),
-                          ),
-                        )
-                      : ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: context.colors.accent,
-                            foregroundColor: context.colors.onAccent,
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          onPressed: () => _handleStatusToggle(
-                            context,
-                            item,
-                            provider,
-                            activeLoan,
-                          ),
-                          icon: AppIcon(
-                            item.status == ItemStatus.lent
-                                ? Icons.assignment_turned_in_outlined
-                                : item.status == ItemStatus.stored
-                                ? Icons.outbox_rounded
-                                : Icons.inventory_2_outlined,
-                            size: 18,
-                          ),
-                          label: Text(
-                            item.status == ItemStatus.lent
-                                ? context.l10n.returnToStorage
-                                : item.status == ItemStatus.stored
-                                ? context.l10n.takeOutToUse
-                                : context.l10n.returnToStorage,
-                          ),
-                        ),
+                  ),
                 ),
               ],
             ),

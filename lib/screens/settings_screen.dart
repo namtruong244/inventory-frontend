@@ -18,6 +18,7 @@ import 'login_screen.dart';
 import 'trash_screen.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
+import '../utils/e2e.dart';
 import '../widgets/app_icon.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -607,22 +608,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 50,
-                  child: OutlinedButton.icon(
-                    onPressed: () => _confirmSignOut(context, provider),
-                    icon: const AppIcon(
-                      Icons.logout_rounded,
-                      size: 18,
-                      color: AppTones.coral,
-                    ),
-                    label: Text(
-                      context.l10n.logOutSwitchAccount,
-                      style: TextStyle(color: AppTones.coral, fontSize: 14),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide.none,
-                      backgroundColor: context.colors.dangerSoft,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  child: e2eId(
+                    'settings_logout',
+                    OutlinedButton.icon(
+                      onPressed: () => _confirmSignOut(context, provider),
+                      icon: const AppIcon(
+                        Icons.logout_rounded,
+                        size: 18,
+                        color: AppTones.coral,
+                      ),
+                      label: Text(
+                        context.l10n.logOutSwitchAccount,
+                        style: TextStyle(color: AppTones.coral, fontSize: 14),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide.none,
+                        backgroundColor: context.colors.dangerSoft,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                     ),
                   ),
@@ -775,31 +779,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onPressed: () => Navigator.pop(ctx),
             child: Text(context.l10n.commonCancel),
           ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.pop(ctx);
-              var loggedOut = await provider.logout();
-              if (!loggedOut && context.mounted) {
-                final discard = await AppFeedback.showConfirmDialog(
-                  context,
-                  title: context.l10n.unsyncedChanges,
-                  message:
-                      '${provider.pendingChanges} change(s) have not been uploaded yet and will be lost if you log out. Log out anyway?',
-                  confirmLabel: context.l10n.discardLogOut,
-                  isDestructive: true,
-                );
-                if (!discard) return;
-                loggedOut = await provider.logout(force: true);
-              }
-              if (loggedOut && context.mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
-            style: FilledButton.styleFrom(backgroundColor: AppTones.coral),
-            child: Text(context.l10n.logOut2),
+          e2eId(
+            'settings_logout_confirm',
+            FilledButton(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                var loggedOut = await provider.logout();
+                if (!loggedOut && context.mounted) {
+                  final discard = await AppFeedback.showConfirmDialog(
+                    context,
+                    title: context.l10n.unsyncedChanges,
+                    message:
+                        '${provider.pendingChanges} change(s) have not been uploaded yet and will be lost if you log out. Log out anyway?',
+                    confirmLabel: context.l10n.discardLogOut,
+                    isDestructive: true,
+                  );
+                  if (!discard) return;
+                  loggedOut = await provider.logout(force: true);
+                }
+                if (loggedOut && context.mounted) {
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+                  );
+                }
+              },
+              style: FilledButton.styleFrom(backgroundColor: AppTones.coral),
+              child: Text(context.l10n.logOut2),
+            ),
           ),
         ],
       ),

@@ -1,0 +1,9 @@
+# Env: TAB = home | box | item | setting
+# Chạm 2 lần: trên iOS lần chạm đầu ngay sau login/điều hướng có thể bị bỏ qua.
+appId: ${APP_ID}
+---
+- waitForAnimationToEnd
+- tapOn:
+    id: nav_${TAB}
+- tapOn:
+    id: nav_${TAB}

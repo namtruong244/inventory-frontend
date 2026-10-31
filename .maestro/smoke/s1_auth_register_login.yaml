@@ -1,0 +1,74 @@
+appId: ${APP_ID}
+tags: [smoke]
+---
+- runScript: ../scripts/new_email.js
+- runFlow: ../subflows/fresh_start.yaml
+# Đăng ký: mật khẩu < 8 ký tự bị chặn ở form
+- tapOn:
+    id: login_toggle_mode
+- tapOn:
+    id: login_name
+- inputText: E2E User
+- tapOn:
+    id: login_email
+- inputText: ${output.email}
+- tapOn:
+    id: login_password
+- inputText: short12
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: login_submit
+- tapOn:
+    id: login_submit
+- assertVisible:
+    id: login_name
+- assertNotVisible:
+    id: nav_home
+# Mật khẩu hợp lệ → vào Home
+- tapOn:
+    id: login_password
+- eraseText: 20
+- inputText: ${output.password}
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: login_submit
+- tapOn:
+    id: login_submit
+- extendedWaitUntil:
+    visible:
+      id: nav_home
+    timeout: 20000
+# Logout → login lại
+- runFlow: ../subflows/logout.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: ${output.email}
+      PASSWORD: ${output.password}
+# Sai mật khẩu → ở lại màn login
+- runFlow: ../subflows/logout.yaml
+- runFlow:
+    when:
+      visible:
+        id: login_name
+    commands:
+      - tapOn:
+          id: login_toggle_mode
+- tapOn:
+    id: login_email
+- inputText: ${output.email}
+- tapOn:
+    id: login_password
+- inputText: WrongPass999
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: login_submit
+- tapOn:
+    id: login_submit
+- assertVisible:
+    id: login_submit
+- assertNotVisible:
+    id: nav_home

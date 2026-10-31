@@ -196,97 +196,105 @@ extension _LocationPickerParts on _LocationPickerSheetState {
     final itemCount = provider.countTotalItemsIn(box.id);
     final c = context.colors;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: isSelected ? c.accent.withValues(alpha: 0.35) : c.fill,
-        borderRadius: BorderRadius.circular(20),
-        child: InkWell(
+    return e2eId(
+      'loc_pick_${box.name}',
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Material(
+          color: isSelected ? c.accent.withValues(alpha: 0.35) : c.fill,
           borderRadius: BorderRadius.circular(20),
-          onTap: () => _selectBox(box.id),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            child: Row(
-              children: [
-                _buildRadioCircle(isSelected),
-                const SizedBox(width: 10),
-                SoftIconTile(
-                  box.type.icon,
-                  color: c.textPrimary,
-                  background: c.surface,
-                  size: 40,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              box.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 14,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          if (isCurrent) ...[
-                            const SizedBox(width: 6),
-                            SoftChip(
-                              label: context.l10n.commonCurrent,
-                              background: c.surface,
-                              foreground: c.textPrimary,
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 4,
-                        children: [
-                          SoftChip(
-                            label: box.type.displayName,
-                            background: c.surface,
-                            foreground: c.textSecondary,
-                          ),
-                          SoftChip.tone(
-                            context.l10n.itemsCountLabel(itemCount),
-                            AppTones.sky,
-                          ),
-                          if (hasChildren)
-                            SoftChip.tone(
-                              context.l10n.nestedCountLabel(childBoxes.length),
-                              AppTones.lilac,
-                            ),
-                        ],
-                      ),
-                    ],
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () => _selectBox(box.id),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  _buildRadioCircle(isSelected),
+                  const SizedBox(width: 10),
+                  SoftIconTile(
+                    box.type.icon,
+                    color: c.textPrimary,
+                    background: c.surface,
+                    size: 40,
                   ),
-                ),
-                // Drill-down: opens the children of this box
-                if (hasChildren)
-                  Tappable(
-                    semanticLabel: context.l10n.scanOpen,
-                    onTap: () => _drillDown(box.id),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: c.surface,
-                        shape: BoxShape.circle,
-                      ),
-                      child: AppIcon(
-                        Icons.chevron_right_rounded,
-                        size: 22,
-                        color: c.textPrimary,
-                      ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                box.name,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 14,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (isCurrent) ...[
+                              const SizedBox(width: 6),
+                              SoftChip(
+                                label: context.l10n.commonCurrent,
+                                background: c.surface,
+                                foreground: c.textPrimary,
+                              ),
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 4,
+                          children: [
+                            SoftChip(
+                              label: box.type.displayName,
+                              background: c.surface,
+                              foreground: c.textSecondary,
+                            ),
+                            SoftChip.tone(
+                              context.l10n.itemsCountLabel(itemCount),
+                              AppTones.sky,
+                            ),
+                            if (hasChildren)
+                              SoftChip.tone(
+                                context.l10n.nestedCountLabel(
+                                  childBoxes.length,
+                                ),
+                                AppTones.lilac,
+                              ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-              ],
+                  // Drill-down: opens the children of this box
+                  if (hasChildren)
+                    e2eId(
+                      'loc_drill_${box.name}',
+                      Tappable(
+                        semanticLabel: context.l10n.scanOpen,
+                        onTap: () => _drillDown(box.id),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: c.surface,
+                            shape: BoxShape.circle,
+                          ),
+                          child: AppIcon(
+                            Icons.chevron_right_rounded,
+                            size: 22,
+                            color: c.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),

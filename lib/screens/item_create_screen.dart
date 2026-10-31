@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../utils/date_format.dart';
+import '../utils/e2e.dart';
 
 import 'package:provider/provider.dart';
 
@@ -434,35 +435,38 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
               ),
             Padding(
               padding: const EdgeInsets.only(right: 12.0),
-              child: FilledButton(
-                onPressed: _isLoading ? null : _saveItem,
-                style: FilledButton.styleFrom(
-                  backgroundColor: context.colors.accent,
-                  foregroundColor: context.colors.onAccent,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
+              child: e2eId(
+                'item_save',
+                FilledButton(
+                  onPressed: _isLoading ? null : _saveItem,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: context.colors.accent,
+                    foregroundColor: context.colors.onAccent,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    minimumSize: Size.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  minimumSize: Size.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: _isLoading
-                    ? SizedBox(
-                        width: 14,
-                        height: 14,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: context.colors.onAccent,
+                  child: _isLoading
+                      ? SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: context.colors.onAccent,
+                          ),
+                        )
+                      : Text(
+                          isEditing
+                              ? context.l10n.commonSave
+                              : context.l10n.commonCreate,
+                          style: const TextStyle(fontSize: 13),
                         ),
-                      )
-                    : Text(
-                        isEditing
-                            ? context.l10n.commonSave
-                            : context.l10n.commonCreate,
-                        style: const TextStyle(fontSize: 13),
-                      ),
+                ),
               ),
             ),
           ],
@@ -488,36 +492,43 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                 Theme(
                   data: Theme.of(context)
                       .copyWith(dividerColor: Colors.transparent),
-                  child: ExpansionTile(
-                    initiallyExpanded: isEditing,
-                    tilePadding: EdgeInsets.zero,
-                    childrenPadding: EdgeInsets.zero,
-                    title: Text(
-                      context.l10n.moreDetails,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        color: context.colors.textPrimary,
+                  child: e2eId(
+                    'item_more_details',
+                    ExpansionTile(
+                      initiallyExpanded: isEditing,
+                      tilePadding: EdgeInsets.zero,
+                      childrenPadding: EdgeInsets.zero,
+                      title: Text(
+                        context.l10n.moreDetails,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: context.colors.textPrimary,
+                        ),
                       ),
+                      children: [
+                        const SizedBox(height: 8),
+                        ..._statusSection(provider, currentBox, breadcrumb),
+
+                        ..._assetDetailsSection(
+                          provider,
+                          currentBox,
+                          breadcrumb,
+                        ),
+
+                        ..._specificationsSection(
+                          provider,
+                          currentBox,
+                          breadcrumb,
+                        ),
+
+                        // Receipts & Invoices
+                        _buildSectionTitle(context.l10n.receiptsWarrantyProof),
+                        const SizedBox(height: 12),
+                        _buildPhotosGallery(true),
+                        const SizedBox(height: 24),
+                      ],
                     ),
-                    children: [
-                      const SizedBox(height: 8),
-                      ..._statusSection(provider, currentBox, breadcrumb),
-
-                      ..._assetDetailsSection(provider, currentBox, breadcrumb),
-
-                      ..._specificationsSection(
-                        provider,
-                        currentBox,
-                        breadcrumb,
-                      ),
-
-                      // Receipts & Invoices
-                      _buildSectionTitle(context.l10n.receiptsWarrantyProof),
-                      const SizedBox(height: 12),
-                      _buildPhotosGallery(true),
-                      const SizedBox(height: 24),
-                    ],
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -526,21 +537,24 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
                 SizedBox(
                   width: double.infinity,
                   height: 52,
-                  child: FilledButton(
-                    onPressed: _isLoading ? null : _saveItem,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: context.colors.accent,
-                      foregroundColor: context.colors.onAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                  child: e2eId(
+                    'item_save_bottom',
+                    FilledButton(
+                      onPressed: _isLoading ? null : _saveItem,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: context.colors.accent,
+                        foregroundColor: context.colors.onAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      isEditing
-                          ? context.l10n.saveChanges
-                          : context.l10n.saveItem,
-                      style: const TextStyle(fontSize: 16),
+                      child: Text(
+                        isEditing
+                            ? context.l10n.saveChanges
+                            : context.l10n.saveItem,
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ),
                   ),
                 ),

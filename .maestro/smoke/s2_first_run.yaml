@@ -1,0 +1,25 @@
+appId: ${APP_ID}
+tags: [smoke]
+---
+- runScript: ../scripts/seed.js
+- runFlow: ../subflows/fresh_start.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: ${output.email}
+      PASSWORD: ${output.password}
+# User mới: Home hiện FirstRoomsCard → chọn 2 phòng → tạo hàng loạt
+- tapOn:
+    id: first_room_0
+- tapOn:
+    id: first_room_1
+- tapOn:
+    id: first_rooms_create
+- extendedWaitUntil:
+    notVisible:
+      id: first_rooms_create
+    timeout: 15000
+- tapOn:
+    id: nav_box
+- assertNotVisible:
+    id: first_rooms_create

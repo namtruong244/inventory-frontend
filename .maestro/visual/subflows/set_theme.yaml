@@ -1,0 +1,19 @@
+# Env: THEME = light | dark | system. Đổi giao diện qua Settings → Appearance, quay lại tab Home.
+appId: ${APP_ID}
+---
+- runFlow:
+    file: ../../subflows/open_tab.yaml
+    env:
+      TAB: setting
+- scrollUntilVisible:
+    element:
+      id: settings_theme
+- tapOn:
+    id: settings_theme
+- tapOn:
+    id: settings_theme_${THEME}
+- waitForAnimationToEnd
+- runFlow:
+    file: ../../subflows/open_tab.yaml
+    env:
+      TAB: home

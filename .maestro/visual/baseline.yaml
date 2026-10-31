@@ -1,0 +1,47 @@
+# Chụp app HIỆN TẠI (trước redesign). Ảnh: .maestro/visual/out/baseline/*.png
+appId: ${APP_ID}
+# Chạy bằng .maestro/visual/run.sh baseline (Maestro chỉ cho ghi ảnh trong thư mục output của lần chạy).
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- takeScreenshot: out/baseline/home
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: box
+- waitForAnimationToEnd
+- takeScreenshot: out/baseline/box
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: item
+- waitForAnimationToEnd
+- takeScreenshot: out/baseline/item
+- tapOn:
+    id: item_card_Bosch GSR 18V-55 cordless drill
+- waitForAnimationToEnd
+- takeScreenshot: out/baseline/item_detail
+- tapOn: Back
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: setting
+- waitForAnimationToEnd
+- takeScreenshot: out/baseline/settings
+- tapOn:
+    id: nav_scan
+- waitForAnimationToEnd
+- takeScreenshot: out/baseline/scanner
+- tapOn: Back
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- waitForAnimationToEnd
+- takeScreenshot: out/baseline/home_dark
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: setting
+- waitForAnimationToEnd
+- takeScreenshot: out/baseline/settings_dark

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
+import '../utils/e2e.dart';
 
 class AppFormField extends StatelessWidget {
+  /// E2E selector for the input (see [e2eId]).
+  final String? id;
   final String label;
   final String? hintText;
   final TextEditingController? controller;
@@ -20,6 +23,7 @@ class AppFormField extends StatelessWidget {
 
   const AppFormField({
     super.key,
+    this.id,
     required this.label,
     this.hintText,
     this.controller,
@@ -56,65 +60,73 @@ class AppFormField extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: context.colors.cardShadow,
           ),
-          child: TextFormField(
-            controller: controller,
-            validator: validator,
-            maxLines: maxLines,
-            keyboardType: keyboardType,
-            textInputAction: textInputAction,
-            readOnly: readOnly,
-            onTap: onTap,
-            onChanged: onChanged,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: context.colors.textPrimary,
-            ),
-            decoration: InputDecoration(
-              hintText: hintText,
-              hintStyle: TextStyle(
-                color: context.colors.textMuted,
+          child: _tag(
+            TextFormField(
+              controller: controller,
+              validator: validator,
+              maxLines: maxLines,
+              keyboardType: keyboardType,
+              textInputAction: textInputAction,
+              readOnly: readOnly,
+              onTap: onTap,
+              onChanged: onChanged,
+              style: TextStyle(
                 fontSize: 15,
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.w500,
+                color: context.colors.textPrimary,
               ),
-              filled: true,
-              fillColor: context.colors.surface,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 15,
-              ),
-              prefixText: prefixText,
-              prefixStyle:
-                  prefixStyle ??
-                  TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: context.colors.textPrimary,
-                  ),
-              prefixIcon: prefixIcon,
-              suffixIcon: suffixIcon,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide(
-                  color: context.colors.primary,
-                  width: 1.5,
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(
+                  color: context.colors.textMuted,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
                 ),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: const BorderSide(color: AppTones.coral, width: 1.5),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: const BorderSide(color: AppTones.coral, width: 1.5),
+                filled: true,
+                fillColor: context.colors.surface,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 15,
+                ),
+                prefixText: prefixText,
+                prefixStyle:
+                    prefixStyle ??
+                    TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: context.colors.textPrimary,
+                    ),
+                prefixIcon: prefixIcon,
+                suffixIcon: suffixIcon,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide(
+                    color: context.colors.primary,
+                    width: 1.5,
+                  ),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: const BorderSide(
+                    color: AppTones.coral,
+                    width: 1.5,
+                  ),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: const BorderSide(
+                    color: AppTones.coral,
+                    width: 1.5,
+                  ),
+                ),
               ),
             ),
           ),
@@ -122,4 +134,6 @@ class AppFormField extends StatelessWidget {
       ],
     );
   }
+
+  Widget _tag(Widget field) => id == null ? field : e2eId(id!, field);
 }

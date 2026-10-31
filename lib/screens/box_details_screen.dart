@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
@@ -160,23 +163,26 @@ class BoxDetailsScreen extends StatelessWidget {
                     // 2. More Options Menu
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: IconButton(
-                        tooltip: context.l10n.moreOptions,
-                        icon: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: context.colors.surface,
-                            shape: BoxShape.circle,
-                            boxShadow: context.colors.cardShadow,
+                      child: e2eId(
+                        'box_options',
+                        IconButton(
+                          tooltip: context.l10n.moreOptions,
+                          icon: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: context.colors.surface,
+                              shape: BoxShape.circle,
+                              boxShadow: context.colors.cardShadow,
+                            ),
+                            child: AppIcon(
+                              Icons.more_horiz_rounded,
+                              size: 20,
+                              color: context.colors.textPrimary,
+                            ),
                           ),
-                          child: AppIcon(
-                            Icons.more_horiz_rounded,
-                            size: 20,
-                            color: context.colors.textPrimary,
-                          ),
+                          onPressed: () =>
+                              _showBoxOptionsMenu(context, box, provider),
                         ),
-                        onPressed: () =>
-                            _showBoxOptionsMenu(context, box, provider),
                       ),
                     ),
                   ],
@@ -328,32 +334,36 @@ class BoxDetailsScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            Tappable(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        BoxCreateScreen(parentId: box.id),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  AppIcon(
-                                    Icons.add_rounded,
-                                    size: 18,
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    context.l10n.addContainer,
-                                    style: theme.textTheme.labelLarge?.copyWith(
-                                      color: theme.colorScheme.primary,
-                                      fontWeight: FontWeight.w500,
+                            e2eId(
+                              'box_add_child',
+                              Tappable(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          BoxCreateScreen(parentId: box.id),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    AppIcon(
+                                      Icons.add_rounded,
+                                      size: 18,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      context.l10n.addContainer,
+                                      style: theme.textTheme.labelLarge
+                                          ?.copyWith(
+                                            color: theme.colorScheme.primary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -366,6 +376,7 @@ class BoxDetailsScreen extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12.0),
                               child: BoxCard(
+                                id: 'box_card_${subBox.name}',
                                 name: subBox.name,
                                 description:
                                     '${subBox.type.displayName} • $count items',
@@ -436,32 +447,36 @@ class BoxDetailsScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            Tappable(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        ItemCreateScreen(boxId: box.id),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  AppIcon(
-                                    Icons.add,
-                                    size: 16,
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    context.l10n.addItem,
-                                    style: theme.textTheme.labelLarge?.copyWith(
-                                      color: theme.colorScheme.primary,
-                                      fontWeight: FontWeight.w500,
+                            e2eId(
+                              'box_add_item',
+                              Tappable(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          ItemCreateScreen(boxId: box.id),
                                     ),
-                                  ),
-                                ],
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    AppIcon(
+                                      Icons.add,
+                                      size: 16,
+                                      color: theme.colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      context.l10n.addItem,
+                                      style: theme.textTheme.labelLarge
+                                          ?.copyWith(
+                                            color: theme.colorScheme.primary,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -517,6 +532,7 @@ class BoxDetailsScreen extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12.0),
                               child: ItemCard(
+                                id: 'item_card_${item.name}',
                                 name: item.name,
                                 description: fullDesc,
                                 imageUrl: item.imageUrl,
@@ -659,44 +675,50 @@ class BoxDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Divider(color: context.colors.border),
-              ListTile(
-                leading: AppIcon(
-                  Icons.edit_outlined,
-                  color: context.colors.textPrimary,
-                ),
-                title: Text(
-                  context.l10n.editLocation,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
+              e2eId(
+                'box_menu_edit',
+                ListTile(
+                  leading: AppIcon(
+                    Icons.edit_outlined,
+                    color: context.colors.textPrimary,
                   ),
-                ),
-                onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BoxCreateScreen(existingBox: box),
+                  title: Text(
+                    context.l10n.editLocation,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
                     ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: AppIcon(
-                  Icons.drive_file_move_outlined,
-                  color: context.colors.textPrimary,
-                ),
-                title: Text(
-                  context.l10n.moveLocation,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
                   ),
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BoxCreateScreen(existingBox: box),
+                      ),
+                    );
+                  },
                 ),
-                onTap: () {
-                  Navigator.pop(bottomSheetContext);
-                  MoveLocationDialog.show(context, box);
-                },
+              ),
+              e2eId(
+                'box_menu_move',
+                ListTile(
+                  leading: AppIcon(
+                    Icons.drive_file_move_outlined,
+                    color: context.colors.textPrimary,
+                  ),
+                  title: Text(
+                    context.l10n.moveLocation,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    MoveLocationDialog.show(context, box);
+                  },
+                ),
               ),
               ListTile(
                 leading: AppIcon(
@@ -738,47 +760,53 @@ class BoxDetailsScreen extends StatelessWidget {
                 },
               ),
               Divider(color: context.colors.border),
-              ListTile(
-                leading: const AppIcon(
-                  Icons.delete_outline_rounded,
-                  color: AppTones.coral,
-                ),
-                title: Text(
-                  context.l10n.deleteLocation,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+              e2eId(
+                'box_menu_delete',
+                ListTile(
+                  leading: const AppIcon(
+                    Icons.delete_outline_rounded,
                     color: AppTones.coral,
                   ),
-                ),
-                onTap: () async {
-                  Navigator.pop(bottomSheetContext);
-                  final confirmed = await TrashActions.confirm(
-                    context,
-                    name: box.name,
-                    isBox: true,
-                    hasContents: true,
-                  );
-                  if (confirmed && context.mounted) {
-                    final boxName = box.name;
-                    final ok = await provider.deleteBox(box.id, cascade: true);
-                    if (!context.mounted) return;
-                    if (ok) {
-                      Navigator.pop(context);
-                      TrashActions.showMoved(
-                        context,
-                        provider,
-                        name: boxName,
-                        boxId: box.id,
+                  title: Text(
+                    context.l10n.deleteLocation,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: AppTones.coral,
+                    ),
+                  ),
+                  onTap: () async {
+                    Navigator.pop(bottomSheetContext);
+                    final confirmed = await TrashActions.confirm(
+                      context,
+                      name: box.name,
+                      isBox: true,
+                      hasContents: true,
+                    );
+                    if (confirmed && context.mounted) {
+                      final boxName = box.name;
+                      final ok = await provider.deleteBox(
+                        box.id,
+                        cascade: true,
                       );
-                    } else {
-                      AppFeedback.showError(
-                        context,
-                        context.l10n.couldNotDeletePleaseTry(boxName),
-                      );
+                      if (!context.mounted) return;
+                      if (ok) {
+                        Navigator.pop(context);
+                        TrashActions.showMoved(
+                          context,
+                          provider,
+                          name: boxName,
+                          boxId: box.id,
+                        );
+                      } else {
+                        AppFeedback.showError(
+                          context,
+                          context.l10n.couldNotDeletePleaseTry(boxName),
+                        );
+                      }
                     }
-                  }
-                },
+                  },
+                ),
               ),
             ],
           ),

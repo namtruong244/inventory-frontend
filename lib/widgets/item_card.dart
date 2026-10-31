@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../utils/e2e.dart';
+
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'app_image_view.dart';
@@ -30,6 +33,7 @@ class ItemCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
   final bool enableClip;
+  final String? id;
 
   const ItemCard({
     super.key,
@@ -46,6 +50,7 @@ class ItemCard extends StatelessWidget {
     this.onTap,
     this.onLongPress,
     this.enableClip = true,
+    this.id,
   });
 
   @override
@@ -155,6 +160,7 @@ class ItemCard extends StatelessWidget {
     if (onTap != null || onLongPress != null) {
       card = Tappable(onTap: onTap, onLongPress: onLongPress, child: card);
     }
+    if (id != null) card = e2eId(id!, card);
 
     if (onDelete == null && onEdit == null) {
       if (!enableClip) return card;

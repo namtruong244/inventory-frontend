@@ -13,6 +13,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
       const SizedBox(height: 12),
 
       AppFormField(
+        id: 'item_name',
         label: context.l10n.itemName,
         hintText: context.l10n.eGMacbookProFirst,
         controller: _nameController,
@@ -101,6 +102,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           Expanded(
             flex: 3,
             child: AppFormField(
+              id: 'item_quantity',
               label: context.l10n.commonQuantity,
               hintText: '1',
               controller: _quantityController,
@@ -116,6 +118,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           Expanded(
             flex: 3,
             child: AppFormField(
+              id: 'item_unit',
               label: context.l10n.commonUnit,
               hintText: provider.defaultUnit.isNotEmpty
                   ? provider.defaultUnit
@@ -154,6 +157,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
 
       // Low Stock Threshold per item
       AppFormField(
+        id: 'item_min_quantity',
         label: context.l10n.lowStockAlertThresholdOptional,
         hintText: context.l10n.eG2AlertWhen,
         controller: _minQuantityController,
@@ -173,91 +177,95 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         ),
       ),
       const SizedBox(height: 8),
-      Tappable(
-        onTap: _pickStorageLocation,
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: context.colors.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: context.colors.cardShadow,
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: context.colors.fill,
-                  borderRadius: BorderRadius.circular(12),
+      e2eId(
+        'item_location',
+        Tappable(
+          onTap: _pickStorageLocation,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: context.colors.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: context.colors.cardShadow,
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: context.colors.fill,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: AppIcon(
+                    currentBox?.type.icon ?? Icons.location_on_outlined,
+                    color: context.colors.textPrimary,
+                    size: 20,
+                  ),
                 ),
-                child: AppIcon(
-                  currentBox?.type.icon ?? Icons.location_on_outlined,
-                  color: context.colors.textPrimary,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      currentBox?.name ?? context.l10n.selectStorageContainer,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: context.colors.textPrimary,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        currentBox?.name ?? context.l10n.selectStorageContainer,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: context.colors.textPrimary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 3),
-                    Row(
-                      children: [
-                        AppIcon(
-                          Icons.route_outlined,
-                          size: 12,
-                          color: context.colors.textSecondary,
-                        ),
-                        const SizedBox(width: 4),
-                        Expanded(
-                          child: Text(
-                            breadcrumb.isNotEmpty
-                                ? breadcrumb
-                                : context.l10n.commonUnassigned,
-                            style: TextStyle(
-                              color: context.colors.textSecondary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                      const SizedBox(height: 3),
+                      Row(
+                        children: [
+                          AppIcon(
+                            Icons.route_outlined,
+                            size: 12,
+                            color: context.colors.textSecondary,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              breadcrumb.isNotEmpty
+                                  ? breadcrumb
+                                  : context.l10n.commonUnassigned,
+                              style: TextStyle(
+                                color: context.colors.textSecondary,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: context.colors.fill,
-                  shape: BoxShape.circle,
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: context.colors.fill,
+                    shape: BoxShape.circle,
+                  ),
+                  child: AppIcon(
+                    Icons.chevron_right_rounded,
+                    color: context.colors.textPrimary,
+                    size: 18,
+                  ),
                 ),
-                child: AppIcon(
-                  Icons.chevron_right_rounded,
-                  color: context.colors.textPrimary,
-                  size: 18,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
       const SizedBox(height: 16),
 
       AppFormField(
+        id: 'item_description',
         label: context.l10n.commonDescription,
         hintText: context.l10n.colorConditionAccessoriesOptional,
         controller: _descriptionController,
@@ -399,6 +407,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
         children: [
           Expanded(
             child: AppFormField(
+              id: 'item_price',
               label: context.l10n.purchasePrice(provider.currency),
               hintText: '0.00',
               prefixText: '${provider.currency} ',
@@ -411,6 +420,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
           const SizedBox(width: 12),
           Expanded(
             child: AppFormField(
+              id: 'item_serial',
               label: context.l10n.serialNumber,
               hintText: 'SN-XXXX-XXXX',
               controller: _serialController,
@@ -422,6 +432,7 @@ extension _ItemCreateSections on _ItemCreateScreenState {
 
       // Barcode (UPC/EAN)
       AppFormField(
+        id: 'item_barcode',
         label: context.l10n.productBarcodeUpcEan,
         hintText: context.l10n.scanOrEnterProductBarcode,
         controller: _barcodeController,

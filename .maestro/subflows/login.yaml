@@ -1,0 +1,23 @@
+# Env: EMAIL, PASSWORD. Yêu cầu đang ở màn login.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: login_email
+- inputText: ${EMAIL}
+- tapOn:
+    id: login_password
+- inputText: ${PASSWORD}
+- runFlow: dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: login_submit
+- tapOn:
+    id: login_submit
+- extendedWaitUntil:
+    visible:
+      id: nav_home
+    timeout: 20000
+# Toast "Welcome back" che thanh nav và nuốt tap → chờ nó biến mất.
+- extendedWaitUntil:
+    notVisible: "Welcome back.*"
+    timeout: 15000
