@@ -64,7 +64,7 @@ var bottomShelf = box('Bottom shelf', 'shelf', cabinet);
 var tvDrawer = box('TV console drawer', 'drawer', living);
 var games = box('Board games', 'box', living);
 
-item('AA Batteries (Eneloop)', cables, 'Electronics', 4, 'pcs', { minQuantity: 8 });
+item('AA Batteries (Eneloop)', cables, 'Electronics', 4, 'pcs', { minQuantity: 8, isConsumable: true });
 item('USB-C Cable 2m', cables, 'Electronics', 6, 'pcs', { minQuantity: 2 });
 item('65W GaN Charger', cables, 'Electronics', 2, 'pcs', { minQuantity: 3, purchasePrice: 42, purchaseDate: daysFromNow(-120) });
 item('Sony WH-1000XM4', topShelf, 'Electronics', 1, 'pcs', {

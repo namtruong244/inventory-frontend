@@ -87,7 +87,7 @@ class AppFormField extends StatelessWidget {
             // Material insets helper/error text by the 16pt content padding; pull it
             // back so it lines up with the label above the field.
             errorBuilder: (context, error) => Transform.translate(
-              offset: const Offset(-16, 0),
+              offset: const Offset(-20, 0),
               child: Text(
                 error,
                 style: TextStyle(
@@ -107,7 +107,7 @@ class AppFormField extends StatelessWidget {
               helper: helperText == null
                   ? null
                   : Transform.translate(
-                      offset: const Offset(-16, 0),
+                      offset: const Offset(-20, 0),
                       child: Text(
                         helperText!,
                         style: TextStyle(

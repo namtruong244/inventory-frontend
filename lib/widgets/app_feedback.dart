@@ -92,8 +92,7 @@ class AppFeedback {
                               label: cancelLabel ?? context.l10n.commonCancel,
                               style: SoftButtonStyle.secondary,
                               expand: true,
-                              onPressed: () =>
-                                  Navigator.of(context).pop(false),
+                              onPressed: () => Navigator.of(context).pop(false),
                             ),
                           ),
                         ),
@@ -180,28 +179,31 @@ class AppFeedback {
               ),
               if (actionLabel != null && onAction != null) ...[
                 const SizedBox(width: 12),
-                Tappable(
-                  onTap: () {
-                    messenger.hideCurrentSnackBar();
-                    onAction();
-                  },
-                  behavior: HitTestBehavior.opaque,
-                  child: Container(
-                    constraints: const BoxConstraints(minHeight: 32),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0x1FFFFFFF),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      actionLabel,
-                      style: TextStyle(
-                        color: c.accent,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 13,
+                e2eId(
+                  'toast_undo',
+                  Tappable(
+                    onTap: () {
+                      messenger.hideCurrentSnackBar();
+                      onAction();
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 32),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0x1FFFFFFF),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        actionLabel,
+                        style: TextStyle(
+                          color: c.accent,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   ),

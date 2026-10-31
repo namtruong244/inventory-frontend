@@ -1965,5 +1965,156 @@
   "storageShortBox": "Box",
   "storageShortDrawer": "Drawer",
   "storageShortOther": "Other",
-  "labelPreviewPlaceholder": "New location"
+  "labelPreviewPlaceholder": "New location",
+  "itemMarkReturned": "Mark as returned",
+  "itemHistoryLabel": "History",
+  "itemActionUseRestock": "Use or restock",
+  "itemMoveToAnother": "Move to another location",
+  "itemMoveToTrash": "Move to trash",
+  "itemRestoreWithin": "You can restore it within {days} days",
+  "@itemRestoreWithin": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "itemCurrentlyLent": "Currently lent",
+  "itemLentOn": "Lent on",
+  "itemDueBack": "Due back",
+  "itemDueBackLate": "{date} · {days}d late",
+  "@itemDueBackLate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "itemOverdueChip": "{days, plural, =1{Overdue 1 day} other{Overdue {days} days}}",
+  "@itemOverdueChip": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "itemWarrantyLifecycle": "Warranty & lifecycle",
+  "itemDaysRemaining": "{days, plural, =1{1 day remaining} other{{days} days remaining}}",
+  "@itemDaysRemaining": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "itemPurchaseInfo": "Purchase info",
+  "itemSpecifications": "Specifications",
+  "itemStockHistorySubtitle": "{name} · now {qty}",
+  "@itemStockHistorySubtitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "itemStockHistoryRow": "Stock history",
+  "stockModeUse": "Use",
+  "stockSheetSubtitle": "Current stock: {current} {unit}",
+  "@stockSheetSubtitle": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "stockSheetSubtitleThreshold": "Current stock: {current} {unit} · threshold {threshold}",
+  "@stockSheetSubtitleThreshold": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "stockQuickUse": "Use",
+  "stockQuickAdd": "Add",
+  "stockQuickAll": "All",
+  "stockAmountLabel": "Amount",
+  "stockRemainingAfterUse": "Remaining after use",
+  "stockTotalAfterRestock": "Total after restock",
+  "stockBelowThreshold": "Below low-stock threshold ({threshold}) — you'll get an alert",
+  "@stockBelowThreshold": {
+    "placeholders": {
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "stockOutAfterUse": "Out of stock after this use",
+  "stockUseAmountButton": "Use {amount} {unit}",
+  "@stockUseAmountButton": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "stockRestockAmountButton": "Restock {amount} {unit}",
+  "@stockRestockAmountButton": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "lendSheetSubtitle": "Only items in stock can be lent",
+  "lendAvailable": "{qty} available",
+  "@lendAvailable": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      }
+    }
+  },
+  "lendQuantityAll": "All",
+  "lendWeek1": "1 week",
+  "lendWeeks2": "2 weeks",
+  "lendMonth1": "1 month",
+  "lendPickDate": "Pick a date",
+  "lendDueBackOn": "Due back {date}",
+  "@lendDueBackOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "specSheetAddTitle": "Add specification",
+  "specSheetEditTitle": "Edit specification",
+  "specSheetSubtitle": "Any detail worth remembering",
+  "specSuggestions": "SUGGESTIONS",
+  "specNameLabel": "Name",
+  "specValueLabel": "Value",
+  "specValueHelper": "Shown on the item's Specifications card",
+  "specMore": "+ More"
 }

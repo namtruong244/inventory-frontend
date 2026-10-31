@@ -2854,4 +2854,180 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get labelPreviewPlaceholder => 'Vị trí mới';
+
+  @override
+  String get itemMarkReturned => 'Đánh dấu đã trả';
+
+  @override
+  String get itemHistoryLabel => 'Lịch sử';
+
+  @override
+  String get itemActionUseRestock => 'Dùng hoặc nhập thêm';
+
+  @override
+  String get itemMoveToAnother => 'Chuyển sang vị trí khác';
+
+  @override
+  String get itemMoveToTrash => 'Chuyển vào thùng rác';
+
+  @override
+  String itemRestoreWithin(int days) {
+    return 'Bạn có thể khôi phục trong $days ngày';
+  }
+
+  @override
+  String get itemCurrentlyLent => 'Đang cho mượn';
+
+  @override
+  String get itemLentOn => 'Ngày mượn';
+
+  @override
+  String get itemDueBack => 'Hạn trả';
+
+  @override
+  String itemDueBackLate(String date, int days) {
+    return '$date · trễ $days ngày';
+  }
+
+  @override
+  String itemOverdueChip(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Quá hạn $days ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get itemWarrantyLifecycle => 'Bảo hành & vòng đời';
+
+  @override
+  String itemDaysRemaining(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Còn $days ngày',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get itemPurchaseInfo => 'Thông tin mua hàng';
+
+  @override
+  String get itemSpecifications => 'Thông số';
+
+  @override
+  String itemStockHistorySubtitle(String name, String qty) {
+    return '$name · hiện có $qty';
+  }
+
+  @override
+  String get itemStockHistoryRow => 'Lịch sử tồn kho';
+
+  @override
+  String get stockModeUse => 'Dùng';
+
+  @override
+  String stockSheetSubtitle(String current, String unit) {
+    return 'Tồn kho hiện tại: $current $unit';
+  }
+
+  @override
+  String stockSheetSubtitleThreshold(
+    String current,
+    String unit,
+    String threshold,
+  ) {
+    return 'Tồn kho hiện tại: $current $unit · ngưỡng $threshold';
+  }
+
+  @override
+  String get stockQuickUse => 'Dùng';
+
+  @override
+  String get stockQuickAdd => 'Thêm';
+
+  @override
+  String get stockQuickAll => 'Hết';
+
+  @override
+  String get stockAmountLabel => 'Số lượng';
+
+  @override
+  String get stockRemainingAfterUse => 'Còn lại sau khi dùng';
+
+  @override
+  String get stockTotalAfterRestock => 'Tổng sau khi nhập thêm';
+
+  @override
+  String stockBelowThreshold(String threshold) {
+    return 'Dưới ngưỡng sắp hết ($threshold) — bạn sẽ nhận cảnh báo';
+  }
+
+  @override
+  String get stockOutAfterUse => 'Sẽ hết hàng sau lần dùng này';
+
+  @override
+  String stockUseAmountButton(String amount, String unit) {
+    return 'Dùng $amount $unit';
+  }
+
+  @override
+  String stockRestockAmountButton(String amount, String unit) {
+    return 'Nhập thêm $amount $unit';
+  }
+
+  @override
+  String get lendSheetSubtitle => 'Chỉ cho mượn đồ đang còn trong kho';
+
+  @override
+  String lendAvailable(String qty) {
+    return 'Còn $qty';
+  }
+
+  @override
+  String get lendQuantityAll => 'Tất cả';
+
+  @override
+  String get lendWeek1 => '1 tuần';
+
+  @override
+  String get lendWeeks2 => '2 tuần';
+
+  @override
+  String get lendMonth1 => '1 tháng';
+
+  @override
+  String get lendPickDate => 'Chọn ngày';
+
+  @override
+  String lendDueBackOn(String date) {
+    return 'Hạn trả $date';
+  }
+
+  @override
+  String get specSheetAddTitle => 'Thêm thông số';
+
+  @override
+  String get specSheetEditTitle => 'Sửa thông số';
+
+  @override
+  String get specSheetSubtitle => 'Mọi chi tiết đáng nhớ';
+
+  @override
+  String get specSuggestions => 'GỢI Ý';
+
+  @override
+  String get specNameLabel => 'Tên';
+
+  @override
+  String get specValueLabel => 'Giá trị';
+
+  @override
+  String get specValueHelper => 'Hiển thị trên thẻ Thông số của món đồ';
+
+  @override
+  String get specMore => '+ Thêm';
 }

@@ -1,0 +1,168 @@
+# Env: THEME = light | dark. Chụp Item detail, Actions, Use/Restock, Stock history, Lend, Specification, toast Undo.
+appId: ${APP_ID}
+---
+- runFlow:
+    file: ../../subflows/open_tab.yaml
+    env:
+      TAB: item
+- extendedWaitUntil:
+    visible:
+      id: items_search
+    timeout: 15000
+# Overdue loan item: top + scrolled + actions sheet
+- tapOn:
+    id: item_card_Mini Projector
+- extendedWaitUntil:
+    visible:
+      id: item_options
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_detail_top_${THEME}
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_detail_scrolled_${THEME}
+- scrollUntilVisible:
+    element:
+      id: item_options
+    direction: UP
+- tapOn:
+    id: item_options
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_actions_lent_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- tapOn: "Back"
+# Consumable: use / restock / history / lend
+- extendedWaitUntil:
+    visible:
+      id: items_search
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: item_card_AA Batteries .*
+- tapOn:
+    id: item_card_AA Batteries .*
+- extendedWaitUntil:
+    visible:
+      id: item_main_action
+    timeout: 10000
+- tapOn:
+    id: item_main_action
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_use_${THEME}
+- tapOn:
+    id: stock_restock
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_restock_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- tapOn:
+    id: item_options
+- extendedWaitUntil:
+    visible:
+      id: item_menu_edit
+    timeout: 8000
+- waitForAnimationToEnd
+- tapOn:
+    id: item_menu_history
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_history_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- tapOn:
+    id: item_options
+- extendedWaitUntil:
+    visible:
+      id: item_menu_edit
+    timeout: 8000
+- waitForAnimationToEnd
+- tapOn:
+    id: item_menu_lend
+- extendedWaitUntil:
+    visible:
+      id: lend_borrower
+    timeout: 10000
+- tapOn:
+    id: lend_borrower
+- inputText: Linh
+- tapOn: "done"
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_lend_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- tapOn: "Back"
+- waitForAnimationToEnd
+# Specification sheet (drill)
+- extendedWaitUntil:
+    visible:
+      id: nav_item
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: item_card_Bosch GSR 18V-55 cordless drill
+    direction: UP
+- tapOn:
+    id: item_card_Bosch GSR 18V-55 cordless drill
+- extendedWaitUntil:
+    visible:
+      id: item_options
+    timeout: 10000
+- tapOn:
+    id: item_options
+- extendedWaitUntil:
+    visible:
+      id: item_menu_edit
+    timeout: 8000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_actions_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: item_spec_add
+- tapOn:
+    id: item_spec_add
+- waitForAnimationToEnd
+- takeScreenshot: out/item_detail/item_spec_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
+- tapOn: "Back"
+# Delete + undo toast (disposable item)
+- extendedWaitUntil:
+    visible:
+      id: nav_item
+    timeout: 10000
+- scrollUntilVisible:
+    element:
+      id: item_card_Catan
+- tapOn:
+    id: item_card_Catan
+- extendedWaitUntil:
+    visible:
+      id: item_options
+    timeout: 10000
+- tapOn:
+    id: item_options
+- extendedWaitUntil:
+    visible:
+      id: item_menu_edit
+    timeout: 8000
+- waitForAnimationToEnd
+- tapOn:
+    id: item_menu_delete
+- tapOn:
+    id: confirm_ok
+- extendedWaitUntil:
+    visible:
+      id: toast_undo
+    timeout: 10000
+- takeScreenshot: out/item_detail/item_deleted_toast_${THEME}
+- tapOn:
+    id: toast_undo
+- waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      id: item_card_Catan
+    timeout: 10000
+- tapOn: "Item"
+- waitForAnimationToEnd

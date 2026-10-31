@@ -1,0 +1,22 @@
+# Item detail + sheets (Light/Dark). Ảnh: .maestro/visual/out/item_detail/*.png
+# Chạy: .maestro/visual/run.sh item_detail
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: subflows/item_detail_shots.yaml
+    env:
+      THEME: light
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/item_detail_shots.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light

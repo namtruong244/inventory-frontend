@@ -93,7 +93,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Take Out to Use'), findsOneWidget);
-      expect(find.text('Move'), findsOneWidget);
+      expect(find.text('Move'), findsWidgets);
       expect(find.text('Edit Details'), findsNothing);
     });
 

@@ -2949,4 +2949,182 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get labelPreviewPlaceholder => 'New location';
+
+  @override
+  String get itemMarkReturned => 'Mark as returned';
+
+  @override
+  String get itemHistoryLabel => 'History';
+
+  @override
+  String get itemActionUseRestock => 'Use or restock';
+
+  @override
+  String get itemMoveToAnother => 'Move to another location';
+
+  @override
+  String get itemMoveToTrash => 'Move to trash';
+
+  @override
+  String itemRestoreWithin(int days) {
+    return 'You can restore it within $days days';
+  }
+
+  @override
+  String get itemCurrentlyLent => 'Currently lent';
+
+  @override
+  String get itemLentOn => 'Lent on';
+
+  @override
+  String get itemDueBack => 'Due back';
+
+  @override
+  String itemDueBackLate(String date, int days) {
+    return '$date · ${days}d late';
+  }
+
+  @override
+  String itemOverdueChip(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Overdue $days days',
+      one: 'Overdue 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get itemWarrantyLifecycle => 'Warranty & lifecycle';
+
+  @override
+  String itemDaysRemaining(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days remaining',
+      one: '1 day remaining',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get itemPurchaseInfo => 'Purchase info';
+
+  @override
+  String get itemSpecifications => 'Specifications';
+
+  @override
+  String itemStockHistorySubtitle(String name, String qty) {
+    return '$name · now $qty';
+  }
+
+  @override
+  String get itemStockHistoryRow => 'Stock history';
+
+  @override
+  String get stockModeUse => 'Use';
+
+  @override
+  String stockSheetSubtitle(String current, String unit) {
+    return 'Current stock: $current $unit';
+  }
+
+  @override
+  String stockSheetSubtitleThreshold(
+    String current,
+    String unit,
+    String threshold,
+  ) {
+    return 'Current stock: $current $unit · threshold $threshold';
+  }
+
+  @override
+  String get stockQuickUse => 'Use';
+
+  @override
+  String get stockQuickAdd => 'Add';
+
+  @override
+  String get stockQuickAll => 'All';
+
+  @override
+  String get stockAmountLabel => 'Amount';
+
+  @override
+  String get stockRemainingAfterUse => 'Remaining after use';
+
+  @override
+  String get stockTotalAfterRestock => 'Total after restock';
+
+  @override
+  String stockBelowThreshold(String threshold) {
+    return 'Below low-stock threshold ($threshold) — you\'ll get an alert';
+  }
+
+  @override
+  String get stockOutAfterUse => 'Out of stock after this use';
+
+  @override
+  String stockUseAmountButton(String amount, String unit) {
+    return 'Use $amount $unit';
+  }
+
+  @override
+  String stockRestockAmountButton(String amount, String unit) {
+    return 'Restock $amount $unit';
+  }
+
+  @override
+  String get lendSheetSubtitle => 'Only items in stock can be lent';
+
+  @override
+  String lendAvailable(String qty) {
+    return '$qty available';
+  }
+
+  @override
+  String get lendQuantityAll => 'All';
+
+  @override
+  String get lendWeek1 => '1 week';
+
+  @override
+  String get lendWeeks2 => '2 weeks';
+
+  @override
+  String get lendMonth1 => '1 month';
+
+  @override
+  String get lendPickDate => 'Pick a date';
+
+  @override
+  String lendDueBackOn(String date) {
+    return 'Due back $date';
+  }
+
+  @override
+  String get specSheetAddTitle => 'Add specification';
+
+  @override
+  String get specSheetEditTitle => 'Edit specification';
+
+  @override
+  String get specSheetSubtitle => 'Any detail worth remembering';
+
+  @override
+  String get specSuggestions => 'SUGGESTIONS';
+
+  @override
+  String get specNameLabel => 'Name';
+
+  @override
+  String get specValueLabel => 'Value';
+
+  @override
+  String get specValueHelper => 'Shown on the item\'s Specifications card';
+
+  @override
+  String get specMore => '+ More';
 }

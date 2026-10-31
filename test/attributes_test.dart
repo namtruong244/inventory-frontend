@@ -155,15 +155,15 @@ void main() {
         await tester.pump(const Duration(seconds: 5));
         await tester.pumpAndSettle();
 
-        final specFinder = find.text('Specifications & Attributes');
+        final specFinder = find.text('Specifications');
         await tester.scrollUntilVisible(specFinder, 500);
 
         // Verify card exists
         expect(specFinder, findsOneWidget);
-        expect(find.text('Manage'), findsOneWidget);
-        expect(find.text('RESOLUTION'), findsOneWidget);
+        expect(find.text('Add'), findsOneWidget);
+        expect(find.text('Resolution'), findsOneWidget);
         expect(find.text('4K'), findsOneWidget);
-        expect(find.text('SENSOR'), findsOneWidget);
+        expect(find.text('Sensor'), findsOneWidget);
         expect(find.text('Full Frame'), findsOneWidget);
 
         await tester.pump(const Duration(seconds: 5));

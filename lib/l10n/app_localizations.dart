@@ -4930,6 +4930,286 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New location'**
   String get labelPreviewPlaceholder;
+
+  /// No description provided for @itemMarkReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as returned'**
+  String get itemMarkReturned;
+
+  /// No description provided for @itemHistoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get itemHistoryLabel;
+
+  /// No description provided for @itemActionUseRestock.
+  ///
+  /// In en, this message translates to:
+  /// **'Use or restock'**
+  String get itemActionUseRestock;
+
+  /// No description provided for @itemMoveToAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to another location'**
+  String get itemMoveToAnother;
+
+  /// No description provided for @itemMoveToTrash.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to trash'**
+  String get itemMoveToTrash;
+
+  /// No description provided for @itemRestoreWithin.
+  ///
+  /// In en, this message translates to:
+  /// **'You can restore it within {days} days'**
+  String itemRestoreWithin(int days);
+
+  /// No description provided for @itemCurrentlyLent.
+  ///
+  /// In en, this message translates to:
+  /// **'Currently lent'**
+  String get itemCurrentlyLent;
+
+  /// No description provided for @itemLentOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent on'**
+  String get itemLentOn;
+
+  /// No description provided for @itemDueBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Due back'**
+  String get itemDueBack;
+
+  /// No description provided for @itemDueBackLate.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {days}d late'**
+  String itemDueBackLate(String date, int days);
+
+  /// No description provided for @itemOverdueChip.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Overdue 1 day} other{Overdue {days} days}}'**
+  String itemOverdueChip(int days);
+
+  /// No description provided for @itemWarrantyLifecycle.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty & lifecycle'**
+  String get itemWarrantyLifecycle;
+
+  /// No description provided for @itemDaysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day remaining} other{{days} days remaining}}'**
+  String itemDaysRemaining(int days);
+
+  /// No description provided for @itemPurchaseInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase info'**
+  String get itemPurchaseInfo;
+
+  /// No description provided for @itemSpecifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Specifications'**
+  String get itemSpecifications;
+
+  /// No description provided for @itemStockHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · now {qty}'**
+  String itemStockHistorySubtitle(String name, String qty);
+
+  /// No description provided for @itemStockHistoryRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock history'**
+  String get itemStockHistoryRow;
+
+  /// No description provided for @stockModeUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get stockModeUse;
+
+  /// No description provided for @stockSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Current stock: {current} {unit}'**
+  String stockSheetSubtitle(String current, String unit);
+
+  /// No description provided for @stockSheetSubtitleThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Current stock: {current} {unit} · threshold {threshold}'**
+  String stockSheetSubtitleThreshold(
+    String current,
+    String unit,
+    String threshold,
+  );
+
+  /// No description provided for @stockQuickUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get stockQuickUse;
+
+  /// No description provided for @stockQuickAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get stockQuickAdd;
+
+  /// No description provided for @stockQuickAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get stockQuickAll;
+
+  /// No description provided for @stockAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get stockAmountLabel;
+
+  /// No description provided for @stockRemainingAfterUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining after use'**
+  String get stockRemainingAfterUse;
+
+  /// No description provided for @stockTotalAfterRestock.
+  ///
+  /// In en, this message translates to:
+  /// **'Total after restock'**
+  String get stockTotalAfterRestock;
+
+  /// No description provided for @stockBelowThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Below low-stock threshold ({threshold}) — you\'ll get an alert'**
+  String stockBelowThreshold(String threshold);
+
+  /// No description provided for @stockOutAfterUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of stock after this use'**
+  String get stockOutAfterUse;
+
+  /// No description provided for @stockUseAmountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {amount} {unit}'**
+  String stockUseAmountButton(String amount, String unit);
+
+  /// No description provided for @stockRestockAmountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Restock {amount} {unit}'**
+  String stockRestockAmountButton(String amount, String unit);
+
+  /// No description provided for @lendSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Only items in stock can be lent'**
+  String get lendSheetSubtitle;
+
+  /// No description provided for @lendAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} available'**
+  String lendAvailable(String qty);
+
+  /// No description provided for @lendQuantityAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get lendQuantityAll;
+
+  /// No description provided for @lendWeek1.
+  ///
+  /// In en, this message translates to:
+  /// **'1 week'**
+  String get lendWeek1;
+
+  /// No description provided for @lendWeeks2.
+  ///
+  /// In en, this message translates to:
+  /// **'2 weeks'**
+  String get lendWeeks2;
+
+  /// No description provided for @lendMonth1.
+  ///
+  /// In en, this message translates to:
+  /// **'1 month'**
+  String get lendMonth1;
+
+  /// No description provided for @lendPickDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get lendPickDate;
+
+  /// No description provided for @lendDueBackOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Due back {date}'**
+  String lendDueBackOn(String date);
+
+  /// No description provided for @specSheetAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add specification'**
+  String get specSheetAddTitle;
+
+  /// No description provided for @specSheetEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit specification'**
+  String get specSheetEditTitle;
+
+  /// No description provided for @specSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Any detail worth remembering'**
+  String get specSheetSubtitle;
+
+  /// No description provided for @specSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'SUGGESTIONS'**
+  String get specSuggestions;
+
+  /// No description provided for @specNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get specNameLabel;
+
+  /// No description provided for @specValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get specValueLabel;
+
+  /// No description provided for @specValueHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown on the item\'s Specifications card'**
+  String get specValueHelper;
+
+  /// No description provided for @specMore.
+  ///
+  /// In en, this message translates to:
+  /// **'+ More'**
+  String get specMore;
 }
 
 class _AppLocalizationsDelegate

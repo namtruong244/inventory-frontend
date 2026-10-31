@@ -1,192 +1,119 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n_ext.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
-import 'app_feedback.dart';
 import '../theme/app_theme.dart';
-import '../l10n/l10n_ext.dart';
+import '../utils/e2e.dart';
+import 'app_feedback.dart';
+import 'app_form_field.dart';
 import 'app_icon.dart';
+import 'item_card_parts.dart';
+import 'soft_sheet.dart';
+import 'soft_ui.dart';
+import 'tappable.dart';
 
 Widget buildCustomAttributesCard(BuildContext context, Item item) {
   final attributes = item.customAttributes;
-  final hasAttributes = attributes.isNotEmpty;
-
-  return Container(
-    padding: const EdgeInsets.all(18),
-    decoration: BoxDecoration(
-      color: context.colors.surface,
-      borderRadius: BorderRadius.circular(24),
-      boxShadow: context.colors.cardShadow,
-    ),
+  final c = context.colors;
+  final l10n = context.l10n;
+  final entries = attributes.entries.toList();
+  return ItemSection(
     child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  AppIcon(
-                    Icons.tune_rounded,
-                    size: 20,
-                    color: context.colors.textPrimary,
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      context.l10n.specificationsAttributes,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: context.colors.textPrimary,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  if (hasAttributes) ...[
-                    const SizedBox(width: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: context.colors.primary,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        '${attributes.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            TextButton.icon(
-              onPressed: () => showManageAttributesSheet(context, item),
-              icon: AppIcon(
-                hasAttributes ? Icons.edit_outlined : Icons.add_rounded,
-                size: 15,
-              ),
-              label: Text(
-                hasAttributes
-                    ? context.l10n.commonManage
-                    : context.l10n.commonAdd,
-              ),
-              style: TextButton.styleFrom(
-                foregroundColor: context.colors.textPrimary,
-                backgroundColor: context.colors.fill,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            ),
-          ],
+        ItemCardHeader(
+          title: l10n.itemSpecifications,
+          pillLabel: l10n.commonAdd,
+          pillIcon: Icons.add_rounded,
+          pillId: 'item_spec_add',
+          onPill: () => showManageAttributesSheet(context, item),
         ),
         const SizedBox(height: 14),
-        if (hasAttributes)
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: attributes.entries.map((entry) {
-              return InkWell(
-                onTap: () => showManageAttributesSheet(
-                  context,
-                  item,
-                  editKey: entry.key,
-                  editValue: entry.value.toString(),
-                ),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: context.colors.fill,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        entry.key.toUpperCase(),
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: context.colors.textSecondary,
+        if (entries.isNotEmpty)
+          LayoutBuilder(
+            builder: (context, box) {
+              final w = (box.maxWidth - 10) / 2;
+              return Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  for (final e in entries)
+                    SizedBox(
+                      width: w,
+                      child: Tappable(
+                        semanticLabel: e.key,
+                        onTap: () => showManageAttributesSheet(
+                          context,
+                          item,
+                          editKey: e.key,
+                          editValue: e.value.toString(),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: c.fill,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                e.key,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: c.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                e.value.toString(),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  color: c.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        entry.value.toString(),
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                ],
               );
-            }).toList(),
+            },
           )
         else
           Container(
-            width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             decoration: BoxDecoration(
-              color: context.colors.fill,
+              color: c.fill,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Column(
               children: [
                 Text(
-                  context.l10n.noSpecificationsAddedYet,
+                  l10n.noSpecificationsAddedYet,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: context.colors.textSecondary,
+                    fontWeight: FontWeight.w700,
+                    color: c.textSecondary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  context.l10n.addCustomDetailsLikeColor,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.colors.textSecondary,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                OutlinedButton.icon(
-                  onPressed: () => showManageAttributesSheet(context, item),
-                  icon: const AppIcon(Icons.add, size: 15),
-                  label: Text(context.l10n.addSpecification),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: context.colors.textPrimary,
-                    side: BorderSide(color: context.colors.border),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 6,
-                    ),
-                  ),
+                  l10n.addCustomDetailsLikeColor,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: c.textSecondary),
                 ),
               ],
             ),
@@ -202,348 +129,274 @@ void showManageAttributesSheet(
   String? editKey,
   String? editValue,
 }) {
-  final keyController = TextEditingController(text: editKey ?? '');
-  final valueController = TextEditingController(text: editValue ?? '');
   final provider = Provider.of<InventoryProvider>(context, listen: false);
+  final editing = editKey != null;
+  showSoftSheet<void>(
+    context,
+    title: editing
+        ? context.l10n.specSheetEditTitle
+        : context.l10n.specSheetAddTitle,
+    subtitle: context.l10n.specSheetSubtitle,
+    builder: (_) => _AttributesSheetBody(
+      host: context,
+      provider: provider,
+      item: item,
+      editKey: editKey,
+      editValue: editValue,
+    ),
+  );
+}
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (sheetContext) {
-      return StatefulBuilder(
-        builder: (ctx, setSheetState) {
-          final latestItem = provider.getItemById(item.id) ?? item;
-          final currentAttributes = Map<String, dynamic>.from(
-            latestItem.customAttributes,
-          );
-          final suggestedAttributes = [
-            'Color',
-            'Size',
-            'Brand',
-            'Model',
-            'Material',
-            'Weight',
-            'RAM',
-            context.l10n.commonStorage,
-            'Dimensions',
-            'Voltage',
-          ].where((attr) => !currentAttributes.containsKey(attr)).toList();
+class _AttributesSheetBody extends StatefulWidget {
+  final BuildContext host;
+  final InventoryProvider provider;
+  final Item item;
+  final String? editKey;
+  final String? editValue;
 
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            ),
-            child: Container(
+  const _AttributesSheetBody({
+    required this.host,
+    required this.provider,
+    required this.item,
+    this.editKey,
+    this.editValue,
+  });
+
+  @override
+  State<_AttributesSheetBody> createState() => _AttributesSheetBodyState();
+}
+
+class _AttributesSheetBodyState extends State<_AttributesSheetBody> {
+  late final _keyCtrl = TextEditingController(text: widget.editKey ?? '');
+  late final _valueCtrl = TextEditingController(text: widget.editValue ?? '');
+  bool _showAll = false;
+
+  @override
+  void dispose() {
+    _keyCtrl.dispose();
+    _valueCtrl.dispose();
+    super.dispose();
+  }
+
+  Item get _latest =>
+      widget.provider.getItemById(widget.item.id) ?? widget.item;
+
+  Future<void> _remove(String key) async {
+    final attrs = Map<String, dynamic>.from(_latest.customAttributes)
+      ..remove(key);
+    await widget.provider.updateItem(_latest.copyWith(customAttributes: attrs));
+    if (!mounted) return;
+    setState(() {});
+    if (widget.host.mounted) {
+      AppFeedback.showSuccess(widget.host, widget.host.l10n.commonRemoved(key));
+    }
+  }
+
+  Future<void> _save() async {
+    final k = _keyCtrl.text.trim();
+    final v = _valueCtrl.text.trim();
+    final l10n = context.l10n;
+    if (k.isEmpty) {
+      AppFeedback.showError(context, l10n.pleaseEnterAnAttributeName);
+      return;
+    }
+    if (v.isEmpty) {
+      AppFeedback.showError(context, l10n.pleaseEnterAnAttributeValue);
+      return;
+    }
+    final attrs = Map<String, dynamic>.from(_latest.customAttributes);
+    attrs[k] = v;
+    await widget.provider.updateItem(_latest.copyWith(customAttributes: attrs));
+    if (!mounted) return;
+    setState(() {
+      _keyCtrl.clear();
+      _valueCtrl.clear();
+    });
+    if (widget.host.mounted) {
+      AppFeedback.showSuccess(widget.host, widget.host.l10n.savedAttribute(k));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final l10n = context.l10n;
+    final current = _latest.customAttributes;
+    final suggestions = [
+      'Color',
+      'Size',
+      'Brand',
+      'Model',
+      'Material',
+      'Weight',
+      'RAM',
+      l10n.commonStorage,
+      'Dimensions',
+      'Voltage',
+    ].where((a) => !current.containsKey(a)).toList();
+    final shown = _showAll ? suggestions : suggestions.take(5).toList();
+    final labelStyle = TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 0.5,
+      color: c.textSecondary,
+    );
+    return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (current.isNotEmpty) ...[
+            Text(l10n.currentSpecifications.toUpperCase(), style: labelStyle),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
               decoration: BoxDecoration(
-                color: context.colors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                color: c.fill,
+                borderRadius: BorderRadius.circular(16),
               ),
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 36,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: context.colors.border,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+              child: Column(
+                children: [
+                  for (final e in current.entries)
                     Row(
                       children: [
-                        AppIcon(
-                          Icons.tune_rounded,
-                          size: 22,
-                          color: context.colors.textPrimary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          context.l10n.specificationsAttributes,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: context.colors.textPrimary,
-                          ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          tooltip: MaterialLocalizations.of(context)
-                              .closeButtonTooltip,
-                          icon: const AppIcon(Icons.close, size: 20),
-                          onPressed: () => Navigator.pop(ctx),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      context.l10n.customizeAttributesAndMetadataFor,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Existing attributes list in sheet
-                    if (currentAttributes.isNotEmpty) ...[
-                      Text(
-                        context.l10n.currentSpecifications,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: context.colors.textSecondary,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: context.colors.fill,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Column(
-                          children: currentAttributes.entries.map((entry) {
-                            return ListTile(
-                              dense: true,
-                              title: Text(
-                                entry.key.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: context.colors.textSecondary,
-                                ),
-                              ),
-                              subtitle: Text(
-                                entry.value.toString(),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: context.colors.textPrimary,
-                                ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
+                        Expanded(
+                          child: Tappable(
+                            semanticLabel: e.key,
+                            onTap: () => setState(() {
+                              _keyCtrl.text = e.key;
+                              _valueCtrl.text = e.value.toString();
+                            }),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  IconButton(
-                                    tooltip: context.l10n.commonEdit,
-                                    icon: AppIcon(
-                                      Icons.edit_outlined,
-                                      size: 18,
-                                      color: context.colors.textSecondary,
+                                  Text(
+                                    e.key,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                      color: c.textSecondary,
                                     ),
-                                    onPressed: () {
-                                      setSheetState(() {
-                                        keyController.text = entry.key;
-                                        valueController.text = entry.value
-                                            .toString();
-                                      });
-                                    },
                                   ),
-                                  IconButton(
-                                    tooltip: MaterialLocalizations.of(context)
-                                        .closeButtonTooltip,
-                                    icon: AppIcon(
-                                      Icons.close_rounded,
-                                      size: 18,
-                                      color: AppTones.coral,
+                                  Text(
+                                    e.value.toString(),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w800,
+                                      color: c.textPrimary,
                                     ),
-                                    onPressed: () async {
-                                      final newAttrs =
-                                          Map<String, dynamic>.from(
-                                            latestItem.customAttributes,
-                                          )..remove(entry.key);
-                                      final updated = latestItem.copyWith(
-                                        customAttributes: newAttrs,
-                                      );
-                                      await provider.updateItem(updated);
-                                      setSheetState(() {});
-                                      if (context.mounted) {
-                                        AppFeedback.showSuccess(
-                                          context,
-                                          context.l10n.commonRemoved(entry.key),
-                                        );
-                                      }
-                                    },
                                   ),
                                 ],
                               ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 18),
-                    ],
-
-                    // Quick suggestion chips
-                    if (suggestedAttributes.isNotEmpty) ...[
-                      Text(
-                        context.l10n.suggestedAttributes,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: context.colors.textSecondary,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: suggestedAttributes.take(6).map((attr) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: ActionChip(
-                                visualDensity: VisualDensity.compact,
-                                backgroundColor: context.colors.fill,
-                                side: BorderSide(
-                                  color: Colors.black.withValues(alpha: 0.06),
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                avatar: AppIcon(
-                                  Icons.add,
-                                  size: 14,
-                                  color: context.colors.textSecondary,
-                                ),
-                                label: Text(
-                                  attr,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: context.colors.textSecondary,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  setSheetState(() {
-                                    keyController.text = attr;
-                                  });
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    // Input section for adding/editing an attribute
-                    Text(
-                      keyController.text.isNotEmpty &&
-                              currentAttributes.containsKey(keyController.text)
-                          ? context.l10n.editAttribute
-                          : context.l10n.addAttribute,
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        color: context.colors.textSecondary,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: keyController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.attributeName,
-                        hintText: context.l10n.eGColorRamSize,
-                        filled: true,
-                        fillColor: context.colors.fill,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: valueController,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.attributeValue,
-                        hintText: context.l10n.eGSpaceBlack16gb,
-                        filled: true,
-                        fillColor: context.colors.fill,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 46,
-                      child: FilledButton(
-                        onPressed: () async {
-                          final k = keyController.text.trim();
-                          final v = valueController.text.trim();
-                          if (k.isEmpty) {
-                            AppFeedback.showError(
-                              ctx,
-                              context.l10n.pleaseEnterAnAttributeName,
-                            );
-                            return;
-                          }
-                          if (v.isEmpty) {
-                            AppFeedback.showError(
-                              ctx,
-                              context.l10n.pleaseEnterAnAttributeValue,
-                            );
-                            return;
-                          }
-
-                          final newAttrs = Map<String, dynamic>.from(
-                            latestItem.customAttributes,
-                          );
-                          newAttrs[k] = v;
-                          final updated = latestItem.copyWith(
-                            customAttributes: newAttrs,
-                          );
-                          await provider.updateItem(updated);
-
-                          setSheetState(() {
-                            keyController.clear();
-                            valueController.clear();
-                          });
-
-                          if (context.mounted) {
-                            AppFeedback.showSuccess(
-                              context,
-                              context.l10n.savedAttribute(k),
-                            );
-                          }
-                        },
-                        style: FilledButton.styleFrom(
-                          backgroundColor: context.colors.primary,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                         ),
-                        child: Text(context.l10n.saveAttribute),
-                      ),
+                        Tappable(
+                          semanticLabel: l10n.commonRemoved(e.key),
+                          onTap: () => _remove(e.key),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: AppIcon(
+                              Icons.close_rounded,
+                              size: 18,
+                              color: AppTones.coral,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                ],
               ),
             ),
-          );
-        },
-      );
-    },
-  );
+            const SizedBox(height: 16),
+          ],
+          if (suggestions.isNotEmpty) ...[
+            Text(l10n.specSuggestions, style: labelStyle),
+            const SizedBox(height: 8),
+            LayoutBuilder(
+              builder: (context, box) {
+                final w = (box.maxWidth - 16) / 3;
+                Widget chip(String label, bool selected, VoidCallback onTap) =>
+                    SizedBox(
+                      width: w,
+                      child: Tappable(
+                        semanticLabel: label,
+                        onTap: onTap,
+                        child: Container(
+                          height: 38,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(horizontal: 6),
+                          decoration: BoxDecoration(
+                            color: selected ? c.primary : c.fill,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: selected ? Colors.white : c.textPrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                return Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final a in shown)
+                      chip(
+                        a,
+                        _keyCtrl.text.trim() == a,
+                        () => setState(() => _keyCtrl.text = a),
+                      ),
+                    if (!_showAll && suggestions.length > shown.length)
+                      chip(
+                        l10n.specMore,
+                        false,
+                        () => setState(() => _showAll = true),
+                      ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+          AppFormField(
+            id: 'spec_name',
+            label: l10n.specNameLabel,
+            hintText: l10n.eGColorRamSize,
+            controller: _keyCtrl,
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: 12),
+          AppFormField(
+            id: 'spec_value',
+            label: l10n.specValueLabel,
+            hintText: l10n.eGSpaceBlack16gb,
+            helperText: l10n.specValueHelper,
+            controller: _valueCtrl,
+          ),
+          const SizedBox(height: 16),
+          e2eId(
+            'spec_save',
+            SoftButton(
+              expand: true,
+              icon: Icons.add_rounded,
+              label: current.containsKey(_keyCtrl.text.trim())
+                  ? l10n.saveAttribute
+                  : l10n.addSpecification,
+              onPressed: _save,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
