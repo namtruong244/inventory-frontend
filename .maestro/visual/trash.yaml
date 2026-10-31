@@ -1,0 +1,59 @@
+# Trash (Light/Dark) + logic restore / xóa vĩnh viễn. Ảnh: .maestro/visual/out/trash/*.png
+# Chạy: .maestro/visual/run.sh trash
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: subflows/trash_shots.yaml
+    env:
+      THEME: light
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/trash_shots.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light
+# Logic: lọc, khôi phục một item, xóa vĩnh viễn item khác, rồi dọn sạch phần còn lại (ảnh trạng thái trống).
+- runFlow: subflows/trash_open.yaml
+- tapOn:
+    id: trash_filter_locations
+- waitForAnimationToEnd
+- assertNotVisible:
+    id: trash_row_Old Kindle Paperwhite
+- tapOn:
+    id: trash_filter_all
+- tapOn:
+    id: trash_restore_Old Kindle Paperwhite
+- extendedWaitUntil:
+    notVisible:
+      id: trash_row_Old Kindle Paperwhite
+    timeout: 10000
+- tapOn:
+    id: trash_delete_Expired sunscreen
+- tapOn:
+    id: confirm_ok
+- extendedWaitUntil:
+    notVisible:
+      id: trash_row_Expired sunscreen
+    timeout: 10000
+- assertVisible:
+    id: trash_row_Broken desk lamp
+- tapOn:
+    id: trash_empty
+- tapOn:
+    id: confirm_ok
+- extendedWaitUntil:
+    notVisible:
+      id: trash_row_Broken desk lamp
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/trash/trash_empty_light
+- tapOn:
+    id: trash_back

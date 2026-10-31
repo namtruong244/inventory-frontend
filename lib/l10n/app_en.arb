@@ -2313,5 +2313,21 @@
         "type": "String"
       }
     }
-  }
+  },
+  "trashBanner": "Deleted things stay here for 30 days, then they're removed for good.",
+  "trashFilterAll": "All {count}",
+  "@trashFilterAll": {"placeholders": {"count": {"type": "int"}}},
+  "trashFilterItems": "Items {count}",
+  "@trashFilterItems": {"placeholders": {"count": {"type": "int"}}},
+  "trashFilterLocations": "Locations {count}",
+  "@trashFilterLocations": {"placeholders": {"count": {"type": "int"}}},
+  "trashDeleteForever": "Delete forever",
+  "trashEmptyAction": "Empty trash",
+  "trashEmptySubtitle": "Deleted items and locations will show up here.",
+  "trashLoadErrorBody": "Check your connection and try again.",
+  "trashDeletedToday": "deleted today",
+  "trashDeletedDaysAgo": "{count, plural, =1{deleted 1 day ago} other{deleted {count} days ago}}",
+  "@trashDeletedDaysAgo": {"placeholders": {"count": {"type": "int"}}},
+  "trashDaysLeft": "{count, plural, =1{1 day} other{{count} days}}",
+  "@trashDaysLeft": {"placeholders": {"count": {"type": "int"}}}
 }

@@ -138,6 +138,9 @@ class Box {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
+  /// Set only on rows returned by `GET /trash`; never sent back to the server.
+  final DateTime? deletedAt;
+
   Box({
     String? id,
     required this.name,
@@ -148,6 +151,7 @@ class Box {
     this.icon,
     DateTime? createdAt,
     this.updatedAt,
+    this.deletedAt,
   }) : id = id ?? const Uuid().v4(),
        createdAt = createdAt ?? DateTime.now();
 
@@ -173,6 +177,7 @@ class Box {
       icon: icon ?? this.icon,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt,
     );
   }
 
@@ -204,6 +209,9 @@ class Box {
         : DateTime.now(),
     updatedAt: json['updatedAt'] != null
         ? DateTime.tryParse(json['updatedAt'])
+        : null,
+    deletedAt: json['deletedAt'] != null
+        ? DateTime.tryParse(json['deletedAt'].toString())
         : null,
   );
 }
@@ -243,6 +251,9 @@ class Item {
   final DateTime createdAt;
   final DateTime? updatedAt;
 
+  /// Set only on rows returned by `GET /trash`; never sent back to the server.
+  final DateTime? deletedAt;
+
   Item({
     String? id,
     required this.name,
@@ -267,6 +278,7 @@ class Item {
     this.lentQuantity = 0,
     DateTime? createdAt,
     this.updatedAt,
+    this.deletedAt,
     String? imageUrl,
   }) : id = id ?? const Uuid().v4(),
        photos = photos ?? (imageUrl != null ? [imageUrl] : []),
@@ -361,6 +373,7 @@ class Item {
       lentQuantity: lentQuantity,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt,
     );
   }
 
@@ -433,6 +446,9 @@ class Item {
         : DateTime.now(),
     updatedAt: json['updatedAt'] != null
         ? DateTime.tryParse(json['updatedAt'])
+        : null,
+    deletedAt: json['deletedAt'] != null
+        ? DateTime.tryParse(json['deletedAt'].toString())
         : null,
   );
 }

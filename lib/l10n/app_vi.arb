@@ -2096,5 +2096,21 @@
         "type": "String"
       }
     }
-  }
+  },
+  "trashBanner": "Mục đã xóa được giữ 30 ngày rồi sẽ bị xóa vĩnh viễn.",
+  "trashFilterAll": "Tất cả {count}",
+  "@trashFilterAll": {"placeholders": {"count": {"type": "int"}}},
+  "trashFilterItems": "Vật phẩm {count}",
+  "@trashFilterItems": {"placeholders": {"count": {"type": "int"}}},
+  "trashFilterLocations": "Vị trí {count}",
+  "@trashFilterLocations": {"placeholders": {"count": {"type": "int"}}},
+  "trashDeleteForever": "Xóa vĩnh viễn",
+  "trashEmptyAction": "Dọn sạch thùng rác",
+  "trashEmptySubtitle": "Vật phẩm và vị trí đã xóa sẽ hiện ở đây.",
+  "trashLoadErrorBody": "Kiểm tra kết nối rồi thử lại.",
+  "trashDeletedToday": "xóa hôm nay",
+  "trashDeletedDaysAgo": "{count, plural, other{xóa {count} ngày trước}}",
+  "@trashDeletedDaysAgo": {"placeholders": {"count": {"type": "int"}}},
+  "trashDaysLeft": "{count, plural, other{{count} ngày}}",
+  "@trashDaysLeft": {"placeholders": {"count": {"type": "int"}}}
 }

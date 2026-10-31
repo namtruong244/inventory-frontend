@@ -3404,4 +3404,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String lentToQty(String borrower, String qty) {
     return 'Lent to $borrower · $qty';
   }
+
+  @override
+  String get trashBanner =>
+      'Deleted things stay here for 30 days, then they\'re removed for good.';
+
+  @override
+  String trashFilterAll(int count) {
+    return 'All $count';
+  }
+
+  @override
+  String trashFilterItems(int count) {
+    return 'Items $count';
+  }
+
+  @override
+  String trashFilterLocations(int count) {
+    return 'Locations $count';
+  }
+
+  @override
+  String get trashDeleteForever => 'Delete forever';
+
+  @override
+  String get trashEmptyAction => 'Empty trash';
+
+  @override
+  String get trashEmptySubtitle =>
+      'Deleted items and locations will show up here.';
+
+  @override
+  String get trashLoadErrorBody => 'Check your connection and try again.';
+
+  @override
+  String get trashDeletedToday => 'deleted today';
+
+  @override
+  String trashDeletedDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'deleted $count days ago',
+      one: 'deleted 1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String trashDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
 }

@@ -1,0 +1,19 @@
+# Mở Trash từ Settings.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: nav_setting
+- scrollUntilVisible:
+    element:
+      id: settings_trash
+- tapOn:
+    id: settings_trash
+- extendedWaitUntil:
+    visible:
+      id: trash_back
+    timeout: 10000
+- extendedWaitUntil:
+    visible:
+      id: trash_empty
+    timeout: 10000
+- waitForAnimationToEnd

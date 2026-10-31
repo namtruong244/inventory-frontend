@@ -5636,6 +5636,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Lent to {borrower} · {qty}'**
   String lentToQty(String borrower, String qty);
+
+  /// No description provided for @trashBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted things stay here for 30 days, then they\'re removed for good.'**
+  String get trashBanner;
+
+  /// No description provided for @trashFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count}'**
+  String trashFilterAll(int count);
+
+  /// No description provided for @trashFilterItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items {count}'**
+  String trashFilterItems(int count);
+
+  /// No description provided for @trashFilterLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'Locations {count}'**
+  String trashFilterLocations(int count);
+
+  /// No description provided for @trashDeleteForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete forever'**
+  String get trashDeleteForever;
+
+  /// No description provided for @trashEmptyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty trash'**
+  String get trashEmptyAction;
+
+  /// No description provided for @trashEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted items and locations will show up here.'**
+  String get trashEmptySubtitle;
+
+  /// No description provided for @trashLoadErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get trashLoadErrorBody;
+
+  /// No description provided for @trashDeletedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'deleted today'**
+  String get trashDeletedToday;
+
+  /// No description provided for @trashDeletedDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{deleted 1 day ago} other{deleted {count} days ago}}'**
+  String trashDeletedDaysAgo(int count);
+
+  /// No description provided for @trashDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String trashDaysLeft(int count);
 }
 
 class _AppLocalizationsDelegate

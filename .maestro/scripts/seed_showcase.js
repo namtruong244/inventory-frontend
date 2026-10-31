@@ -100,3 +100,13 @@ post('/lending/lend', {
   lentDate: daysFromNow(-2) + 'T09:00:00.000Z', expectedReturnDate: daysFromNow(9) + 'T18:00:00.000Z',
 }, token);
 output.drillId = drill;
+
+// Trash showcase: throwaway items and a location, moved to Trash (soft delete).
+function trash(path, id) {
+  var res = http.delete(base + path + '/' + id, { headers: { Authorization: 'Bearer ' + token } });
+  if (!res.ok) throw new Error('DELETE ' + path + ' -> ' + res.status + ' ' + res.body);
+}
+trash('/items', item('Old Kindle Paperwhite', topShelf, 'Electronics', 1, 'pcs', {}));
+trash('/items', item('Expired sunscreen', bottomShelf, 'Health', 2, 'pcs', {}));
+trash('/items', item('Broken desk lamp', garage, 'Tools', 1, 'pcs', {}));
+trash('/boxes', box('Spare shelf', 'shelf', garage));

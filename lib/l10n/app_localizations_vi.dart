@@ -3301,4 +3301,58 @@ class AppLocalizationsVi extends AppLocalizations {
   String lentToQty(String borrower, String qty) {
     return 'Cho $borrower mượn · $qty';
   }
+
+  @override
+  String get trashBanner =>
+      'Mục đã xóa được giữ 30 ngày rồi sẽ bị xóa vĩnh viễn.';
+
+  @override
+  String trashFilterAll(int count) {
+    return 'Tất cả $count';
+  }
+
+  @override
+  String trashFilterItems(int count) {
+    return 'Vật phẩm $count';
+  }
+
+  @override
+  String trashFilterLocations(int count) {
+    return 'Vị trí $count';
+  }
+
+  @override
+  String get trashDeleteForever => 'Xóa vĩnh viễn';
+
+  @override
+  String get trashEmptyAction => 'Dọn sạch thùng rác';
+
+  @override
+  String get trashEmptySubtitle => 'Vật phẩm và vị trí đã xóa sẽ hiện ở đây.';
+
+  @override
+  String get trashLoadErrorBody => 'Kiểm tra kết nối rồi thử lại.';
+
+  @override
+  String get trashDeletedToday => 'xóa hôm nay';
+
+  @override
+  String trashDeletedDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'xóa $count ngày trước',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String trashDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ngày',
+    );
+    return '$_temp0';
+  }
 }

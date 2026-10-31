@@ -460,34 +460,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () => showExportReportSheet(context, provider),
                   ),
                   const Divider(height: 1),
-                  ListTile(
-                    leading: buildIconBox(
-                      Icons.delete_outline_rounded,
-                      AppTones.coral,
-                      context.colors.dangerSoft,
-                    ),
-                    title: Text(
-                      context.l10n.commonTrash,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: context.colors.textPrimary,
+                  e2eId(
+                    'settings_trash',
+                    ListTile(
+                      leading: buildIconBox(
+                        Icons.delete_outline_rounded,
+                        AppTones.coral,
+                        context.colors.dangerSoft,
                       ),
-                    ),
-                    subtitle: Text(
-                      context.l10n.restoreOrPermanentlyDeleteRemoved,
-                      style: TextStyle(
-                        fontSize: 12,
+                      title: Text(
+                        context.l10n.commonTrash,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: context.colors.textPrimary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        context.l10n.restoreOrPermanentlyDeleteRemoved,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: context.colors.textSecondary,
+                        ),
+                      ),
+                      trailing: AppIcon(
+                        Icons.chevron_right_rounded,
                         color: context.colors.textSecondary,
+                        size: 20,
                       ),
-                    ),
-                    trailing: AppIcon(
-                      Icons.chevron_right_rounded,
-                      color: context.colors.textSecondary,
-                      size: 20,
-                    ),
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const TrashScreen()),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const TrashScreen()),
+                      ),
                     ),
                   ),
                   const Divider(height: 1),

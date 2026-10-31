@@ -1,0 +1,11 @@
+# Env: THEME = light | dark. Chụp Trash từ Settings.
+appId: ${APP_ID}
+---
+- runFlow: trash_open.yaml
+- takeScreenshot: out/trash/trash_${THEME}
+- tapOn:
+    id: trash_back
+- extendedWaitUntil:
+    visible:
+      id: nav_home
+    timeout: 10000
