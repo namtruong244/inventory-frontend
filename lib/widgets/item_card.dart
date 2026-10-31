@@ -16,6 +16,10 @@ class ItemCard extends StatelessWidget {
   final String description;
   final String? imageUrl;
 
+  /// Storage path ("Bedroom › Desk drawer"); shown with a pin icon in the meta
+  /// row instead of [description].
+  final String? locationPath;
+
   /// Quantity headline on the right, e.g. "12 pcs".
   final String? quantityText;
 
@@ -40,6 +44,7 @@ class ItemCard extends StatelessWidget {
     required this.name,
     required this.description,
     this.imageUrl,
+    this.locationPath,
     this.quantityText,
     this.status,
     this.tags = const [],
@@ -58,6 +63,10 @@ class ItemCard extends StatelessWidget {
     final c = context.colors;
     final hasChips = status != null || tags.isNotEmpty;
 
+    final hasMeta =
+        quantityText != null || description.isNotEmpty || locationPath != null;
+    final metaText = locationPath ?? description;
+
     Widget card = Container(
       padding: const EdgeInsets.all(12),
       color: c.surface,
@@ -69,26 +78,26 @@ class ItemCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(18),
                 child: Container(
-                  width: 68,
-                  height: 68,
+                  width: 64,
+                  height: 64,
                   color: c.fill,
                   child: imageUrl != null && imageUrl!.isNotEmpty
                       ? AppImageView(
                           imageUrlOrPath: imageUrl!,
-                          width: 68,
-                          height: 68,
+                          width: 64,
+                          height: 64,
                           fit: BoxFit.cover,
                         )
                       : Center(
                           child: AppIcon(
                             Icons.image_outlined,
-                            color: c.textMuted,
-                            size: 28,
+                            color: c.textPrimary,
+                            size: 26,
                           ),
                         ),
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,25 +108,61 @@ class ItemCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w700,
                         color: c.textPrimary,
                       ),
                     ),
-                    if (description.isNotEmpty) ...[
-                      const SizedBox(height: 3),
-                      Text(
-                        description,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                          height: 1.3,
-                          color: c.textSecondary,
-                        ),
+                    if (hasMeta) ...[
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          if (quantityText != null)
+                            Text(
+                              quantityText!,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: c.textSecondary,
+                              ),
+                            ),
+                          if (quantityText != null && metaText.isNotEmpty) ...[
+                            const SizedBox(width: 4),
+                            Text(
+                              '·',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: c.textMuted,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                          ],
+                          if (locationPath != null) ...[
+                            AppIcon(
+                              Icons.location_on_outlined,
+                              size: 12,
+                              color: c.textSecondary,
+                            ),
+                            const SizedBox(width: 4),
+                          ],
+                          if (metaText.isNotEmpty)
+                            Expanded(
+                              child: Text(
+                                metaText,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: c.textSecondary,
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                     if (hasChips) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Wrap(
                         spacing: 6,
                         runSpacing: 6,
@@ -127,21 +172,11 @@ class ItemCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (quantityText != null) ...[
-                const SizedBox(width: 8),
-                Text(
-                  quantityText!,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: c.textPrimary,
-                  ),
-                ),
-              ],
+              const SizedBox(width: 12),
               AppIcon(
                 Icons.chevron_right_rounded,
                 color: c.textMuted,
-                size: 22,
+                size: 18,
               ),
             ],
           ),

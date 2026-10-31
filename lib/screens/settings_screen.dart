@@ -14,6 +14,7 @@ import '../widgets/settings_appearance_section.dart';
 import '../widgets/app_feedback.dart';
 import '../widgets/failed_ops_tile.dart';
 import '../widgets/export_barcodes_sheet.dart';
+import 'dev_component_gallery_screen.dart';
 import 'login_screen.dart';
 import 'trash_screen.dart';
 import '../theme/app_theme.dart';
@@ -603,6 +604,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 24),
 
                 FailedOpsTile(provider: provider),
+
+                if (kE2E) ...[
+                  e2eId(
+                    'settings_dev_gallery',
+                    SettingsRow(
+                      icon: Icons.palette_outlined,
+                      label: 'Component gallery (dev)',
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const DevComponentGalleryScreen(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
 
                 // 10. Account Sign Out / Switch
                 SizedBox(

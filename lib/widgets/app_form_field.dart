@@ -8,6 +8,9 @@ class AppFormField extends StatelessWidget {
   final String? id;
   final String label;
   final String? hintText;
+
+  /// Small muted line under the input ("Required").
+  final String? helperText;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final int maxLines;
@@ -26,6 +29,7 @@ class AppFormField extends StatelessWidget {
     this.id,
     required this.label,
     this.hintText,
+    this.helperText,
     this.controller,
     this.validator,
     this.maxLines = 1,
@@ -42,86 +46,97 @@ class AppFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
+    OutlineInputBorder border([Color? color]) => OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: color == null
+          ? BorderSide.none
+          : BorderSide(color: color, width: 1.5),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: context.colors.textPrimary,
-            letterSpacing: -0.2,
+            color: c.textSecondary,
           ),
         ),
-        const SizedBox(height: 8),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: context.colors.cardShadow,
-          ),
-          child: _tag(
-            TextFormField(
-              controller: controller,
-              validator: validator,
-              maxLines: maxLines,
-              keyboardType: keyboardType,
-              textInputAction: textInputAction,
-              readOnly: readOnly,
-              onTap: onTap,
-              onChanged: onChanged,
-              style: TextStyle(
+        const SizedBox(height: 6),
+        _tag(
+          TextFormField(
+            controller: controller,
+            validator: validator,
+            maxLines: maxLines,
+            keyboardType: keyboardType,
+            textInputAction: textInputAction,
+            readOnly: readOnly,
+            onTap: onTap,
+            onChanged: onChanged,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: c.textPrimary,
+            ),
+            // Material insets helper/error text by the 16pt content padding; pull it
+            // back so it lines up with the label above the field.
+            errorBuilder: (context, error) => Transform.translate(
+              offset: const Offset(-16, 0),
+              child: Text(
+                error,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: c.dangerStrong,
+                ),
+              ),
+            ),
+            decoration: InputDecoration(
+              hintText: hintText,
+              hintStyle: TextStyle(
+                color: c.textMuted,
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
-                color: context.colors.textPrimary,
               ),
-              decoration: InputDecoration(
-                hintText: hintText,
-                hintStyle: TextStyle(
-                  color: context.colors.textMuted,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                ),
-                filled: true,
-                fillColor: context.colors.surface,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 15,
-                ),
-                prefixText: prefixText,
-                prefixStyle:
-                    prefixStyle ??
-                    TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: context.colors.textPrimary,
+              helper: helperText == null
+                  ? null
+                  : Transform.translate(
+                      offset: const Offset(-16, 0),
+                      child: Text(
+                        helperText!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: c.textMuted,
+                        ),
+                      ),
                     ),
-                prefixIcon: prefixIcon,
-                suffixIcon: suffixIcon,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide(
-                    color: context.colors.primary,
-                    width: 1.5,
-                  ),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide(color: AppTones.coral, width: 1.5),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide(color: AppTones.coral, width: 1.5),
-                ),
+              filled: true,
+              fillColor: c.fill,
+              constraints: maxLines == 1
+                  ? const BoxConstraints(minHeight: 52)
+                  : null,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 15,
               ),
+              prefixText: prefixText,
+              prefixStyle:
+                  prefixStyle ??
+                  TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: c.textPrimary,
+                  ),
+              prefixIcon: prefixIcon,
+              suffixIcon: suffixIcon,
+              border: border(),
+              enabledBorder: border(),
+              focusedBorder: border(c.primary),
+              errorBorder: border(c.dangerStrong),
+              focusedErrorBorder: border(c.dangerStrong),
             ),
           ),
         ),

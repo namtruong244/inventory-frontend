@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import '../utils/e2e.dart';
 
 import 'package:flutter/material.dart';
@@ -7,6 +5,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import 'app_icon.dart';
+import 'soft_ui.dart';
+import 'tappable.dart';
 
 class AppFeedback {
   /// Display action confirmation dialog (Delete, Cancel, Change...)
@@ -19,7 +19,6 @@ class AppFeedback {
     bool isDestructive = false,
     IconData icon = Icons.warning_amber_rounded,
   }) async {
-    final theme = Theme.of(context);
     final result = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: true,
@@ -32,110 +31,83 @@ class AppFeedback {
           parent: anim1,
           curve: Curves.easeOutBack,
         ).value;
+        final c = context.colors;
         return Transform.scale(
           scale: 0.8 + (0.2 * curvedValue),
           child: Opacity(
             opacity: anim1.value.clamp(0.0, 1.0),
             child: Dialog(
-              backgroundColor: context.colors.surface,
+              backgroundColor: c.surface,
               elevation: 10,
-              insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+              shadowColor: const Color(0x33000000),
+              insetPadding: const EdgeInsets.symmetric(horizontal: 32),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(28),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header Icon Circle
                     Container(
-                      width: 64,
-                      height: 64,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
-                        color: isDestructive
-                            ? context
-                                  .colors
-                                  .dangerSoft // Light red
-                            : context.colors.border, // Light slate
-                        shape: BoxShape.circle,
+                        color: isDestructive ? c.dangerSoft : c.fill,
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: AppIcon(
                         icon,
-                        size: 32,
-                        color: isDestructive
-                            ? AppTones
-                                  .coral // Strong red
-                            : theme.colorScheme.primary,
+                        size: 22,
+                        color: isDestructive ? c.dangerStrong : c.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    // Title
+                    const SizedBox(height: 16),
                     Text(
                       title,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                        color: c.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    // Message
+                    const SizedBox(height: 6),
                     Text(
                       message,
-                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
-                        color: context.colors.textSecondary,
-                        height: 1.5,
+                        fontWeight: FontWeight.w500,
+                        color: c.textSecondary,
+                        height: 1.45,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    // Buttons
+                    const SizedBox(height: 16),
                     Row(
                       children: [
                         Expanded(
                           child: e2eId(
                             'confirm_cancel',
-                            OutlinedButton(
-                              onPressed: () => Navigator.of(context).pop(false),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: theme.colorScheme.primary,
-                                side: BorderSide(color: context.colors.border),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: Text(
-                                cancelLabel ?? context.l10n.commonCancel,
-                              ),
+                            SoftButton(
+                              label: cancelLabel ?? context.l10n.commonCancel,
+                              style: SoftButtonStyle.secondary,
+                              expand: true,
+                              onPressed: () =>
+                                  Navigator.of(context).pop(false),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: e2eId(
                             'confirm_ok',
-                            FilledButton(
+                            SoftButton(
+                              label: confirmLabel ?? context.l10n.commonConfirm,
+                              style: isDestructive
+                                  ? SoftButtonStyle.danger
+                                  : SoftButtonStyle.accent,
+                              expand: true,
                               onPressed: () => Navigator.of(context).pop(true),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: isDestructive
-                                    ? AppTones.coral
-                                    : theme.colorScheme.primary,
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 14,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: Text(
-                                confirmLabel ?? context.l10n.commonConfirm,
-                                style: const TextStyle(color: Colors.white),
-                              ),
                             ),
                           ),
                         ),
@@ -153,86 +125,89 @@ class AppFeedback {
     return result ?? false;
   }
 
-  /// Helper method for modern translucent floating toasts
+  /// Design Toast: dark pill, round colored badge, optional action chip.
   static void _showToast(
     BuildContext context, {
     required String message,
     required IconData icon,
-    required Color color,
+    required Color badge,
     required Color iconColor,
     String? actionLabel,
     VoidCallback? onAction,
   }) {
     final messenger = ScaffoldMessenger.of(context);
     messenger.hideCurrentSnackBar();
+    final c = context.colors;
     messenger.showSnackBar(
       SnackBar(
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         padding: EdgeInsets.zero,
         duration: Duration(seconds: onAction == null ? 3 : 6),
-        content: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.72),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.22),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
+        content: Container(
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+          decoration: BoxDecoration(
+            color: c.primary,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x2E000000),
+                blurRadius: 28,
+                offset: Offset(0, 12),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(color: badge, shape: BoxShape.circle),
+                child: AppIcon(icon, color: iconColor, size: 16),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+              if (actionLabel != null && onAction != null) ...[
+                const SizedBox(width: 12),
+                Tappable(
+                  onTap: () {
+                    messenger.hideCurrentSnackBar();
+                    onAction();
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    constraints: const BoxConstraints(minHeight: 32),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: context.colors.surface.withValues(alpha: 0.95),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 4,
-                        ),
-                      ],
+                      color: const Color(0x1FFFFFFF),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: AppIcon(icon, color: iconColor, size: 18),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
                     child: Text(
-                      message,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        letterSpacing: 0.1,
+                      actionLabel,
+                      style: TextStyle(
+                        color: c.accent,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
                       ),
                     ),
                   ),
-                  if (actionLabel != null && onAction != null)
-                    TextButton(
-                      onPressed: () {
-                        messenger.hideCurrentSnackBar();
-                        onAction();
-                      },
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        minimumSize: const Size(48, 48),
-                      ),
-                      child: Text(actionLabel),
-                    ),
-                ],
-              ),
-            ),
+                ),
+              ],
+            ],
           ),
         ),
       ),
@@ -252,8 +227,8 @@ class AppFeedback {
       actionLabel: actionLabel,
       onAction: onAction,
       icon: Icons.check_rounded,
-      color: AppTones.matcha, // Emerald
-      iconColor: AppTones.matcha,
+      badge: context.colors.accent,
+      iconColor: context.colors.onAccent,
     );
   }
 
@@ -263,8 +238,8 @@ class AppFeedback {
       context,
       message: message,
       icon: Icons.priority_high_rounded,
-      color: AppTones.coral, // Rose red
-      iconColor: AppTones.coral,
+      badge: context.colors.dangerSoft,
+      iconColor: context.colors.dangerStrong,
     );
   }
 
@@ -274,8 +249,8 @@ class AppFeedback {
       context,
       message: message,
       icon: Icons.warning_amber_rounded,
-      color: AppTones.amber, // Amber
-      iconColor: AppTones.amber,
+      badge: context.colors.warningSoft,
+      iconColor: context.colors.warningStrong,
     );
   }
 
@@ -285,8 +260,8 @@ class AppFeedback {
       context,
       message: message,
       icon: Icons.info_outline_rounded,
-      color: AppTones.ink, // Deep navy / charcoal
-      iconColor: AppTones.ink,
+      badge: context.colors.infoSoft,
+      iconColor: context.colors.infoStrong,
     );
   }
 }

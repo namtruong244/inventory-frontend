@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'app_icon.dart';
+import 'soft_ui.dart';
 
 Widget buildSectionHeader(String title) {
   return Builder(
@@ -155,4 +156,90 @@ Widget buildInfoRow(
       return rowContent;
     },
   );
+}
+
+/// Design SettingsRow: 36px icon tile, 15/600 label, optional value, chevron or
+/// a custom [trailing] (e.g. [SoftToggle]).
+class SettingsRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String? value;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+  final Color? iconColor;
+  final Color? iconBackground;
+  final Color? labelColor;
+  final bool showChevron;
+
+  const SettingsRow({
+    super.key,
+    required this.icon,
+    required this.label,
+    this.value,
+    this.trailing,
+    this.onTap,
+    this.iconColor,
+    this.iconBackground,
+    this.labelColor,
+    this.showChevron = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final row = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          SoftIconTile(
+            icon,
+            size: 36,
+            color: iconColor,
+            background: iconBackground,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: labelColor ?? c.textPrimary,
+              ),
+            ),
+          ),
+          if (value != null) ...[
+            const SizedBox(width: 12),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 140),
+              child: Text(
+                value!,
+                textAlign: TextAlign.right,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: c.textSecondary,
+                ),
+              ),
+            ),
+          ],
+          if (trailing != null) ...[const SizedBox(width: 12), trailing!],
+          if (trailing == null && showChevron && onTap != null) ...[
+            const SizedBox(width: 12),
+            AppIcon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: c.textSecondary,
+            ),
+          ],
+        ],
+      ),
+    );
+    if (onTap == null) return row;
+    return InkWell(onTap: onTap, child: row);
+  }
 }

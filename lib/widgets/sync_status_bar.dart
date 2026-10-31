@@ -7,6 +7,7 @@ import 'failed_ops_tile.dart';
 import 'session_guard.dart';
 import '../theme/app_theme.dart';
 import 'app_icon.dart';
+import 'tappable.dart';
 
 /// App-wide strip shown above every screen while the app is offline, changes are
 /// waiting to sync, or the server dropped some of them. Tap for details and "Sync now".
@@ -27,11 +28,6 @@ class SyncStatusBar extends StatelessWidget {
             needsAttention > 0);
     if (!show) return child;
 
-    final warn = needsAttention > 0;
-    final bg = warn ? context.colors.warningSoft : context.colors.dangerSoft;
-    final fg = warn
-        ? context.colors.warningStrong
-        : context.colors.dangerStrong;
     final text = StringBuffer(
       provider.isOffline ? l10n.syncOffline : l10n.syncUnsynced,
     );
@@ -44,45 +40,21 @@ class SyncStatusBar extends StatelessWidget {
 
     return Column(
       children: [
-        Material(
-          color: bg,
+        ColoredBox(
+          color: context.colors.background,
           child: SafeArea(
             bottom: false,
-            child: InkWell(
-              onTap: () => _showDetails(provider),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 40),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 6,
-                  ),
-                  child: Row(
-                    children: [
-                      AppIcon(
-                        provider.isOffline
-                            ? Icons.cloud_off_rounded
-                            : Icons.sync_problem_rounded,
-                        size: 18,
-                        color: fg,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          text.toString(),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: fg,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      AppIcon(Icons.chevron_right_rounded, size: 18, color: fg),
-                    ],
-                  ),
-                ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 6, 24, 6),
+              child: SyncStatusPill(
+                text: text.toString(),
+                icon: provider.isOffline
+                    ? Icons.cloud_off_rounded
+                    : Icons.sync_problem_rounded,
+                danger: needsAttention > 0,
+                actionLabel: provider.isSyncing ? null : l10n.syncNow,
+                onAction: provider.syncNow,
+                onTap: () => _showDetails(provider),
               ),
             ),
           ),
@@ -186,6 +158,81 @@ class _SyncDetailsSheet extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Design SyncStatusBar pill: warning tones (danger when changes need attention),
+/// icon, message and a "Sync now" action.
+class SyncStatusPill extends StatelessWidget {
+  final String text;
+  final IconData icon;
+  final bool danger;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+  final VoidCallback? onTap;
+
+  const SyncStatusPill({
+    super.key,
+    required this.text,
+    required this.icon,
+    this.danger = false,
+    this.actionLabel,
+    this.onAction,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final bg = danger ? c.dangerSoft : c.warningSoft;
+    final fg = danger ? c.dangerStrong : c.warningStrong;
+    return Material(
+      color: bg,
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 38),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                AppIcon(icon, size: 18, color: fg),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    text,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: fg,
+                    ),
+                  ),
+                ),
+                if (actionLabel != null) ...[
+                  const SizedBox(width: 10),
+                  Tappable(
+                    onTap: onAction,
+                    behavior: HitTestBehavior.opaque,
+                    child: Text(
+                      actionLabel!,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: fg,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );

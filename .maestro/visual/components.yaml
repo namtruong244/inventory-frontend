@@ -1,0 +1,105 @@
+# Component gallery (dev) light + dark. Ảnh: .maestro/visual/out/components/*.png
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: setting
+# --- light ---
+- scrollUntilVisible:
+    element:
+      id: settings_dev_gallery
+- tapOn:
+    id: settings_dev_gallery
+- waitForAnimationToEnd
+- takeScreenshot: out/components/top_light
+- tapOn:
+    id: gallery_sheet
+- waitForAnimationToEnd
+- takeScreenshot: out/components/sheet_light
+- tapOn:
+    point: 50%,10%
+- waitForAnimationToEnd
+- tapOn:
+    id: gallery_dialog
+- waitForAnimationToEnd
+- takeScreenshot: out/components/dialog_light
+- tapOn:
+    id: confirm_cancel
+- waitForAnimationToEnd
+- tapOn:
+    id: gallery_toast
+- waitForAnimationToEnd
+- takeScreenshot: out/components/toast_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll1_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll2_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll3_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll4_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll5_light
+- tapOn: "Back"
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: setting
+# --- dark ---
+- scrollUntilVisible:
+    element:
+      id: settings_dev_gallery
+- tapOn:
+    id: settings_dev_gallery
+- waitForAnimationToEnd
+- takeScreenshot: out/components/top_dark
+- tapOn:
+    id: gallery_sheet
+- waitForAnimationToEnd
+- takeScreenshot: out/components/sheet_dark
+- tapOn:
+    point: 50%,10%
+- waitForAnimationToEnd
+- tapOn:
+    id: gallery_dialog
+- waitForAnimationToEnd
+- takeScreenshot: out/components/dialog_dark
+- tapOn:
+    id: confirm_cancel
+- waitForAnimationToEnd
+- tapOn:
+    id: gallery_toast
+- waitForAnimationToEnd
+- takeScreenshot: out/components/toast_dark
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll1_dark
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll2_dark
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll3_dark
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll4_dark
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/components/scroll5_dark
+- tapOn: "Back"
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light

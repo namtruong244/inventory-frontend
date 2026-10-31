@@ -39,57 +39,56 @@ class BoxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final c = context.colors;
 
     final tappable = Tappable(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: context.colors.surface),
+        padding: const EdgeInsets.fromLTRB(12, 12, 14, 12),
+        color: c.surface,
         child: Row(
           children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: context.colors.accent.withValues(alpha: 0.45),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: AppIcon(
-                icon ?? type?.icon ?? Icons.inventory_2_outlined,
-                color: context.colors.textPrimary,
-                size: 26,
-              ),
+            SoftIconTile(
+              icon ?? type?.icon ?? Icons.inventory_2_outlined,
+              color: AppTones.sky,
+              background: AppTones.skySoft,
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     name,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: c.textPrimary,
                     ),
                   ),
                   if (description.isNotEmpty) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       description,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: c.textSecondary,
+                      ),
                     ),
                   ],
                 ],
               ),
             ),
+            const SizedBox(width: 12),
             AppIcon(
               Icons.chevron_right_rounded,
-              color: context.colors.textMuted,
-              size: 24,
+              color: c.textSecondary,
+              size: 18,
             ),
           ],
         ),
@@ -100,10 +99,11 @@ class BoxCard extends StatelessWidget {
 
     if (onDelete == null && onEdit == null) {
       if (!enableClip) return card;
-      return SoftCard(child: card);
+      return SoftCard(radius: 20, child: card);
     }
 
     return SoftCard(
+      radius: 20,
       child: Slidable(
         key: ValueKey(name + description),
         endActionPane: ActionPane(

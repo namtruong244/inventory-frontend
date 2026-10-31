@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'app_icon.dart';
+import 'soft_ui.dart';
 
 /// A placeholder for an empty list with a button for the obvious next step.
 class EmptyStateCard extends StatelessWidget {
@@ -10,6 +11,7 @@ class EmptyStateCard extends StatelessWidget {
   final String subtitle;
   final String? actionLabel;
   final VoidCallback? onAction;
+  final IconData? actionIcon;
 
   const EmptyStateCard({
     super.key,
@@ -18,54 +20,58 @@ class EmptyStateCard extends StatelessWidget {
     required this.subtitle,
     this.actionLabel,
     this.onAction,
+    this.actionIcon,
   });
 
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
       decoration: BoxDecoration(
         color: c.surface,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: context.colors.cardShadow,
+        boxShadow: c.cardShadow,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppIcon(icon, size: 52, color: c.textMuted),
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: c.accent,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: AppIcon(icon, size: 32, color: c.onAccent),
+          ),
           const SizedBox(height: 14),
           Text(
             title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              fontSize: 17,
               color: c.textPrimary,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 14),
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 13, color: c.textSecondary, height: 1.4),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: c.textSecondary,
+              height: 1.45,
+            ),
           ),
           if (actionLabel != null && onAction != null) ...[
-            const SizedBox(height: 18),
-            FilledButton(
+            const SizedBox(height: 14),
+            SoftButton(
+              label: actionLabel!,
+              icon: actionIcon,
               onPressed: onAction,
-              style: FilledButton.styleFrom(
-                backgroundColor: c.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: Text(actionLabel!),
             ),
           ],
         ],
