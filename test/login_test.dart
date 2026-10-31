@@ -43,9 +43,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // App Branding
-      expect(find.text('Personal Inventory'), findsOneWidget);
+      expect(find.text('Welcome back'), findsOneWidget);
       expect(
-        find.text('Sign in to sync your inventory & assets across devices'),
+        find.text('Sign in to sync your inventory across devices.'),
         findsOneWidget,
       );
 
@@ -56,7 +56,7 @@ void main() {
       expect(find.text('Sign in with Apple'), findsNothing);
 
       // Email & Password Fields
-      expect(find.text('or continue with email'), findsOneWidget);
+      expect(find.text('or'), findsOneWidget);
       expect(find.text('Email Address'), findsOneWidget);
       expect(find.text('Password'), findsOneWidget);
       expect(find.text('Sign In'), findsOneWidget);
@@ -79,17 +79,25 @@ void main() {
       await tester.pumpAndSettle();
 
       // Initially in Sign In mode
-      expect(find.text("Don't have an account? Sign up"), findsOneWidget);
+      expect(
+        find.text("Don't have an account? Create one", findRichText: true),
+        findsOneWidget,
+      );
       expect(find.text('Full Name'), findsNothing);
 
       // Tap toggle to register mode
-      await tester.tap(find.text("Don't have an account? Sign up"));
+      await tester.tap(
+        find.text("Don't have an account? Create one", findRichText: true),
+      );
       await tester.pumpAndSettle();
 
       // In Register mode
       expect(find.text('Full Name'), findsOneWidget);
       expect(find.text('Create Account'), findsOneWidget);
-      expect(find.text('Already have an account? Sign in'), findsOneWidget);
+      expect(
+        find.text('Already have an account? Sign in', findRichText: true),
+        findsOneWidget,
+      );
     });
 
     testWidgets(

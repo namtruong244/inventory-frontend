@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/inventory_provider.dart';
 import '../widgets/app_feedback.dart';
-import '../widgets/google_logo.dart';
+import '../widgets/auth_widgets.dart';
+import '../widgets/app_form_field.dart';
+import '../widgets/soft_ui.dart';
+import '../widgets/tappable.dart';
 import '../utils/e2e.dart';
 import '../utils/friendly_error.dart';
 import 'home_screen.dart';
@@ -15,7 +17,6 @@ import '../l10n/l10n_ext.dart';
 import '../widgets/app_icon.dart';
 
 /// Screen allowing authentication with Google (Gmail) or Email/Password
-part 'login_screen_parts.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool autoOpenGoogle;
@@ -212,310 +213,196 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _setMode(bool register) {
+    if (_isRegisterMode == register) return;
+    setState(() => _isRegisterMode = register);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final c = context.colors;
+    final l = context.l10n;
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final linkStyle = TextStyle(
+      fontSize: 13,
+      color: c.textSecondary,
+      fontWeight: FontWeight.w500,
+    );
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: dark ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: context.colors.background,
+        backgroundColor: c.background,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 20.0,
-              ),
+              padding: const EdgeInsets.all(24),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 440),
                 child: Form(
                   key: _formKey,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // App Icon
-                      Center(
-                        child: Container(
-                          width: 68,
-                          height: 68,
-                          decoration: BoxDecoration(
-                            color: context.colors.accent,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.12),
-                                blurRadius: 16,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: AppIcon(
-                              Icons.inventory_2_rounded,
-                              size: 34,
-                              color: context.colors.onAccent,
-                            ),
-                          ),
-                        ),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: AppMark(size: 56),
                       ),
-                      const SizedBox(height: 18),
-
-                      // Title & Subtitle
+                      const SizedBox(height: 22),
                       Text(
-                        'Personal Inventory',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 24,
+                        _isRegisterMode
+                            ? l.loginCreateTitle
+                            : l.loginWelcomeBack,
+                        style: TextStyle(
+                          fontSize: 28,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: -0.5,
-                          color: context.colors.textPrimary,
+                          letterSpacing: -0.7,
+                          color: c.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        context.l10n.signInToSyncYour,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
-                          color: context.colors.textSecondary,
-                          fontWeight: FontWeight.w400,
+                        _isRegisterMode ? l.loginCreateSub : l.signInToSyncYour,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: c.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: 32),
-
-                      // 1. Google Sign-In Button
-                      _buildOAuthButton(
-                        onPressed: _isLoading ? null : _handleGoogleSignIn,
-                        leading: const GoogleLogoWidget(size: 22),
-                        label: context.l10n.continueWithGoogle,
-                        backgroundColor: context.colors.surface,
-                        textColor: context.colors.textPrimary,
-                        borderColor: context.colors.border,
+                      const SizedBox(height: 22),
+                      AuthModeSwitch(
+                        registerMode: _isRegisterMode,
+                        onChanged: _setMode,
                       ),
-                      const SizedBox(height: 24),
-
-                      // Divider with "or continue with email"
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Divider(color: context.colors.border),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14.0,
-                            ),
-                            child: Text(
-                              'or continue with email',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: context.colors.textMuted,
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Divider(color: context.colors.border),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Form: Name (Register Mode only)
+                      const SizedBox(height: 22),
                       if (_isRegisterMode) ...[
-                        e2eId(
-                          'login_name',
-                          TextFormField(
-                            controller: _nameController,
-                            decoration: InputDecoration(
-                              labelText: context.l10n.fullName,
-                              hintText: 'John Doe',
-                              prefixIcon: const AppIcon(
-                                Icons.person_outline_rounded,
-                                size: 20,
-                              ),
-                              fillColor: context.colors.surface,
-                              filled: true,
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: context.colors.border,
-                                ),
-                              ),
-                            ),
-                            validator: (val) {
-                              if (_isRegisterMode &&
-                                  (val == null || val.trim().isEmpty)) {
-                                return context.l10n.pleaseEnterYourName;
-                              }
-                              return null;
-                            },
+                        AppFormField(
+                          id: 'login_name',
+                          label: l.fullName,
+                          hintText: 'John Doe',
+                          textInputAction: TextInputAction.next,
+                          prefixIcon: const _FieldIcon(
+                            Icons.person_outline_rounded,
                           ),
+                          controller: _nameController,
+                          validator: (val) {
+                            if (_isRegisterMode &&
+                                (val == null || val.trim().isEmpty)) {
+                              return l.pleaseEnterYourName;
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 14),
                       ],
-
-                      // Form: Email Field
+                      AppFormField(
+                        id: 'login_email',
+                        label: l.emailAddress,
+                        hintText: 'name@example.com',
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        prefixIcon: const _FieldIcon(
+                          Icons.mail_outline_rounded,
+                        ),
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return l.pleaseEnterYourEmail;
+                          }
+                          if (!val.contains('@') || !val.contains('.')) {
+                            return l.pleaseEnterAValidEmail;
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 14),
+                      _PasswordField(
+                        controller: _passwordController,
+                        obscure: _obscurePassword,
+                        onToggle: () => setState(
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
+                        isRegister: _isRegisterMode,
+                      ),
+                      const SizedBox(height: 22),
                       e2eId(
-                        'login_email',
-                        TextFormField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.emailAddress,
-                            hintText: 'name@example.com',
-                            prefixIcon: const AppIcon(
-                              Icons.mail_outline_rounded,
-                              size: 20,
-                            ),
-                            fillColor: context.colors.surface,
-                            filled: true,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: context.colors.border,
+                        'login_submit',
+                        SoftButton(
+                          label: _isRegisterMode ? l.createAccount : l.signIn,
+                          onPressed: _isLoading
+                              ? null
+                              : _handleEmailPasswordAuth,
+                          loading: _isLoading,
+                          expand: true,
+                        ),
+                      ),
+                      const SizedBox(height: 22),
+                      Row(
+                        children: [
+                          Expanded(child: Divider(color: c.border, height: 1)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              l.loginOr,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: c.textMuted,
                               ),
                             ),
                           ),
-                          validator: (val) {
-                            if (val == null || val.trim().isEmpty) {
-                              return context.l10n.pleaseEnterYourEmail;
-                            }
-                            if (!val.contains('@') || !val.contains('.')) {
-                              return context.l10n.pleaseEnterAValidEmail;
-                            }
-                            return null;
-                          },
+                          Expanded(child: Divider(color: c.border, height: 1)),
+                        ],
+                      ),
+                      const SizedBox(height: 22),
+                      GoogleAuthButton(
+                        onPressed: _isLoading ? null : _handleGoogleSignIn,
+                      ),
+                      const SizedBox(height: 22),
+                      Text(
+                        l.byContinuingYouAgreeTo,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.45,
+                          fontWeight: FontWeight.w500,
+                          color: c.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 14),
-
-                      // Form: Password Field
-                      e2eId(
-                        'login_password',
-                        TextFormField(
-                          controller: _passwordController,
-                          obscureText: _obscurePassword,
-                          decoration: InputDecoration(
-                            labelText: context.l10n.commonPassword,
-                            hintText: '••••••••',
-                            prefixIcon: const AppIcon(
-                              Icons.lock_outline_rounded,
-                              size: 20,
-                            ),
-                            suffixIcon: IconButton(
-                              tooltip: context.l10n.showOrHidePassword,
-                              icon: AppIcon(
-                                _obscurePassword
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
-                                size: 20,
-                                color: context.colors.textSecondary,
-                              ),
-                              onPressed: () {
-                                setState(
-                                  () => _obscurePassword = !_obscurePassword,
-                                );
-                              },
-                            ),
-                            fillColor: context.colors.surface,
-                            filled: true,
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide(
-                                color: context.colors.border,
-                              ),
-                            ),
-                          ),
-                          validator: (val) {
-                            if (val == null || val.isEmpty) {
-                              return context.l10n.passwordIsRequired;
-                            }
-                            // Login accepts older 6-7 character passwords; only new ones need 8.
-                            if (_isRegisterMode && val.length < 8) {
-                              return context.l10n.passwordMustBeAtLeast;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Primary Submit Button
-                      SizedBox(
-                        height: 52,
-                        child: e2eId(
-                          'login_submit',
-                          FilledButton(
-                            onPressed: _isLoading
-                                ? null
-                                : _handleEmailPasswordAuth,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: context.colors.primary,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    width: 22,
-                                    height: 22,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                : Text(
-                                    _isRegisterMode
-                                        ? context.l10n.createAccount
-                                        : context.l10n.signIn,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 15,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Switch between Sign In / Register
                       e2eId(
                         'login_toggle_mode',
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _isRegisterMode = !_isRegisterMode;
-                            });
-                          },
-                          child: Text(
-                            _isRegisterMode
-                                ? context.l10n.alreadyHaveAnAccountSign
-                                : context.l10n.donTHaveAnAccount,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: AppTones.sky,
+                        Tappable(
+                          onTap: () => _setMode(!_isRegisterMode),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            child: Text.rich(
+                              textAlign: TextAlign.center,
+                              TextSpan(
+                                style: linkStyle,
+                                children: [
+                                  TextSpan(
+                                    text: _isRegisterMode
+                                        ? l.loginHaveAccountQ
+                                        : l.loginNoAccountQ,
+                                  ),
+                                  const TextSpan(text: ' '),
+                                  TextSpan(
+                                    text: _isRegisterMode
+                                        ? l.loginSignInLink
+                                        : l.loginCreateOneLink,
+                                    style: TextStyle(
+                                      color: c.textPrimary,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Terms & Policy (WCAG AA compliant contrast #6B7280)
-                      Text(
-                        context.l10n.byContinuingYouAgreeTo,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 11,
-                          color: AppTones.slate,
-                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
@@ -526,6 +413,59 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _FieldIcon extends StatelessWidget {
+  final IconData icon;
+  const _FieldIcon(this.icon);
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(left: 16, right: 10),
+    child: AppIcon(icon, size: 18, color: context.colors.textMuted),
+  );
+}
+
+class _PasswordField extends StatelessWidget {
+  final TextEditingController controller;
+  final bool obscure;
+  final VoidCallback onToggle;
+  final bool isRegister;
+  const _PasswordField({
+    required this.controller,
+    required this.obscure,
+    required this.onToggle,
+    required this.isRegister,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return AppFormField(
+      id: 'login_password',
+      label: l.commonPassword,
+      hintText: '••••••••',
+      controller: controller,
+      obscureText: obscure,
+      textInputAction: TextInputAction.done,
+      prefixIcon: const _FieldIcon(Icons.lock_outline_rounded),
+      suffixIcon: IconButton(
+        tooltip: l.showOrHidePassword,
+        icon: AppIcon(
+          obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+          size: 18,
+          color: context.colors.textMuted,
+        ),
+        onPressed: onToggle,
+      ),
+      validator: (val) {
+        if (val == null || val.isEmpty) return l.passwordIsRequired;
+        // Login accepts older 6-7 character passwords; only new ones need 8.
+        if (isRegister && val.length < 8) return l.passwordMustBeAtLeast;
+        return null;
+      },
     );
   }
 }

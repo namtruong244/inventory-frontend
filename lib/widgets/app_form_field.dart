@@ -23,6 +23,7 @@ class AppFormField extends StatelessWidget {
   final TextStyle? prefixStyle;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
+  final bool obscureText;
 
   const AppFormField({
     super.key,
@@ -42,6 +43,7 @@ class AppFormField extends StatelessWidget {
     this.prefixStyle,
     this.prefixIcon,
     this.suffixIcon,
+    this.obscureText = false,
   });
 
   @override
@@ -70,6 +72,7 @@ class AppFormField extends StatelessWidget {
             controller: controller,
             validator: validator,
             maxLines: maxLines,
+            obscureText: obscureText,
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             readOnly: readOnly,

@@ -931,7 +931,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signInToSyncYour =>
-      'Sign in to sync your inventory & assets across devices';
+      'Sign in to sync your inventory across devices.';
 
   @override
   String get continueWithGoogle => 'Continue with Google';
@@ -977,7 +977,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get byContinuingYouAgreeTo =>
-      'By continuing, you agree to our Terms of Service & Privacy Policy';
+      'By continuing you agree to the Terms of Service and Privacy Policy.';
 
   @override
   String get commonCancel => 'Cancel';
@@ -2604,10 +2604,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get developerBadge => 'DEVELOPER';
 
   @override
-  String get splashTagline => 'Smart inventory & asset tracker';
+  String get splashTagline =>
+      'Know where everything lives, what\'s running low, and who borrowed it.';
 
   @override
-  String get continueToApp => 'Continue to app →';
+  String get continueToApp => 'Continue to App';
 
   @override
   String changesNeedAttention(int count) {
@@ -2772,4 +2773,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonLoading => 'Loading…';
+
+  @override
+  String get loginWelcomeBack => 'Welcome back';
+
+  @override
+  String get loginCreateTitle => 'Create your account';
+
+  @override
+  String get loginCreateSub => 'Start tracking your belongings in a minute.';
+
+  @override
+  String get loginOr => 'or';
+
+  @override
+  String get loginTabSignIn => 'Sign in';
+
+  @override
+  String get loginTabCreate => 'Create account';
+
+  @override
+  String get loginNoAccountQ => 'Don\'t have an account?';
+
+  @override
+  String get loginCreateOneLink => 'Create one';
+
+  @override
+  String get loginHaveAccountQ => 'Already have an account?';
+
+  @override
+  String get loginSignInLink => 'Sign in';
 }

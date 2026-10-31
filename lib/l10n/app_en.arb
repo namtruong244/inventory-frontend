@@ -604,7 +604,7 @@
     }
   },
   "authenticationFailed": "Authentication failed",
-  "signInToSyncYour": "Sign in to sync your inventory & assets across devices",
+  "signInToSyncYour": "Sign in to sync your inventory across devices.",
   "continueWithGoogle": "Continue with Google",
   "fullName": "Full Name",
   "pleaseEnterYourName": "Please enter your name",
@@ -619,7 +619,7 @@
   "signIn": "Sign In",
   "alreadyHaveAnAccountSign": "Already have an account? Sign in",
   "donTHaveAnAccount": "Don't have an account? Sign up",
-  "byContinuingYouAgreeTo": "By continuing, you agree to our Terms of Service & Privacy Policy",
+  "byContinuingYouAgreeTo": "By continuing you agree to the Terms of Service and Privacy Policy.",
   "commonCancel": "Cancel",
   "commonContinue": "Continue",
   "boxQrCode": "Box QR Code",
@@ -1738,8 +1738,8 @@
     }
   },
   "developerBadge": "DEVELOPER",
-  "splashTagline": "Smart inventory & asset tracker",
-  "continueToApp": "Continue to app →",
+  "splashTagline": "Know where everything lives, what's running low, and who borrowed it.",
+  "continueToApp": "Continue to App",
   "changesNeedAttention": "{count, plural, =1{1 offline change needs your attention} other{{count} offline changes need your attention}}",
   "@changesNeedAttention": {
     "placeholders": {
@@ -1872,5 +1872,15 @@
   "connectionErrorTitle": "Can't reach the server",
   "connectionErrorBody": "Check your connection and try again",
   "commonTryAgain": "Try again",
-  "commonLoading": "Loading…"
+  "commonLoading": "Loading…",
+  "loginWelcomeBack": "Welcome back",
+  "loginCreateTitle": "Create your account",
+  "loginCreateSub": "Start tracking your belongings in a minute.",
+  "loginOr": "or",
+  "loginTabSignIn": "Sign in",
+  "loginTabCreate": "Create account",
+  "loginNoAccountQ": "Don't have an account?",
+  "loginCreateOneLink": "Create one",
+  "loginHaveAccountQ": "Already have an account?",
+  "loginSignInLink": "Sign in"
 }

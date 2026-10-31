@@ -4,14 +4,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/inventory_provider.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import '../l10n/l10n_ext.dart';
-import '../widgets/app_icon.dart';
+import '../utils/e2e.dart';
+import '../widgets/auth_widgets.dart';
+import '../widgets/soft_ui.dart';
 
 /// Minimalist Splash Screen with clean typography and seamless initialization
 class SplashScreen extends StatefulWidget {
@@ -129,167 +130,118 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     final c = context.colors;
+    final dark = Theme.of(context).brightness == Brightness.dark;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarBrightness: Theme.of(context).brightness == Brightness.dark
-            ? Brightness.dark
-            : Brightness.light,
-        statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
-            ? Brightness.light
-            : Brightness.dark,
+        statusBarBrightness: dark ? Brightness.dark : Brightness.light,
+        statusBarIconBrightness: dark ? Brightness.light : Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: c.background,
         body: SafeArea(
           child: FadeTransition(
             opacity: _fadeAnimation,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Spacer(flex: 3),
-
-                    // Minimalist App Icon Container
-                    Container(
-                      width: 76,
-                      height: 76,
-                      decoration: BoxDecoration(
-                        color: c.accent,
-                        borderRadius: BorderRadius.circular(28),
-                        boxShadow: c.cardShadow,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SplashMarkCluster(),
+                          const SizedBox(height: 20),
+                          Text(
+                            'Smart Inventory',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: c.textPrimary,
+                              fontSize: 30,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.8,
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          Text(
+                            context.l10n.splashTagline,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: c.textSecondary,
+                              fontSize: 15,
+                              height: 1.45,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
-                      child: Center(
-                        child: AppIcon(
-                          Icons.inventory_2_rounded,
-                          size: 38,
-                          color: c.onAccent,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 14),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 52,
+                        child: _showManualContinue
+                            ? e2eId(
+                                'splash_continue',
+                                SoftButton(
+                                  label: context.l10n.continueToApp,
+                                  onPressed: _navigateToNext,
+                                  expand: true,
+                                ),
+                              )
+                            : Consumer<InventoryProvider>(
+                                builder: (context, provider, _) => Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 90,
+                                      height: 3,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(4),
+                                        child: LinearProgressIndicator(
+                                          backgroundColor: c.fill,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                c.accentStrong,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      provider.initStatus,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: c.textSecondary,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        'v1.0.0',
+                        style: TextStyle(
+                          color: c.textMuted,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // App Title
-                    Text(
-                      'Personal Inventory',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: c.textPrimary,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.4,
-                      ),
-                    ),
-
-                    const SizedBox(height: 6),
-
-                    // Subtitle in English
-                    Text(
-                      context.l10n.splashTagline,
-                      style: GoogleFonts.plusJakartaSans(
-                        color: c.textSecondary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-
-                    const Spacer(flex: 2),
-
-                    // Minimalist Progress & Status
-                    Consumer<InventoryProvider>(
-                      builder: (context, provider, _) {
-                        return Column(
-                          children: [
-                            SizedBox(
-                              width: 90,
-                              height: 2.5,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: LinearProgressIndicator(
-                                  backgroundColor: c.fill,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    c.primary,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            SizedBox(
-                              height: 18,
-                              child: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 200),
-                                transitionBuilder: (child, animation) {
-                                  return FadeTransition(
-                                    opacity: animation,
-                                    child: child,
-                                  );
-                                },
-                                child: Text(
-                                  provider.initStatus,
-                                  key: ValueKey(provider.initStatus),
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: c.textSecondary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    // Minimalist manual continue button if slow
-                    AnimatedOpacity(
-                      duration: const Duration(milliseconds: 250),
-                      opacity: _showManualContinue ? 1.0 : 0.0,
-                      child: _showManualContinue
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 12.0),
-                              child: TextButton(
-                                onPressed: _navigateToNext,
-                                style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 6,
-                                  ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: Text(
-                                  context.l10n.continueToApp,
-                                  style: TextStyle(
-                                    color: c.textPrimary,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : const SizedBox(height: 28),
-                    ),
-
-                    const Spacer(flex: 2),
-
-                    // Minimal Footer
-                    Text(
-                      'v1.0.0',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: c.textMuted,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

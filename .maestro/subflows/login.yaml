@@ -4,6 +4,9 @@ appId: ${APP_ID}
 - tapOn:
     id: login_email
 - inputText: ${EMAIL}
+- scrollUntilVisible:
+    element:
+      id: login_password
 - tapOn:
     id: login_password
 - inputText: ${PASSWORD}

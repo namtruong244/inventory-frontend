@@ -12,6 +12,9 @@ tags: [smoke]
 - tapOn:
     id: login_email
 - inputText: ${output.email}
+- scrollUntilVisible:
+    element:
+      id: login_password
 - tapOn:
     id: login_password
 - inputText: short12
@@ -22,10 +25,13 @@ tags: [smoke]
 - tapOn:
     id: login_submit
 - assertVisible:
-    id: login_name
+    id: login_submit
 - assertNotVisible:
     id: nav_home
 # Mật khẩu hợp lệ → vào Home
+- scrollUntilVisible:
+    element:
+      id: login_password
 - tapOn:
     id: login_password
 - eraseText: 20
@@ -59,6 +65,9 @@ tags: [smoke]
 - tapOn:
     id: login_email
 - inputText: ${output.email}
+- scrollUntilVisible:
+    element:
+      id: login_password
 - tapOn:
     id: login_password
 - inputText: WrongPass999

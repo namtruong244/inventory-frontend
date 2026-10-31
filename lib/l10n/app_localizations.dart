@@ -1654,7 +1654,7 @@ abstract class AppLocalizations {
   /// No description provided for @signInToSyncYour.
   ///
   /// In en, this message translates to:
-  /// **'Sign in to sync your inventory & assets across devices'**
+  /// **'Sign in to sync your inventory across devices.'**
   String get signInToSyncYour;
 
   /// No description provided for @continueWithGoogle.
@@ -1744,7 +1744,7 @@ abstract class AppLocalizations {
   /// No description provided for @byContinuingYouAgreeTo.
   ///
   /// In en, this message translates to:
-  /// **'By continuing, you agree to our Terms of Service & Privacy Policy'**
+  /// **'By continuing you agree to the Terms of Service and Privacy Policy.'**
   String get byContinuingYouAgreeTo;
 
   /// No description provided for @commonCancel.
@@ -4418,13 +4418,13 @@ abstract class AppLocalizations {
   /// No description provided for @splashTagline.
   ///
   /// In en, this message translates to:
-  /// **'Smart inventory & asset tracker'**
+  /// **'Know where everything lives, what\'s running low, and who borrowed it.'**
   String get splashTagline;
 
   /// No description provided for @continueToApp.
   ///
   /// In en, this message translates to:
-  /// **'Continue to app →'**
+  /// **'Continue to App'**
   String get continueToApp;
 
   /// No description provided for @changesNeedAttention.
@@ -4660,6 +4660,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading…'**
   String get commonLoading;
+
+  /// No description provided for @loginWelcomeBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get loginWelcomeBack;
+
+  /// No description provided for @loginCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get loginCreateTitle;
+
+  /// No description provided for @loginCreateSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Start tracking your belongings in a minute.'**
+  String get loginCreateSub;
+
+  /// No description provided for @loginOr.
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get loginOr;
+
+  /// No description provided for @loginTabSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get loginTabSignIn;
+
+  /// No description provided for @loginTabCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get loginTabCreate;
+
+  /// No description provided for @loginNoAccountQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account?'**
+  String get loginNoAccountQ;
+
+  /// No description provided for @loginCreateOneLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Create one'**
+  String get loginCreateOneLink;
+
+  /// No description provided for @loginHaveAccountQ.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account?'**
+  String get loginHaveAccountQ;
+
+  /// No description provided for @loginSignInLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get loginSignInLink;
 }
 
 class _AppLocalizationsDelegate

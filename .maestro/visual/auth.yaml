@@ -1,0 +1,79 @@
+# Splash + Sign In (Light/Dark). Ảnh: .maestro/visual/out/auth/*.png
+# Chạy: .maestro/visual/run.sh .maestro/visual/auth
+appId: ${APP_ID}
+tags: [visual]
+---
+# Splash chỉ hiện ~1.2s: chụp ngay sau khi mở app.
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "Smart Inventory"
+    timeout: 10000
+- takeScreenshot: out/auth/splash_light
+- extendedWaitUntil:
+    visible:
+      id: login_email|nav_home
+    timeout: 30000
+- runFlow:
+    when:
+      visible:
+        id: nav_home
+    file: ../subflows/logout.yaml
+- waitForAnimationToEnd
+- takeScreenshot: out/auth/signin_light
+# Chế độ đăng ký
+- tapOn:
+    id: login_mode_register
+- waitForAnimationToEnd
+- takeScreenshot: out/auth/register_light
+- tapOn:
+    id: login_mode_signin
+# Lỗi validate: email sai + mật khẩu trống
+- tapOn:
+    id: login_email
+- inputText: minh.duong@gmail
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- tapOn:
+    id: login_submit
+- waitForAnimationToEnd
+- takeScreenshot: out/auth/signin_error_light
+# Dark: đăng nhập, đổi theme, đăng xuất, chụp màn Sign In
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow: ../subflows/logout.yaml
+- waitForAnimationToEnd
+- takeScreenshot: out/auth/signin_dark
+- tapOn:
+    id: login_mode_register
+- waitForAnimationToEnd
+- takeScreenshot: out/auth/register_dark
+- tapOn:
+    id: login_mode_signin
+- tapOn:
+    id: login_email
+- inputText: minh.duong@gmail
+- runFlow: ../subflows/dismiss_keyboard.yaml
+- tapOn:
+    id: login_submit
+- waitForAnimationToEnd
+- takeScreenshot: out/auth/signin_error_dark
+# Splash dark (theme còn giữ sau khi đăng xuất)
+- launchApp
+- extendedWaitUntil:
+    visible: "Smart Inventory"
+    timeout: 10000
+- takeScreenshot: out/auth/splash_dark
+# Trả về giao diện sáng
+- extendedWaitUntil:
+    visible:
+      id: login_email
+    timeout: 30000
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light
+- runFlow: ../subflows/logout.yaml

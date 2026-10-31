@@ -604,7 +604,7 @@
     }
   },
   "authenticationFailed": "Xác thực thất bại",
-  "signInToSyncYour": "Đăng nhập để đồng bộ đồ đạc & tài sản trên mọi thiết bị",
+  "signInToSyncYour": "Đăng nhập để đồng bộ đồ đạc trên mọi thiết bị.",
   "continueWithGoogle": "Tiếp tục với Google",
   "fullName": "Họ và tên",
   "pleaseEnterYourName": "Vui lòng nhập tên của bạn",
@@ -619,7 +619,7 @@
   "signIn": "Đăng nhập",
   "alreadyHaveAnAccountSign": "Đã có tài khoản? Đăng nhập",
   "donTHaveAnAccount": "Chưa có tài khoản? Đăng ký",
-  "byContinuingYouAgreeTo": "Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ & Chính sách quyền riêng tư",
+  "byContinuingYouAgreeTo": "Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư.",
   "commonCancel": "Hủy",
   "commonContinue": "Tiếp tục",
   "boxQrCode": "Mã QR của hộp",
@@ -1745,8 +1745,8 @@
     }
   },
   "developerBadge": "NHÀ PHÁT TRIỂN",
-  "splashTagline": "Quản lý đồ đạc và tài sản thông minh",
-  "continueToApp": "Vào ứng dụng →",
+  "splashTagline": "Biết đồ nằm ở đâu, món nào sắp hết và ai đang mượn.",
+  "continueToApp": "Vào ứng dụng",
   "changesNeedAttention": "{count} thay đổi ngoại tuyến cần bạn xem lại",
   "@changesNeedAttention": {
     "placeholders": {
@@ -1809,5 +1809,15 @@
   "connectionErrorTitle": "Không kết nối được máy chủ",
   "connectionErrorBody": "Kiểm tra kết nối và thử lại",
   "commonTryAgain": "Thử lại",
-  "commonLoading": "Đang tải…"
+  "commonLoading": "Đang tải…",
+  "loginWelcomeBack": "Chào mừng trở lại",
+  "loginCreateTitle": "Tạo tài khoản",
+  "loginCreateSub": "Bắt đầu quản lý đồ đạc của bạn chỉ trong một phút.",
+  "loginOr": "hoặc",
+  "loginTabSignIn": "Đăng nhập",
+  "loginTabCreate": "Tạo tài khoản",
+  "loginNoAccountQ": "Chưa có tài khoản?",
+  "loginCreateOneLink": "Tạo mới",
+  "loginHaveAccountQ": "Đã có tài khoản?",
+  "loginSignInLink": "Đăng nhập"
 }

@@ -929,7 +929,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get signInToSyncYour =>
-      'Đăng nhập để đồng bộ đồ đạc & tài sản trên mọi thiết bị';
+      'Đăng nhập để đồng bộ đồ đạc trên mọi thiết bị.';
 
   @override
   String get continueWithGoogle => 'Tiếp tục với Google';
@@ -975,7 +975,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get byContinuingYouAgreeTo =>
-      'Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ & Chính sách quyền riêng tư';
+      'Khi tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư.';
 
   @override
   String get commonCancel => 'Hủy';
@@ -2557,10 +2557,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get developerBadge => 'NHÀ PHÁT TRIỂN';
 
   @override
-  String get splashTagline => 'Quản lý đồ đạc và tài sản thông minh';
+  String get splashTagline =>
+      'Biết đồ nằm ở đâu, món nào sắp hết và ai đang mượn.';
 
   @override
-  String get continueToApp => 'Vào ứng dụng →';
+  String get continueToApp => 'Vào ứng dụng';
 
   @override
   String changesNeedAttention(int count) {
@@ -2706,4 +2707,35 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get commonLoading => 'Đang tải…';
+
+  @override
+  String get loginWelcomeBack => 'Chào mừng trở lại';
+
+  @override
+  String get loginCreateTitle => 'Tạo tài khoản';
+
+  @override
+  String get loginCreateSub =>
+      'Bắt đầu quản lý đồ đạc của bạn chỉ trong một phút.';
+
+  @override
+  String get loginOr => 'hoặc';
+
+  @override
+  String get loginTabSignIn => 'Đăng nhập';
+
+  @override
+  String get loginTabCreate => 'Tạo tài khoản';
+
+  @override
+  String get loginNoAccountQ => 'Chưa có tài khoản?';
+
+  @override
+  String get loginCreateOneLink => 'Tạo mới';
+
+  @override
+  String get loginHaveAccountQ => 'Đã có tài khoản?';
+
+  @override
+  String get loginSignInLink => 'Đăng nhập';
 }

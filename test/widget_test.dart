@@ -8,6 +8,7 @@ import 'package:inventory/providers/inventory_provider.dart';
 import 'package:inventory/screens/home_screen.dart';
 import 'package:inventory/screens/login_screen.dart';
 import 'package:inventory/screens/splash_screen.dart';
+import 'package:inventory/widgets/auth_widgets.dart';
 
 void main() {
   testWidgets(
@@ -32,12 +33,17 @@ void main() {
       await tester.pump();
 
       // Verify app title and subtitle in English
-      expect(find.text('Personal Inventory'), findsOneWidget);
-      expect(find.text('Smart inventory & asset tracker'), findsOneWidget);
+      expect(find.text('Smart Inventory'), findsOneWidget);
+      expect(
+        find.text(
+          "Know where everything lives, what's running low, and who borrowed it.",
+        ),
+        findsOneWidget,
+      );
 
       // Verify progress indicator is present
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
-      expect(find.byIcon(Icons.inventory_2_rounded), findsOneWidget);
+      expect(find.byType(AppMark), findsOneWidget);
 
       // Advance time past minimum display duration and bootstrap
       await tester.pump(const Duration(seconds: 7));

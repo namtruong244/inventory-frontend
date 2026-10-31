@@ -288,8 +288,7 @@ class SoftIconTile extends StatelessWidget {
     final c = context.colors;
     final fg = color ?? c.textPrimary;
     final bg =
-        background ??
-        (color == null ? c.fill : fg.withValues(alpha: 0.14));
+        background ?? (color == null ? c.fill : fg.withValues(alpha: 0.14));
     return Container(
       width: size,
       height: size,
@@ -389,9 +388,8 @@ class _SoftSearchFieldState extends State<SoftSearchField> {
           ),
           if (widget.value.isNotEmpty)
             Tappable(
-              semanticLabel: MaterialLocalizations.of(
-                context,
-              ).clearButtonTooltip,
+              semanticLabel: MaterialLocalizations.of(context)
+                  .clearButtonTooltip,
               onTap: () {
                 _controller.clear();
                 widget.onClear();
@@ -428,6 +426,9 @@ class SoftButton extends StatelessWidget {
   /// Fill the available width (otherwise hugs the content).
   final bool expand;
 
+  /// Shows a spinner instead of the label (the caller also nulls [onPressed]).
+  final bool loading;
+
   const SoftButton({
     super.key,
     required this.label,
@@ -435,6 +436,7 @@ class SoftButton extends StatelessWidget {
     this.icon,
     this.style = SoftButtonStyle.accent,
     this.expand = false,
+    this.loading = false,
   });
 
   @override
@@ -462,24 +464,35 @@ class SoftButton extends StatelessWidget {
               child: Row(
                 mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    AppIcon(icon, size: 18, color: fg),
-                    const SizedBox(width: 8),
-                  ],
-                  Flexible(
-                    child: Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: fg,
-                      ),
-                    ),
-                  ),
-                ],
+                children: loading
+                    ? [
+                        SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(fg),
+                          ),
+                        ),
+                      ]
+                    : [
+                        if (icon != null) ...[
+                          AppIcon(icon, size: 18, color: fg),
+                          const SizedBox(width: 8),
+                        ],
+                        Flexible(
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: fg,
+                            ),
+                          ),
+                        ),
+                      ],
               ),
             ),
           ),
