@@ -3191,4 +3191,29 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get scanManualEntry => 'Nhập mã thủ công';
+
+  @override
+  String get searchFilterItems => 'Vật phẩm';
+
+  @override
+  String get searchFilterLocations => 'Vị trí';
+
+  @override
+  String get searchGroupItems => 'VẬT PHẨM';
+
+  @override
+  String get searchGroupLocations => 'VỊ TRÍ LƯU TRỮ';
+
+  @override
+  String searchResultCount(num count) {
+    return '$count kết quả';
+  }
+
+  @override
+  String searchAccentHint(String variants) {
+    return 'Tìm không phân biệt dấu: $variants';
+  }
+
+  @override
+  String get searchBackTooltip => 'Quay lại';
 }

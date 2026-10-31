@@ -1,0 +1,64 @@
+# Env: THEME = light | dark. Chụp Search: initial, results, no results; mở 1 box + 1 item để kiểm tra điều hướng.
+appId: ${APP_ID}
+---
+- extendedWaitUntil:
+    visible:
+      id: home_search
+    timeout: 15000
+- tapOn:
+    id: home_search
+- extendedWaitUntil:
+    visible:
+      id: search_input
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/search/search_initial_${THEME}
+- tapOn:
+    id: search_input
+- inputText: cab
+- waitForAnimationToEnd
+- takeScreenshot: out/search/search_results_${THEME}
+# Item -> item detail
+- tapOn:
+    id: search_result_item_HDMI Cable
+- extendedWaitUntil:
+    visible:
+      id: item_options
+    timeout: 10000
+- tapOn: "Back"
+- extendedWaitUntil:
+    visible:
+      id: search_input
+    timeout: 10000
+# Box -> box detail
+- tapOn:
+    id: search_result_box_Oak cabinet
+- extendedWaitUntil:
+    visible:
+      id: box_add_child
+    timeout: 10000
+- tapOn: "Back"
+- extendedWaitUntil:
+    visible:
+      id: search_input
+    timeout: 10000
+# Filter chip selected state
+- tapOn:
+    id: search_filter_locations
+- waitForAnimationToEnd
+- takeScreenshot: out/search/search_filter_locations_${THEME}
+- tapOn:
+    id: search_filter_all
+- tapOn:
+    id: search_clear
+- tapOn:
+    id: search_input
+- inputText: zzzz
+- waitForAnimationToEnd
+- takeScreenshot: out/search/search_no_results_${THEME}
+- tapOn:
+    id: search_back
+- extendedWaitUntil:
+    visible:
+      id: home_search
+    timeout: 10000

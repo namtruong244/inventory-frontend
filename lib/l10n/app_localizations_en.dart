@@ -3288,4 +3288,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanManualEntry => 'Enter code manually';
+
+  @override
+  String get searchFilterItems => 'Items';
+
+  @override
+  String get searchFilterLocations => 'Locations';
+
+  @override
+  String get searchGroupItems => 'ITEMS';
+
+  @override
+  String get searchGroupLocations => 'STORAGE LOCATIONS';
+
+  @override
+  String searchResultCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results',
+      one: '1 result',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchAccentHint(String variants) {
+    return 'Matching without accents: $variants';
+  }
+
+  @override
+  String get searchBackTooltip => 'Back';
 }

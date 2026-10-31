@@ -1996,5 +1996,26 @@
   "scanCameraUnavailableHint": "Hãy chọn ảnh chứa mã từ thư viện.",
   "scanCameraDenied": "Chưa cấp quyền camera",
   "scanCameraDeniedHint": "Cho phép camera trong Cài đặt để quét, hoặc chọn ảnh từ thư viện.",
-  "scanManualEntry": "Nhập mã thủ công"
+  "scanManualEntry": "Nhập mã thủ công",
+  "searchFilterItems": "Vật phẩm",
+  "searchFilterLocations": "Vị trí",
+  "searchGroupItems": "VẬT PHẨM",
+  "searchGroupLocations": "VỊ TRÍ LƯU TRỮ",
+  "searchResultCount": "{count} kết quả",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "searchAccentHint": "Tìm không phân biệt dấu: {variants}",
+  "@searchAccentHint": {
+    "placeholders": {
+      "variants": {
+        "type": "String"
+      }
+    }
+  },
+  "searchBackTooltip": "Quay lại"
 }

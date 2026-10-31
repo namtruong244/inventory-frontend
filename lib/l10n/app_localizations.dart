@@ -5498,6 +5498,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter code manually'**
   String get scanManualEntry;
+
+  /// No description provided for @searchFilterItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Items'**
+  String get searchFilterItems;
+
+  /// No description provided for @searchFilterLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'Locations'**
+  String get searchFilterLocations;
+
+  /// No description provided for @searchGroupItems.
+  ///
+  /// In en, this message translates to:
+  /// **'ITEMS'**
+  String get searchGroupItems;
+
+  /// No description provided for @searchGroupLocations.
+  ///
+  /// In en, this message translates to:
+  /// **'STORAGE LOCATIONS'**
+  String get searchGroupLocations;
+
+  /// No description provided for @searchResultCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 result} other{{count} results}}'**
+  String searchResultCount(num count);
+
+  /// No description provided for @searchAccentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Matching without accents: {variants}'**
+  String searchAccentHint(String variants);
+
+  /// No description provided for @searchBackTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get searchBackTooltip;
 }
 
 class _AppLocalizationsDelegate

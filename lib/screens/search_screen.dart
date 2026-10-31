@@ -4,16 +4,16 @@ import 'package:provider/provider.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../widgets/app_image_view.dart';
-import '../widgets/box_card.dart';
-import 'box_details_screen.dart';
-import 'item_create_screen.dart';
-import 'item_details_screen.dart';
 import '../widgets/app_refresh.dart';
-import '../widgets/tappable.dart';
+import '../widgets/box_tree.dart';
+import '../widgets/empty_state_card.dart';
+import '../widgets/search_parts.dart';
+import '../widgets/soft_ui.dart';
+import 'box_details_screen.dart';
+import 'item_details_screen.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
 import '../utils/text_normalize.dart';
-import '../widgets/app_icon.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -25,11 +25,14 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final _searchController = TextEditingController();
   String _query = '';
+  String _rawQuery = '';
   // Stable ids; the label shown comes from [_filterLabel].
   String _selectedFilter = 'all';
 
   final List<String> _filters = [
     'all',
+    'items',
+    'locations',
     'stored',
     'inUse',
     'lent',
@@ -37,6 +40,8 @@ class _SearchScreenState extends State<SearchScreen> {
   ];
 
   String _filterLabel(BuildContext context, String id) => switch (id) {
+    'items' => context.l10n.searchFilterItems,
+    'locations' => context.l10n.searchFilterLocations,
     'stored' => context.l10n.commonStored2,
     'inUse' => context.l10n.inUse2,
     'lent' => context.l10n.commonLent3,
@@ -54,501 +59,210 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: context.colors.background,
-      appBar: AppBar(
-        backgroundColor: context.colors.background,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: IconButton(
-            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: context.colors.surface,
-                shape: BoxShape.circle,
-              ),
-              child: AppIcon(
-                Icons.arrow_back_ios_new_rounded,
-                color: context.colors.textPrimary,
-                size: 16,
-              ),
-            ),
-            onPressed: () => Navigator.pop(context),
+      body: SafeArea(
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Consumer<InventoryProvider>(
+            builder: (context, provider, child) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 4, 24, 18),
+                    child: SearchInputRow(
+                      hint: context.l10n.searchItemsSerialBarcodeBoxes,
+                      controller: _searchController,
+                      hasText: _query.isNotEmpty,
+                      onChanged: (val) => setState(() {
+                        _rawQuery = val.trim();
+                        _query = normalizeVi(_rawQuery);
+                      }),
+                      onClear: () {
+                        _searchController.clear();
+                        setState(() {
+                          _rawQuery = '';
+                          _query = '';
+                        });
+                      },
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: SearchFilterBar(
+                      filters: [
+                        for (final f in _filters) (f, _filterLabel(context, f)),
+                      ],
+                      selected: _selectedFilter,
+                      onSelected: (f) => setState(() => _selectedFilter = f),
+                    ),
+                  ),
+                  Expanded(child: _buildSearchResults(context, provider)),
+                ],
+              );
+            },
           ),
-        ),
-        titleSpacing: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(right: 16.0),
-          child: Container(
-            height: 46,
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: context.colors.cardShadow,
-            ),
-            child: Row(
-              children: [
-                AppIcon(
-                  Icons.search,
-                  size: 20,
-                  color: context.colors.textMuted,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    autofocus: true,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 15,
-                    ),
-                    decoration: InputDecoration(
-                      hintText: context.l10n.searchItemsSerialBarcodeBoxes,
-                      hintStyle: TextStyle(
-                        color: context.colors.textMuted,
-                        fontSize: 13,
-                        fontWeight: FontWeight.normal,
-                      ),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      filled: false,
-                      contentPadding: EdgeInsets.zero,
-                      isDense: true,
-                    ),
-                    onChanged: (val) {
-                      setState(() {
-                        _query = normalizeVi(val.trim());
-                      });
-                    },
-                  ),
-                ),
-                if (_query.isNotEmpty)
-                  Tappable(
-                    semanticLabel: MaterialLocalizations.of(context)
-                        .clearButtonTooltip,
-                    onTap: () {
-                      _searchController.clear();
-                      setState(() {
-                        _query = '';
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: context.colors.border,
-                        shape: BoxShape.circle,
-                      ),
-                      child: AppIcon(
-                        Icons.close_rounded,
-                        size: 16,
-                        color: context.colors.textSecondary,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      body: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Consumer<InventoryProvider>(
-          builder: (context, provider, child) {
-            // Filter chips header
-            return Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 6, 20, 12),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: _filters.map((filter) {
-                        final isSelected = _selectedFilter == filter;
-                        return Tappable(
-                          onTap: () => setState(() => _selectedFilter = filter),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            margin: const EdgeInsets.only(right: 8),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? context.colors.accent
-                                  : context.colors.surface,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              _filterLabel(context, filter),
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.w500,
-                                color: isSelected
-                                    ? context.colors.onAccent
-                                    : context.colors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-
-                Expanded(child: _buildSearchResults(context, provider)),
-              ],
-            );
-          },
         ),
       ),
     );
   }
 
+  Widget _centered(Widget child) => Center(
+    child: SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+      child: child,
+    ),
+  );
+
   Widget _buildSearchResults(BuildContext context, InventoryProvider provider) {
-    // A status filter alone is a valid search ("everything that is lent out").
+    final l10n = context.l10n;
+    // A filter alone is a valid search ("everything that is lent out").
     if (_query.isEmpty && _selectedFilter == 'all') {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppIcon(
-              Icons.search_rounded,
-              size: 56,
-              color: context.colors.border,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              context.l10n.searchYourEntireInventory,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: context.colors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.findItemsByNameBarcode,
-              style: TextStyle(fontSize: 13, color: context.colors.textMuted),
-              textAlign: TextAlign.center,
-            ),
-          ],
+      return _centered(
+        EmptyStateCard(
+          icon: Icons.search_rounded,
+          title: l10n.searchYourEntireInventory,
+          subtitle: l10n.findItemsByNameBarcode,
         ),
       );
     }
 
-    // Matching Boxes
-    // (locations have no status, so a filter without a keyword lists items only)
-    final matchingBoxes = _query.isEmpty
+    final onlyItems =
+        _selectedFilter != 'all' && _selectedFilter != 'locations';
+    final onlyBoxes = _selectedFilter == 'locations';
+
+    // Locations have no status, so status filters list items only.
+    final matchingBoxes = onlyItems
         ? <Box>[]
         : provider.boxes.where((b) {
-            return containsNormalized(b.name, _query) ||
+            return _query.isEmpty ||
+                containsNormalized(b.name, _query) ||
                 containsNormalized(b.description, _query) ||
                 containsNormalized(b.label, _query);
           }).toList();
 
-    // Matching Items (Full-text search)
-    var matchingItems = provider.items.where((i) {
-      final matchesQuery =
-          _query.isEmpty ||
-          containsNormalized(i.name, _query) ||
-          containsNormalized(i.description, _query) ||
-          containsNormalized(i.categoryId, _query) ||
-          containsNormalized(i.serialNumber, _query) ||
-          containsNormalized(i.barcode, _query) ||
-          i.customAttributes.entries.any(
-            (entry) =>
-                containsNormalized(entry.key, _query) ||
-                containsNormalized(entry.value.toString(), _query),
-          );
-
-      if (!matchesQuery) return false;
-
-      // Status filters
-      if (_selectedFilter == 'stored') return i.status == ItemStatus.stored;
-      if (_selectedFilter == 'inUse') return i.status == ItemStatus.inUse;
-      if (_selectedFilter == 'lent') return i.status == ItemStatus.lent;
-      if (_selectedFilter == 'perishable') return i.expiryDate != null;
-
-      return true;
-    }).toList();
+    final matchingItems = onlyBoxes
+        ? <Item>[]
+        : provider.items.where((i) {
+            final matchesQuery =
+                _query.isEmpty ||
+                containsNormalized(i.name, _query) ||
+                containsNormalized(i.description, _query) ||
+                containsNormalized(i.categoryId, _query) ||
+                containsNormalized(i.serialNumber, _query) ||
+                containsNormalized(i.barcode, _query) ||
+                i.customAttributes.entries.any(
+                  (entry) =>
+                      containsNormalized(entry.key, _query) ||
+                      containsNormalized(entry.value.toString(), _query),
+                );
+            if (!matchesQuery) return false;
+            return switch (_selectedFilter) {
+              'stored' => i.status == ItemStatus.stored,
+              'inUse' => i.status == ItemStatus.inUse,
+              'lent' => i.status == ItemStatus.lent,
+              'perishable' => i.expiryDate != null,
+              _ => true,
+            };
+          }).toList();
 
     if (matchingBoxes.isEmpty && matchingItems.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AppIcon(
-              Icons.inventory_2_outlined,
-              size: 56,
-              color: context.colors.border,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              context.l10n.noResultsFor(_query),
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              context.l10n.tryADifferentNameSerial,
-              style: TextStyle(fontSize: 13, color: context.colors.textMuted),
-            ),
-          ],
+      return _centered(
+        EmptyStateCard(
+          icon: Icons.inventory_2_outlined,
+          title: l10n.noResultsFor(_rawQuery),
+          subtitle: l10n.tryADifferentNameSerial,
         ),
       );
     }
+
+    // Typed text and its accent-free form, e.g. “Cáp”, “cap”.
+    final variants = {_rawQuery, _query}.where((v) => v.isNotEmpty).toList();
 
     return AppRefresh(
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 120),
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
         children: [
-          // Storage Containers Match
-          if (matchingBoxes.isNotEmpty) ...[
-            Row(
-              children: [
-                const AppIcon(Icons.meeting_room_outlined, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  context.l10n.storageLocations(matchingBoxes.length),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
+          if (variants.length > 1) ...[
+            SearchAccentHint(variants: variants.map((v) => '“$v”').join(', ')),
+            const SizedBox(height: 18),
+          ],
+          if (matchingItems.isNotEmpty)
+            SearchResultGroup(
+              title: l10n.searchGroupItems,
+              count: matchingItems.length,
+              rows: [
+                for (final item in matchingItems) _itemRow(provider, item),
               ],
             ),
-            const SizedBox(height: 12),
-            ...matchingBoxes.map((box) {
-              final breadcrumb = provider.getBreadcrumbString(box.id);
-              final itemsCount = provider.countTotalItemsIn(box.id);
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12.0),
-                child: BoxCard(
-                  name: box.name,
-                  description: '$breadcrumb\n$itemsCount items stored',
-                  label: box.label,
-                  type: box.type,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BoxDetailsScreen(boxId: box.id),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }),
-            const SizedBox(height: 20),
-          ],
-
-          // Items Match with Full Breadcrumb Navigation
-          if (matchingItems.isNotEmpty) ...[
-            Row(
-              children: [
-                const AppIcon(Icons.category_outlined, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  context.l10n.commonItems(matchingItems.length),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
+          if (matchingItems.isNotEmpty && matchingBoxes.isNotEmpty)
+            const SizedBox(height: 18),
+          if (matchingBoxes.isNotEmpty)
+            SearchResultGroup(
+              title: l10n.searchGroupLocations,
+              count: matchingBoxes.length,
+              rows: [for (final box in matchingBoxes) _boxRow(provider, box)],
             ),
-            const SizedBox(height: 12),
-            ...matchingItems.map((item) {
-              final breadcrumb = provider.getBreadcrumbString(item.boxId);
-
-              return Tappable(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ItemDetailsScreen(itemId: item.id),
-                    ),
-                  );
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 12.0),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: context.colors.surface,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: context.colors.cardShadow,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (item.imageUrl != null) ...[
-                        AppImageView(
-                          imageUrlOrPath: item.imageUrl!,
-                          width: 58,
-                          height: 58,
-                          borderRadius: BorderRadius.circular(14),
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(width: 14),
-                      ],
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Item Name + Status Badge
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    item.name,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: context.colors.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 3,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: item.status.color.withValues(
-                                      alpha: 0.15,
-                                    ),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    item.status.displayName,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: item.status.color,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            if (item.description.isNotEmpty) ...[
-                              const SizedBox(height: 4),
-                              Text(
-                                item.description,
-                                style: TextStyle(
-                                  color: context.colors.textSecondary,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                            const SizedBox(height: 10),
-
-                            // Breadcrumb Path display
-                            Tappable(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        BoxDetailsScreen(boxId: item.boxId),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: context.colors.fill,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    AppIcon(
-                                      Icons.location_on_outlined,
-                                      size: 14,
-                                      color: context.colors.textPrimary,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Flexible(
-                                      child: Text(
-                                        breadcrumb,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                          color: context.colors.textPrimary,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    AppIcon(
-                                      Icons.chevron_right,
-                                      size: 14,
-                                      color: context.colors.textSecondary,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            // Actions & Metadata row
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  '${context.l10n.qtyValue(provider.formatQty(item.quantity, item.unit))}${item.purchasePrice != null ? ' • ${provider.formatPrice(item.purchasePrice)}' : ''}${item.barcode != null ? ' • UPC: ${item.barcode}' : ''}',
-                                  style: TextStyle(
-                                    color: context.colors.textMuted,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                                Tappable(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ItemCreateScreen(
-                                          boxId: item.boxId,
-                                          existingItem: item,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Text(
-                                    context.l10n.commonEdit,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                      color: context.colors.textPrimary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-          ],
         ],
+      ),
+    );
+  }
+
+  Widget _itemRow(InventoryProvider provider, Item item) {
+    final c = context.colors;
+    return SearchResultRow(
+      key: ValueKey('item_${item.id}'),
+      id: 'search_result_item_${item.name}',
+      tile: item.imageUrl != null
+          ? AppImageView(
+              imageUrlOrPath: item.imageUrl!,
+              width: 42,
+              height: 42,
+              borderRadius: BorderRadius.circular(14),
+              fit: BoxFit.cover,
+            )
+          : SoftIconTile(
+              CategoryHelper.getCategoryIcon(item.categoryId),
+              color: c.textPrimary,
+              size: 42,
+            ),
+      name: item.name,
+      normalizedQuery: _query,
+      sub: provider.getBreadcrumbString(item.boxId),
+      badge: context.l10n.qtyValue(
+        provider.formatQty(item.quantity, item.unit),
+      ),
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => ItemDetailsScreen(itemId: item.id)),
+      ),
+    );
+  }
+
+  Widget _boxRow(InventoryProvider provider, Box box) {
+    final tone = boxTypeTone(box.type);
+    final parentPath = box.parentId == null
+        ? ''
+        : provider.getBreadcrumbString(box.parentId!);
+    return SearchResultRow(
+      key: ValueKey('box_${box.id}'),
+      id: 'search_result_box_${box.name}',
+      tile: SoftIconTile(
+        box.type.icon,
+        color: tone.fg,
+        background: tone.bg,
+        size: 42,
+      ),
+      name: box.name,
+      normalizedQuery: _query,
+      sub: parentPath.isEmpty
+          ? box.type.displayName
+          : '${box.type.displayName} · $parentPath',
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => BoxDetailsScreen(boxId: box.id)),
       ),
     );
   }

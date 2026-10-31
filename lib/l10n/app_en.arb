@@ -2185,9 +2185,21 @@
   "locationPickerScan": "Scan",
   "locationCreateHereShort": "Create location here",
   "locationPickerIn": "in {name}",
-  "@locationPickerIn": {"placeholders": {"name": {"type": "String"}}},
+  "@locationPickerIn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "locationInsideCount": "{count} inside",
-  "@locationInsideCount": {"placeholders": {"count": {"type": "int"}}},
+  "@locationInsideCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "locationPickerUp": "Up one level",
   "locationCurrentKicker": "Current location",
   "locationSubKicker": "Sub-containers inside",
@@ -2201,5 +2213,26 @@
   "scanCameraUnavailableHint": "Use the gallery to pick a photo of the code instead.",
   "scanCameraDenied": "Camera access is off",
   "scanCameraDeniedHint": "Allow camera access in Settings to scan, or pick a photo from the gallery.",
-  "scanManualEntry": "Enter code manually"
+  "scanManualEntry": "Enter code manually",
+  "searchFilterItems": "Items",
+  "searchFilterLocations": "Locations",
+  "searchGroupItems": "ITEMS",
+  "searchGroupLocations": "STORAGE LOCATIONS",
+  "searchResultCount": "{count, plural, =1{1 result} other{{count} results}}",
+  "@searchResultCount": {
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "searchAccentHint": "Matching without accents: {variants}",
+  "@searchAccentHint": {
+    "placeholders": {
+      "variants": {
+        "type": "String"
+      }
+    }
+  },
+  "searchBackTooltip": "Back"
 }
