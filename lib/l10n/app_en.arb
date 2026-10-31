@@ -2234,5 +2234,84 @@
       }
     }
   },
-  "searchBackTooltip": "Back"
+  "searchBackTooltip": "Back",
+  "alertsSummaryExpired": "Expired",
+  "alertsSummaryLowSoon": "Low / soon",
+  "alertsSummaryOverdue": "Overdue",
+  "alertsSummaryWarranty": "Warranty",
+  "alertLowStockSub": "Only {qty} {unit} left · threshold {min}",
+  "@alertLowStockSub": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "alertOverdueSub": "{borrower} · {days, plural, =1{1 day} other{{days} days}} overdue",
+  "@alertOverdueSub": {
+    "placeholders": {
+      "borrower": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "alertWarrantySub": "Warranty ends in {days, plural, =1{1 day} other{{days} days}} · {date}",
+  "@alertWarrantySub": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lendingTabActive": "Active",
+  "lendingTabHistory": "History",
+  "lendingSectionOnTime": "On time",
+  "lendingExpectedReturn": "Expected return",
+  "lendingReturnedLabel": "Returned",
+  "lendingLentSince": "Lent",
+  "loanDueLate": "{date} · {days, plural, =1{1 day} other{{days} days}} late",
+  "@loanDueLate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "loanDueIn": "{date} · {days, plural, =0{due today} =1{in 1 day} other{in {days} days}}",
+  "@loanDueIn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "lentToQty": "Lent to {borrower} · {qty}",
+  "@lentToQty": {
+    "placeholders": {
+      "borrower": {
+        "type": "String"
+      },
+      "qty": {
+        "type": "String"
+      }
+    }
+  }
 }

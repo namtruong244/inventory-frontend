@@ -2017,5 +2017,84 @@
       }
     }
   },
-  "searchBackTooltip": "Quay lại"
+  "searchBackTooltip": "Quay lại",
+  "alertsSummaryExpired": "Hết hạn",
+  "alertsSummaryLowSoon": "Sắp hết",
+  "alertsSummaryOverdue": "Quá hạn",
+  "alertsSummaryWarranty": "Bảo hành",
+  "alertLowStockSub": "Chỉ còn {qty} {unit} · ngưỡng {min}",
+  "@alertLowStockSub": {
+    "placeholders": {
+      "qty": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "alertOverdueSub": "{borrower} · quá hạn {days, plural, =1{1 ngày} other{{days} ngày}}",
+  "@alertOverdueSub": {
+    "placeholders": {
+      "borrower": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "alertWarrantySub": "Bảo hành hết sau {days, plural, =1{1 ngày} other{{days} ngày}} · {date}",
+  "@alertWarrantySub": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "lendingTabActive": "Đang mượn",
+  "lendingTabHistory": "Lịch sử",
+  "lendingSectionOnTime": "Đúng hạn",
+  "lendingExpectedReturn": "Hẹn trả",
+  "lendingReturnedLabel": "Đã trả",
+  "lendingLentSince": "Đã cho mượn",
+  "loanDueLate": "{date} · trễ {days, plural, =1{1 ngày} other{{days} ngày}}",
+  "@loanDueLate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "loanDueIn": "{date} · {days, plural, =0{hôm nay} =1{còn 1 ngày} other{còn {days} ngày}}",
+  "@loanDueIn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "lentToQty": "Cho {borrower} mượn · {qty}",
+  "@lentToQty": {
+    "placeholders": {
+      "borrower": {
+        "type": "String"
+      },
+      "qty": {
+        "type": "String"
+      }
+    }
+  }
 }

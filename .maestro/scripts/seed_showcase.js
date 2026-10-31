@@ -86,4 +86,17 @@ post('/lending/lend', {
   lentDate: daysFromNow(-20) + 'T09:00:00.000Z', expectedReturnDate: daysFromNow(-5) + 'T18:00:00.000Z',
   notes: 'For movie night',
 }, token);
+
+// Alerts / Lending showcase: an expired item and two on-time loans.
+item('Greek yogurt 4-pack', bottomShelf, 'Health', 4, 'pcs', { expiryDate: daysFromNow(-2) });
+var chairs = item('Folding camping chairs', garage, 'Tools', 6, 'pcs', {});
+var tent = item('Camping tent', garage, 'Tools', 1, 'pcs', {});
+post('/lending/lend', {
+  itemId: chairs, borrowerName: 'Hoa', borrowerContact: '', quantity: 2,
+  lentDate: daysFromNow(-4) + 'T09:00:00.000Z', expectedReturnDate: daysFromNow(16) + 'T18:00:00.000Z',
+}, token);
+post('/lending/lend', {
+  itemId: tent, borrowerName: 'Nam', borrowerContact: '',
+  lentDate: daysFromNow(-2) + 'T09:00:00.000Z', expectedReturnDate: daysFromNow(9) + 'T18:00:00.000Z',
+}, token);
 output.drillId = drill;

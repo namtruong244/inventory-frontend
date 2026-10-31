@@ -3319,4 +3319,89 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchBackTooltip => 'Back';
+
+  @override
+  String get alertsSummaryExpired => 'Expired';
+
+  @override
+  String get alertsSummaryLowSoon => 'Low / soon';
+
+  @override
+  String get alertsSummaryOverdue => 'Overdue';
+
+  @override
+  String get alertsSummaryWarranty => 'Warranty';
+
+  @override
+  String alertLowStockSub(String qty, String unit, String min) {
+    return 'Only $qty $unit left · threshold $min';
+  }
+
+  @override
+  String alertOverdueSub(String borrower, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$borrower · $_temp0 overdue';
+  }
+
+  @override
+  String alertWarrantySub(int days, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return 'Warranty ends in $_temp0 · $date';
+  }
+
+  @override
+  String get lendingTabActive => 'Active';
+
+  @override
+  String get lendingTabHistory => 'History';
+
+  @override
+  String get lendingSectionOnTime => 'On time';
+
+  @override
+  String get lendingExpectedReturn => 'Expected return';
+
+  @override
+  String get lendingReturnedLabel => 'Returned';
+
+  @override
+  String get lendingLentSince => 'Lent';
+
+  @override
+  String loanDueLate(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days',
+      one: '1 day',
+    );
+    return '$date · $_temp0 late';
+  }
+
+  @override
+  String loanDueIn(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'in $days days',
+      one: 'in 1 day',
+      zero: 'due today',
+    );
+    return '$date · $_temp0';
+  }
+
+  @override
+  String lentToQty(String borrower, String qty) {
+    return 'Lent to $borrower · $qty';
+  }
 }

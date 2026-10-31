@@ -1,0 +1,64 @@
+# Alerts + Lending tracker (Light/Dark). Ảnh: .maestro/visual/out/alerts/*.png
+# Chạy: .maestro/visual/run.sh alerts
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: subflows/alerts_shots.yaml
+    env:
+      THEME: light
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/alerts_shots.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light
+# Logic: bật/tắt lọc Alerts theo ô tóm tắt (nội dung lọc kiểm bằng ảnh, cây semantics của Flutter trễ), mở item từ alert, trả đồ ở Lending.
+- tapOn:
+    id: nav_home
+- tapOn:
+    id: home_alerts
+- extendedWaitUntil:
+    visible:
+      id: alerts_filter_overdue
+    timeout: 10000
+- tapOn:
+    id: alerts_filter_overdue
+- waitForAnimationToEnd
+- tapOn:
+    id: alerts_filter_overdue
+- waitForAnimationToEnd
+- tapOn:
+    id: alert_row_Greek yogurt 4-pack
+- extendedWaitUntil:
+    visible:
+      id: item_options
+    timeout: 10000
+- tapOn: "Back"
+- tapOn:
+    id: alerts_back
+- tapOn:
+    id: home_lending
+- extendedWaitUntil:
+    visible:
+      id: loan_return_Camping tent
+    timeout: 10000
+- tapOn:
+    id: loan_return_Camping tent
+- tapOn:
+    id: confirm_ok
+- extendedWaitUntil:
+    notVisible:
+      id: loan_row_Camping tent
+    timeout: 10000
+- tapOn:
+    id: lending_tab_history
+- assertVisible:
+    id: loan_row_Camping tent

@@ -1,0 +1,33 @@
+# Env: THEME = light | dark. Chụp Alerts + Lending từ Home.
+appId: ${APP_ID}
+---
+- tapOn:
+    id: nav_home
+- extendedWaitUntil:
+    visible:
+      id: home_alerts
+    timeout: 15000
+- tapOn:
+    id: home_alerts
+- extendedWaitUntil:
+    visible:
+      id: alerts_back
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/alerts/alerts_${THEME}
+- tapOn:
+    id: alerts_back
+- extendedWaitUntil:
+    visible:
+      id: home_lending
+    timeout: 10000
+- tapOn:
+    id: home_lending
+- extendedWaitUntil:
+    visible:
+      id: lending_back
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/alerts/lending_${THEME}
+- tapOn:
+    id: lending_back

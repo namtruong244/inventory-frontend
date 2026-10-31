@@ -3216,4 +3216,89 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get searchBackTooltip => 'Quay lại';
+
+  @override
+  String get alertsSummaryExpired => 'Hết hạn';
+
+  @override
+  String get alertsSummaryLowSoon => 'Sắp hết';
+
+  @override
+  String get alertsSummaryOverdue => 'Quá hạn';
+
+  @override
+  String get alertsSummaryWarranty => 'Bảo hành';
+
+  @override
+  String alertLowStockSub(String qty, String unit, String min) {
+    return 'Chỉ còn $qty $unit · ngưỡng $min';
+  }
+
+  @override
+  String alertOverdueSub(String borrower, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ngày',
+      one: '1 ngày',
+    );
+    return '$borrower · quá hạn $_temp0';
+  }
+
+  @override
+  String alertWarrantySub(int days, String date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ngày',
+      one: '1 ngày',
+    );
+    return 'Bảo hành hết sau $_temp0 · $date';
+  }
+
+  @override
+  String get lendingTabActive => 'Đang mượn';
+
+  @override
+  String get lendingTabHistory => 'Lịch sử';
+
+  @override
+  String get lendingSectionOnTime => 'Đúng hạn';
+
+  @override
+  String get lendingExpectedReturn => 'Hẹn trả';
+
+  @override
+  String get lendingReturnedLabel => 'Đã trả';
+
+  @override
+  String get lendingLentSince => 'Đã cho mượn';
+
+  @override
+  String loanDueLate(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ngày',
+      one: '1 ngày',
+    );
+    return '$date · trễ $_temp0';
+  }
+
+  @override
+  String loanDueIn(String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'còn $days ngày',
+      one: 'còn 1 ngày',
+      zero: 'hôm nay',
+    );
+    return '$date · $_temp0';
+  }
+
+  @override
+  String lentToQty(String borrower, String qty) {
+    return 'Cho $borrower mượn · $qty';
+  }
 }

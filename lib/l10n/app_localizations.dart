@@ -5540,6 +5540,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back'**
   String get searchBackTooltip;
+
+  /// No description provided for @alertsSummaryExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get alertsSummaryExpired;
+
+  /// No description provided for @alertsSummaryLowSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Low / soon'**
+  String get alertsSummaryLowSoon;
+
+  /// No description provided for @alertsSummaryOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get alertsSummaryOverdue;
+
+  /// No description provided for @alertsSummaryWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty'**
+  String get alertsSummaryWarranty;
+
+  /// No description provided for @alertLowStockSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Only {qty} {unit} left · threshold {min}'**
+  String alertLowStockSub(String qty, String unit, String min);
+
+  /// No description provided for @alertOverdueSub.
+  ///
+  /// In en, this message translates to:
+  /// **'{borrower} · {days, plural, =1{1 day} other{{days} days}} overdue'**
+  String alertOverdueSub(String borrower, int days);
+
+  /// No description provided for @alertWarrantySub.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty ends in {days, plural, =1{1 day} other{{days} days}} · {date}'**
+  String alertWarrantySub(int days, String date);
+
+  /// No description provided for @lendingTabActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get lendingTabActive;
+
+  /// No description provided for @lendingTabHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get lendingTabHistory;
+
+  /// No description provided for @lendingSectionOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time'**
+  String get lendingSectionOnTime;
+
+  /// No description provided for @lendingExpectedReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected return'**
+  String get lendingExpectedReturn;
+
+  /// No description provided for @lendingReturnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get lendingReturnedLabel;
+
+  /// No description provided for @lendingLentSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent'**
+  String get lendingLentSince;
+
+  /// No description provided for @loanDueLate.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {days, plural, =1{1 day} other{{days} days}} late'**
+  String loanDueLate(String date, int days);
+
+  /// No description provided for @loanDueIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {days, plural, =0{due today} =1{in 1 day} other{in {days} days}}'**
+  String loanDueIn(String date, int days);
+
+  /// No description provided for @lentToQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent to {borrower} · {qty}'**
+  String lentToQty(String borrower, String qty);
 }
 
 class _AppLocalizationsDelegate
