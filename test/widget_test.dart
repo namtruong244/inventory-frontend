@@ -70,7 +70,8 @@ void main() {
 
       await tester.pump();
       await tester.pump(const Duration(seconds: 7));
-      await tester.pumpAndSettle();
+      // Home shows a looping skeleton while loading, so settle can't finish.
+      await tester.pump(const Duration(seconds: 1));
 
       // Verify transition to HomeScreen
       expect(find.byType(HomeScreen), findsOneWidget);

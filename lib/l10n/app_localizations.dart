@@ -880,7 +880,7 @@ abstract class AppLocalizations {
   /// No description provided for @trackManageYourInventory.
   ///
   /// In en, this message translates to:
-  /// **'Track & manage\nyour inventory!'**
+  /// **'Track & manage your inventory'**
   String get trackManageYourInventory;
 
   /// No description provided for @commonSearch.
@@ -2164,19 +2164,19 @@ abstract class AppLocalizations {
   /// No description provided for @totalAssets.
   ///
   /// In en, this message translates to:
-  /// **'Total Assets'**
+  /// **'Total assets'**
   String get totalAssets;
 
   /// No description provided for @onLoan.
   ///
   /// In en, this message translates to:
-  /// **'On Loan'**
+  /// **'On loan'**
   String get onLoan;
 
   /// No description provided for @estValue.
   ///
   /// In en, this message translates to:
-  /// **'Est. Value'**
+  /// **'Est. value'**
   String get estValue;
 
   /// No description provided for @couldNotRestore.
@@ -2578,7 +2578,7 @@ abstract class AppLocalizations {
   /// No description provided for @recentItems.
   ///
   /// In en, this message translates to:
-  /// **'Recent Items'**
+  /// **'Recent items'**
   String get recentItems;
 
   /// No description provided for @viewAll.
@@ -4130,7 +4130,7 @@ abstract class AppLocalizations {
   /// No description provided for @heyName.
   ///
   /// In en, this message translates to:
-  /// **'Hey {name}!'**
+  /// **'Hey {name} 👋'**
   String heyName(Object name);
 
   /// No description provided for @heyFallbackName.
@@ -4172,13 +4172,13 @@ abstract class AppLocalizations {
   /// No description provided for @firstRoomsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Where do you keep your things?'**
+  /// **'Which rooms do you store things in?'**
   String get firstRoomsTitle;
 
   /// No description provided for @firstRoomsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Pick the rooms you have. You can add cabinets, shelves and boxes inside them later.'**
+  /// **'Pick a few — we\'ll create them all at once. You can rename later.'**
   String get firstRoomsSubtitle;
 
   /// No description provided for @roomLivingRoom.
@@ -4226,13 +4226,13 @@ abstract class AppLocalizations {
   /// No description provided for @createSelectedRooms.
   ///
   /// In en, this message translates to:
-  /// **'Create selected ({count})'**
-  String createSelectedRooms(Object count);
+  /// **'{count, plural, =0{Create rooms} =1{Create 1 room} other{Create {count} rooms}}'**
+  String createSelectedRooms(int count);
 
   /// No description provided for @addMyOwnLocation.
   ///
   /// In en, this message translates to:
-  /// **'Add my own'**
+  /// **'Custom…'**
   String get addMyOwnLocation;
 
   /// No description provided for @locationsCreatedCount.
@@ -4546,6 +4546,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days, plural, =1{1 day} other{{days} days}} overdue'**
   String daysOverdueCount(int days);
+
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your inventory'**
+  String get homeSearchHint;
+
+  /// No description provided for @homeAttentionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item needs your attention} other{{count} items need your attention}}'**
+  String homeAttentionTitle(int count);
+
+  /// No description provided for @homeChipExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} expired'**
+  String homeChipExpired(int count);
+
+  /// No description provided for @homeChipLow.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} low'**
+  String homeChipLow(int count);
+
+  /// No description provided for @homeChipOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} overdue'**
+  String homeChipOverdue(int count);
+
+  /// No description provided for @homeAlertsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry, stock & warranty'**
+  String get homeAlertsSub;
+
+  /// No description provided for @homeLendingSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Who has your things'**
+  String get homeLendingSub;
+
+  /// No description provided for @homeAlertsOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} open'**
+  String homeAlertsOpen(int count);
+
+  /// No description provided for @homeLendingActive.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active'**
+  String homeLendingActive(int count);
+
+  /// No description provided for @homeWelcomeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name} 👋'**
+  String homeWelcomeName(Object name);
+
+  /// No description provided for @homeSetupTagline.
+  ///
+  /// In en, this message translates to:
+  /// **'Let\'s set up your home'**
+  String get homeSetupTagline;
+
+  /// No description provided for @firstRoomsStepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1 of 2 · Add your rooms'**
+  String get firstRoomsStepLabel;
+
+  /// No description provided for @firstRoomsSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip — I\'ll do it later'**
+  String get firstRoomsSkip;
+
+  /// No description provided for @firstRoomsNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2 · Add your first item'**
+  String get firstRoomsNextTitle;
+
+  /// No description provided for @firstRoomsNextSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocks after you create a room'**
+  String get firstRoomsNextSub;
+
+  /// No description provided for @connectionErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach the server'**
+  String get connectionErrorTitle;
+
+  /// No description provided for @connectionErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again'**
+  String get connectionErrorBody;
+
+  /// No description provided for @commonTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get commonTryAgain;
+
+  /// No description provided for @commonLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get commonLoading;
 }
 
 class _AppLocalizationsDelegate

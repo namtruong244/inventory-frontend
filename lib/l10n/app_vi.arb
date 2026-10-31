@@ -230,8 +230,12 @@
   "boxSummary": "{items, plural, other{{items} món đồ}} • {nested} ngăn con",
   "@boxSummary": {
     "placeholders": {
-      "items": {"type": "int"},
-      "nested": {"type": "int"}
+      "items": {
+        "type": "int"
+      },
+      "nested": {
+        "type": "int"
+      }
     }
   },
   "nestedContainers": "Ngăn chứa con ({count})",
@@ -314,7 +318,7 @@
   "commonEdit": "Sửa",
   "addSubContainer": "Thêm ngăn chứa con",
   "commonPath": "Đường dẫn: ",
-  "trackManageYourInventory": "Theo dõi & quản lý\nđồ đạc của bạn!",
+  "trackManageYourInventory": "Theo dõi & quản lý đồ đạc của bạn",
   "commonSearch": "Tìm kiếm",
   "commonHome": "Trang chủ",
   "commonBox": "Vị trí",
@@ -1551,7 +1555,7 @@
   "statusBroken": "Hỏng",
   "statusDisposed": "Đã thanh lý",
   "statusLost": "Mất",
-  "heyName": "Xin chào {name}!",
+  "heyName": "Xin chào {name} 👋",
   "@heyName": {
     "placeholders": {
       "name": {
@@ -1582,8 +1586,8 @@
   "itemFallbackName": "vật phẩm",
   "createFirstLocation": "Tạo vị trí đầu tiên",
   "addFirstItem": "Thêm món đồ đầu tiên",
-  "firstRoomsTitle": "Bạn cất đồ ở đâu?",
-  "firstRoomsSubtitle": "Chọn các phòng bạn có. Sau đó bạn có thể thêm tủ, kệ, hộp bên trong.",
+  "firstRoomsTitle": "Bạn cất đồ ở những phòng nào?",
+  "firstRoomsSubtitle": "Chọn vài phòng — chúng tôi sẽ tạo hết một lần. Bạn có thể đổi tên sau.",
   "roomLivingRoom": "Phòng khách",
   "roomKitchen": "Bếp",
   "roomBedroom": "Phòng ngủ",
@@ -1591,15 +1595,15 @@
   "roomGarage": "Gara",
   "roomOffice": "Phòng làm việc",
   "roomStorage": "Kho",
-  "createSelectedRooms": "Tạo các phòng đã chọn ({count})",
+  "createSelectedRooms": "{count, plural, =0{Tạo phòng} other{Tạo {count} phòng}}",
   "@createSelectedRooms": {
     "placeholders": {
       "count": {
-        "type": "Object"
+        "type": "int"
       }
     }
   },
-  "addMyOwnLocation": "Tự thêm vị trí",
+  "addMyOwnLocation": "Tự thêm…",
   "locationsCreatedCount": "Đã tạo {count} vị trí",
   "@locationsCreatedCount": {
     "placeholders": {
@@ -1786,5 +1790,24 @@
   "opCreateCategory": "Thêm danh mục",
   "opDeleteCategory": "Xóa danh mục",
   "opUpdateSettings": "Đổi cài đặt",
-  "daysOverdueCount": "Quá hạn {days} ngày"
+  "daysOverdueCount": "Quá hạn {days} ngày",
+  "homeSearchHint": "Tìm trong kho đồ của bạn",
+  "homeAttentionTitle": "{count, plural, other{{count} mục cần bạn xử lý}}",
+  "homeChipExpired": "{count} hết hạn",
+  "homeChipLow": "{count} sắp hết",
+  "homeChipOverdue": "{count} quá hạn",
+  "homeAlertsSub": "Hạn dùng, tồn kho & bảo hành",
+  "homeLendingSub": "Ai đang giữ đồ của bạn",
+  "homeAlertsOpen": "{count} đang mở",
+  "homeLendingActive": "{count} đang cho mượn",
+  "homeWelcomeName": "Chào mừng, {name} 👋",
+  "homeSetupTagline": "Cùng thiết lập ngôi nhà của bạn",
+  "firstRoomsStepLabel": "Bước 1/2 · Thêm các phòng",
+  "firstRoomsSkip": "Bỏ qua — để sau",
+  "firstRoomsNextTitle": "Bước 2 · Thêm món đồ đầu tiên",
+  "firstRoomsNextSub": "Mở khóa sau khi bạn tạo phòng",
+  "connectionErrorTitle": "Không kết nối được máy chủ",
+  "connectionErrorBody": "Kiểm tra kết nối và thử lại",
+  "commonTryAgain": "Thử lại",
+  "commonLoading": "Đang tải…"
 }

@@ -486,7 +486,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonPath => 'Path: ';
 
   @override
-  String get trackManageYourInventory => 'Track & manage\nyour inventory!';
+  String get trackManageYourInventory => 'Track & manage your inventory';
 
   @override
   String get commonSearch => 'Search';
@@ -1211,13 +1211,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonContainers => 'Containers';
 
   @override
-  String get totalAssets => 'Total Assets';
+  String get totalAssets => 'Total assets';
 
   @override
-  String get onLoan => 'On Loan';
+  String get onLoan => 'On loan';
 
   @override
-  String get estValue => 'Est. Value';
+  String get estValue => 'Est. value';
 
   @override
   String couldNotRestore(Object name) {
@@ -1441,7 +1441,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonClose => 'Close';
 
   @override
-  String get recentItems => 'Recent Items';
+  String get recentItems => 'Recent items';
 
   @override
   String get viewAll => 'View all';
@@ -2378,7 +2378,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String heyName(Object name) {
-    return 'Hey $name!';
+    return 'Hey $name 👋';
   }
 
   @override
@@ -2404,11 +2404,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addFirstItem => 'Add your first item';
 
   @override
-  String get firstRoomsTitle => 'Where do you keep your things?';
+  String get firstRoomsTitle => 'Which rooms do you store things in?';
 
   @override
   String get firstRoomsSubtitle =>
-      'Pick the rooms you have. You can add cabinets, shelves and boxes inside them later.';
+      'Pick a few — we\'ll create them all at once. You can rename later.';
 
   @override
   String get roomLivingRoom => 'Living room';
@@ -2432,12 +2432,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roomStorage => 'Storage room';
 
   @override
-  String createSelectedRooms(Object count) {
-    return 'Create selected ($count)';
+  String createSelectedRooms(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Create $count rooms',
+      one: 'Create 1 room',
+      zero: 'Create rooms',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get addMyOwnLocation => 'Add my own';
+  String get addMyOwnLocation => 'Custom…';
 
   @override
   String locationsCreatedCount(Object count) {
@@ -2688,4 +2695,81 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0 overdue';
   }
+
+  @override
+  String get homeSearchHint => 'Search your inventory';
+
+  @override
+  String homeAttentionTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items need your attention',
+      one: '1 item needs your attention',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeChipExpired(int count) {
+    return '$count expired';
+  }
+
+  @override
+  String homeChipLow(int count) {
+    return '$count low';
+  }
+
+  @override
+  String homeChipOverdue(int count) {
+    return '$count overdue';
+  }
+
+  @override
+  String get homeAlertsSub => 'Expiry, stock & warranty';
+
+  @override
+  String get homeLendingSub => 'Who has your things';
+
+  @override
+  String homeAlertsOpen(int count) {
+    return '$count open';
+  }
+
+  @override
+  String homeLendingActive(int count) {
+    return '$count active';
+  }
+
+  @override
+  String homeWelcomeName(Object name) {
+    return 'Welcome, $name 👋';
+  }
+
+  @override
+  String get homeSetupTagline => 'Let\'s set up your home';
+
+  @override
+  String get firstRoomsStepLabel => 'Step 1 of 2 · Add your rooms';
+
+  @override
+  String get firstRoomsSkip => 'Skip — I\'ll do it later';
+
+  @override
+  String get firstRoomsNextTitle => 'Step 2 · Add your first item';
+
+  @override
+  String get firstRoomsNextSub => 'Unlocks after you create a room';
+
+  @override
+  String get connectionErrorTitle => 'Can\'t reach the server';
+
+  @override
+  String get connectionErrorBody => 'Check your connection and try again';
+
+  @override
+  String get commonTryAgain => 'Try again';
+
+  @override
+  String get commonLoading => 'Loading…';
 }

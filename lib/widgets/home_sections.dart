@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
-
-import '../utils/e2e.dart';
-
 import 'package:provider/provider.dart';
 
+import '../l10n/l10n_ext.dart';
 import '../providers/inventory_provider.dart';
 import '../screens/alerts_screen.dart';
 import '../screens/lending_tracker_screen.dart';
-import 'tappable.dart';
 import '../theme/app_theme.dart';
-import '../l10n/l10n_ext.dart';
+import '../utils/e2e.dart';
 import 'app_icon.dart';
+import 'soft_ui.dart';
+import 'state_views.dart';
+import 'tappable.dart';
 
 /// Home tab sections. Navigation and tab switching stay owned by the home
-/// screen and are passed in as callbacks.
+/// screen and are passed in as callbacks. Sections have no outer margin: the
+/// Home column owns the 24 side padding and the 24 gaps between sections.
 class HomeSections {
   final BuildContext context;
   final Future<void> Function(Widget page) navigate;
@@ -21,218 +22,272 @@ class HomeSections {
 
   HomeSections(this.context, {required this.navigate, required this.selectTab});
 
+  /// "Can't reach the server" strip with Retry; offline mode is covered by the
+  /// app-wide SyncStatusBar so it only shows for a failed connection.
   Widget buildConnectionBanner() {
     return Consumer<InventoryProvider>(
       builder: (context, provider, _) {
-        // Offline mode is covered by the app-wide SyncStatusBar.
-        if (provider.isConnected || provider.isOffline)
+        if (provider.isConnected || provider.isOffline) {
           return const SizedBox.shrink();
+        }
+        return ConnectionErrorBanner(onRetry: () => provider.fetchAllData());
+      },
+    );
+  }
 
-        return Container(
-          margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+  /// Dark "Action required" card with a Review button and count pills.
+  Widget buildAlertBanner() {
+    return Consumer<InventoryProvider>(
+      builder: (context, provider, _) {
+        final c = context.colors;
+        final l10n = context.l10n;
+        final alertCount = provider.totalAlertCount;
+        if (alertCount == 0) return const SizedBox.shrink();
+        final expired = provider.getExpiredItems().length;
+        final low = provider.getLowStockItems().length;
+        final overdue = provider.getOverdueLoans().length;
+
+        Widget pill(String text, Color dot) => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: context.colors.dangerSoft,
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              AppIcon(Icons.cloud_off_rounded, color: AppTones.coral, size: 20),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  context.l10n.cannotConnectToBackend(provider.serverUrl),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: context.colors.dangerStrong,
-                  ),
-                ),
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(color: dot, shape: BoxShape.circle),
               ),
-              TextButton(
-                onPressed: () => provider.fetchAllData(),
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 2,
-                  ),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  context.l10n.commonRetry,
-                  style: TextStyle(fontSize: 12),
+              const SizedBox(width: 6),
+              Text(
+                text,
+                style: const TextStyle(
+                  color: Color(0xD9FFFFFF),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
           ),
         );
-      },
-    );
-  }
 
-  Widget buildAlertBanner() {
-    return Consumer<InventoryProvider>(
-      builder: (context, provider, _) {
-        final alertCount = provider.totalAlertCount;
-        final overdueCount = provider.getOverdueLoans().length;
-        final expiredCount = provider.getExpiredItems().length;
-        if (alertCount == 0) return const SizedBox.shrink();
-
-        String alertMessage = '';
-        if (overdueCount > 0 && expiredCount > 0) {
-          alertMessage =
-              '$overdueCount overdue loan & $expiredCount expired item require action';
-        } else if (overdueCount > 0) {
-          alertMessage = '$overdueCount item loan is currently overdue!';
-        } else {
-          alertMessage = '$alertCount items/warranties require your attention';
-        }
-
-        return Container(
-          margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: context.colors.dangerSoft,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTones.coral.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: AppIcon(
-                  Icons.warning_amber_rounded,
-                  color: AppTones.coral,
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+        return e2eId(
+          'home_alert_banner',
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: c.primary,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Text(
-                      context.l10n.actionRequired,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: context.colors.dangerStrong,
+                    SoftIconTile(
+                      Icons.warning_amber_rounded,
+                      size: 40,
+                      color: c.onAccent,
+                      background: c.accent,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.actionRequired.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: c.accent,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            l10n.homeAttentionTitle(alertCount),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                              height: 1.25,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      alertMessage,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        height: 1.25,
-                        color: context.colors.dangerStrong,
+                    const SizedBox(width: 12),
+                    e2eId(
+                      'home_review',
+                      Tappable(
+                        semanticLabel: l10n.commonReview,
+                        onTap: () => navigate(const AlertsScreen()),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: c.accent,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                l10n.commonReview,
+                                style: TextStyle(
+                                  color: c.onAccent,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              AppIcon(
+                                Icons.arrow_forward_rounded,
+                                size: 14,
+                                color: c.onAccent,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(width: 12),
-              Tappable(
-                onTap: () => navigate(const AlertsScreen()),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                if (expired + low + overdue > 0) ...[
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      if (expired > 0)
+                        pill(
+                          l10n.homeChipExpired(expired),
+                          const Color(0xFFFCA5A5),
+                        ),
+                      if (low > 0)
+                        pill(l10n.homeChipLow(low), const Color(0xFFFCD34D)),
+                      if (overdue > 0)
+                        pill(
+                          l10n.homeChipOverdue(overdue),
+                          const Color(0xFFFCA5A5),
+                        ),
+                    ],
                   ),
-                  decoration: BoxDecoration(
-                    color: context.colors.primary,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    context.l10n.commonReview,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+                ],
+              ],
+            ),
           ),
         );
       },
     );
   }
 
+  /// Alerts and Lending shortcut cards, side by side.
   Widget buildQuickModulesSection() {
     final provider = Provider.of<InventoryProvider>(context);
     final c = context.colors;
+    final l10n = context.l10n;
     final activeLoans = provider.getActiveLoans().length;
+    final overdueLoans = provider.getOverdueLoans().length;
     final totalAlerts = provider.totalAlertCount;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: e2eId(
-              'home_lending',
-              _QuickCard(
-                icon: Icons.handshake_outlined,
-                iconBg: c.infoSoft,
-                iconFg: c.infoStrong,
-                title: context.l10n.commonLending,
-                stat: '$activeLoans',
-                caption: activeLoans > 0
-                    ? '$activeLoans Active'
-                    : context.l10n.noLoans,
-                onTap: () => navigate(const LendingTrackerScreen()),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _QuickCard(
+    final alertsChip = totalAlerts > 0
+        ? SoftChip(
+            label: l10n.homeAlertsOpen(totalAlerts),
+            background: c.dangerSoft,
+            foreground: c.dangerStrong,
+            icon: Icons.error_outline_rounded,
+          )
+        : SoftChip(
+            label: l10n.allClear,
+            background: c.successSoft,
+            foreground: c.successStrong,
+            icon: Icons.check_circle_outline_rounded,
+          );
+    final lendingChip = overdueLoans > 0
+        ? SoftChip(
+            label: l10n.homeChipOverdue(overdueLoans),
+            background: c.dangerSoft,
+            foreground: c.dangerStrong,
+            icon: Icons.schedule_rounded,
+          )
+        : activeLoans > 0
+        ? SoftChip(
+            label: l10n.homeLendingActive(activeLoans),
+            background: c.warningSoft,
+            foreground: c.warningStrong,
+            icon: Icons.schedule_rounded,
+          )
+        : SoftChip(
+            label: l10n.noLoans,
+            background: c.fill,
+            foreground: c.textSecondary,
+          );
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: e2eId(
+            'home_alerts',
+            _ModuleCard(
               icon: totalAlerts > 0
                   ? Icons.notifications_active_outlined
                   : Icons.shield_outlined,
               iconBg: totalAlerts > 0 ? c.dangerSoft : c.successSoft,
               iconFg: totalAlerts > 0 ? c.dangerStrong : c.successStrong,
-              title: context.l10n.commonAlerts,
-              stat: '$totalAlerts',
-              caption: totalAlerts > 0
-                  ? '$totalAlerts Issues'
-                  : context.l10n.allClear,
+              title: l10n.commonAlerts,
+              sub: l10n.homeAlertsSub,
+              chip: alertsChip,
               onTap: () => navigate(const AlertsScreen()),
             ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: e2eId(
+            'home_lending',
+            _ModuleCard(
+              icon: Icons.handshake_outlined,
+              iconBg: c.warningSoft,
+              iconFg: c.warningStrong,
+              title: l10n.commonLending,
+              sub: l10n.homeLendingSub,
+              chip: lendingChip,
+              onTap: () => navigate(const LendingTrackerScreen()),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-/// Slim white pill: icon, title with caption, count and a drill-down chevron.
-class _QuickCard extends StatelessWidget {
+/// Design `Alerts Module` / `Lending Module`: icon tile + arrow, title, sub, chip.
+class _ModuleCard extends StatelessWidget {
   final IconData icon;
   final Color iconBg;
   final Color iconFg;
   final String title;
-  final String stat;
-  final String caption;
+  final String sub;
+  final Widget chip;
   final VoidCallback onTap;
 
-  const _QuickCard({
+  const _ModuleCard({
     required this.icon,
     required this.iconBg,
     required this.iconFg,
     required this.title,
-    required this.stat,
-    required this.caption,
+    required this.sub,
+    required this.chip,
     required this.onTap,
   });
 
@@ -242,57 +297,40 @@ class _QuickCard extends StatelessWidget {
     return Tappable(
       semanticLabel: title,
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: c.surface,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: c.cardShadow,
-        ),
-        child: Row(
+      child: SoftCard(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 34,
-              height: 34,
-              decoration: BoxDecoration(
-                color: iconBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: AppIcon(icon, color: iconFg, size: 18),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SoftIconTile(icon, size: 40, color: iconFg, background: iconBg),
+                AppIcon(Icons.north_east_rounded, size: 18, color: c.textMuted),
+              ],
             ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: c.textPrimary,
-                    ),
-                  ),
-                  Text(
-                    caption,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 11, color: c.textSecondary),
-                  ),
-                ],
-              ),
-            ),
+            const SizedBox(height: 14),
             Text(
-              stat,
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
                 color: c.textPrimary,
               ),
             ),
-            AppIcon(Icons.chevron_right_rounded, color: c.textMuted, size: 18),
+            const SizedBox(height: 2),
+            Text(
+              sub,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: c.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 14),
+            chip,
           ],
         ),
       ),

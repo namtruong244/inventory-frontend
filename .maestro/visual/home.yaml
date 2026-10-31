@@ -1,0 +1,47 @@
+# Home (Light/Dark) + New Account. Ảnh: .maestro/visual/out/home/*.png
+# Chạy: .maestro/visual/run.sh home
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- extendedWaitUntil:
+    visible:
+      id: home_search
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: out/home/home_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/home/home_light_2
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/home/home_light_3
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- waitForAnimationToEnd
+- takeScreenshot: out/home/home_dark
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/home/home_dark_2
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/home/home_dark_3
+# Quay lại giao diện sáng rồi đăng xuất.
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light
+- runFlow: ../subflows/logout.yaml
+# Tài khoản mới: chưa có phòng nào → màn hình thiết lập.
+- runFlow: ../subflows/login_fresh.yaml
+- takeScreenshot: out/home/new_account_light
+- tapOn:
+    id: first_room_0
+- tapOn:
+    id: first_room_1
+- tapOn:
+    id: first_room_2
+- waitForAnimationToEnd
+- takeScreenshot: out/home/new_account_light_selected

@@ -11,6 +11,6 @@ appId: ${APP_ID}
       PASSWORD: ${output.password}
 # Chờ Home tải xong dữ liệu; chạm ngay lúc này trên iOS hay bị nuốt.
 - extendedWaitUntil:
-    visible: Recent Items
+    visible: "Recent items|Which rooms do you store things in\\?"
     timeout: 15000
 - waitForAnimationToEnd

@@ -2,78 +2,92 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../l10n/l10n_ext.dart';
+import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../theme/app_theme.dart';
-import 'app_icon.dart';
+import 'soft_ui.dart';
 
-/// Bento grid of the headline numbers: a tall lime tile for total assets,
-/// two stacked tiles for containers and loans, and a wide tile for value.
+/// Home "Inventory Metrics" card: total assets and value, a status health bar
+/// with legend, then loans and containers.
 class InventoryMetricsBanner extends StatelessWidget {
   const InventoryMetricsBanner({super.key});
 
-  static const double _gap = 12;
-  static const double _smallTile = 92;
+  static const _order = [
+    ItemStatus.stored,
+    ItemStatus.inUse,
+    ItemStatus.lent,
+    ItemStatus.broken,
+    ItemStatus.lost,
+    ItemStatus.disposed,
+  ];
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<InventoryProvider>();
     final c = context.colors;
-    final dark = Theme.of(context).brightness == Brightness.dark;
     final l10n = context.l10n;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
-          child: Text(
-            l10n.inventoryQuickMetrics,
-            style: TextStyle(
-              color: c.textPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: _smallTile * 2 + _gap,
-          child: Row(
+    final counts = {for (final s in _order) s: 0};
+    for (final i in provider.items) {
+      counts[i.status] = (counts[i.status] ?? 0) + 1;
+    }
+    final present = [
+      for (final s in _order)
+        if (counts[s]! > 0) s,
+    ];
+    final labelStyle = TextStyle(
+      color: c.textSecondary,
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
+    );
+
+    return SoftCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Expanded(
-                flex: 11,
-                child: _tile(
-                  context,
-                  icon: Icons.category_outlined,
-                  label: l10n.totalAssets,
-                  value: '${provider.items.length}',
-                  background: c.accent,
-                  foreground: c.onAccent,
-                  big: true,
-                ),
-              ),
-              const SizedBox(width: _gap),
-              Expanded(
-                flex: 10,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: _tile(
-                        context,
-                        icon: Icons.inventory_2_outlined,
-                        label: l10n.commonContainers,
-                        value: '${provider.boxes.length}',
-                        background: AppTones.skySoft,
-                        foreground: c.textPrimary,
+                    Text(l10n.totalAssets, style: labelStyle),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${provider.items.length}',
+                      style: TextStyle(
+                        color: c.textPrimary,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w800,
+                        height: 1.1,
+                        letterSpacing: -1.5,
                       ),
                     ),
-                    const SizedBox(height: _gap),
-                    Expanded(
-                      child: _tile(
-                        context,
-                        icon: Icons.handshake_outlined,
-                        label: l10n.onLoan,
-                        value: '${provider.getActiveLoans().length}',
-                        background: AppTones.sandSoft,
-                        foreground: c.textPrimary,
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 170),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(l10n.estValue, style: labelStyle),
+                    const SizedBox(height: 2),
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        provider.formatPrice(provider.totalInventoryValue),
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: c.textPrimary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                     ),
                   ],
@@ -81,114 +95,129 @@ class InventoryMetricsBanner extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        const SizedBox(height: _gap),
-        SizedBox(
-          height: _smallTile,
-          child: _tile(
-            context,
-            icon: Icons.account_balance_wallet_outlined,
-            label: l10n.estValue,
-            value: provider.formatPrice(provider.totalInventoryValue),
-            // c.primary is a mid grey in dark mode, so the lime accent pair
-            // keeps the figure readable there.
-            background: dark ? c.accent : c.primary,
-            foreground: dark ? c.onAccent : c.surface,
-            wide: true,
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 10,
+            child: present.isEmpty
+                ? DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: c.fill,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: const SizedBox.expand(),
+                  )
+                : Row(
+                    children: [
+                      for (var i = 0; i < present.length; i++) ...[
+                        if (i > 0) const SizedBox(width: 3),
+                        Expanded(
+                          flex: counts[present[i]]!,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: present[i].color,
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: const SizedBox.expand(),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
           ),
-        ),
-      ],
+          if (present.isNotEmpty) ...[
+            const SizedBox(height: 18),
+            Wrap(
+              spacing: 14,
+              runSpacing: 6,
+              children: [
+                for (final s in present)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: s.color,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        '${s.displayName} ${counts[s]}',
+                        style: TextStyle(
+                          color: c.textSecondary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ],
+          const SizedBox(height: 18),
+          Container(height: 1, color: c.border),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: _stat(
+                  context,
+                  Icons.handshake_outlined,
+                  '${provider.getActiveLoans().length}',
+                  l10n.onLoan,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _stat(
+                  context,
+                  Icons.archive_outlined,
+                  '${provider.boxes.length}',
+                  l10n.commonContainers,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _tile(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color background,
-    required Color foreground,
-    bool big = false,
-    bool wide = false,
-  }) {
-    final iconBox = Container(
-      width: 34,
-      height: 34,
-      decoration: BoxDecoration(
-        color: foreground.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: AppIcon(icon, color: foreground, size: 18),
-    );
-    final labelText = Text(
-      label,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        color: foreground.withValues(alpha: 0.75),
-        fontSize: 12,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-    final valueText = FittedBox(
-      fit: BoxFit.scaleDown,
-      alignment: Alignment.centerLeft,
-      child: Text(
-        value,
-        maxLines: 1,
-        style: TextStyle(
-          color: foreground,
-          fontSize: big ? 44 : 24,
-          fontWeight: FontWeight.w800,
-          height: 1,
-          letterSpacing: big ? -1.5 : -0.5,
+  Widget _stat(BuildContext context, IconData icon, String num, String label) {
+    final c = context.colors;
+    return Row(
+      children: [
+        SoftIconTile(icon, size: 36),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                num,
+                style: TextStyle(
+                  color: c.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  height: 1.2,
+                ),
+              ),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: c.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: background,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: wide
-          ? Row(
-              children: [
-                iconBox,
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [labelText, const SizedBox(height: 6), valueText],
-                  ),
-                ),
-              ],
-            )
-          : big
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                iconBox,
-                const Spacer(),
-                valueText,
-                const SizedBox(height: 6),
-                labelText,
-              ],
-            )
-          : Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [valueText, const SizedBox(height: 4), labelText],
-                  ),
-                ),
-                iconBox,
-              ],
-            ),
+      ],
     );
   }
 }

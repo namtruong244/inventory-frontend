@@ -5,6 +5,7 @@ import 'package:inventory/models/inventory_models.dart';
 import 'package:inventory/providers/inventory_provider.dart';
 import 'package:inventory/services/offline_store.dart';
 import 'package:inventory/widgets/first_rooms_card.dart';
+import 'package:inventory/widgets/soft_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,14 +38,14 @@ void main() {
     ),
   );
 
-  FilledButton createButton(WidgetTester tester) =>
-      tester.widget<FilledButton>(find.byType(FilledButton));
+  SoftButton createButton(WidgetTester tester) =>
+      tester.widget<SoftButton>(find.byType(SoftButton));
 
   testWidgets('picking rooms creates them as top-level locations', (
     tester,
   ) async {
     await pumpCard(tester);
-    expect(find.text('Where do you keep your things?'), findsOneWidget);
+    expect(find.text('Which rooms do you store things in?'), findsOneWidget);
     expect(
       createButton(tester).onPressed,
       isNull,
@@ -54,9 +55,9 @@ void main() {
     await tester.tap(find.text('Kitchen'));
     await tester.tap(find.text('Garage'));
     await tester.pump();
-    expect(find.text('Create selected (2)'), findsOneWidget);
+    expect(find.text('Create 2 rooms'), findsOneWidget);
 
-    await tester.tap(find.byType(FilledButton));
+    await tester.tap(find.byType(SoftButton));
     await tester.pump(const Duration(seconds: 1));
 
     expect(provider.boxes.map((b) => b.name).toSet(), {'Kitchen', 'Garage'});
@@ -86,7 +87,7 @@ void main() {
     await pumpCard(tester);
     await tester.tap(find.text('Kitchen'));
     await tester.pump();
-    await tester.tap(find.byType(FilledButton));
+    await tester.tap(find.byType(SoftButton));
     await tester.pump(const Duration(seconds: 1));
     expect(provider.boxes, isEmpty);
   });

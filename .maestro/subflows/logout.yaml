@@ -3,7 +3,7 @@ appId: ${APP_ID}
 # Lần chạm đầu ngay sau login có thể bị bỏ qua khi Home còn đang tải; chạm lại vô hại.
 # Toast "Welcome, X!"/"Welcome back, X!" che thanh nav và nuốt tap → chờ nó biến mất.
 - extendedWaitUntil:
-    notVisible: "Welcome.*"
+    notVisible: "Welcome.*!"
     timeout: 15000
 - waitForAnimationToEnd
 - tapOn:

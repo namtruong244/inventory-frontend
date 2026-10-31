@@ -482,7 +482,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get commonPath => 'Đường dẫn: ';
 
   @override
-  String get trackManageYourInventory => 'Theo dõi & quản lý\nđồ đạc của bạn!';
+  String get trackManageYourInventory => 'Theo dõi & quản lý đồ đạc của bạn';
 
   @override
   String get commonSearch => 'Tìm kiếm';
@@ -2368,7 +2368,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String heyName(Object name) {
-    return 'Xin chào $name!';
+    return 'Xin chào $name 👋';
   }
 
   @override
@@ -2394,11 +2394,11 @@ class AppLocalizationsVi extends AppLocalizations {
   String get addFirstItem => 'Thêm món đồ đầu tiên';
 
   @override
-  String get firstRoomsTitle => 'Bạn cất đồ ở đâu?';
+  String get firstRoomsTitle => 'Bạn cất đồ ở những phòng nào?';
 
   @override
   String get firstRoomsSubtitle =>
-      'Chọn các phòng bạn có. Sau đó bạn có thể thêm tủ, kệ, hộp bên trong.';
+      'Chọn vài phòng — chúng tôi sẽ tạo hết một lần. Bạn có thể đổi tên sau.';
 
   @override
   String get roomLivingRoom => 'Phòng khách';
@@ -2422,12 +2422,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get roomStorage => 'Kho';
 
   @override
-  String createSelectedRooms(Object count) {
-    return 'Tạo các phòng đã chọn ($count)';
+  String createSelectedRooms(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Tạo $count phòng',
+      zero: 'Tạo phòng',
+    );
+    return '$_temp0';
   }
 
   @override
-  String get addMyOwnLocation => 'Tự thêm vị trí';
+  String get addMyOwnLocation => 'Tự thêm…';
 
   @override
   String locationsCreatedCount(Object count) {
@@ -2624,4 +2630,80 @@ class AppLocalizationsVi extends AppLocalizations {
   String daysOverdueCount(int days) {
     return 'Quá hạn $days ngày';
   }
+
+  @override
+  String get homeSearchHint => 'Tìm trong kho đồ của bạn';
+
+  @override
+  String homeAttentionTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mục cần bạn xử lý',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeChipExpired(int count) {
+    return '$count hết hạn';
+  }
+
+  @override
+  String homeChipLow(int count) {
+    return '$count sắp hết';
+  }
+
+  @override
+  String homeChipOverdue(int count) {
+    return '$count quá hạn';
+  }
+
+  @override
+  String get homeAlertsSub => 'Hạn dùng, tồn kho & bảo hành';
+
+  @override
+  String get homeLendingSub => 'Ai đang giữ đồ của bạn';
+
+  @override
+  String homeAlertsOpen(int count) {
+    return '$count đang mở';
+  }
+
+  @override
+  String homeLendingActive(int count) {
+    return '$count đang cho mượn';
+  }
+
+  @override
+  String homeWelcomeName(Object name) {
+    return 'Chào mừng, $name 👋';
+  }
+
+  @override
+  String get homeSetupTagline => 'Cùng thiết lập ngôi nhà của bạn';
+
+  @override
+  String get firstRoomsStepLabel => 'Bước 1/2 · Thêm các phòng';
+
+  @override
+  String get firstRoomsSkip => 'Bỏ qua — để sau';
+
+  @override
+  String get firstRoomsNextTitle => 'Bước 2 · Thêm món đồ đầu tiên';
+
+  @override
+  String get firstRoomsNextSub => 'Mở khóa sau khi bạn tạo phòng';
+
+  @override
+  String get connectionErrorTitle => 'Không kết nối được máy chủ';
+
+  @override
+  String get connectionErrorBody => 'Kiểm tra kết nối và thử lại';
+
+  @override
+  String get commonTryAgain => 'Thử lại';
+
+  @override
+  String get commonLoading => 'Đang tải…';
 }

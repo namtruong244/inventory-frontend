@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/inventory_provider.dart';
-import '../utils/e2e.dart';
 import '../widgets/add_item_flow.dart';
 import 'box_create_screen.dart';
 import '../widgets/first_rooms_card.dart';
@@ -16,10 +15,10 @@ import 'items_screen.dart';
 import 'qr_scanner_tab.dart';
 import 'search_screen.dart';
 import 'settings_screen.dart';
-import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
-import '../widgets/app_icon.dart';
+import '../widgets/app_bottom_nav.dart';
+import '../widgets/home_header.dart';
 import '../widgets/inventory_metrics_banner.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,6 +35,9 @@ class _HomeScreenState extends State<HomeScreen>
   late TabController _tabController;
   late final ScrollController _homeScrollController;
   int _currentIndex = 0;
+
+  /// "Skip - I'll do it later" on the new-account setup; session-local.
+  bool _setupSkipped = false;
 
   // Keys for sub-tab screens to enable scroll-to-top
   final GlobalKey<ScrollToTopHostState> _boxesKey = GlobalKey();
@@ -168,17 +170,11 @@ class _HomeScreenState extends State<HomeScreen>
                 ],
               ),
             ),
-            _buildBottomNav(context),
+            Positioned.fill(child: _buildNav(context)),
           ],
         ),
       ),
     );
-  }
-
-  /// The nav bar floats above the bottom edge; keep it off the home indicator / gesture bar.
-  double _navBottomInset(BuildContext context) {
-    final inset = MediaQuery.of(context).padding.bottom;
-    return inset > 16 ? inset : 16;
   }
 
   HomeSections _sections(BuildContext context) => HomeSections(
@@ -187,8 +183,26 @@ class _HomeScreenState extends State<HomeScreen>
     selectTab: _onTabSelected,
   );
 
+  Widget _buildNav(BuildContext context) {
+    final l10n = context.l10n;
+    final isBoxTab = _currentIndex == 1;
+    final showAdd = isBoxTab || _currentIndex == 2;
+    return AppBottomNav(
+      currentIndex: _currentIndex,
+      onSelect: _onTabSelected,
+      onScan: () =>
+          _navigateWithOverlayRestore(const QRScannerTab(isFullScreen: true)),
+      addLabel: showAdd ? (isBoxTab ? l10n.newLocation : l10n.addItem) : null,
+      onAdd: () => isBoxTab
+          ? _navigateWithOverlayRestore(const BoxCreateScreen())
+          : startAddItemFlow(context),
+    );
+  }
+
   Widget _buildHomeTab(BuildContext context) {
     final provider = Provider.of<InventoryProvider>(context, listen: false);
+    final topPadding = MediaQuery.of(context).padding.top;
+    final sections = _sections(context);
 
     return RefreshIndicator(
       onRefresh: () => provider.fetchAllData(),
@@ -196,387 +210,69 @@ class _HomeScreenState extends State<HomeScreen>
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         controller: _homeScrollController,
-        padding: const EdgeInsets.only(bottom: 140),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeaderWithSearch(context),
-            const SizedBox(height: 20),
-            _sections(context).buildConnectionBanner(),
-            _sections(context).buildAlertBanner(),
-            Consumer<InventoryProvider>(
-              builder: (context, p, _) {
-                // A brand-new account: ask where things are kept instead of showing empty lists.
-                final firstRun =
-                    p.boxes.isEmpty && !p.isLoading && !p.isSyncing;
-                return firstRun
-                    ? const FirstRoomsCard()
-                    : const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24),
-                        child: InventoryMetricsBanner(),
-                      );
-              },
-            ),
-            const SizedBox(height: 16),
-            _sections(context).buildQuickModulesSection(),
-            const SizedBox(height: 32),
-            _sections(context).buildRecentItemsSection(),
-          ],
+        padding: EdgeInsets.fromLTRB(
+          24,
+          topPadding + 8,
+          24,
+          AppBottomNav.bottomInset(context) + 64 + 32,
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderWithSearch(BuildContext context) {
-    final topPadding = MediaQuery.of(context).padding.top;
-    final c = context.colors;
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(24, topPadding + 16, 24, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Consumer<InventoryProvider>(
-                builder: (context, provider, _) {
-                  final initial = provider.userName.trim().isNotEmpty
-                      ? provider.userName.trim()[0].toUpperCase()
-                      : 'U';
-                  return CircleAvatar(
-                    radius: 22,
-                    backgroundColor: c.accent,
-                    child: Text(
-                      initial,
-                      style: TextStyle(
-                        color: c.onAccent,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Consumer<InventoryProvider>(
-                  builder: (context, provider, _) {
-                    final firstName = provider.userName.trim().split(' ').first;
-                    return Text(
-                      context.l10n.heyName(
-                        firstName.isNotEmpty
-                            ? firstName
-                            : context.l10n.heyFallbackName,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: c.textSecondary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Consumer<InventoryProvider>(
-                builder: (context, provider, _) {
-                  final alertCount = provider.totalAlertCount;
-                  return Tappable(
-                    semanticLabel: context.l10n.commonAlerts,
-                    onTap: () =>
-                        _navigateWithOverlayRestore(const AlertsScreen()),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: c.surface,
-                            shape: BoxShape.circle,
-                            boxShadow: c.cardShadow,
-                          ),
-                          child: AppIcon(
-                            Icons.notifications_none_rounded,
-                            color: c.textPrimary,
-                            size: 22,
-                          ),
-                        ),
-                        if (alertCount > 0)
-                          Positioned(
-                            top: -2,
-                            right: -2,
-                            child: Container(
-                              constraints: const BoxConstraints(
-                                minWidth: 18,
-                                minHeight: 18,
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: c.dangerStrong,
-                                borderRadius: BorderRadius.circular(9),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '$alertCount',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Text(
-            context.l10n.trackManageYourInventory,
-            style: TextStyle(
-              color: c.textPrimary,
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              height: 1.15,
-              letterSpacing: -0.8,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Tappable(
-            semanticLabel: context.l10n.commonSearch,
-            onTap: () => _navigateWithOverlayRestore(const SearchScreen()),
-            child: Container(
-              height: 56,
-              padding: const EdgeInsets.fromLTRB(18, 0, 8, 0),
-              decoration: BoxDecoration(
-                color: c.surface,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: c.cardShadow,
-              ),
-              child: Row(
+        child: Consumer<InventoryProvider>(
+          builder: (context, p, _) {
+            // A brand-new account: ask where things are kept first.
+            final setup =
+                p.boxes.isEmpty &&
+                !p.isLoading &&
+                !p.isSyncing &&
+                !_setupSkipped;
+            void openAlerts() =>
+                _navigateWithOverlayRestore(const AlertsScreen());
+            if (setup) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppIcon(Icons.search_rounded, color: c.textMuted, size: 22),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      context.l10n.commonSearch,
-                      style: TextStyle(
-                        color: c.textMuted,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                  HomeHeader(onAlerts: openAlerts, setup: true),
+                  const SizedBox(height: 24),
+                  FirstRoomsCard(
+                    onSkip: () => setState(() => _setupSkipped = true),
                   ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: c.fill,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: AppIcon(
-                      Icons.tune_rounded,
-                      color: c.textPrimary,
-                      size: 18,
-                    ),
-                  ),
+                  const SizedBox(height: 24),
+                  const FirstRoomsNextStep(),
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav(BuildContext context) {
-    final c = context.colors;
-    final bottom = _navBottomInset(context);
-    final showAdd = _currentIndex == 1 || _currentIndex == 2;
-    return Positioned.fill(
-      child: Stack(
-        children: [
-          // Floating add button, only on the Box (1) and Item (2) tabs.
-          Positioned(
-            right: 20,
-            bottom: bottom + 68 + 16,
-            child: IgnorePointer(
-              ignoring: !showAdd,
-              child: AnimatedScale(
-                scale: showAdd ? 1 : 0,
-                duration: const Duration(milliseconds: 220),
-                curve: Curves.easeOutBack,
-                child: _buildQuickAddButton(),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: bottom,
-            left: 20,
-            right: 20,
-            child: Container(
-              height: 68,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: c.surface,
-                borderRadius: BorderRadius.circular(34),
-                boxShadow: c.cardShadow,
-              ),
-              child: Row(
-                // Evenly spaced instead of fixed gaps so the pill never overflows
-                // on narrow phones (5 targets need only ~260dp).
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  _buildNavItem(
-                    index: 0,
-                    icon: Icons.home_outlined,
-                    activeIcon: Icons.home_rounded,
-                    tooltip: context.l10n.commonHome,
-                  ),
-                  _buildNavItem(
-                    index: 1,
-                    icon: Icons.inventory_2_outlined,
-                    activeIcon: Icons.inventory_2_rounded,
-                    tooltip: context.l10n.commonBox,
-                  ),
-                  _buildCenterQRButton(),
-                  _buildNavItem(
-                    index: 2,
-                    icon: Icons.category_outlined,
-                    activeIcon: Icons.category_rounded,
-                    tooltip: context.l10n.commonItem,
-                  ),
-                  _buildNavItem(
-                    index: 3,
-                    icon: Icons.settings_outlined,
-                    activeIcon: Icons.settings_rounded,
-                    tooltip: context.l10n.commonSetting,
-                  ),
+              );
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                HomeHeader(onAlerts: openAlerts),
+                const SizedBox(height: 20),
+                HomeSearchBar(
+                  onSearch: () =>
+                      _navigateWithOverlayRestore(const SearchScreen()),
+                ),
+                ..._gap(sections.buildConnectionBanner(), p),
+                if (p.totalAlertCount > 0) ...[
+                  const SizedBox(height: 24),
+                  sections.buildAlertBanner(),
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Quick add floats at the right edge above the nav pill: a new
-  /// location on the Box tab, a new item on the Item tab.
-  Widget _buildQuickAddButton() {
-    final c = context.colors;
-    final isBoxTab = _currentIndex == 1;
-    final label = isBoxTab ? context.l10n.newLocation : context.l10n.addItem;
-    return e2eId(
-      'nav_add',
-      Tooltip(
-        message: label,
-        child: Tappable(
-          semanticLabel: label,
-          onTap: () => isBoxTab
-              ? _navigateWithOverlayRestore(const BoxCreateScreen())
-              : startAddItemFlow(context),
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: c.accent,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: c.accent.withValues(alpha: 0.55),
-                  blurRadius: 22,
-                  offset: const Offset(0, 8),
-                ),
+                const SizedBox(height: 24),
+                const InventoryMetricsBanner(),
+                const SizedBox(height: 24),
+                sections.buildQuickModulesSection(),
+                const SizedBox(height: 24),
+                sections.buildRecentItemsSection(),
               ],
-            ),
-            child: AppIcon(Icons.add_rounded, color: c.onAccent, size: 32),
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildNavItem({
-    required int index,
-    required IconData icon,
-    required IconData activeIcon,
-    required String tooltip,
-  }) {
-    final isSelected = _currentIndex == index;
-    final c = context.colors;
-
-    return e2eId(
-      const ['nav_home', 'nav_box', 'nav_item', 'nav_setting'][index],
-      Tooltip(
-        message: tooltip,
-        child: Tappable(
-          semanticLabel: tooltip,
-          onTap: () => _onTabSelected(index),
-          behavior: HitTestBehavior.opaque,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 220),
-            curve: Curves.easeOutCubic,
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isSelected ? c.accent : Colors.transparent,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: AppIcon(
-              isSelected ? activeIcon : icon,
-              size: 24,
-              color: isSelected ? c.onAccent : c.textMuted,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCenterQRButton() {
-    final c = context.colors;
-    return e2eId(
-      'nav_scan',
-      Tooltip(
-        message: context.l10n.scanQrCode,
-        child: Tappable(
-          semanticLabel: context.l10n.scanQrCode,
-          onTap: () => _navigateWithOverlayRestore(
-            const QRScannerTab(isFullScreen: true),
-          ),
-          behavior: HitTestBehavior.opaque,
-          child: Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: c.primary,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.18),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: AppIcon(
-              Icons.qr_code_scanner_rounded,
-              color: c.accent,
-              size: 24,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  /// A section that renders nothing when connected: only add its gap when shown.
+  List<Widget> _gap(Widget section, InventoryProvider p) => [
+    if (!p.isConnected && !p.isOffline) ...[
+      const SizedBox(height: 24),
+      section,
+    ],
+  ];
 }

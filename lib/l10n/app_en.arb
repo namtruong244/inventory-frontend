@@ -230,8 +230,12 @@
   "boxSummary": "{items, plural, =1{1 total item} other{{items} total items}} • {nested} nested",
   "@boxSummary": {
     "placeholders": {
-      "items": {"type": "int"},
-      "nested": {"type": "int"}
+      "items": {
+        "type": "int"
+      },
+      "nested": {
+        "type": "int"
+      }
     }
   },
   "nestedContainers": "Nested Containers ({count})",
@@ -314,7 +318,7 @@
   "commonEdit": "Edit",
   "addSubContainer": "Add sub-container",
   "commonPath": "Path: ",
-  "trackManageYourInventory": "Track & manage\nyour inventory!",
+  "trackManageYourInventory": "Track & manage your inventory",
   "commonSearch": "Search",
   "commonHome": "Home",
   "commonBox": "Box",
@@ -720,9 +724,9 @@
   "deleteForever": "Delete Forever",
   "inventoryQuickMetrics": "Inventory Quick Metrics",
   "commonContainers": "Containers",
-  "totalAssets": "Total Assets",
-  "onLoan": "On Loan",
-  "estValue": "Est. Value",
+  "totalAssets": "Total assets",
+  "onLoan": "On loan",
+  "estValue": "Est. value",
   "couldNotRestore": "Could not restore \"{name}\"",
   "@couldNotRestore": {
     "placeholders": {
@@ -841,7 +845,7 @@
   "commonDiscard": "Discard",
   "keepMine": "Keep mine",
   "commonClose": "Close",
-  "recentItems": "Recent Items",
+  "recentItems": "Recent items",
   "viewAll": "View all",
   "noItemsInInventoryYet": "No items in inventory yet",
   "tapToAddYourFirst": "Tap + to add your first item",
@@ -1558,14 +1562,7 @@
   "statusBroken": "Broken",
   "statusDisposed": "Disposed",
   "statusLost": "Lost",
-  "heyName": "Hey {name}!",
-  "@heyName": {
-    "placeholders": {
-      "name": {
-        "type": "Object"
-      }
-    }
-  },
+  "heyName": "Hey {name} 👋",
   "heyFallbackName": "there",
   "markReturnedBy": "Mark \"{item}\" as returned by {borrower}?\nStatus will change back to Stored.",
   "@markReturnedBy": {
@@ -1589,8 +1586,8 @@
   "itemFallbackName": "item",
   "createFirstLocation": "Create your first location",
   "addFirstItem": "Add your first item",
-  "firstRoomsTitle": "Where do you keep your things?",
-  "firstRoomsSubtitle": "Pick the rooms you have. You can add cabinets, shelves and boxes inside them later.",
+  "firstRoomsTitle": "Which rooms do you store things in?",
+  "firstRoomsSubtitle": "Pick a few — we'll create them all at once. You can rename later.",
   "roomLivingRoom": "Living room",
   "roomKitchen": "Kitchen",
   "roomBedroom": "Bedroom",
@@ -1598,15 +1595,8 @@
   "roomGarage": "Garage",
   "roomOffice": "Office",
   "roomStorage": "Storage room",
-  "createSelectedRooms": "Create selected ({count})",
-  "@createSelectedRooms": {
-    "placeholders": {
-      "count": {
-        "type": "Object"
-      }
-    }
-  },
-  "addMyOwnLocation": "Add my own",
+  "createSelectedRooms": "{count, plural, =0{Create rooms} =1{Create 1 room} other{Create {count} rooms}}",
+  "addMyOwnLocation": "Custom…",
   "locationsCreatedCount": "{count} locations created",
   "@locationsCreatedCount": {
     "placeholders": {
@@ -1800,5 +1790,87 @@
         "type": "int"
       }
     }
-  }
+  },
+  "@heyName": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeSearchHint": "Search your inventory",
+  "homeAttentionTitle": "{count, plural, =1{1 item needs your attention} other{{count} items need your attention}}",
+  "@homeAttentionTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeChipExpired": "{count} expired",
+  "@homeChipExpired": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeChipLow": "{count} low",
+  "@homeChipLow": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeChipOverdue": "{count} overdue",
+  "@homeChipOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeAlertsSub": "Expiry, stock & warranty",
+  "homeLendingSub": "Who has your things",
+  "homeAlertsOpen": "{count} open",
+  "@homeAlertsOpen": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeLendingActive": "{count} active",
+  "@homeLendingActive": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeWelcomeName": "Welcome, {name} 👋",
+  "@homeWelcomeName": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "homeSetupTagline": "Let's set up your home",
+  "firstRoomsStepLabel": "Step 1 of 2 · Add your rooms",
+  "@createSelectedRooms": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "firstRoomsSkip": "Skip — I'll do it later",
+  "firstRoomsNextTitle": "Step 2 · Add your first item",
+  "firstRoomsNextSub": "Unlocks after you create a room",
+  "connectionErrorTitle": "Can't reach the server",
+  "connectionErrorBody": "Check your connection and try again",
+  "commonTryAgain": "Try again",
+  "commonLoading": "Loading…"
 }

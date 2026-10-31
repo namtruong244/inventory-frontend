@@ -11,10 +11,16 @@ import '../providers/inventory_provider.dart';
 import '../screens/box_create_screen.dart';
 import '../theme/app_theme.dart';
 import 'app_feedback.dart';
+import 'app_icon.dart';
+import 'soft_ui.dart';
+import 'tappable.dart';
 
 /// First-run step on Home: tick the rooms you have and create them all at once.
 class FirstRoomsCard extends StatefulWidget {
-  const FirstRoomsCard({super.key});
+  /// Called when the user taps "Skip - I'll do it later".
+  final VoidCallback? onSkip;
+
+  const FirstRoomsCard({super.key, this.onSkip});
 
   @override
   State<FirstRoomsCard> createState() => _FirstRoomsCardState();
@@ -32,6 +38,16 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
     l.roomGarage,
     l.roomOffice,
     l.roomStorage,
+  ];
+
+  static const _icons = [
+    Icons.weekend_outlined,
+    Icons.kitchen_outlined,
+    Icons.bed_outlined,
+    Icons.bathtub_outlined,
+    Icons.directions_car_outlined,
+    Icons.desktop_windows_outlined,
+    Icons.warehouse_outlined,
   ];
 
   Future<void> _create(List<String> names) async {
@@ -63,98 +79,283 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _tile(
+    BuildContext context, {
+    required String id,
+    required String label,
+    required IconData icon,
+    required bool selected,
+    required VoidCallback? onTap,
+  }) {
     final c = context.colors;
-    final names = roomNames(context.l10n);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: c.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: context.colors.cardShadow,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            context.l10n.firstRoomsTitle,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-              color: c.textPrimary,
+    return e2eId(
+      id,
+      Tappable(
+        semanticLabel: label,
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 52),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: selected ? c.infoSoft : c.fill,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: selected ? c.infoStrong : Colors.transparent,
+              width: 1.5,
             ),
           ),
-          const SizedBox(height: 6),
-          Text(
-            context.l10n.firstRoomsSubtitle,
-            style: TextStyle(fontSize: 13, color: c.textSecondary, height: 1.4),
-          ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          child: Row(
             children: [
-              for (var i = 0; i < names.length; i++)
-                e2eId(
-                  'first_room_$i',
-                  FilterChip(
-                    label: Text(names[i]),
-                    selected: _selected.contains(i),
-                    onSelected: _creating
-                        ? null
-                        : (on) => setState(
-                            () => on ? _selected.add(i) : _selected.remove(i),
-                          ),
+              AppIcon(
+                icon,
+                size: 18,
+                color: selected ? c.infoStrong : c.textSecondary,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: selected ? c.infoStrong : c.textPrimary,
+                  ),
+                ),
+              ),
+              if (selected)
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: c.infoStrong,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const AppIcon(
+                    Icons.check_rounded,
+                    size: 13,
+                    color: Colors.white,
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 18),
-          SizedBox(
-            width: double.infinity,
-            child: e2eId(
-              'first_rooms_create',
-              FilledButton(
-                onPressed: _selected.isEmpty || _creating
-                    ? null
-                    : () => _create(names),
-                style: FilledButton.styleFrom(
-                  backgroundColor: c.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final l10n = context.l10n;
+    final names = roomNames(l10n);
+    final tiles = <Widget>[
+      for (var i = 0; i < names.length; i++)
+        _tile(
+          context,
+          id: 'first_room_$i',
+          label: names[i],
+          icon: _icons[i],
+          selected: _selected.contains(i),
+          onTap: _creating
+              ? null
+              : () => setState(
+                  () => _selected.contains(i)
+                      ? _selected.remove(i)
+                      : _selected.add(i),
+                ),
+        ),
+      _tile(
+        context,
+        id: 'first_rooms_custom',
+        label: l10n.addMyOwnLocation,
+        icon: Icons.add_rounded,
+        selected: false,
+        onTap: _creating
+            ? null
+            : () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const BoxCreateScreen()),
+              ),
+      ),
+    ];
+    return SoftCard(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: c.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  '1',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
-                child: _creating
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(context.l10n.createSelectedRooms(_selected.length)),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  l10n.firstRoomsStepLabel.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: c.textSecondary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            l10n.firstRoomsTitle,
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              height: 1.2,
+              letterSpacing: -0.5,
+              color: c.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            l10n.firstRoomsSubtitle,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: c.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          for (var r = 0; r < tiles.length; r += 2) ...[
+            if (r > 0) const SizedBox(height: 8),
+            IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(child: tiles[r]),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: r + 1 < tiles.length
+                        ? tiles[r + 1]
+                        : const SizedBox(),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+          e2eId(
+            'first_rooms_create',
+            SoftButton(
+              label: _creating
+                  ? l10n.commonLoading
+                  : l10n.createSelectedRooms(_selected.length),
+              icon: _creating ? null : Icons.add_rounded,
+              expand: true,
+              onPressed: _selected.isEmpty || _creating
+                  ? null
+                  : () => _create(names),
+            ),
+          ),
+          const SizedBox(height: 4),
+          e2eId(
+            'first_rooms_skip',
+            Tappable(
+              semanticLabel: l10n.firstRoomsSkip,
+              onTap: _creating ? null : widget.onSkip,
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  l10n.firstRoomsSkip,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: c.textSecondary,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.center,
-            child: TextButton(
-              onPressed: _creating
-                  ? null
-                  : () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => const BoxCreateScreen(),
-                      ),
-                    ),
-              child: Text(context.l10n.addMyOwnLocation),
-            ),
-          ),
         ],
+      ),
+    );
+  }
+}
+
+/// Locked "Step 2" teaser under the first-rooms card.
+class FirstRoomsNextStep extends StatelessWidget {
+  const FirstRoomsNextStep({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    final l10n = context.l10n;
+    return Opacity(
+      opacity: 0.7,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: c.fill,
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            SoftIconTile(
+              Icons.add_box_outlined,
+              size: 36,
+              color: c.textSecondary,
+              background: c.surface,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.firstRoomsNextTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: c.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    l10n.firstRoomsNextSub,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: c.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            AppIcon(Icons.lock_outline_rounded, size: 16, color: c.textMuted),
+          ],
+        ),
       ),
     );
   }
