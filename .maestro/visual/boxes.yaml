@@ -1,0 +1,82 @@
+# Tab Box (Light/Dark) + tài khoản mới (trống). Ảnh: .maestro/visual/out/boxes/*.png
+# Chạy: .maestro/visual/run.sh boxes
+appId: ${APP_ID}
+tags: [visual]
+---
+- runFlow: subflows/login_showcase.yaml
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: box
+- extendedWaitUntil:
+    visible:
+      id: boxes_search
+    timeout: 15000
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_light
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_light_2
+- scrollUntilVisible:
+    element:
+      id: box_expand_Oak cabinet
+    direction: UP
+- tapOn:
+    id: box_expand_Oak cabinet
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_light_expanded
+- scrollUntilVisible:
+    element:
+      id: boxes_view_list
+    direction: UP
+- tapOn:
+    id: boxes_view_list
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_light_list
+- tapOn:
+    id: boxes_view_tree
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: dark
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: box
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_dark
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_dark_2
+- scrollUntilVisible:
+    element:
+      id: box_expand_Oak cabinet
+    direction: UP
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_dark_expanded
+- scrollUntilVisible:
+    element:
+      id: boxes_view_list
+    direction: UP
+- tapOn:
+    id: boxes_view_list
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_dark_list
+- runFlow:
+    file: subflows/set_theme.yaml
+    env:
+      THEME: light
+- runFlow: ../subflows/logout.yaml
+# Tài khoản mới: chưa có vị trí nào → trạng thái trống.
+- runFlow:
+    file: ../subflows/login_fresh.yaml
+    env:
+      SEED_ROOMS: 0
+- tapOn:
+    id: first_rooms_skip
+- runFlow:
+    file: ../subflows/open_tab.yaml
+    env:
+      TAB: box
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_empty_light

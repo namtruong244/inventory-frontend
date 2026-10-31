@@ -1,284 +1,161 @@
 part of 'boxes_screen.dart';
 
-/// Box card, empty state and filter chip builders.
+/// Tree and flat-list builders for the Box tab.
 extension _BoxesScreenParts on _BoxesScreenState {
-  Widget _buildFlatBoxCard(Box box, InventoryProvider provider) {
-    final itemCount = provider.countTotalItemsIn(box.id);
-    final subBoxCount = provider.getBoxesIn(box.id).length;
-    final breadcrumbList = provider.getBreadcrumb(box.id);
+  Widget _buildFilterChip(int index, String label) => SoftFilterChip(
+    label: label,
+    selected: _filterIndex == index,
+    onTap: () => _update(() => _filterIndex = index),
+  );
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: SoftCard(
-        child: Slidable(
-          key: ValueKey(box.id),
-          endActionPane: ActionPane(
-            motion: const ScrollMotion(),
-            extentRatio: 0.65,
-            children: [
-              SlidableAction(
-                onPressed: (_) => MoveLocationDialog.show(context, box),
-                backgroundColor: AppTones.slate,
-                foregroundColor: Colors.white,
-                icon: Icons.drive_file_move_outlined,
-                label: context.l10n.commonMove,
-              ),
-              SlidableAction(
-                onPressed: (_) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => BoxCreateScreen(existingBox: box),
-                    ),
-                  );
-                },
-                backgroundColor: context.colors.primary,
-                foregroundColor: Colors.white,
-                icon: Icons.edit_outlined,
-                label: context.l10n.commonEdit,
-              ),
-              SlidableAction(
-                onPressed: (_) async {
-                  final confirmed = await TrashActions.confirm(
-                    context,
-                    name: box.name,
-                    isBox: true,
-                    hasContents: true,
-                  );
-                  if (confirmed && mounted) {
-                    final ok = await provider.deleteBox(box.id, cascade: true);
-                    if (!mounted) return;
-                    if (ok) {
-                      TrashActions.showMoved(
-                        context,
-                        provider,
-                        name: box.name,
-                        boxId: box.id,
-                      );
-                    } else {
-                      AppFeedback.showError(
-                        context,
-                        context.l10n.couldNotDeletePleaseTry2(box.name),
-                      );
-                    }
-                  }
-                },
-                backgroundColor: AppTones.coral,
-                foregroundColor: Colors.white,
-                icon: Icons.delete_outline,
-                label: context.l10n.commonDelete,
-              ),
-            ],
-          ),
-          child: Material(
-            color: context.colors.surface,
-            child: InkWell(
-              onLongPress: () => showBoxActionsSheet(context, box),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => BoxDetailsScreen(boxId: box.id),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: context.colors.accent.withValues(
-                              alpha: 0.45,
-                            ),
-                            borderRadius: BorderRadius.circular(17),
-                          ),
-                          child: AppIcon(
-                            box.type.icon,
-                            color: context.colors.textPrimary,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                box.name,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                  color: context.colors.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 3),
-                              Wrap(
-                                spacing: 6,
-                                runSpacing: 4,
-                                children: [
-                                  SoftChip(
-                                    label: box.type.displayName,
-                                    background: context.colors.fill,
-                                    foreground: context.colors.textSecondary,
-                                  ),
-                                  SoftChip.tone(
-                                    context.l10n.itemsCountLabel(itemCount),
-                                    AppTones.sky,
-                                    icon: Icons.category_outlined,
-                                  ),
-                                  if (subBoxCount > 0)
-                                    SoftChip.tone(
-                                      context.l10n.nestedCountLabel(
-                                        subBoxCount,
-                                      ),
-                                      AppTones.lilac,
-                                      icon: Icons.inventory_2_outlined,
-                                    ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        AppIcon(
-                          Icons.chevron_right_rounded,
-                          color: context.colors.textMuted,
-                          size: 24,
-                        ),
-                      ],
-                    ),
+  void _open(Box box) => Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => BoxDetailsScreen(boxId: box.id)),
+  );
 
-                    // Full Breadcrumb Row without truncation
-                    if (box.parentId != null && breadcrumbList.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: context.colors.fill,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              AppIcon(
-                                Icons.route_outlined,
-                                size: 14,
-                                color: context.colors.textSecondary,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                context.l10n.commonPath,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: context.colors.textSecondary,
-                                ),
-                              ),
-                              for (
-                                int i = 0;
-                                i < breadcrumbList.length;
-                                i++
-                              ) ...[
-                                if (i > 0)
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 4.0,
-                                    ),
-                                    child: AppIcon(
-                                      Icons.chevron_right_rounded,
-                                      size: 14,
-                                      color: context.colors.textMuted,
-                                    ),
-                                  ),
-                                Text(
-                                  breadcrumbList[i].name,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    fontWeight: i == breadcrumbList.length - 1
-                                        ? FontWeight.w600
-                                        : FontWeight.w400,
-                                    color: i == breadcrumbList.length - 1
-                                        ? context.colors.textPrimary
-                                        : context.colors.textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  int _descendantCount(InventoryProvider p, String id) {
+    var n = 0;
+    for (final child in p.getBoxesIn(id)) {
+      n += 1 + _descendantCount(p, child.id);
+    }
+    return n;
   }
 
-  Widget _buildEmptyState({
-    required String title,
-    required String subtitle,
-    VoidCallback? onAction,
-    String? actionLabel,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(top: 40),
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: context.colors.cardShadow,
+  String _meta(InventoryProvider p, Box box, int containers) {
+    final parts = [
+      context.l10n.itemsCountLabel(p.countTotalItemsIn(box.id)),
+      if (containers > 0) context.l10n.subContainersCountLabel(containers),
+    ];
+    return parts.join(' · ');
+  }
+
+  int _alertCount(InventoryProvider p, String boxId) =>
+      p.getItemsIn(boxId).where((i) => i.isLowStock || i.isExpired).length;
+
+  List<Widget> _buildHierarchyTree(InventoryProvider provider) {
+    // Orphans (parent missing) are shown at the top level too.
+    final known = provider.boxes.map((b) => b.id).toSet();
+    final topLevel = [
+      ...provider.getRootBoxes(),
+      ...provider.boxes.where(
+        (b) => b.parentId != null && !known.contains(b.parentId),
       ),
+    ];
+    return [
+      for (final root in topLevel) ...[
+        _buildRootCard(root, provider),
+        const SizedBox(height: 12),
+      ],
+    ];
+  }
+
+  Widget _buildRootCard(Box root, InventoryProvider provider) {
+    final children = provider.getBoxesIn(root.id);
+    final expanded = children.isNotEmpty && _expandedBoxIds.contains(root.id);
+    return SoftCard(
+      radius: expanded ? 24 : 20,
       child: Column(
         children: [
-          SoftIconTile(
-            Icons.inventory_2_outlined,
-            color: context.colors.textPrimary,
-            background: context.colors.accent.withValues(alpha: 0.45),
-            size: 72,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w600,
-              fontSize: 16,
-              color: context.colors.textPrimary,
+          BoxSlidable(
+            box: root,
+            provider: provider,
+            child: Material(
+              color: context.colors.surface,
+              child: BoxTreeRow(
+                box: root,
+                meta: _meta(
+                  provider,
+                  root,
+                  _descendantCount(provider, root.id),
+                ),
+                hasChildren: children.isNotEmpty,
+                expanded: expanded,
+                onTap: () => _open(root),
+                onLongPress: () => showBoxActionsSheet(context, root),
+                onToggle: () => _toggleExpand(root.id),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 13,
-              color: context.colors.textSecondary,
-            ),
-          ),
-          if (onAction != null && actionLabel != null) ...[
-            const SizedBox(height: 16),
-            FilledButton(onPressed: onAction, child: Text(actionLabel)),
+          if (expanded) ...[
+            ..._buildChildNodes(root, provider, 1, const []),
+            const SizedBox(height: 10),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildFilterChip(int index, String label) => SoftFilterChip(
-    label: label,
-    selected: _filterIndex == index,
-    onTap: () => _update(() => _filterIndex = index),
-  );
+  List<Widget> _buildChildNodes(
+    Box parent,
+    InventoryProvider provider,
+    int depth,
+    List<bool> continues,
+  ) {
+    final children = provider.getBoxesIn(parent.id);
+    final out = <Widget>[];
+    for (var i = 0; i < children.length; i++) {
+      final box = children[i];
+      final isLast = i == children.length - 1;
+      final sub = provider.getBoxesIn(box.id);
+      final expanded = sub.isNotEmpty && _expandedBoxIds.contains(box.id);
+      out.add(
+        BoxSlidable(
+          box: box,
+          provider: provider,
+          child: Material(
+            color: context.colors.surface,
+            child: BoxTreeNodeRow(
+              box: box,
+              meta: _meta(provider, box, sub.length),
+              depth: depth,
+              continues: continues,
+              isLast: isLast,
+              alertCount: _alertCount(provider, box.id),
+              hasChildren: sub.isNotEmpty,
+              expanded: expanded,
+              onTap: () => _open(box),
+              onLongPress: () => showBoxActionsSheet(context, box),
+              onToggle: () => _toggleExpand(box.id),
+            ),
+          ),
+        ),
+      );
+      if (expanded) {
+        out.addAll(
+          _buildChildNodes(box, provider, depth + 1, [...continues, !isLast]),
+        );
+      }
+    }
+    return out;
+  }
+
+  Widget _buildFlatRow(Box box, InventoryProvider provider) {
+    final crumbs = box.parentId == null
+        ? const <Box>[]
+        : provider.getBreadcrumb(box.id);
+    // Breadcrumb ends with the box itself; show only its ancestors.
+    final path = crumbs.length > 1
+        ? crumbs.take(crumbs.length - 1).map((b) => b.name).join(' › ')
+        : null;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: SoftCard(
+        radius: 20,
+        child: BoxSlidable(
+          box: box,
+          provider: provider,
+          child: Material(
+            color: context.colors.surface,
+            child: BoxTreeRow(
+              box: box,
+              meta: _meta(provider, box, provider.getBoxesIn(box.id).length),
+              path: path,
+              onTap: () => _open(box),
+              onLongPress: () => showBoxActionsSheet(context, box),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

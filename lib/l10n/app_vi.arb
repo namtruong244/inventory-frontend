@@ -311,7 +311,7 @@
   "expandAll": "Mở rộng tất cả",
   "collapseAll": "Thu gọn tất cả",
   "noLocationsYet": "Chưa có vị trí nào",
-  "tapNewLocationAboveTo": "Nhấn \"Vị trí mới\" ở trên để tạo phòng hoặc hộp đầu tiên",
+  "tapNewLocationAboveTo": "Nhấn + để tạo phòng hoặc hộp đầu tiên",
   "noMatchingLocationsFound": "Không tìm thấy vị trí phù hợp",
   "trySearchingWithADifferent": "Thử tìm bằng tên hoặc nhãn khác",
   "commonMove": "Di chuyển",
@@ -1819,5 +1819,9 @@
   "loginNoAccountQ": "Chưa có tài khoản?",
   "loginCreateOneLink": "Tạo mới",
   "loginHaveAccountQ": "Đã có tài khoản?",
-  "loginSignInLink": "Đăng nhập"
+  "loginSignInLink": "Đăng nhập",
+  "locationsItemsSubtitle": "{locations} vị trí · {items} món đồ",
+  "@locationsItemsSubtitle": {"placeholders": {"locations": {"type": "int"}, "items": {"type": "int"}}},
+  "locationsCountLabel": "{count} vị trí",
+  "@locationsCountLabel": {"placeholders": {"count": {"type": "int"}}}
 }

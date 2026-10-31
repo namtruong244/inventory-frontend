@@ -415,7 +415,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteLocation => 'Delete Location';
 
   @override
-  String get storageHierarchy => 'Storage Hierarchy';
+  String get storageHierarchy => 'Storage hierarchy';
 
   @override
   String get exportAllQrCodes => 'Export all QR codes';
@@ -463,8 +463,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noLocationsYet => 'No locations yet';
 
   @override
-  String get tapNewLocationAboveTo =>
-      'Tap \"New Location\" above to create your first room or box';
+  String get tapNewLocationAboveTo => 'Tap + to create your first room or box';
 
   @override
   String get noMatchingLocationsFound => 'No matching locations found';
@@ -2803,4 +2802,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginSignInLink => 'Sign in';
+
+  @override
+  String locationsItemsSubtitle(int locations, int items) {
+    String _temp0 = intl.Intl.pluralLogic(
+      locations,
+      locale: localeName,
+      other: '$locations locations',
+      one: '1 location',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      items,
+      locale: localeName,
+      other: '$items items',
+      one: '1 item',
+    );
+    return '$_temp0 · $_temp1';
+  }
+
+  @override
+  String locationsCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count locations',
+      one: '1 location',
+    );
+    return '$_temp0';
+  }
 }

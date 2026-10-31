@@ -270,7 +270,7 @@
   "printThermalLabel": "Print Thermal Label",
   "viewFullQrCode": "View Full QR Code",
   "deleteLocation": "Delete Location",
-  "storageHierarchy": "Storage Hierarchy",
+  "storageHierarchy": "Storage hierarchy",
   "exportAllQrCodes": "Export all QR codes",
   "newLocation": "New Location",
   "searchLocationsRoomsContainers": "Search locations, rooms, containers...",
@@ -311,7 +311,7 @@
   "expandAll": "Expand all",
   "collapseAll": "Collapse all",
   "noLocationsYet": "No locations yet",
-  "tapNewLocationAboveTo": "Tap \"New Location\" above to create your first room or box",
+  "tapNewLocationAboveTo": "Tap + to create your first room or box",
   "noMatchingLocationsFound": "No matching locations found",
   "trySearchingWithADifferent": "Try searching with a different name or label",
   "commonMove": "Move",
@@ -1882,5 +1882,9 @@
   "loginNoAccountQ": "Don't have an account?",
   "loginCreateOneLink": "Create one",
   "loginHaveAccountQ": "Already have an account?",
-  "loginSignInLink": "Sign in"
+  "loginSignInLink": "Sign in",
+  "locationsItemsSubtitle": "{locations, plural, =1{1 location} other{{locations} locations}} · {items, plural, =1{1 item} other{{items} items}}",
+  "@locationsItemsSubtitle": {"placeholders": {"locations": {"type": "int"}, "items": {"type": "int"}}},
+  "locationsCountLabel": "{count, plural, =1{1 location} other{{count} locations}}",
+  "@locationsCountLabel": {"placeholders": {"count": {"type": "int"}}}
 }

@@ -760,7 +760,7 @@ abstract class AppLocalizations {
   /// No description provided for @storageHierarchy.
   ///
   /// In en, this message translates to:
-  /// **'Storage Hierarchy'**
+  /// **'Storage hierarchy'**
   String get storageHierarchy;
 
   /// No description provided for @exportAllQrCodes.
@@ -838,7 +838,7 @@ abstract class AppLocalizations {
   /// No description provided for @tapNewLocationAboveTo.
   ///
   /// In en, this message translates to:
-  /// **'Tap \"New Location\" above to create your first room or box'**
+  /// **'Tap + to create your first room or box'**
   String get tapNewLocationAboveTo;
 
   /// No description provided for @noMatchingLocationsFound.
@@ -4720,6 +4720,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in'**
   String get loginSignInLink;
+
+  /// No description provided for @locationsItemsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{locations, plural, =1{1 location} other{{locations} locations}} · {items, plural, =1{1 item} other{{items} items}}'**
+  String locationsItemsSubtitle(int locations, int items);
+
+  /// No description provided for @locationsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 location} other{{count} locations}}'**
+  String locationsCountLabel(int count);
 }
 
 class _AppLocalizationsDelegate

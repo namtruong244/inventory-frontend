@@ -460,8 +460,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get noLocationsYet => 'Chưa có vị trí nào';
 
   @override
-  String get tapNewLocationAboveTo =>
-      'Nhấn \"Vị trí mới\" ở trên để tạo phòng hoặc hộp đầu tiên';
+  String get tapNewLocationAboveTo => 'Nhấn + để tạo phòng hoặc hộp đầu tiên';
 
   @override
   String get noMatchingLocationsFound => 'Không tìm thấy vị trí phù hợp';
@@ -2738,4 +2737,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loginSignInLink => 'Đăng nhập';
+
+  @override
+  String locationsItemsSubtitle(int locations, int items) {
+    return '$locations vị trí · $items món đồ';
+  }
+
+  @override
+  String locationsCountLabel(int count) {
+    return '$count vị trí';
+  }
 }
