@@ -3030,4 +3030,131 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get specMore => '+ Thêm';
+
+  @override
+  String get itemDraftBadge => 'Nháp';
+
+  @override
+  String get itemCoverPhoto => 'Ảnh bìa';
+
+  @override
+  String get itemKeepEditing => 'Tiếp tục sửa';
+
+  @override
+  String get itemConsumableHint =>
+      'Pin, khẩu trang, thực phẩm… theo dõi mức dùng';
+
+  @override
+  String get itemPerishable => 'Có hạn sử dụng';
+
+  @override
+  String get itemPerishableHint => 'Nhắc tôi trước khi hết hạn';
+
+  @override
+  String itemExpiresOn(Object date) {
+    return 'Hết hạn $date';
+  }
+
+  @override
+  String get itemWarranty => 'Bảo hành';
+
+  @override
+  String get itemWarrantyHint => 'Theo dõi ngày hết bảo hành';
+
+  @override
+  String itemWarrantyEnds(Object date) {
+    return 'Đến hết $date';
+  }
+
+  @override
+  String get itemMoreDetailsHint =>
+      'Mô tả, số serial, mã vạch, giá, ngày mua, trạng thái, ảnh, thông số';
+
+  @override
+  String get photoSheetTitle => 'Thêm ảnh';
+
+  @override
+  String get photoSheetSubtitle => 'Chọn loại ảnh bạn muốn thêm';
+
+  @override
+  String get photoTabProduct => 'Sản phẩm';
+
+  @override
+  String get photoTabReceipt => 'Hóa đơn';
+
+  @override
+  String get photoPasteUrl => 'Dán URL';
+
+  @override
+  String get photoSamplePhoto => 'Ảnh mẫu';
+
+  @override
+  String get categorySheetSubtitle => 'Chọn một danh mục hoặc tự tạo';
+
+  @override
+  String get categorySearchHint => 'Tìm hoặc tạo mới…';
+
+  @override
+  String get categoryIconHint => 'Biểu tượng chọn theo tên';
+
+  @override
+  String get categoryMore => 'Thêm';
+
+  @override
+  String locationUseName(Object name) {
+    return 'Dùng $name';
+  }
+
+  @override
+  String locationCreateHint(Object name) {
+    return 'trong $name';
+  }
+
+  @override
+  String get locationThisLevelKicker => 'VỊ TRÍ NÀY';
+
+  @override
+  String locationOpenInside(Object name) {
+    return 'Mở $name';
+  }
+
+  @override
+  String get itemQuantityDecrease => 'Giảm số lượng';
+
+  @override
+  String get itemQuantityIncrease => 'Tăng số lượng';
+
+  @override
+  String get locationPickerTitle => 'Chọn vị trí';
+
+  @override
+  String get locationPickerSubtitle => 'Món đồ này sẽ để ở đâu?';
+
+  @override
+  String get locationPickerAll => 'Tất cả';
+
+  @override
+  String get locationPickerScan => 'Quét';
+
+  @override
+  String get locationCreateHereShort => 'Tạo vị trí tại đây';
+
+  @override
+  String locationPickerIn(String name) {
+    return 'trong $name';
+  }
+
+  @override
+  String locationInsideCount(int count) {
+    return '$count bên trong';
+  }
+
+  @override
+  String get locationPickerUp => 'Lên một cấp';
+
+  @override
+  String get locationCurrentKicker => 'Vị trí hiện tại';
+
+  @override
+  String get locationSubKicker => 'Ngăn chứa bên trong';
 }

@@ -2116,5 +2116,79 @@
   "specNameLabel": "Name",
   "specValueLabel": "Value",
   "specValueHelper": "Shown on the item's Specifications card",
-  "specMore": "+ More"
+  "specMore": "+ More",
+  "itemDraftBadge": "Draft",
+  "itemCoverPhoto": "Cover photo",
+  "itemKeepEditing": "Keep editing",
+  "itemConsumableHint": "Batteries, masks, food… track usage",
+  "itemPerishable": "Perishable",
+  "itemPerishableHint": "Remind me before it expires",
+  "itemExpiresOn": "Expires {date}",
+  "@itemExpiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemWarranty": "Warranty",
+  "itemWarrantyHint": "Track the warranty end date",
+  "itemWarrantyEnds": "Ends {date}",
+  "@itemWarrantyEnds": {
+    "placeholders": {
+      "date": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemMoreDetailsHint": "Description, serial, barcode, price, purchase date, status, photos, specifications",
+  "photoSheetTitle": "Add photo",
+  "photoSheetSubtitle": "Choose what you're capturing",
+  "photoTabProduct": "Product",
+  "photoTabReceipt": "Receipt",
+  "photoPasteUrl": "Paste URL",
+  "photoSamplePhoto": "Sample photo",
+  "categorySheetSubtitle": "Pick one or create your own",
+  "categorySearchHint": "Search or create…",
+  "categoryIconHint": "Icon picked from name",
+  "categoryMore": "More",
+  "locationUseName": "Use {name}",
+  "@locationUseName": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "locationCreateHint": "in {name}",
+  "@locationCreateHint": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "locationThisLevelKicker": "THIS LOCATION",
+  "locationOpenInside": "Open {name}",
+  "@locationOpenInside": {
+    "placeholders": {
+      "name": {
+        "type": "Object"
+      }
+    }
+  },
+  "itemQuantityDecrease": "Decrease quantity",
+  "itemQuantityIncrease": "Increase quantity",
+  "locationPickerTitle": "Choose location",
+  "locationPickerSubtitle": "Where will this item live?",
+  "locationPickerAll": "All",
+  "locationPickerScan": "Scan",
+  "locationCreateHereShort": "Create location here",
+  "locationPickerIn": "in {name}",
+  "@locationPickerIn": {"placeholders": {"name": {"type": "String"}}},
+  "locationInsideCount": "{count} inside",
+  "@locationInsideCount": {"placeholders": {"count": {"type": "int"}}},
+  "locationPickerUp": "Up one level",
+  "locationCurrentKicker": "Current location",
+  "locationSubKicker": "Sub-containers inside"
 }

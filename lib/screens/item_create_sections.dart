@@ -2,493 +2,860 @@ part of 'item_create_screen.dart';
 
 /// Form sections and helpers of the item editor.
 extension _ItemCreateSections on _ItemCreateScreenState {
-  List<Widget> _basicInfoSection(
-    InventoryProvider provider,
-    Box? currentBox,
-    String breadcrumb,
-  ) {
-    return [
-      // Section 2: Basic Info
-      _buildSectionTitle(context.l10n.basicInformation),
-      const SizedBox(height: 12),
+  BoxDecoration _cardDeco() => BoxDecoration(
+    color: context.colors.surface,
+    borderRadius: BorderRadius.circular(24),
+    boxShadow: context.colors.cardShadow,
+  );
 
-      AppFormField(
-        id: 'item_name',
-        label: context.l10n.itemName,
-        hintText: context.l10n.eGMacbookProFirst,
-        controller: _nameController,
-        validator: (value) => value == null || value.trim().isEmpty
-            ? context.l10n.pleaseEnterItemName
-            : null,
+  Widget _fieldLabel(String text) => Padding(
+    padding: const EdgeInsets.only(bottom: 6),
+    child: Text(
+      text,
+      style: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        color: context.colors.textSecondary,
       ),
-      const SizedBox(height: 16),
+    ),
+  );
 
-      // Category Section with Bottom Sheet Picker
-      Text(
-        context.l10n.commonCategory,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: context.colors.textPrimary,
-        ),
-      ),
-      const SizedBox(height: 8),
+  Widget _pillButton(String id, IconData icon, String label, VoidCallback tap) {
+    final c = context.colors;
+    return e2eId(
+      id,
       Tappable(
-        onTap: () => _openCategoryPicker(provider),
+        semanticLabel: label,
+        onTap: tap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          height: 29,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: context.colors.surface,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: context.colors.cardShadow,
+            color: c.fill,
+            borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: context.colors.fill,
-                  borderRadius: BorderRadius.circular(12),
+              AppIcon(icon, size: 14, color: c.textPrimary),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: c.textPrimary,
                 ),
-                child: AppIcon(
-                  CategoryHelper.getCategoryIcon(_selectedCategory),
-                  size: 20,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _selectedCategory.isNotEmpty
-                          ? _selectedCategory
-                          : context.l10n.selectCategory,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        color: _selectedCategory.isNotEmpty
-                            ? context.colors.textPrimary
-                            : context.colors.textMuted,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      context.l10n.tapToChangeCategory,
-                      style: TextStyle(
-                        color: context.colors.textMuted,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              AppIcon(
-                Icons.keyboard_arrow_down_rounded,
-                color: context.colors.textSecondary,
-                size: 22,
               ),
             ],
           ),
         ),
       ),
-      const SizedBox(height: 16),
+    );
+  }
 
-      // Quantity & Unit Row
-      Row(
+  Widget _coverCard() {
+    final c = context.colors;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: _cardDeco(),
+      child: Row(
         children: [
-          Expanded(
-            flex: 3,
-            child: AppFormField(
-              id: 'item_quantity',
-              label: context.l10n.commonQuantity,
-              hintText: '1',
-              controller: _quantityController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+          e2eId(
+            'item_photo_add',
+            Tappable(
+              semanticLabel: context.l10n.photoSheetTitle,
+              onTap: () => _openPhotoModal(false),
+              child: SizedBox(
+                width: 76,
+                height: 76,
+                child: _photos.isNotEmpty
+                    ? AppImageView(
+                        imageUrlOrPath: _photos.first,
+                        fit: BoxFit.cover,
+                        borderRadius: BorderRadius.circular(20),
+                      )
+                    : Container(
+                        decoration: BoxDecoration(
+                          color: c.fill,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: AppIcon(
+                          Icons.add_a_photo_outlined,
+                          size: 26,
+                          color: c.textSecondary,
+                        ),
+                      ),
               ),
-              validator: (v) => _isValidAmount(v)
-                  ? null
-                  : context.l10n.pleaseEnterAValidQuantity,
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
-            flex: 3,
-            child: AppFormField(
-              id: 'item_unit',
-              label: context.l10n.commonUnit,
-              hintText: provider.defaultUnit.isNotEmpty
-                  ? provider.defaultUnit
-                  : 'pcs',
-              controller: _unitController,
-              suffixIcon: PopupMenuButton<String>(
-                icon: AppIcon(
-                  Icons.arrow_drop_down_rounded,
-                  color: context.colors.textSecondary,
-                ),
-                tooltip: context.l10n.selectUnit,
-                onSelected: (val) {
-                  _update(() {
-                    _unitController.text = val;
-                  });
-                },
-                itemBuilder: (context) {
-                  final commonUnits = _getCommonUnits(provider.defaultUnit);
-                  return commonUnits.map((u) {
-                    return PopupMenuItem<String>(
-                      value: u,
-                      child: Text(
-                        u,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    );
-                  }).toList();
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-
-      const SizedBox(height: 16),
-
-      // Low Stock Threshold per item
-      AppFormField(
-        id: 'item_min_quantity',
-        label: context.l10n.lowStockAlertThresholdOptional,
-        hintText: context.l10n.eG2AlertWhen,
-        controller: _minQuantityController,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        validator: (v) =>
-            _isValidAmount(v) ? null : context.l10n.pleaseEnterAValidQuantity,
-      ),
-      const SizedBox(height: 16),
-
-      // Storage Location Selector
-      Text(
-        context.l10n.storageLocation,
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: context.colors.textPrimary,
-        ),
-      ),
-      const SizedBox(height: 8),
-      e2eId(
-        'item_location',
-        Tappable(
-          onTap: _pickStorageLocation,
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: context.colors.cardShadow,
-            ),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: context.colors.fill,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: AppIcon(
-                    currentBox?.type.icon ?? Icons.location_on_outlined,
-                    color: context.colors.textPrimary,
-                    size: 20,
+                Text(
+                  context.l10n.itemCoverPhoto,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: c.textPrimary,
                   ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        currentBox?.name ?? context.l10n.selectStorageContainer,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Row(
-                        children: [
-                          AppIcon(
-                            Icons.route_outlined,
-                            size: 12,
-                            color: context.colors.textSecondary,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              breadcrumb.isNotEmpty
-                                  ? breadcrumb
-                                  : context.l10n.commonUnassigned,
-                              style: TextStyle(
-                                color: context.colors.textSecondary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: context.colors.fill,
-                    shape: BoxShape.circle,
-                  ),
-                  child: AppIcon(
-                    Icons.chevron_right_rounded,
-                    color: context.colors.textPrimary,
-                    size: 18,
-                  ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _pillButton(
+                      'item_cover_camera',
+                      Icons.photo_camera_outlined,
+                      context.l10n.commonCamera,
+                      () => _captureFromCamera(false),
+                    ),
+                    _pillButton(
+                      'item_cover_gallery',
+                      Icons.image_outlined,
+                      context.l10n.commonGallery,
+                      () => _pickFromGallery(false),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
-      const SizedBox(height: 16),
+    );
+  }
 
-      AppFormField(
-        id: 'item_description',
-        label: context.l10n.commonDescription,
-        hintText: context.l10n.colorConditionAccessoriesOptional,
-        controller: _descriptionController,
-        maxLines: 2,
-      ),
-      const SizedBox(height: 16),
-
-      // Consumable Item Option Card
-      Container(
-        padding: const EdgeInsets.all(16),
+  Widget _stepButton(IconData icon, String tip, bool accent, VoidCallback tap) {
+    final c = context.colors;
+    return Tappable(
+      semanticLabel: tip,
+      onTap: tap,
+      child: Container(
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
-          color: context.colors.surface,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: context.colors.cardShadow,
+          color: accent ? c.accent : c.surface,
+          borderRadius: BorderRadius.circular(14),
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: _isConsumable
-                    ? context.colors.primary
-                    : context.colors.fill,
-                borderRadius: BorderRadius.circular(12),
+        child: AppIcon(
+          icon,
+          size: 18,
+          color: accent ? c.onAccent : c.textPrimary,
+        ),
+      ),
+    );
+  }
+
+  void _stepQuantity(double delta) {
+    final cur = double.tryParse(_quantityController.text.trim()) ?? 0;
+    final next = (cur + delta).clamp(0, 999999).toDouble();
+    _update(() {
+      _quantityController.text = next % 1 == 0
+          ? next.toInt().toString()
+          : next.toString();
+    });
+  }
+
+  Widget _quantityStepper() {
+    final c = context.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _fieldLabel(context.l10n.commonQuantity),
+        Container(
+          height: 52,
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          decoration: BoxDecoration(
+            color: c.fill,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              _stepButton(
+                Icons.remove_rounded,
+                context.l10n.itemQuantityDecrease,
+                false,
+                () => _stepQuantity(-1),
               ),
-              child: AppIcon(
-                Icons.shopping_basket_outlined,
-                color: _isConsumable
-                    ? Colors.white
-                    : context.colors.textSecondary,
-                size: 22,
+              Expanded(
+                child: e2eId(
+                  'item_quantity',
+                  TextFormField(
+                    controller: _quantityController,
+                    textAlign: TextAlign.center,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    onTapOutside: (_) =>
+                        FocusManager.instance.primaryFocus?.unfocus(),
+                    validator: (v) => _isValidAmount(v)
+                        ? null
+                        : context.l10n.pleaseEnterAValidQuantity,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: c.textPrimary,
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      filled: false,
+                      isDense: true,
+                      errorStyle: TextStyle(fontSize: 0, height: 0),
+                      contentPadding: EdgeInsets.symmetric(vertical: 14),
+                    ),
+                  ),
+                ),
+              ),
+              _stepButton(
+                Icons.add_rounded,
+                context.l10n.itemQuantityIncrease,
+                true,
+                () => _stepQuantity(1),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _unitField(InventoryProvider provider) {
+    return AppFormField(
+      id: 'item_unit',
+      label: context.l10n.commonUnit,
+      hintText: provider.defaultUnit.isNotEmpty ? provider.defaultUnit : 'pcs',
+      controller: _unitController,
+      suffixIcon: PopupMenuButton<String>(
+        icon: AppIcon(
+          Icons.keyboard_arrow_down_rounded,
+          color: context.colors.textSecondary,
+        ),
+        tooltip: context.l10n.selectUnit,
+        onSelected: (val) => _update(() => _unitController.text = val),
+        itemBuilder: (context) => [
+          for (final u in _getCommonUnits(provider.defaultUnit))
+            PopupMenuItem<String>(
+              value: u,
+              child: Text(
+                u,
+                style: const TextStyle(fontWeight: FontWeight.w500),
               ),
             ),
-            const SizedBox(width: 14),
+        ],
+      ),
+    );
+  }
+
+  Widget _locationField(Box? currentBox, String breadcrumb) {
+    final c = context.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _fieldLabel(context.l10n.storageLocation),
+        e2eId(
+          'item_location',
+          Tappable(
+            semanticLabel: context.l10n.storageLocation,
+            onTap: _pickStorageLocation,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 52),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: c.fill,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  AppIcon(
+                    currentBox?.type.icon ?? Icons.location_on_outlined,
+                    size: 18,
+                    color: AppTones.sky,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      breadcrumb.isNotEmpty
+                          ? breadcrumb
+                          : context.l10n.selectStorageContainer,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: breadcrumb.isNotEmpty
+                            ? c.textPrimary
+                            : c.textMuted,
+                      ),
+                    ),
+                  ),
+                  AppIcon(
+                    Icons.chevron_right_rounded,
+                    size: 18,
+                    color: c.textSecondary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _categoryChip(String label, bool selected, VoidCallback tap) {
+    final c = context.colors;
+    return e2eId(
+      'category_chip_$label',
+      Tappable(
+        semanticLabel: label,
+        onTap: tap,
+        child: Container(
+          height: 32,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: selected ? c.accent : c.fill,
+            borderRadius: BorderRadius.circular(999),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppIcon(
+                CategoryHelper.getCategoryIcon(label),
+                size: 14,
+                color: selected ? c.onAccent : c.textSecondary,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: selected ? c.onAccent : c.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _categoryRow(InventoryProvider provider) {
+    final c = context.colors;
+    final cats = <String>[
+      if (_selectedCategory.isNotEmpty) _selectedCategory,
+      ...provider.categories.where((x) => x != _selectedCategory).take(5),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _fieldLabel(context.l10n.commonCategory),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (final cat in cats) ...[
+                _categoryChip(
+                  cat,
+                  cat == _selectedCategory,
+                  () => _update(() => _selectedCategory = cat),
+                ),
+                const SizedBox(width: 8),
+              ],
+              e2eId(
+                'item_category',
+                Tappable(
+                  semanticLabel: context.l10n.selectCategory,
+                  onTap: () => _openCategoryPicker(provider),
+                  child: Container(
+                    height: 32,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: c.fill,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      context.l10n.specMore,
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: c.textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _basicsCard(InventoryProvider provider, Box? box, String breadcrumb) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: _cardDeco(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppFormField(
+            id: 'item_name',
+            label: context.l10n.itemName,
+            hintText: context.l10n.eGMacbookProFirst,
+            controller: _nameController,
+            validator: (value) => value == null || value.trim().isEmpty
+                ? context.l10n.pleaseEnterItemName
+                : null,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _quantityStepper()),
+              const SizedBox(width: 12),
+              Expanded(child: _unitField(provider)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _locationField(box, breadcrumb),
+          const SizedBox(height: 16),
+          _categoryRow(provider),
+        ],
+      ),
+    );
+  }
+
+  Future<DateTime?> _pickDate(DateTime? initial) => showDatePicker(
+    context: context,
+    initialDate: initial ?? DateTime.now().add(const Duration(days: 365)),
+    firstDate: DateTime(2000),
+    lastDate: DateTime(2050),
+  );
+
+  Widget _toggleRow({
+    required String id,
+    required IconData icon,
+    required Color fg,
+    required Color bg,
+    required String title,
+    required String sub,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    VoidCallback? onTap,
+  }) {
+    final c = context.colors;
+    return Tappable(
+      semanticLabel: title,
+      onTap: onTap ?? () => onChanged(!value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            SoftIconTile(icon, color: fg, background: bg, size: 36),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    context.l10n.consumableItem,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: c.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    context.l10n.consumableItemsBatteriesMasksFood,
+                    sub,
                     style: TextStyle(
-                      color: context.colors.textSecondary,
-                      fontSize: 11,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: c.textSecondary,
                     ),
                   ),
                 ],
               ),
             ),
-            Switch.adaptive(
-              value: _isConsumable,
-              activeTrackColor: context.colors.primary,
-              activeThumbColor: Colors.white,
-              onChanged: (val) => _update(() => _isConsumable = val),
-            ),
+            const SizedBox(width: 12),
+            e2eId(id, SoftToggle(value: value, onChanged: onChanged)),
           ],
         ),
       ),
-      const SizedBox(height: 24),
-    ];
+    );
   }
 
-  List<Widget> _statusSection(
-    InventoryProvider provider,
-    Box? currentBox,
-    String breadcrumb,
-  ) {
-    return [
-      // Section 3: Asset Status
-      _buildSectionTitle(context.l10n.assetStatus),
-      const SizedBox(height: 12),
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: ItemStatus.values.map((status) {
-            final isSelected = _selectedStatus == status;
-            return Tappable(
-              onTap: () => _update(() => _selectedStatus = status),
-              child: Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? context.colors.accent
-                      : context.colors.surface,
-                  borderRadius: BorderRadius.circular(14),
-                ),
+  Widget _trackingCard() {
+    final c = context.colors;
+    Widget divider() => Divider(height: 1, thickness: 1, color: c.border);
+    Future<void> dateToggle(
+      bool on,
+      DateTime? current,
+      ValueChanged<DateTime?> set,
+    ) async {
+      if (!on) {
+        _update(() => set(null));
+        return;
+      }
+      final d = await _pickDate(current);
+      if (d != null && mounted) _update(() => set(d));
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+      decoration: _cardDeco(),
+      child: Column(
+        children: [
+          _toggleRow(
+            id: 'item_consumable_toggle',
+            icon: Icons.shopping_basket_outlined,
+            fg: AppTones.matcha,
+            bg: AppTones.matchaSoft,
+            title: context.l10n.consumableItem,
+            sub: context.l10n.itemConsumableHint,
+            value: _isConsumable,
+            onChanged: (v) => _update(() => _isConsumable = v),
+          ),
+          divider(),
+          _toggleRow(
+            id: 'item_perishable_toggle',
+            icon: Icons.event_outlined,
+            fg: AppTones.amber,
+            bg: AppTones.amberSoft,
+            title: context.l10n.itemPerishable,
+            sub: _expiryDate != null
+                ? context.l10n.itemExpiresOn(formatDate(context, _expiryDate!))
+                : context.l10n.itemPerishableHint,
+            value: _expiryDate != null,
+            onChanged: (v) =>
+                dateToggle(v, _expiryDate, (d) => _expiryDate = d),
+            onTap: () => dateToggle(true, _expiryDate, (d) => _expiryDate = d),
+          ),
+          divider(),
+          _toggleRow(
+            id: 'item_warranty_toggle',
+            icon: Icons.verified_user_outlined,
+            fg: AppTones.sky,
+            bg: AppTones.skySoft,
+            title: context.l10n.itemWarranty,
+            sub: _warrantyExpiryDate != null
+                ? context.l10n.itemWarrantyEnds(
+                    formatDate(context, _warrantyExpiryDate!),
+                  )
+                : context.l10n.itemWarrantyHint,
+            value: _warrantyExpiryDate != null,
+            onChanged: (v) => dateToggle(
+              v,
+              _warrantyExpiryDate,
+              (d) => _warrantyExpiryDate = d,
+            ),
+            onTap: () => dateToggle(
+              true,
+              _warrantyExpiryDate,
+              (d) => _warrantyExpiryDate = d,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _moreDetailsCard(InventoryProvider provider) {
+    final c = context.colors;
+    return Container(
+      decoration: _cardDeco(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          e2eId(
+            'item_more_details',
+            Tappable(
+              semanticLabel: context.l10n.moreDetails,
+              onTap: _toggleMore,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    AppIcon(
-                      status.icon,
-                      size: 16,
-                      color: isSelected
-                          ? context.colors.onAccent
-                          : status.color,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            context.l10n.moreDetails,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                              color: c.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            context.l10n.itemMoreDetailsHint,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: c.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      status.displayName,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.w500,
-                        color: isSelected
-                            ? context.colors.onAccent
-                            : context.colors.textPrimary,
+                    const SizedBox(width: 12),
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: c.fill,
+                        shape: BoxShape.circle,
+                      ),
+                      child: AppIcon(
+                        _moreOpen
+                            ? Icons.keyboard_arrow_up_rounded
+                            : Icons.keyboard_arrow_down_rounded,
+                        size: 18,
+                        color: c.textPrimary,
                       ),
                     ),
                   ],
                 ),
               ),
-            );
-          }).toList(),
-        ),
+            ),
+          ),
+          if (_moreOpen)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppFormField(
+                    id: 'item_description',
+                    label: context.l10n.commonDescription,
+                    hintText: context.l10n.colorConditionAccessoriesOptional,
+                    controller: _descriptionController,
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 16),
+                  AppFormField(
+                    id: 'item_min_quantity',
+                    label: context.l10n.lowStockAlertThresholdOptional,
+                    hintText: context.l10n.eG2AlertWhen,
+                    controller: _minQuantityController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    validator: (v) => _isValidAmount(v)
+                        ? null
+                        : context.l10n.pleaseEnterAValidQuantity,
+                  ),
+                  const SizedBox(height: 20),
+                  _sectionTitle(context.l10n.assetStatus),
+                  _statusChips(),
+                  const SizedBox(height: 20),
+                  _sectionTitle(context.l10n.assetWarrantyDetails),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: AppFormField(
+                          id: 'item_price',
+                          label: context.l10n.purchasePrice(provider.currency),
+                          hintText: '0.00',
+                          prefixText: '${provider.currency} ',
+                          controller: _priceController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: AppFormField(
+                          id: 'item_serial',
+                          label: context.l10n.serialNumber,
+                          hintText: 'SN-XXXX',
+                          controller: _serialController,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  AppFormField(
+                    id: 'item_barcode',
+                    label: context.l10n.productBarcodeUpcEan,
+                    hintText: context.l10n.scanOrEnterProductBarcode,
+                    controller: _barcodeController,
+                    suffixIcon: IconButton(
+                      tooltip: context.l10n.scanBarcode,
+                      icon: const AppIcon(Icons.qr_code_scanner_rounded),
+                      onPressed: () async {
+                        final code = await showBarcodeScanSheet(context);
+                        if (code != null) {
+                          _update(() => _barcodeController.text = code);
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _datePickerField(
+                    label: context.l10n.purchaseDate,
+                    date: _purchaseDate,
+                    onSelected: (d) => _update(() => _purchaseDate = d),
+                  ),
+                  const SizedBox(height: 20),
+                  _sectionTitle(context.l10n.productPhotos),
+                  _buildPhotosGallery(false),
+                  const SizedBox(height: 20),
+                  buildCustomAttributesSection(
+                    context,
+                    attributes: _customAttributes,
+                    onSave: (key, value, replacedKey) => _update(() {
+                      if (replacedKey != null) {
+                        _customAttributes.remove(replacedKey);
+                      }
+                      _customAttributes[key] = value;
+                    }),
+                    onRemove: (key) =>
+                        _update(() => _customAttributes.remove(key)),
+                  ),
+                  const SizedBox(height: 20),
+                  _sectionTitle(context.l10n.receiptsWarrantyProof),
+                  _buildPhotosGallery(true),
+                ],
+              ),
+            ),
+        ],
       ),
-      const SizedBox(height: 24),
-    ];
+    );
   }
 
-  List<Widget> _assetDetailsSection(
-    InventoryProvider provider,
-    Box? currentBox,
-    String breadcrumb,
-  ) {
-    return [
-      // Section 4: Asset, Price & Serial
-      _buildSectionTitle(context.l10n.assetWarrantyDetails),
-      const SizedBox(height: 12),
+  Widget _sectionTitle(String t) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: Text(
+      t,
+      style: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w800,
+        color: context.colors.textPrimary,
+      ),
+    ),
+  );
 
-      Row(
-        children: [
-          Expanded(
-            child: AppFormField(
-              id: 'item_price',
-              label: context.l10n.purchasePrice(provider.currency),
-              hintText: '0.00',
-              prefixText: '${provider.currency} ',
-              controller: _priceController,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+  Widget _statusChips() {
+    final c = context.colors;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [
+        for (final status in ItemStatus.values)
+          Tappable(
+            semanticLabel: status.displayName,
+            onTap: () => _update(() => _selectedStatus = status),
+            child: Container(
+              height: 36,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: BoxDecoration(
+                color: _selectedStatus == status ? c.accent : c.fill,
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AppIcon(
+                    status.icon,
+                    size: 14,
+                    color: _selectedStatus == status
+                        ? c.onAccent
+                        : status.color,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    status.displayName,
+                    style: TextStyle(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                      color: _selectedStatus == status
+                          ? c.onAccent
+                          : c.textSecondary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: AppFormField(
-              id: 'item_serial',
-              label: context.l10n.serialNumber,
-              hintText: 'SN-XXXX-XXXX',
-              controller: _serialController,
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 16),
-
-      // Barcode (UPC/EAN)
-      AppFormField(
-        id: 'item_barcode',
-        label: context.l10n.productBarcodeUpcEan,
-        hintText: context.l10n.scanOrEnterProductBarcode,
-        controller: _barcodeController,
-        suffixIcon: IconButton(
-          tooltip: context.l10n.scanBarcode,
-          icon: const AppIcon(Icons.qr_code_scanner_rounded),
-          onPressed: () async {
-            final code = await showBarcodeScanSheet(context);
-            if (code != null) _update(() => _barcodeController.text = code);
-          },
-        ),
-      ),
-      const SizedBox(height: 16),
-
-      // Dates: Warranty & Expiry
-      Row(
-        children: [
-          Expanded(
-            child: _buildDatePickerTile(
-              label: context.l10n.warrantyExpiry,
-              date: _warrantyExpiryDate,
-              onSelected: (d) => _update(() => _warrantyExpiryDate = d),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildDatePickerTile(
-              label: context.l10n.perishableExpiry,
-              date: _expiryDate,
-              onSelected: (d) => _update(() => _expiryDate = d),
-            ),
-          ),
-        ],
-      ),
-      const SizedBox(height: 24),
-    ];
+      ],
+    );
   }
 
-  List<Widget> _specificationsSection(
-    InventoryProvider provider,
-    Box? currentBox,
-    String breadcrumb,
-  ) {
-    return [
-      // Section 5: Specifications & Attributes
-      buildCustomAttributesSection(
-        context,
-        attributes: _customAttributes,
-        onSave: (key, value, replacedKey) => _update(() {
-          if (replacedKey != null) _customAttributes.remove(replacedKey);
-          _customAttributes[key] = value;
-        }),
-        onRemove: (key) => _update(() => _customAttributes.remove(key)),
-      ),
-      const SizedBox(height: 24),
-    ];
+  Widget _datePickerField({
+    required String label,
+    required DateTime? date,
+    required ValueChanged<DateTime?> onSelected,
+  }) {
+    final c = context.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _fieldLabel(label),
+        Tappable(
+          semanticLabel: label,
+          onTap: () async {
+            final picked = await _pickDate(date);
+            if (picked != null) onSelected(picked);
+          },
+          child: Container(
+            height: 52,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: c.fill,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    date != null
+                        ? formatDate(context, date)
+                        : context.l10n.notSet,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: date != null ? c.textPrimary : c.textMuted,
+                    ),
+                  ),
+                ),
+                if (date != null)
+                  Tappable(
+                    semanticLabel: MaterialLocalizations.of(context)
+                        .clearButtonTooltip,
+                    onTap: () => onSelected(null),
+                    child: AppIcon(
+                      Icons.clear,
+                      size: 16,
+                      color: c.textSecondary,
+                    ),
+                  )
+                else
+                  AppIcon(
+                    Icons.event_outlined,
+                    size: 16,
+                    color: c.textSecondary,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Future<void> _captureFromCamera(bool isReceipt) =>
@@ -587,7 +954,9 @@ extension _ItemCreateSections on _ItemCreateScreenState {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    isReceipt ? '+ Receipt' : '+ Photo',
+                    isReceipt
+                        ? context.l10n.photoTabReceipt
+                        : context.l10n.photoTabProduct,
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
@@ -676,106 +1045,10 @@ extension _ItemCreateSections on _ItemCreateScreenState {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 17,
-        fontWeight: FontWeight.w800,
-        color: context.colors.textPrimary,
-        letterSpacing: -0.3,
-      ),
-    );
-  }
-
-  Widget _buildDatePickerTile({
-    required String label,
-    required DateTime? date,
-    required ValueChanged<DateTime?> onSelected,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: context.colors.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Tappable(
-          onTap: () async {
-            final picked = await showDatePicker(
-              context: context,
-              initialDate:
-                  date ?? DateTime.now().add(const Duration(days: 365)),
-              firstDate: DateTime(2000),
-              lastDate: DateTime(2050),
-            );
-            if (picked != null) onSelected(picked);
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-            decoration: BoxDecoration(
-              color: context.colors.surface,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: context.colors.cardShadow,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    date != null
-                        ? formatDate(context, date)
-                        : context.l10n.notSet,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: date != null
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                      color: date != null
-                          ? context.colors.textPrimary
-                          : context.colors.textMuted,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (date != null)
-                  Tappable(
-                    semanticLabel: MaterialLocalizations.of(context)
-                        .clearButtonTooltip,
-                    onTap: () => onSelected(null),
-                    child: AppIcon(
-                      Icons.clear,
-                      size: 16,
-                      color: context.colors.textSecondary,
-                    ),
-                  )
-                else
-                  AppIcon(
-                    Icons.event_outlined,
-                    size: 16,
-                    color: context.colors.textSecondary,
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Future<void> _pickStorageLocation() async {
     final selectedBox = await LocationPickerSheet.show(
       context,
       initialBoxId: _currentBoxId,
-      title: context.l10n.selectStorageLocation,
-      subtitle: context.l10n.chooseContainerOrScanQr,
-      confirmButtonText: context.l10n.setLocation,
     );
     if (!mounted || selectedBox == null) return;
     _update(() {

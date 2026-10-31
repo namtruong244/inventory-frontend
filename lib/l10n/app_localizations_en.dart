@@ -3127,4 +3127,130 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get specMore => '+ More';
+
+  @override
+  String get itemDraftBadge => 'Draft';
+
+  @override
+  String get itemCoverPhoto => 'Cover photo';
+
+  @override
+  String get itemKeepEditing => 'Keep editing';
+
+  @override
+  String get itemConsumableHint => 'Batteries, masks, food… track usage';
+
+  @override
+  String get itemPerishable => 'Perishable';
+
+  @override
+  String get itemPerishableHint => 'Remind me before it expires';
+
+  @override
+  String itemExpiresOn(Object date) {
+    return 'Expires $date';
+  }
+
+  @override
+  String get itemWarranty => 'Warranty';
+
+  @override
+  String get itemWarrantyHint => 'Track the warranty end date';
+
+  @override
+  String itemWarrantyEnds(Object date) {
+    return 'Ends $date';
+  }
+
+  @override
+  String get itemMoreDetailsHint =>
+      'Description, serial, barcode, price, purchase date, status, photos, specifications';
+
+  @override
+  String get photoSheetTitle => 'Add photo';
+
+  @override
+  String get photoSheetSubtitle => 'Choose what you\'re capturing';
+
+  @override
+  String get photoTabProduct => 'Product';
+
+  @override
+  String get photoTabReceipt => 'Receipt';
+
+  @override
+  String get photoPasteUrl => 'Paste URL';
+
+  @override
+  String get photoSamplePhoto => 'Sample photo';
+
+  @override
+  String get categorySheetSubtitle => 'Pick one or create your own';
+
+  @override
+  String get categorySearchHint => 'Search or create…';
+
+  @override
+  String get categoryIconHint => 'Icon picked from name';
+
+  @override
+  String get categoryMore => 'More';
+
+  @override
+  String locationUseName(Object name) {
+    return 'Use $name';
+  }
+
+  @override
+  String locationCreateHint(Object name) {
+    return 'in $name';
+  }
+
+  @override
+  String get locationThisLevelKicker => 'THIS LOCATION';
+
+  @override
+  String locationOpenInside(Object name) {
+    return 'Open $name';
+  }
+
+  @override
+  String get itemQuantityDecrease => 'Decrease quantity';
+
+  @override
+  String get itemQuantityIncrease => 'Increase quantity';
+
+  @override
+  String get locationPickerTitle => 'Choose location';
+
+  @override
+  String get locationPickerSubtitle => 'Where will this item live?';
+
+  @override
+  String get locationPickerAll => 'All';
+
+  @override
+  String get locationPickerScan => 'Scan';
+
+  @override
+  String get locationCreateHereShort => 'Create location here';
+
+  @override
+  String locationPickerIn(String name) {
+    return 'in $name';
+  }
+
+  @override
+  String locationInsideCount(int count) {
+    return '$count inside';
+  }
+
+  @override
+  String get locationPickerUp => 'Up one level';
+
+  @override
+  String get locationCurrentKicker => 'Current location';
+
+  @override
+  String get locationSubKicker => 'Sub-containers inside';
 }

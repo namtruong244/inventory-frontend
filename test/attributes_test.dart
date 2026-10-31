@@ -76,6 +76,9 @@ void main() {
           300,
           scrollable: find.byType(Scrollable).first,
         );
+        // keep the card clear of the pinned Save bar
+        await tester.drag(find.byType(ListView).first, const Offset(0, -200));
+        await tester.pumpAndSettle();
         await tester.tap(find.text('More details'));
         await tester.pumpAndSettle();
 

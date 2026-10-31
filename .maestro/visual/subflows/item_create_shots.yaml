@@ -1,0 +1,140 @@
+# Env: THEME = light | dark. Chụp Create item, filled, photo/category/location sheets, discard dialog, Edit item.
+appId: ${APP_ID}
+---
+- runFlow:
+    file: ../../subflows/open_tab.yaml
+    env:
+      TAB: item
+- tapOn:
+    id: nav_add
+- extendedWaitUntil:
+    visible:
+      id: loc_pick_Garage
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_location_sheet_${THEME}
+- tapOn:
+    id: loc_pick_Garage
+- tapOn:
+    id: location_confirm
+- extendedWaitUntil:
+    visible:
+      id: item_name
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_create_top_${THEME}
+- scrollUntilVisible:
+    element:
+      id: category_chip_Electronics
+- swipe:
+    start: 80%,68%
+    end: 12%,68%
+- swipe:
+    start: 80%,68%
+    end: 12%,68%
+- swipe:
+    start: 80%,68%
+    end: 12%,68%
+- swipe:
+    start: 80%,68%
+    end: 12%,68%
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_category_row_${THEME}
+- tapOn:
+    id: item_category
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_category_sheet_${THEME}
+- tapOn:
+    point: 50%,8%
+- waitForAnimationToEnd
+# Filled + scrolled
+- tapOn:
+    id: item_name
+- inputText: Cordless jigsaw
+- runFlow: ../../subflows/dismiss_keyboard.yaml
+- scrollUntilVisible:
+    element:
+      id: item_more_details
+- tapOn:
+    id: item_more_details
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_create_filled_${THEME}
+- scrollUntilVisible:
+    element:
+      id: item_photo_add
+    direction: UP
+# Sheets
+- tapOn:
+    id: item_photo_add
+- extendedWaitUntil:
+    visible:
+      id: photo_camera
+    timeout: 5000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_photo_sheet_${THEME}
+- tapOn:
+    point: 50%,8%
+- waitForAnimationToEnd
+- scrollUntilVisible:
+    element:
+      id: item_location
+- tapOn:
+    id: item_location
+- extendedWaitUntil:
+    visible:
+      id: location_confirm
+    timeout: 5000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_location_sheet2_${THEME}
+- tapOn:
+    id: loc_drill_Living room
+- waitForAnimationToEnd
+- tapOn:
+    id: loc_drill_Oak cabinet
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_location_drill_${THEME}
+- tapOn:
+    point: 50%,8%
+- waitForAnimationToEnd
+# Discard dialog
+- scrollUntilVisible:
+    element:
+      id: item_discard_back
+    direction: UP
+- tapOn:
+    id: item_discard_back
+- extendedWaitUntil:
+    visible:
+      id: confirm_ok
+    timeout: 5000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_discard_dialog_${THEME}
+- tapOn:
+    id: confirm_ok
+- waitForAnimationToEnd
+# Edit an existing showcase item
+- extendedWaitUntil:
+    visible:
+      id: items_search
+    timeout: 10000
+- tapOn:
+    id: item_card_Bosch GSR 18V-55 cordless drill
+- extendedWaitUntil:
+    visible:
+      id: item_options
+    timeout: 10000
+- tapOn:
+    id: item_options
+- tapOn:
+    id: item_menu_edit
+- extendedWaitUntil:
+    visible:
+      id: item_name
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/item_create/item_edit_top_${THEME}
+- tapOn:
+    id: item_discard_back
+- waitForAnimationToEnd
+- tapOn: "Back"

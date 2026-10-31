@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 import 'app_icon.dart';
+import '../utils/e2e.dart';
 import 'tappable.dart';
 
 /// White 24px card with the soft drop shadow; the shadow sits outside the clip
@@ -661,6 +662,9 @@ class SoftTopAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Icon of the leading button (a close X on create forms).
   final IconData leadingIcon;
 
+  /// E2E id of the leading button.
+  final String? backId;
+
   const SoftTopAppBar({
     super.key,
     required this.title,
@@ -668,6 +672,7 @@ class SoftTopAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.actions = const [],
     this.showBack = true,
     this.leadingIcon = Icons.arrow_back_rounded,
+    this.backId,
   });
 
   @override
@@ -685,13 +690,16 @@ class SoftTopAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: Row(
             children: [
               if (showBack) ...[
-                SoftCircleButton(
-                  icon: leadingIcon,
-                  tooltip: leadingIcon == Icons.close_rounded
-                      ? MaterialLocalizations.of(context).closeButtonTooltip
-                      : MaterialLocalizations.of(context).backButtonTooltip,
-                  onTap: onBack ?? () => Navigator.of(context).maybePop(),
-                ),
+                () {
+                  final button = SoftCircleButton(
+                    icon: leadingIcon,
+                    tooltip: leadingIcon == Icons.close_rounded
+                        ? MaterialLocalizations.of(context).closeButtonTooltip
+                        : MaterialLocalizations.of(context).backButtonTooltip,
+                    onTap: onBack ?? () => Navigator.of(context).maybePop(),
+                  );
+                  return backId == null ? button : e2eId(backId!, button);
+                }(),
                 const SizedBox(width: 12),
               ],
               Expanded(

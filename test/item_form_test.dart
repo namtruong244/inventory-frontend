@@ -129,7 +129,7 @@ void main() {
     'leaving with unsaved changes asks first; an untouched form just closes',
     (tester) async {
       await openForm(tester, item: existing);
-      await tester.tap(find.byTooltip('Back'));
+      await tester.tap(find.byTooltip('Close'));
       await tester.pumpAndSettle();
       expect(
         find.byType(ItemCreateScreen),
@@ -144,7 +144,7 @@ void main() {
         'Edited',
       );
       await tester.pump();
-      await tester.tap(find.byTooltip('Back'));
+      await tester.tap(find.byTooltip('Close'));
       await tester.pumpAndSettle();
       expect(find.text('Discard changes?'), findsOneWidget);
       expect(find.byType(ItemCreateScreen), findsOneWidget);

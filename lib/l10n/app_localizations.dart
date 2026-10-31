@@ -5210,6 +5210,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'+ More'**
   String get specMore;
+
+  /// No description provided for @itemDraftBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get itemDraftBadge;
+
+  /// No description provided for @itemCoverPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Cover photo'**
+  String get itemCoverPhoto;
+
+  /// No description provided for @itemKeepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get itemKeepEditing;
+
+  /// No description provided for @itemConsumableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Batteries, masks, food… track usage'**
+  String get itemConsumableHint;
+
+  /// No description provided for @itemPerishable.
+  ///
+  /// In en, this message translates to:
+  /// **'Perishable'**
+  String get itemPerishable;
+
+  /// No description provided for @itemPerishableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me before it expires'**
+  String get itemPerishableHint;
+
+  /// No description provided for @itemExpiresOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires {date}'**
+  String itemExpiresOn(Object date);
+
+  /// No description provided for @itemWarranty.
+  ///
+  /// In en, this message translates to:
+  /// **'Warranty'**
+  String get itemWarranty;
+
+  /// No description provided for @itemWarrantyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Track the warranty end date'**
+  String get itemWarrantyHint;
+
+  /// No description provided for @itemWarrantyEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends {date}'**
+  String itemWarrantyEnds(Object date);
+
+  /// No description provided for @itemMoreDetailsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Description, serial, barcode, price, purchase date, status, photos, specifications'**
+  String get itemMoreDetailsHint;
+
+  /// No description provided for @photoSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get photoSheetTitle;
+
+  /// No description provided for @photoSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what you\'re capturing'**
+  String get photoSheetSubtitle;
+
+  /// No description provided for @photoTabProduct.
+  ///
+  /// In en, this message translates to:
+  /// **'Product'**
+  String get photoTabProduct;
+
+  /// No description provided for @photoTabReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get photoTabReceipt;
+
+  /// No description provided for @photoPasteUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste URL'**
+  String get photoPasteUrl;
+
+  /// No description provided for @photoSamplePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample photo'**
+  String get photoSamplePhoto;
+
+  /// No description provided for @categorySheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick one or create your own'**
+  String get categorySheetSubtitle;
+
+  /// No description provided for @categorySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search or create…'**
+  String get categorySearchHint;
+
+  /// No description provided for @categoryIconHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Icon picked from name'**
+  String get categoryIconHint;
+
+  /// No description provided for @categoryMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get categoryMore;
+
+  /// No description provided for @locationUseName.
+  ///
+  /// In en, this message translates to:
+  /// **'Use {name}'**
+  String locationUseName(Object name);
+
+  /// No description provided for @locationCreateHint.
+  ///
+  /// In en, this message translates to:
+  /// **'in {name}'**
+  String locationCreateHint(Object name);
+
+  /// No description provided for @locationThisLevelKicker.
+  ///
+  /// In en, this message translates to:
+  /// **'THIS LOCATION'**
+  String get locationThisLevelKicker;
+
+  /// No description provided for @locationOpenInside.
+  ///
+  /// In en, this message translates to:
+  /// **'Open {name}'**
+  String locationOpenInside(Object name);
+
+  /// No description provided for @itemQuantityDecrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease quantity'**
+  String get itemQuantityDecrease;
+
+  /// No description provided for @itemQuantityIncrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase quantity'**
+  String get itemQuantityIncrease;
+
+  /// No description provided for @locationPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose location'**
+  String get locationPickerTitle;
+
+  /// No description provided for @locationPickerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where will this item live?'**
+  String get locationPickerSubtitle;
+
+  /// No description provided for @locationPickerAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get locationPickerAll;
+
+  /// No description provided for @locationPickerScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan'**
+  String get locationPickerScan;
+
+  /// No description provided for @locationCreateHereShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Create location here'**
+  String get locationCreateHereShort;
+
+  /// No description provided for @locationPickerIn.
+  ///
+  /// In en, this message translates to:
+  /// **'in {name}'**
+  String locationPickerIn(String name);
+
+  /// No description provided for @locationInsideCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} inside'**
+  String locationInsideCount(int count);
+
+  /// No description provided for @locationPickerUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Up one level'**
+  String get locationPickerUp;
+
+  /// No description provided for @locationCurrentKicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Current location'**
+  String get locationCurrentKicker;
+
+  /// No description provided for @locationSubKicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub-containers inside'**
+  String get locationSubKicker;
 }
 
 class _AppLocalizationsDelegate

@@ -82,7 +82,7 @@ void main() {
 
     await tester.tap(find.text('Phòng khách'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Select Location'));
+    await tester.tap(find.text('Use Phòng khách'));
     await tester.pumpAndSettle();
     expect(picked?.id, 'living');
   });
@@ -91,8 +91,8 @@ void main() {
     tester,
   ) async {
     await openPicker(tester);
-    await tester.ensureVisible(find.text('Create new location here'));
-    await tester.tap(find.text('Create new location here'));
+    await tester.ensureVisible(find.text('Create location here'));
+    await tester.tap(find.text('Create location here'));
     await tester.pumpAndSettle();
 
     await tester.enterText(
@@ -119,7 +119,7 @@ void main() {
     );
     expect(provider.boxes.where((b) => b.label == created.label).length, 1);
 
-    await tester.tap(find.text('Select Location'));
+    await tester.tap(find.text('Use Kệ sách'));
     await tester.pumpAndSettle();
     expect(
       picked?.id,

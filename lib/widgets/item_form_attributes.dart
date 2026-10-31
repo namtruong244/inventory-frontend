@@ -44,13 +44,13 @@ Widget buildCustomAttributesSection(
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: context.colors.primary,
+                      color: context.colors.accent,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       '${attributes.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: context.colors.onAccent,
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
                       ),
@@ -65,7 +65,7 @@ Widget buildCustomAttributesSection(
             icon: const AppIcon(Icons.add_rounded, size: 16),
             label: Text(context.l10n.addAttribute2),
             style: TextButton.styleFrom(
-              foregroundColor: AppTones.sky,
+              foregroundColor: context.colors.textPrimary,
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -86,7 +86,7 @@ Widget buildCustomAttributesSection(
                 child: ActionChip(
                   visualDensity: VisualDensity.compact,
                   backgroundColor: context.colors.fill,
-                  side: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
+                  side: BorderSide(color: context.colors.border),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(24),
                   ),

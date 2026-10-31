@@ -18,6 +18,7 @@ import '../widgets/app_form_field.dart';
 import '../widgets/app_image_view.dart';
 import '../widgets/barcode_scan_sheet.dart';
 import '../widgets/location_picker_sheet.dart';
+import '../widgets/soft_ui.dart';
 import '../widgets/tappable.dart';
 import '../theme/app_theme.dart';
 import '../l10n/l10n_ext.dart';
@@ -78,6 +79,9 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
   }
 
   bool _tracking = false;
+  bool _moreOpen = false;
+
+  void _toggleMore() => setState(() => _moreOpen = !_moreOpen);
 
   /// Typing marks the form as changed (once the starting values are in place).
   void _markDirty() {
@@ -103,8 +107,9 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
       final newest = provider.items.reduce(
         (a, b) => a.createdAt.isAfter(b.createdAt) ? a : b,
       );
-      if (provider.categories.contains(newest.categoryId))
+      if (provider.categories.contains(newest.categoryId)) {
         return newest.categoryId;
+      }
     }
     return provider.categories.isNotEmpty
         ? provider.categories.first
@@ -141,6 +146,7 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
   void initState() {
     super.initState();
     _currentBoxId = widget.boxId;
+    _moreOpen = widget.existingItem != null;
 
     if (widget.existingItem != null) {
       final i = widget.existingItem!;
@@ -210,10 +216,10 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
     showAddPhotoModal(
       context,
       isReceipt: isReceipt,
-      onCamera: () => _captureFromCamera(isReceipt),
-      onGallery: () => _pickFromGallery(isReceipt),
-      onPhotoAdded: (url) =>
-          _update(() => (isReceipt ? _receiptPhotos : _photos).add(url)),
+      onCamera: _captureFromCamera,
+      onGallery: _pickFromGallery,
+      onPhotoAdded: (url, receipt) =>
+          _update(() => (receipt ? _receiptPhotos : _photos).add(url)),
     );
   }
 
@@ -334,12 +340,31 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
     }
   }
 
+  Future<void> _deleteExisting(InventoryProvider provider) async {
+    final name = widget.existingItem!.name;
+    final itemId = widget.existingItem!.id;
+    final confirmed = await TrashActions.confirm(context, name: name);
+    if (!confirmed || !mounted) return;
+    final ok = await provider.deleteItem(itemId);
+    if (!mounted) return;
+    if (ok) {
+      Navigator.pop(context);
+      TrashActions.showMoved(context, provider, name: name, itemId: itemId);
+    } else {
+      AppFeedback.showError(
+        context,
+        context.l10n.couldNotDeletePleaseTry2(name),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existingItem != null;
     final provider = Provider.of<InventoryProvider>(context);
     final currentBox = provider.getBoxById(_currentBoxId);
     final breadcrumb = provider.getBreadcrumbString(_currentBoxId);
+    final c = context.colors;
 
     return PopScope(
       canPop: !_dirty || _isLoading,
@@ -350,215 +375,88 @@ class _ItemCreateScreenState extends State<ItemCreateScreen> {
           title: context.l10n.discardChangesTitle,
           message: context.l10n.discardChangesMessage,
           confirmLabel: context.l10n.commonDiscard,
+          cancelLabel: context.l10n.itemKeepEditing,
+          icon: Icons.delete_outline,
           isDestructive: true,
         );
         if (leave && context.mounted) Navigator.pop(context);
       },
-      child: Scaffold(
-        backgroundColor: context.colors.background,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: IconButton(
-              tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: context.colors.surface,
-                  shape: BoxShape.circle,
-                ),
-                child: AppIcon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 16,
-                  color: context.colors.textPrimary,
-                ),
-              ),
-              onPressed: () => Navigator.maybePop(context),
-            ),
-          ),
-          title: Text(
-            isEditing ? context.l10n.editItem : context.l10n.newItem,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: context.colors.textPrimary,
-            ),
-          ),
-          centerTitle: true,
-          actions: [
-            if (isEditing)
-              Padding(
-                padding: const EdgeInsets.only(right: 4.0),
-                child: IconButton(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: c.background,
+          appBar: SoftTopAppBar(
+            title: isEditing ? context.l10n.editItem : context.l10n.newItem,
+            leadingIcon: Icons.close_rounded,
+            backId: 'item_discard_back',
+            onBack: () => Navigator.maybePop(context),
+            actions: [
+              if (isEditing)
+                SoftCircleButton(
+                  icon: Icons.delete_outline,
                   tooltip: context.l10n.commonDelete,
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: context.colors.surface,
-                      shape: BoxShape.circle,
-                    ),
-                    child: AppIcon(
-                      Icons.delete_outline,
-                      size: 20,
-                      color: AppTones.coral,
+                  onTap: () => _deleteExisting(provider),
+                )
+              else
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: c.fill,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    context.l10n.itemDraftBadge,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: c.textSecondary,
                     ),
                   ),
-                  onPressed: () async {
-                    final name = widget.existingItem!.name;
-                    final itemId = widget.existingItem!.id;
-                    final confirmed = await TrashActions.confirm(
-                      context,
-                      name: name,
-                    );
-                    if (confirmed && context.mounted) {
-                      final ok = await provider.deleteItem(itemId);
-                      if (!context.mounted) return;
-                      if (ok) {
-                        Navigator.pop(context);
-                        TrashActions.showMoved(
-                          context,
-                          provider,
-                          name: name,
-                          itemId: itemId,
-                        );
-                      } else {
-                        AppFeedback.showError(
-                          context,
-                          context.l10n.couldNotDeletePleaseTry2(name),
-                        );
-                      }
-                    }
-                  },
                 ),
-              ),
-            Padding(
-              padding: const EdgeInsets.only(right: 12.0),
-              child: e2eId(
-                'item_save',
-                FilledButton(
-                  onPressed: _isLoading ? null : _saveItem,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: context.colors.accent,
-                    foregroundColor: context.colors.onAccent,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    minimumSize: Size.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? SizedBox(
-                          width: 14,
-                          height: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: context.colors.onAccent,
-                          ),
-                        )
-                      : Text(
-                          isEditing
-                              ? context.l10n.commonSave
-                              : context.l10n.commonCreate,
-                          style: const TextStyle(fontSize: 13),
-                        ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        body: GestureDetector(
-          behavior: HitTestBehavior.translucent,
-          onTap: () => FocusScope.of(context).unfocus(),
-          child: Form(
+            ],
+          ),
+          body: Form(
             key: _formKey,
             child: ListView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
               children: [
-                // The name and the few fields everyone fills in come first.
-                ..._basicInfoSection(provider, currentBox, breadcrumb),
-
-                _buildSectionTitle(context.l10n.productPhotos),
-                const SizedBox(height: 12),
-                _buildPhotosGallery(false),
-                const SizedBox(height: 24),
-
-                // Everything else is optional: collapsed for a new item, open when editing.
-                Theme(
-                  data: Theme.of(context)
-                      .copyWith(dividerColor: Colors.transparent),
-                  child: e2eId(
-                    'item_more_details',
-                    ExpansionTile(
-                      initiallyExpanded: isEditing,
-                      tilePadding: EdgeInsets.zero,
-                      childrenPadding: EdgeInsets.zero,
-                      title: Text(
-                        context.l10n.moreDetails,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: context.colors.textPrimary,
-                        ),
-                      ),
-                      children: [
-                        const SizedBox(height: 8),
-                        ..._statusSection(provider, currentBox, breadcrumb),
-
-                        ..._assetDetailsSection(
-                          provider,
-                          currentBox,
-                          breadcrumb,
-                        ),
-
-                        ..._specificationsSection(
-                          provider,
-                          currentBox,
-                          breadcrumb,
-                        ),
-
-                        // Receipts & Invoices
-                        _buildSectionTitle(context.l10n.receiptsWarrantyProof),
-                        const SizedBox(height: 12),
-                        _buildPhotosGallery(true),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // Save Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: e2eId(
-                    'item_save_bottom',
-                    FilledButton(
-                      onPressed: _isLoading ? null : _saveItem,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: context.colors.accent,
-                        foregroundColor: context.colors.onAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        isEditing
-                            ? context.l10n.saveChanges
-                            : context.l10n.saveItem,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ),
+                _coverCard(),
+                const SizedBox(height: 16),
+                _basicsCard(provider, currentBox, breadcrumb),
+                const SizedBox(height: 16),
+                _trackingCard(),
+                const SizedBox(height: 16),
+                _moreDetailsCard(provider),
               ],
+            ),
+          ),
+          bottomNavigationBar: Container(
+            padding: EdgeInsets.fromLTRB(
+              24,
+              12,
+              24,
+              12 + MediaQuery.paddingOf(context).bottom,
+            ),
+            decoration: BoxDecoration(
+              color: c.background,
+              border: Border(top: BorderSide(color: c.border)),
+            ),
+            child: e2eId(
+              'item_save',
+              SoftButton(
+                label: isEditing
+                    ? context.l10n.saveChanges
+                    : context.l10n.saveItem,
+                icon: Icons.check_rounded,
+                expand: true,
+                loading: _isLoading,
+                onPressed: _isLoading ? null : _saveItem,
+              ),
             ),
           ),
         ),
