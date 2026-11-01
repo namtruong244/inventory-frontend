@@ -35,7 +35,6 @@ class _BoxesScreenState extends State<BoxesScreen> {
       0; // 0: All (Tree), 1: Rooms, 2: Cabinets/Shelves, 3: Boxes/Drawers
   bool _isTreeView = true;
   final Set<String> _expandedBoxIds = {};
-  bool _initializedExpanded = false;
 
   /// setState entry point for the extension in the part file.
   void _update(VoidCallback fn) => setState(fn);
@@ -63,16 +62,6 @@ class _BoxesScreenState extends State<BoxesScreen> {
     _searchQuery = '';
     _filterIndex = 0;
   });
-
-  void _initExpandedIfNeeded(InventoryProvider provider) {
-    if (!_initializedExpanded && provider.boxes.isNotEmpty) {
-      // By default, expand root nodes so hierarchy is immediately visible
-      for (final box in provider.boxes) {
-        if (box.parentId == null) _expandedBoxIds.add(box.id);
-      }
-      _initializedExpanded = true;
-    }
-  }
 
   void _toggleExpand(String boxId) {
     setState(() {
@@ -133,7 +122,6 @@ class _BoxesScreenState extends State<BoxesScreen> {
         bottom: false,
         child: Consumer<InventoryProvider>(
           builder: (context, provider, child) {
-            _initExpandedIfNeeded(provider);
             final displayed = _displayed(provider);
             final showTree =
                 _isTreeView && _filterIndex == 0 && _searchQuery.isEmpty;

@@ -84,10 +84,6 @@ extension HomeRecentSection on HomeSections {
                             icon: Icons.event_outlined,
                           ),
                       ],
-                      stockRatio: item.stockRatio,
-                      stockColor: item.isLowStock
-                          ? AppTones.amber
-                          : context.colors.successStrong,
                       onTap: () => navigate(ItemDetailsScreen(itemId: item.id)),
                     ),
                   ),

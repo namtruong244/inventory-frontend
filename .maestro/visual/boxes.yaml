@@ -14,17 +14,23 @@ tags: [visual]
     timeout: 15000
 - waitForAnimationToEnd
 - takeScreenshot: out/boxes/boxes_light
-- scroll
+# Cây mặc định thu gọn: mở Living room rồi Oak cabinet. Cuộn hàng vào giữa
+# trước khi chạm — ở mép dưới nó nằm dưới nút "+" nổi.
+- tapOn:
+    id: box_expand_Living room
 - waitForAnimationToEnd
-- takeScreenshot: out/boxes/boxes_light_2
 - scrollUntilVisible:
     element:
       id: box_expand_Oak cabinet
-    direction: UP
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: box_expand_Oak cabinet
 - waitForAnimationToEnd
 - takeScreenshot: out/boxes/boxes_light_expanded
+- scroll
+- waitForAnimationToEnd
+- takeScreenshot: out/boxes/boxes_light_2
 - scrollUntilVisible:
     element:
       id: boxes_view_list
