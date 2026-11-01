@@ -300,6 +300,9 @@ class Item {
   bool isLowStockAt(double qty) =>
       minQuantity != null && qty + lentQuantity <= minQuantity!;
 
+  /// Only items on the shelf or in use can be lent out.
+  bool get canLend => status == ItemStatus.stored || status == ItemStatus.inUse;
+
   /// Units that still belong to the user, including those lent out.
   double get heldQuantity => quantity + lentQuantity;
 

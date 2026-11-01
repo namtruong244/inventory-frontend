@@ -16,6 +16,31 @@ extension InventoryBoxes on InventoryProvider {
     );
   }
 
+  /// Creates top-level rooms one by one through [addBox] (so each keeps its own
+  /// rollback / offline queue). Returns how many were created.
+  Future<int> addRooms(List<String> names) async {
+    if (_isCreatingRooms) return 0;
+    _isCreatingRooms = true;
+    _notify();
+    var created = 0;
+    try {
+      for (final name in names) {
+        final ok = await addBox(
+          Box(
+            name: name,
+            type: StorageType.room,
+            label: 'loc_${const Uuid().v4().substring(0, 8)}',
+          ),
+        );
+        if (ok) created++;
+      }
+    } finally {
+      _isCreatingRooms = false;
+      _notify();
+    }
+    return created;
+  }
+
   Future<bool> updateBox(Box updatedBox) async {
     final index = _boxes.indexWhere((b) => b.id == updatedBox.id);
     final previous = index != -1 ? _boxes[index] : null;

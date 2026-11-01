@@ -42,7 +42,6 @@ class _AlertsScreenState extends State<AlertsScreen> {
     final provider = Provider.of<InventoryProvider>(context);
     final c = context.colors;
     final l10n = context.l10n;
-    final now = DateTime.now();
 
     final expired = provider.getExpiredItems();
     final expiring = provider.getExpiringItems(
@@ -108,7 +107,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 icon: Icons.dangerous_outlined,
                 name: item.name,
                 sub: l10n.expiredAgoOn(
-                  now.difference(item.expiryDate!).inDays,
+                  -item.daysUntilExpiry!,
                   formatDate(context, item.expiryDate!),
                 ),
                 subColor: danger.strong,
@@ -129,7 +128,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 icon: Icons.hourglass_top_rounded,
                 name: item.name,
                 sub: l10n.expiresInOn(
-                  item.expiryDate!.difference(now).inDays,
+                  item.daysUntilExpiry!,
                   formatDate(context, item.expiryDate!),
                 ),
                 subColor: warning.strong,
@@ -155,9 +154,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   _num(item.minQuantity!),
                 ),
                 subColor: warning.strong,
-                progress: item.minQuantity! > 0
-                    ? (item.quantity + item.lentQuantity) / item.minQuantity!
-                    : 0,
+                progress: item.stockRatio ?? 0,
                 onTap: () => _openItem(item),
               ),
           ],
@@ -179,7 +176,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                   name: name,
                   sub: l10n.alertOverdueSub(
                     loan.borrowerName,
-                    now.difference(loan.expectedReturnDate!).inDays,
+                    -daysBetweenToday(loan.expectedReturnDate!),
                   ),
                   subColor: danger.strong,
                   onTap: () {
@@ -202,7 +199,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
                 icon: Icons.security_outlined,
                 name: item.name,
                 sub: l10n.alertWarrantySub(
-                  item.warrantyExpiryDate!.difference(now).inDays,
+                  item.daysUntilWarrantyExpiry!,
                   formatDate(context, item.warrantyExpiryDate!),
                 ),
                 subColor: info.strong,

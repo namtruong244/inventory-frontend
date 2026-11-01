@@ -42,6 +42,11 @@ class InventoryProvider extends ChangeNotifier {
   bool _isSyncing = false;
   bool get isSyncing => _isSyncing;
 
+  /// True while [addRooms] runs, so Home keeps the first-run setup view mounted
+  /// (the first room already makes `boxes` non-empty).
+  bool _isCreatingRooms = false;
+  bool get isCreatingRooms => _isCreatingRooms;
+
   bool _isConnected = false;
   bool get isConnected => _isConnected;
 

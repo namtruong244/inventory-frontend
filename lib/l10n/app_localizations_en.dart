@@ -1181,9 +1181,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAccount => 'Delete Account';
 
   @override
-  String get switchAccountLogin => 'Switch Account / Login';
-
-  @override
   String get editProfile => 'Edit Profile';
 
   @override
@@ -1195,6 +1192,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unsyncedChanges => 'Unsynced changes';
+
+  @override
+  String trashPurgeConfirm(String name) {
+    return '\"$name\" will be removed for good. This cannot be undone.';
+  }
+
+  @override
+  String logoutUnsyncedWarning(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count changes have not been uploaded yet and will be lost if you log out. Log out anyway?',
+      one: '1 change has not been uploaded yet and will be lost if you log out. Log out anyway?',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get discardLogOut => 'Discard & Log Out';
@@ -1809,7 +1823,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String addedTotal(
-    Object addAmount,
+    String addAmount,
     Object unit,
     Object formattedNew,
     Object unit2,

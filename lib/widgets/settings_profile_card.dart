@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../l10n/l10n_ext.dart';
 import '../providers/inventory_provider.dart';
-import '../screens/login_screen.dart';
 import '../theme/app_theme.dart';
 import '../utils/e2e.dart';
-import 'app_icon.dart';
 import 'settings_profile_sheets.dart';
 import 'soft_ui.dart';
 import 'tappable.dart';
 
 /// Design Profile card: accent avatar, name + email, and an "Edit" pill.
-/// The whole card opens the profile editor; the small switch button opens login.
+/// The whole card opens the profile editor.
 class SettingsProfileCard extends StatelessWidget {
   final InventoryProvider provider;
 
@@ -88,26 +86,6 @@ class SettingsProfileCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 8),
-              Tappable(
-                semanticLabel: context.l10n.switchAccountLogin,
-                onTap: () => Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (_) => const LoginScreen())),
-                child: Container(
-                  width: 31,
-                  height: 31,
-                  decoration: BoxDecoration(
-                    color: c.fill,
-                    shape: BoxShape.circle,
-                  ),
-                  child: AppIcon(
-                    Icons.sync_alt_rounded,
-                    size: 16,
-                    color: c.textPrimary,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 6),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,

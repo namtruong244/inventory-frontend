@@ -67,7 +67,7 @@ class HomeSections {
               Text(
                 text,
                 style: const TextStyle(
-                  color: Color(0xD9FFFFFF),
+                  color: AppTones.textOnDark,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -172,14 +172,14 @@ class HomeSections {
                       if (expired > 0)
                         pill(
                           l10n.homeChipExpired(expired),
-                          const Color(0xFFFCA5A5),
+                          AppTones.coralOnDark,
                         ),
                       if (low > 0)
-                        pill(l10n.homeChipLow(low), const Color(0xFFFCD34D)),
+                        pill(l10n.homeChipLow(low), AppTones.amberOnDark),
                       if (overdue > 0)
                         pill(
                           l10n.homeChipOverdue(overdue),
-                          const Color(0xFFFCA5A5),
+                          AppTones.coralOnDark,
                         ),
                     ],
                   ),

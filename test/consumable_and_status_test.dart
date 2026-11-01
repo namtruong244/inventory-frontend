@@ -14,6 +14,17 @@ void main() {
     FlutterSecureStorage.setMockInitialValues({});
   });
 
+  test('canLend only for stored and inUse items', () {
+    for (final status in ItemStatus.values) {
+      final item = Item(id: 'i', name: 'Drill', boxId: 'b', status: status);
+      expect(
+        item.canLend,
+        status == ItemStatus.stored || status == ItemStatus.inUse,
+        reason: status.name,
+      );
+    }
+  });
+
   group('Item isConsumable & Status Serialization', () {
     test('Default isConsumable is false and serializes correctly', () {
       final item = Item(

@@ -715,11 +715,26 @@
   "hierarchicalMultiLevelTree": "Hierarchical Multi-Level Tree",
   "logOutSwitchAccount": "Log Out / Switch Account",
   "deleteAccount": "Delete Account",
-  "switchAccountLogin": "Switch Account / Login",
   "editProfile": "Edit Profile",
   "logOut": "Log Out?",
   "areYouSureYouWant": "Are you sure you want to log out? You can sign back in anytime using Google or your email.",
   "unsyncedChanges": "Unsynced changes",
+  "trashPurgeConfirm": "\"{name}\" will be removed for good. This cannot be undone.",
+  "@trashPurgeConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "logoutUnsyncedWarning": "{count, plural, =1{1 change has not been uploaded yet and will be lost if you log out. Log out anyway?} other{{count} changes have not been uploaded yet and will be lost if you log out. Log out anyway?}}",
+  "@logoutUnsyncedWarning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "discardLogOut": "Discard & Log Out",
   "logOut2": "Log Out",
   "deleteAccount2": "Delete Account?",
@@ -1114,7 +1129,7 @@
   "@addedTotal": {
     "placeholders": {
       "addAmount": {
-        "type": "Object"
+        "type": "String"
       },
       "unit": {
         "type": "Object"

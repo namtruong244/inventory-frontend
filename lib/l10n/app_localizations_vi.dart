@@ -1178,9 +1178,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get deleteAccount => 'Xóa tài khoản';
 
   @override
-  String get switchAccountLogin => 'Đổi tài khoản / Đăng nhập';
-
-  @override
   String get editProfile => 'Sửa hồ sơ';
 
   @override
@@ -1192,6 +1189,22 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get unsyncedChanges => 'Thay đổi chưa đồng bộ';
+
+  @override
+  String trashPurgeConfirm(String name) {
+    return '\"$name\" sẽ bị xóa vĩnh viễn. Không thể hoàn tác.';
+  }
+
+  @override
+  String logoutUnsyncedWarning(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count thay đổi chưa được tải lên và sẽ mất nếu bạn đăng xuất. Vẫn đăng xuất?',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get discardLogOut => 'Bỏ & đăng xuất';
@@ -1803,7 +1816,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String addedTotal(
-    Object addAmount,
+    String addAmount,
     Object unit,
     Object formattedNew,
     Object unit2,

@@ -91,4 +91,38 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     expect(provider.boxes, isEmpty);
   });
+
+  testWidgets('the success toast shows even when Home swaps the card out', (
+    tester,
+  ) async {
+    // Same swap as HomeScreen: the first room makes boxes non-empty, so the card
+    // is only kept while the batch runs.
+    await tester.pumpWidget(
+      ChangeNotifierProvider<InventoryProvider>.value(
+        value: provider,
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: Consumer<InventoryProvider>(
+              builder: (context, p, _) =>
+                  p.boxes.isEmpty || p.isCreatingRooms
+                  ? const SingleChildScrollView(child: FirstRoomsCard())
+                  : const Text('home'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Kitchen'));
+    await tester.tap(find.text('Garage'));
+    await tester.pump();
+    await tester.tap(find.byType(SoftButton));
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(provider.boxes.length, 2);
+    expect(find.text('2 locations created'), findsOneWidget);
+    expect(find.text('home'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 10));
+  });
 }

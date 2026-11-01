@@ -126,8 +126,9 @@ Future<void> showLogoutDialog(
               final discard = await AppFeedback.showConfirmDialog(
                 context,
                 title: context.l10n.unsyncedChanges,
-                message:
-                    '${provider.pendingChanges} change(s) have not been uploaded yet and will be lost if you log out. Log out anyway?',
+                message: context.l10n.logoutUnsyncedWarning(
+                  provider.pendingChanges,
+                ),
                 confirmLabel: context.l10n.discardLogOut,
                 isDestructive: true,
               );

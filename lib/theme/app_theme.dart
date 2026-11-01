@@ -483,6 +483,12 @@ abstract final class AppTones {
   static Color get slateSoft =>
       _dark ? const Color(0xFF27272A) : const Color(0xFFEEF1F5);
 
+  /// Content on the always-dark "Action required" banner (`primary` stays dark
+  /// in both themes), so these do not flip with the brightness.
+  static const coralOnDark = Color(0xFFFCA5A5);
+  static const amberOnDark = Color(0xFFFCD34D);
+  static const textOnDark = Color(0xD9FFFFFF);
+
   /// Aliases kept for existing call sites.
   static Color get limeSoft => matchaSoft;
   static Color get sandSoft => amberSoft;

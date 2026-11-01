@@ -143,21 +143,10 @@ class _ItemDetailsScreenState extends State<ItemDetailsScreen> {
     InventoryProvider provider,
     LendingRecord? activeLoan,
   ) {
-    final crumbs = item.boxId.isEmpty
-        ? <Box>[]
-        : provider.getBreadcrumb(item.boxId);
-    final where = crumbs.map((b) => b.name).join(' › ');
     showItemActionsSheet(
       context,
-      item: item,
-      subtitle: where.isEmpty
-          ? item.status.displayName
-          : '$where · ${item.status.displayName}',
+      item,
       onMainAction: () => _mainAction(context, item, provider, activeLoan),
-      onMove: () => _showMoveItemDialog(context, item),
-      onEdit: () => _edit(context, item),
-      onLend: () => LendItemSheet.show(context, initialItem: item),
-      onHistory: () => StockHistorySheet.show(context, item),
       onDelete: () => _deleteItem(context, item, provider),
     );
   }

@@ -10,7 +10,7 @@ import '../theme/app_theme.dart';
 import '../utils/e2e.dart';
 import 'app_feedback.dart';
 import 'app_icon.dart';
-import 'item_box_actions.dart';
+import 'item_actions_sheet.dart';
 import 'item_card.dart';
 import 'lend_item_sheet.dart';
 import 'move_item_sheet.dart';

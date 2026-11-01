@@ -248,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen>
           builder: (context, p, _) {
             // A brand-new account: ask where things are kept first.
             final setup =
-                p.boxes.isEmpty &&
+                (p.boxes.isEmpty || p.isCreatingRooms) &&
                 !p.isLoading &&
                 !p.isSyncing &&
                 !_setupSkipped;

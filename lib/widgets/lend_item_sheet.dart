@@ -51,7 +51,9 @@ class _LendItemSheetState extends State<LendItemSheet> {
   @override
   void initState() {
     super.initState();
-    _selectedItemId = widget.initialItem?.id;
+    // A non-lendable initial item (broken, lent...) is not preselected.
+    final initial = widget.initialItem;
+    _selectedItemId = initial != null && initial.canLend ? initial.id : null;
   }
 
   Future<void> _pickItem(List<Item> available) async {
@@ -127,9 +129,9 @@ class _LendItemSheetState extends State<LendItemSheet> {
     final provider = Provider.of<InventoryProvider>(context);
     final c = context.colors;
     final l10n = context.l10n;
-    // Only items not currently lent
+    // Only items that can be lent (stored or in use)
     final availableItems = provider.items
-        .where((i) => i.status != ItemStatus.lent)
+        .where((i) => i.canLend)
         .toList();
     final selectedItem = availableItems
         .where((i) => i.id == _selectedItemId)
@@ -150,7 +152,7 @@ class _LendItemSheetState extends State<LendItemSheet> {
           children: [
             _SelectedItemCard(
               item: selectedItem,
-              locked: widget.initialItem != null,
+              locked: selectedItem != null && widget.initialItem != null,
               onChange: () => _pickItem(availableItems),
             ),
             const SizedBox(height: 16),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../l10n/l10n_ext.dart';
 import '../theme/app_theme.dart';
+import '../utils/date_format.dart';
 import 'app_icon.dart';
 import 'soft_sheet.dart';
 
@@ -139,7 +139,7 @@ class _TimelineRow extends StatelessWidget {
       _ => (c.fill, c.textSecondary, Icons.swap_horiz_rounded),
     };
     final before = m.quantityAfter - m.delta;
-    final when = DateFormat.MMMd().add_Hm().format(m.createdAt);
+    final when = formatDateTimeShort(context, m.createdAt);
     final sub = m.delta == 0
         ? when
         : '$when · ${provider.formatQty(before, item.unit)} → '

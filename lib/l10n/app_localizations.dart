@@ -2101,12 +2101,6 @@ abstract class AppLocalizations {
   /// **'Delete Account'**
   String get deleteAccount;
 
-  /// No description provided for @switchAccountLogin.
-  ///
-  /// In en, this message translates to:
-  /// **'Switch Account / Login'**
-  String get switchAccountLogin;
-
   /// No description provided for @editProfile.
   ///
   /// In en, this message translates to:
@@ -2130,6 +2124,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unsynced changes'**
   String get unsyncedChanges;
+
+  /// No description provided for @trashPurgeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" will be removed for good. This cannot be undone.'**
+  String trashPurgeConfirm(String name);
+
+  /// No description provided for @logoutUnsyncedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 change has not been uploaded yet and will be lost if you log out. Log out anyway?} other{{count} changes have not been uploaded yet and will be lost if you log out. Log out anyway?}}'**
+  String logoutUnsyncedWarning(int count);
 
   /// No description provided for @discardLogOut.
   ///
@@ -3209,7 +3215,7 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Added {addAmount} {unit}. Total: {formattedNew} {unit2}'**
   String addedTotal(
-    Object addAmount,
+    String addAmount,
     Object unit,
     Object formattedNew,
     Object unit2,

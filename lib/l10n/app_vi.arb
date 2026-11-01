@@ -715,11 +715,26 @@
   "hierarchicalMultiLevelTree": "Cây phân cấp nhiều tầng",
   "logOutSwitchAccount": "Đăng xuất / Đổi tài khoản",
   "deleteAccount": "Xóa tài khoản",
-  "switchAccountLogin": "Đổi tài khoản / Đăng nhập",
   "editProfile": "Sửa hồ sơ",
   "logOut": "Đăng xuất?",
   "areYouSureYouWant": "Bạn có chắc muốn đăng xuất? Bạn có thể đăng nhập lại bất cứ lúc nào bằng Google hoặc email.",
   "unsyncedChanges": "Thay đổi chưa đồng bộ",
+  "trashPurgeConfirm": "\"{name}\" sẽ bị xóa vĩnh viễn. Không thể hoàn tác.",
+  "@trashPurgeConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "logoutUnsyncedWarning": "{count, plural, other{{count} thay đổi chưa được tải lên và sẽ mất nếu bạn đăng xuất. Vẫn đăng xuất?}}",
+  "@logoutUnsyncedWarning": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "discardLogOut": "Bỏ & đăng xuất",
   "logOut2": "Đăng xuất",
   "deleteAccount2": "Xóa tài khoản?",
@@ -1107,7 +1122,7 @@
   "@addedTotal": {
     "placeholders": {
       "addAmount": {
-        "type": "Object"
+        "type": "String"
       },
       "unit": {
         "type": "Object"

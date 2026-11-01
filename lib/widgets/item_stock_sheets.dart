@@ -142,7 +142,7 @@ class _StockSheetBodyState extends State<_StockSheetBody> {
       AppFeedback.showSuccess(
         host,
         host.l10n.addedTotal(
-          amount,
+          _fmt(amount, digits: 2),
           item.unit,
           _fmt(after, digits: 2),
           item.unit,

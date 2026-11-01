@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 
 import '../utils/e2e.dart';
 
 import '../l10n/app_localizations.dart';
 import '../l10n/l10n_ext.dart';
-import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
 import '../screens/box_create_screen.dart';
 import '../theme/app_theme.dart';
@@ -53,17 +51,10 @@ class _FirstRoomsCardState extends State<FirstRoomsCard> {
   Future<void> _create(List<String> names) async {
     setState(() => _creating = true);
     final provider = context.read<InventoryProvider>();
-    var created = 0;
-    for (final i in _selected.toList()..sort()) {
-      final ok = await provider.addBox(
-        Box(
-          name: names[i],
-          type: StorageType.room,
-          label: 'loc_${const Uuid().v4().substring(0, 8)}',
-        ),
-      );
-      if (ok) created++;
-    }
+    // The provider keeps Home on this card until the batch ends (see isCreatingRooms).
+    final created = await provider.addRooms([
+      for (final i in _selected.toList()..sort()) names[i],
+    ]);
     if (!mounted) return;
     setState(() {
       _creating = false;

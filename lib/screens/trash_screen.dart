@@ -62,7 +62,7 @@ class _TrashScreenState extends State<TrashScreen> {
     );
     if (!mounted) return;
     if (ok) {
-      AppFeedback.showSuccess(context, '"$name" restored');
+      AppFeedback.showSuccess(context, context.l10n.trashRestoredToast(name));
       _load();
     } else {
       AppFeedback.showError(context, context.l10n.couldNotRestore(name));
@@ -77,7 +77,7 @@ class _TrashScreenState extends State<TrashScreen> {
     final confirmed = await AppFeedback.showConfirmDialog(
       context,
       title: context.l10n.deletePermanently,
-      message: '"$name" will be removed for good. This cannot be undone.',
+      message: context.l10n.trashPurgeConfirm(name),
       confirmLabel: context.l10n.commonDelete,
       isDestructive: true,
     );
