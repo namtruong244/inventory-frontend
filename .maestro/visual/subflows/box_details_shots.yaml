@@ -35,6 +35,17 @@ appId: ${APP_ID}
 - waitForAnimationToEnd
 - takeScreenshot: out/box_details/new_storage_${THEME}
 - tapOn: "Close"
+# Storage actions sheet
+- tapOn:
+    id: box_options
+- extendedWaitUntil:
+    visible:
+      id: box_menu_delete
+    timeout: 10000
+- waitForAnimationToEnd
+- takeScreenshot: out/box_details/storage_actions_${THEME}
+- tapOn: "Close"
+- waitForAnimationToEnd
 # Edit storage
 - tapOn:
     id: box_options

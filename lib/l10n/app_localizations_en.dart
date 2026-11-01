@@ -3476,4 +3476,46 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get storageActionAddItem => 'Add item here';
+
+  @override
+  String get storageActionAddContainer => 'Add container inside';
+
+  @override
+  String get storageActionMove => 'Move to another location';
+
+  @override
+  String get storageActionEdit => 'Edit location details';
+
+  @override
+  String get storageActionQr => 'Show QR / print label';
+
+  @override
+  String get storageActionExport => 'Export item barcodes';
+
+  @override
+  String get storageActionDelete => 'Delete location';
+
+  @override
+  String containersCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count containers',
+      one: '1 container',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storageDeleteHintContents(String contents) {
+    return '$contents go to Trash too';
+  }
+
+  @override
+  String storageDeleteHintBoth(String items, String containers) {
+    return '$items & $containers';
+  }
 }

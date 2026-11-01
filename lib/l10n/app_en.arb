@@ -2334,5 +2334,18 @@
   "trashDeletedDaysAgo": "{count, plural, =1{deleted 1 day ago} other{deleted {count} days ago}}",
   "@trashDeletedDaysAgo": {"placeholders": {"count": {"type": "int"}}},
   "trashDaysLeft": "{count, plural, =1{1 day} other{{count} days}}",
-  "@trashDaysLeft": {"placeholders": {"count": {"type": "int"}}}
+  "@trashDaysLeft": {"placeholders": {"count": {"type": "int"}}},
+  "storageActionAddItem": "Add item here",
+  "storageActionAddContainer": "Add container inside",
+  "storageActionMove": "Move to another location",
+  "storageActionEdit": "Edit location details",
+  "storageActionQr": "Show QR / print label",
+  "storageActionExport": "Export item barcodes",
+  "storageActionDelete": "Delete location",
+  "containersCountLabel": "{count, plural, =1{1 container} other{{count} containers}}",
+  "@containersCountLabel": {"placeholders": {"count": {"type": "int"}}},
+  "storageDeleteHintContents": "{contents} go to Trash too",
+  "@storageDeleteHintContents": {"placeholders": {"contents": {"type": "String"}}},
+  "storageDeleteHintBoth": "{items} & {containers}",
+  "@storageDeleteHintBoth": {"placeholders": {"items": {"type": "String"}, "containers": {"type": "String"}}}
 }

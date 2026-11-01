@@ -6,13 +6,12 @@ import 'package:provider/provider.dart';
 import '../l10n/l10n_ext.dart';
 import '../models/inventory_models.dart';
 import '../providers/inventory_provider.dart';
-import '../screens/box_create_screen.dart';
 import '../screens/item_create_screen.dart';
 import '../theme/app_theme.dart';
 import 'app_feedback.dart';
 import 'lend_item_sheet.dart';
 import 'move_item_sheet.dart';
-import 'move_location_dialog.dart';
+import 'storage_actions_sheet.dart';
 import 'trash_actions.dart';
 import 'app_icon.dart';
 
@@ -78,61 +77,9 @@ Future<void> showItemActionsSheet(BuildContext context, Item item) {
   );
 }
 
-/// The same menu for a location.
-Future<void> showBoxActionsSheet(BuildContext context, Box box) {
-  final provider = context.read<InventoryProvider>();
-  return _showActions(
-    context,
-    title: box.name,
-    actions: [
-      _Action(
-        Icons.add_box_outlined,
-        context.l10n.addSubContainer,
-        () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BoxCreateScreen(parentId: box.id)),
-        ),
-      ),
-      _Action(
-        Icons.drive_file_move_outlined,
-        context.l10n.commonMove,
-        () => MoveLocationDialog.show(context, box),
-      ),
-      _Action(
-        Icons.edit_outlined,
-        context.l10n.commonEdit,
-        () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => BoxCreateScreen(existingBox: box)),
-        ),
-      ),
-      _Action(Icons.delete_outline, context.l10n.commonDelete, () async {
-        final confirmed = await TrashActions.confirm(
-          context,
-          name: box.name,
-          isBox: true,
-          hasContents: true,
-        );
-        if (!confirmed || !context.mounted) return;
-        final ok = await provider.deleteBox(box.id, cascade: true);
-        if (!context.mounted) return;
-        if (ok) {
-          TrashActions.showMoved(
-            context,
-            provider,
-            name: box.name,
-            boxId: box.id,
-          );
-        } else {
-          AppFeedback.showError(
-            context,
-            context.l10n.couldNotDeletePleaseTry2(box.name),
-          );
-        }
-      }, destructive: true),
-    ],
-  );
-}
+/// The same menu for a location; see [showStorageActionsSheet].
+Future<void> showBoxActionsSheet(BuildContext context, Box box) =>
+    showStorageActionsSheet(context, box);
 
 class _Action {
   final IconData icon;

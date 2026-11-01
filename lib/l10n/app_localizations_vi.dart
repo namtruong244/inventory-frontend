@@ -3370,4 +3370,45 @@ class AppLocalizationsVi extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get storageActionAddItem => 'Thêm món đồ vào đây';
+
+  @override
+  String get storageActionAddContainer => 'Thêm ngăn chứa bên trong';
+
+  @override
+  String get storageActionMove => 'Chuyển sang vị trí khác';
+
+  @override
+  String get storageActionEdit => 'Sửa thông tin vị trí';
+
+  @override
+  String get storageActionQr => 'Xem QR / in nhãn';
+
+  @override
+  String get storageActionExport => 'Xuất mã vạch món đồ';
+
+  @override
+  String get storageActionDelete => 'Xóa vị trí';
+
+  @override
+  String containersCountLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ngăn chứa',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String storageDeleteHintContents(String contents) {
+    return '$contents cũng vào thùng rác';
+  }
+
+  @override
+  String storageDeleteHintBoth(String items, String containers) {
+    return '$items và $containers';
+  }
 }

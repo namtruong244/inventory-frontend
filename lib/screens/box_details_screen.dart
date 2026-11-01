@@ -10,6 +10,7 @@ import '../widgets/app_feedback.dart';
 import '../widgets/trash_actions.dart';
 import '../widgets/box_card.dart';
 import '../widgets/box_details_parts.dart';
+import '../widgets/storage_actions_sheet.dart';
 import '../widgets/breadcrumb_bar.dart';
 import '../widgets/soft_ui.dart';
 import '../widgets/item_card.dart';
@@ -118,7 +119,11 @@ class BoxDetailsScreen extends StatelessWidget {
                 SoftCircleButton(
                   icon: Icons.more_horiz_rounded,
                   tooltip: context.l10n.moreOptions,
-                  onTap: () => showBoxOptionsSheet(context, box, provider),
+                  onTap: () => showStorageActionsSheet(
+                    context,
+                    box,
+                    closeScreenOnDelete: true,
+                  ),
                 ),
               ),
             ],

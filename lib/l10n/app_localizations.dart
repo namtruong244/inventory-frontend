@@ -5726,6 +5726,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 day} other{{count} days}}'**
   String trashDaysLeft(int count);
+
+  /// No description provided for @storageActionAddItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Add item here'**
+  String get storageActionAddItem;
+
+  /// No description provided for @storageActionAddContainer.
+  ///
+  /// In en, this message translates to:
+  /// **'Add container inside'**
+  String get storageActionAddContainer;
+
+  /// No description provided for @storageActionMove.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to another location'**
+  String get storageActionMove;
+
+  /// No description provided for @storageActionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit location details'**
+  String get storageActionEdit;
+
+  /// No description provided for @storageActionQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Show QR / print label'**
+  String get storageActionQr;
+
+  /// No description provided for @storageActionExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export item barcodes'**
+  String get storageActionExport;
+
+  /// No description provided for @storageActionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete location'**
+  String get storageActionDelete;
+
+  /// No description provided for @containersCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 container} other{{count} containers}}'**
+  String containersCountLabel(int count);
+
+  /// No description provided for @storageDeleteHintContents.
+  ///
+  /// In en, this message translates to:
+  /// **'{contents} go to Trash too'**
+  String storageDeleteHintContents(String contents);
+
+  /// No description provided for @storageDeleteHintBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'{items} & {containers}'**
+  String storageDeleteHintBoth(String items, String containers);
 }
 
 class _AppLocalizationsDelegate

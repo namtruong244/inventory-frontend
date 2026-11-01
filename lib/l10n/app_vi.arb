@@ -2117,5 +2117,18 @@
   "trashDeletedDaysAgo": "{count, plural, other{xóa {count} ngày trước}}",
   "@trashDeletedDaysAgo": {"placeholders": {"count": {"type": "int"}}},
   "trashDaysLeft": "{count, plural, other{{count} ngày}}",
-  "@trashDaysLeft": {"placeholders": {"count": {"type": "int"}}}
+  "@trashDaysLeft": {"placeholders": {"count": {"type": "int"}}},
+  "storageActionAddItem": "Thêm món đồ vào đây",
+  "storageActionAddContainer": "Thêm ngăn chứa bên trong",
+  "storageActionMove": "Chuyển sang vị trí khác",
+  "storageActionEdit": "Sửa thông tin vị trí",
+  "storageActionQr": "Xem QR / in nhãn",
+  "storageActionExport": "Xuất mã vạch món đồ",
+  "storageActionDelete": "Xóa vị trí",
+  "containersCountLabel": "{count, plural, other{{count} ngăn chứa}}",
+  "@containersCountLabel": {"placeholders": {"count": {"type": "int"}}},
+  "storageDeleteHintContents": "{contents} cũng vào thùng rác",
+  "@storageDeleteHintContents": {"placeholders": {"contents": {"type": "String"}}},
+  "storageDeleteHintBoth": "{items} và {containers}",
+  "@storageDeleteHintBoth": {"placeholders": {"items": {"type": "String"}, "containers": {"type": "String"}}}
 }
