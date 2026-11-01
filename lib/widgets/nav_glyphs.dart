@@ -3,7 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 /// Bottom-nav glyphs copied from the design (`C7tXqo`): each is a small filled
 /// "Solid" accent shape plus a 2px round "Line" outline, both in one color.
-/// They differ from the Soft Line set used elsewhere, so they live here.
+/// The nav draws them at a fixed 2px line (not [AppIcon]'s size-scaled
+/// stroke) and needs its own shapes, so they live here.
 enum NavGlyph {
   home(
     solid: 'M11.2 13.2h1.6a1.8 1.8 0 0 1 1.8 1.8v1.6a1.8 1.8 0 0 1-1.8 1.8h-1.6a1.8 1.8 0 0 1-1.8-1.8v-1.6a1.8 1.8 0 0 1 1.8-1.8z',
