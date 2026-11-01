@@ -12,6 +12,7 @@ import '../widgets/app_icon.dart';
 import '../widgets/app_refresh.dart';
 import '../widgets/box_tree.dart';
 import '../widgets/empty_state_card.dart';
+import '../widgets/home_tab_support.dart';
 import '../widgets/item_box_actions.dart';
 import '../widgets/soft_ui.dart';
 import '../widgets/state_views.dart';
@@ -38,6 +39,30 @@ class _BoxesScreenState extends State<BoxesScreen> {
 
   /// setState entry point for the extension in the part file.
   void _update(VoidCallback fn) => setState(fn);
+
+  Listenable? _resetSignal;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Tapping the tab again while at the top clears search and filters.
+    final signal = ScrollToTopHost.resetSignalOf(context);
+    if (signal != _resetSignal) {
+      _resetSignal?.removeListener(_resetFilters);
+      _resetSignal = signal?..addListener(_resetFilters);
+    }
+  }
+
+  @override
+  void dispose() {
+    _resetSignal?.removeListener(_resetFilters);
+    super.dispose();
+  }
+
+  void _resetFilters() => setState(() {
+    _searchQuery = '';
+    _filterIndex = 0;
+  });
 
   void _initExpandedIfNeeded(InventoryProvider provider) {
     if (!_initializedExpanded && provider.boxes.isNotEmpty) {

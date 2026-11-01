@@ -11,6 +11,7 @@ import '../utils/text_normalize.dart';
 import '../widgets/soft_ui.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/empty_state_card.dart';
+import '../widgets/home_tab_support.dart';
 import '../widgets/items_list_parts.dart';
 import '../utils/e2e.dart';
 
@@ -30,6 +31,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
   static const int _pageSize = 30;
   int _visibleCount = _pageSize;
   ScrollController? _scrollController;
+  Listenable? _resetSignal;
 
   @override
   void didChangeDependencies() {
@@ -40,13 +42,27 @@ class _ItemsScreenState extends State<ItemsScreen> {
       _scrollController?.removeListener(_onScroll);
       _scrollController = controller?..addListener(_onScroll);
     }
+    // Tapping the tab again while at the top clears search and filters.
+    final signal = ScrollToTopHost.resetSignalOf(context);
+    if (signal != _resetSignal) {
+      _resetSignal?.removeListener(_resetFilters);
+      _resetSignal = signal?..addListener(_resetFilters);
+    }
   }
 
   @override
   void dispose() {
     _scrollController?.removeListener(_onScroll);
+    _resetSignal?.removeListener(_resetFilters);
     super.dispose();
   }
+
+  void _resetFilters() => setState(() {
+    _searchQuery = '';
+    _selectedBoxFilter = null;
+    _statusFilterIndex = 0;
+    _visibleCount = _pageSize;
+  });
 
   /// Reveals the next page of items when the list is scrolled near its end.
   void _onScroll() {

@@ -21,7 +21,7 @@ extension HomeRecentSection on HomeSections {
         SoftSectionHeader(
           context.l10n.recentItems,
           actionLabel: context.l10n.viewAll,
-          onAction: () => selectTab(2),
+          onAction: () => selectTab(2, reset: true),
         ),
         const SizedBox(height: 16),
         Consumer<InventoryProvider>(

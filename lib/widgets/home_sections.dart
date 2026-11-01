@@ -18,7 +18,9 @@ import 'tappable.dart';
 class HomeSections {
   final BuildContext context;
   final Future<void> Function(Widget page) navigate;
-  final void Function(int index) selectTab;
+
+  /// Switches tab; `reset` opens it at the top with filters cleared.
+  final void Function(int index, {bool reset}) selectTab;
 
   HomeSections(this.context, {required this.navigate, required this.selectTab});
 

@@ -32,9 +32,14 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
   late final ScrollController _homeScrollController;
   int _currentIndex = 0;
+
+  /// Fade-through between tabs: the tab being left fades out over the first
+  /// [_fadeOutEnd] of [_fade], then the new one fades in while scaling up.
+  late final AnimationController _fade;
+  static const double _fadeOutEnd = 0.3;
+  int _previousIndex = 0;
 
   /// "Skip - I'll do it later" on the new-account setup; session-local.
   bool _setupSkipped = false;
@@ -47,23 +52,13 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex;
-    _tabController = TabController(
-      length: 4,
+    _currentIndex = _previousIndex = widget.initialIndex;
+    _fade = AnimationController(
       vsync: this,
-      initialIndex: widget.initialIndex,
+      duration: const Duration(milliseconds: 300),
+      value: 1,
     );
-    _tabController.addListener(_handleTabChange);
     _homeScrollController = ScrollController();
-  }
-
-  void _handleTabChange() {
-    if (_currentIndex != _tabController.index) {
-      setState(() {
-        _currentIndex = _tabController.index;
-      });
-      _updateSystemOverlay();
-    }
   }
 
   void _updateSystemOverlay() {
@@ -90,50 +85,96 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
-    _tabController.removeListener(_handleTabChange);
-    _tabController.dispose();
+    _fade.dispose();
     _homeScrollController.dispose();
     super.dispose();
   }
 
-  void _onTabSelected(int index) {
+  /// The tab on screen: the one being left during the fade-out phase.
+  int get _shownIndex =>
+      _fade.value < _fadeOutEnd ? _previousIndex : _currentIndex;
+
+  /// Switching keeps each tab where it was left. Tapping the open tab again
+  /// scrolls it to the top, and once at the top clears its search and filters.
+  /// [reset] opens the tab fresh (top, no filters), for links like "See all".
+  void _onTabSelected(int index, {bool reset = false}) {
     if (_currentIndex == index) {
-      _scrollToTop(index);
+      if (reset) {
+        _resetTab(index);
+      } else if (!_scrollToTop(index)) {
+        _hostOf(index)?.resetFilters();
+      }
       return;
     }
     setState(() {
+      _previousIndex = _shownIndex;
       _currentIndex = index;
     });
-    _tabController.animateTo(
-      index,
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeInOutCubic,
-    );
+    if (reset) _resetTab(index);
+    _fade.forward(from: 0);
     _updateSystemOverlay();
-    _scrollToTop(index);
   }
 
-  void _scrollToTop(int index) {
-    switch (index) {
-      case 0:
-        if (_homeScrollController.hasClients) {
-          _homeScrollController.animateTo(
-            0,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-        break;
-      case 1:
-        _boxesKey.currentState?.scrollToTop();
-        break;
-      case 2:
-        _itemsKey.currentState?.scrollToTop();
-        break;
-      case 3:
-        _settingsKey.currentState?.scrollToTop();
-        break;
+  ScrollToTopHostState? _hostOf(int index) => switch (index) {
+    1 => _boxesKey.currentState,
+    2 => _itemsKey.currentState,
+    3 => _settingsKey.currentState,
+    _ => null,
+  };
+
+  /// Animates the tab to the top; false when it is already there.
+  bool _scrollToTop(int index) => index == 0
+      ? animateToTop(_homeScrollController)
+      : _hostOf(index)?.scrollToTop() ?? false;
+
+  void _resetTab(int index) {
+    if (index == 0) {
+      if (_homeScrollController.hasClients) _homeScrollController.jumpTo(0);
+    } else {
+      _hostOf(index)?.reset();
     }
+  }
+
+  /// The four tabs stay mounted; only the shown one paints, gets input and
+  /// runs tickers.
+  Widget _buildTabs(BuildContext context) {
+    final tabs = [
+      _buildHomeTab(context),
+      ScrollToTopHost(key: _boxesKey, child: const BoxesScreen()),
+      ScrollToTopHost(key: _itemsKey, child: const ItemsScreen()),
+      ScrollToTopHost(key: _settingsKey, child: const SettingsScreen()),
+    ];
+    return AnimatedBuilder(
+      animation: _fade,
+      builder: (context, _) {
+        final t = _fade.value;
+        final shown = _shownIndex;
+        final double opacity;
+        final double scale;
+        if (t < _fadeOutEnd) {
+          opacity = 1 - Curves.easeIn.transform(t / _fadeOutEnd);
+          scale = 1;
+        } else {
+          final p = (t - _fadeOutEnd) / (1 - _fadeOutEnd);
+          opacity = Curves.easeOut.transform(p);
+          scale = 0.96 + 0.04 * Curves.easeOutCubic.transform(p);
+        }
+        return Opacity(
+          opacity: opacity,
+          child: Transform.scale(
+            scale: scale,
+            child: IndexedStack(
+              index: shown,
+              sizing: StackFit.expand,
+              children: [
+                for (var i = 0; i < tabs.length; i++)
+                  TickerMode(enabled: i == shown, child: tabs[i]),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -155,32 +196,7 @@ class _HomeScreenState extends State<HomeScreen>
           data: outerMedia,
           child: Stack(
             children: [
-              Positioned.fill(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    KeepAliveTab(child: _buildHomeTab(context)),
-                    KeepAliveTab(
-                      child: ScrollToTopHost(
-                        key: _boxesKey,
-                        child: const BoxesScreen(),
-                      ),
-                    ),
-                    KeepAliveTab(
-                      child: ScrollToTopHost(
-                        key: _itemsKey,
-                        child: const ItemsScreen(),
-                      ),
-                    ),
-                    KeepAliveTab(
-                      child: ScrollToTopHost(
-                        key: _settingsKey,
-                        child: const SettingsScreen(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              Positioned.fill(child: _buildTabs(context)),
               Positioned.fill(child: _buildNav(context)),
             ],
           ),
