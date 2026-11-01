@@ -91,7 +91,7 @@ scripts/run_e2e.sh             # bật backend → build app → chạy maestro
 
 - **Mỗi flow độc lập:** `launchApp: clearState: true` + `seed.js` (`runScript` + `http.post`) đăng ký **user mới** `e2e_${timestamp}@test.local` và tạo sẵn box/item qua API. Không phụ thuộc thứ tự, không cần dọn DB.
 - **Selector bằng id, không bằng text:** app có 2 ngôn ngữ vi/en nên text dễ vỡ. Gắn `Semantics(identifier: 'login_email')` vào widget quan trọng, Maestro dùng `id: login_email`.
-- **App id khác nhau:** Android `com.example.inventory`, iOS `com.namtruong244.inventory` → truyền qua `-e APP_ID=...`.
+- **App id khác nhau:** Android `com.example.inventory`, iOS `com.namtruong244.personal-inventory` → truyền qua `-e APP_ID=...`.
 
 ## 2. Bước 0: chuẩn bị app (sửa FE)
 

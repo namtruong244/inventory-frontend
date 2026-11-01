@@ -12,7 +12,7 @@ REPORT="$FE/report.xml"
 
 case "$PLATFORM" in
   android) APP_ID="com.example.inventory"; APP_API="http://10.0.2.2:8080" ;;
-  ios)     APP_ID="com.namtruong244.inventory"; APP_API="http://localhost:8080" ;;
+  ios)     APP_ID="com.namtruong244.personal-inventory"; APP_API="http://localhost:8080" ;;
   *) echo "Platform phải là android hoặc ios" >&2; exit 2 ;;
 esac
 [[ "$SUITE" == "smoke" || "$SUITE" == "full" ]] || { echo "Suite phải là smoke hoặc full" >&2; exit 2; }
