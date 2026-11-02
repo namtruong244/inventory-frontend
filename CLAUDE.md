@@ -1,6 +1,6 @@
 # Frontend — Flutter app (package `inventory`)
 
-Rule chung BE↔FE và business rules: [../CLAUDE.md](../CLAUDE.md). Đặc tả API chuẩn nằm ở `../BE_GoLang/AGENTS.md`; file `AGENtS.md` trong thư mục này là bản cũ, đừng dựa vào nó.
+Rule chung BE↔FE và business rules: [../CLAUDE.md](../CLAUDE.md). Đặc tả API chuẩn nằm ở `../BE_GoLang/AGENTS.md`.
 
 ## Lệnh thường dùng
 

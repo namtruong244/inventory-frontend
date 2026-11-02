@@ -1,6 +1,6 @@
 # Smart Inventory — Flutter app
 
-App mobile (iOS/Android) quản lý đồ đạc và tài sản cá nhân: sắp xếp theo cây vị trí lưu trữ (Room → Cabinet → Shelf → Box → Drawer), theo dõi tồn kho, cho mượn/trả, quét QR/barcode, cảnh báo hết hạn/bảo hành và xuất tem PDF.
+App mobile (iOS/Android) quản lý đồ đạc và tài sản cá nhân: sắp xếp theo cây vị trí lưu trữ (Room → Cabinet → Shelf → Box → Drawer), theo dõi tồn kho, cho mượn/trả, quét QR/barcode, cảnh báo hết hạn/bảo hành và in tem QR/barcode ra PDF.
 
 Backend là REST API Go nằm ở [`../BE_GoLang`](../BE_GoLang). Đặc tả API chuẩn: [`../BE_GoLang/AGENTS.md`](../BE_GoLang/AGENTS.md).
 
@@ -10,7 +10,8 @@ Backend là REST API Go nằm ở [`../BE_GoLang`](../BE_GoLang). Đặc tả AP
 - **Vật phẩm** — thông số động (custom attributes), ảnh, danh mục, ngưỡng tồn kho riêng (`minQuantity`), trạng thái `stored | inUse | lent | broken | disposed`.
 - **Mượn/trả** — theo dõi người mượn, hạn trả, cảnh báo quá hạn.
 - **Quét mã** — camera hoặc ảnh trong thư viện; khớp tem vị trí, barcode, serial number.
-- **Cảnh báo & báo cáo** — sắp hết hàng, hết hạn, hết bảo hành; xuất PDF.
+- **Cảnh báo & báo cáo** — sắp hết hàng, hết hạn, hết bảo hành; báo cáo tồn kho dạng văn bản (sao chép được).
+- **Tem QR/barcode** — xuất PDF để in dán lên vị trí và vật phẩm.
 - **Thùng rác** — khôi phục item/vị trí đã xoá trong 30 ngày.
 - **Offline-first** — dùng được khi mất mạng; thay đổi được xếp hàng và tự đồng bộ khi có mạng lại.
 - **Đăng nhập** email/mật khẩu hoặc Google; giao diện **tiếng Anh + tiếng Việt**, light/dark mode.
@@ -23,11 +24,15 @@ Backend là REST API Go nằm ở [`../BE_GoLang`](../BE_GoLang). Đặc tả AP
 
 ## Chạy app
 
-```bash
-# 1. Khởi động backend (từ thư mục gốc repo)
-cd ../BE_GoLang && make db-up && make run      # API tại http://localhost:8080
+Cần hai terminal: một chạy backend, một chạy app.
 
-# 2. Chạy app
+```bash
+# Terminal 1 — backend (từ thư mục FE_Flutter)
+cd ../BE_GoLang
+cp .env.example .env     # chỉ lần đầu; docker compose và backend bắt buộc có JWT_SECRET (>= 32 ký tự)
+make db-up && make run   # API tại http://localhost:8080, chạy foreground
+
+# Terminal 2 — app (từ thư mục FE_Flutter)
 flutter pub get
 flutter run --dart-define=API_BASE_URL=http://localhost:8080
 ```
@@ -36,7 +41,9 @@ flutter run --dart-define=API_BASE_URL=http://localhost:8080
 
 1. `--dart-define=API_BASE_URL=...` lúc build
 2. URL đã lưu trong màn **Settings** của app
-3. Mặc định: `http://localhost:8080` (Android emulator tự dùng `http://10.0.2.2:8080`)
+3. Mặc định: `http://localhost:8080`; trên **mọi thiết bị Android** là `http://10.0.2.2:8080` (chỉ đúng với emulator)
+
+Điện thoại Android thật không tới được `10.0.2.2`: truyền IP LAN của máy chạy backend, ví dụ `--dart-define=API_BASE_URL=http://192.168.1.10:8080`, hoặc đổi URL trong Settings.
 
 **iPhone thật (release):**
 
@@ -59,8 +66,10 @@ flutter gen-l10n                    # sinh lại code l10n sau khi sửa file .a
 **E2E (Maestro):** flow nằm trong [`.maestro/`](.maestro), kế hoạch và tiến độ ở [`E2E_TEST_PLAN.md`](E2E_TEST_PLAN.md).
 
 ```bash
-scripts/run_e2e.sh [android|ios] [smoke|full]   # tự bật backend, build với E2E=true, chạy Maestro
+scripts/run_e2e.sh [android|ios] smoke   # tự bật backend, build với E2E=true, chạy Maestro
 ```
+
+Hiện chỉ có suite `smoke`; suite `full` (F1–F15) chưa làm, xem tiến độ trong `E2E_TEST_PLAN.md`.
 
 ## Cấu trúc thư mục
 
@@ -93,4 +102,4 @@ openapi.yaml                  OpenAPI spec tham khảo
 - [`CLAUDE.md`](CLAUDE.md) — quy ước code, kiến trúc chi tiết (offline sync, UI, l10n, test)
 - [`../CLAUDE.md`](../CLAUDE.md) — hợp đồng API giữa BE và FE, business rules
 - [`DESIGN_BRIEF.md`](DESIGN_BRIEF.md) — định hướng thiết kế
-- `AGENtS.md` trong thư mục này là bản đặc tả cũ, **đã lỗi thời** — dùng [`../BE_GoLang/AGENTS.md`](../BE_GoLang/AGENTS.md)
+- [`../BE_GoLang/AGENTS.md`](../BE_GoLang/AGENTS.md) — đặc tả API chuẩn (schema, endpoint, business rules)
