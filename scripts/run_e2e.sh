@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Chạy E2E Maestro: backend -> build -> cài -> maestro -> tắt backend.
-# Dùng: scripts/run_e2e.sh [android|ios] [smoke|full]
+# Dùng: scripts/run_e2e.sh [android|ios] [smoke]
 set -euo pipefail
 
 PLATFORM="${1:-android}"
@@ -15,7 +15,8 @@ case "$PLATFORM" in
   ios)     APP_ID="com.namtruong244.personal-inventory"; APP_API="http://localhost:8080" ;;
   *) echo "Platform phải là android hoặc ios" >&2; exit 2 ;;
 esac
-[[ "$SUITE" == "smoke" || "$SUITE" == "full" ]] || { echo "Suite phải là smoke hoặc full" >&2; exit 2; }
+# Suite full (F1–F15) chưa có thư mục .maestro/full: từ chối ngay thay vì build xong mới lỗi.
+[[ "$SUITE" == "smoke" ]] || { echo "Suite phải là smoke (suite full chưa làm, xem E2E_TEST_PLAN.md)" >&2; exit 2; }
 command -v maestro >/dev/null || { echo "Thiếu maestro: https://maestro.mobile.dev" >&2; exit 1; }
 
 BE_PID=""
@@ -28,8 +29,6 @@ cleanup() {
 trap cleanup EXIT
 
 echo "==> Backend"
-# docker-compose và backend đòi JWT_SECRET (>= 32 ký tự); E2E dùng khóa tạm nếu chưa có.
-export JWT_SECRET="${JWT_SECRET:-e2e-only-secret-$(date +%s)-0123456789abcdef}"
 if ! docker ps --format '{{.Names}}' | grep -qx inventory_postgres; then
   (cd "$BE" && make db-up)
 fi

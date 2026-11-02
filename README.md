@@ -11,7 +11,7 @@ Backend là REST API Go nằm ở [`../BE_GoLang`](../BE_GoLang). Đặc tả AP
 - **Mượn/trả** — theo dõi người mượn, hạn trả, cảnh báo quá hạn.
 - **Quét mã** — camera hoặc ảnh trong thư viện; khớp tem vị trí, barcode, serial number.
 - **Cảnh báo & báo cáo** — sắp hết hàng, hết hạn, hết bảo hành; báo cáo tồn kho dạng văn bản (sao chép được).
-- **Tem QR/barcode** — xuất PDF để in dán lên vị trí và vật phẩm.
+- **Tem QR/barcode** — xuất PDF để in dán lên vị trí lưu trữ (chưa hỗ trợ tem cho vật phẩm).
 - **Thùng rác** — khôi phục item/vị trí đã xoá trong 30 ngày.
 - **Offline-first** — dùng được khi mất mạng; thay đổi được xếp hàng và tự đồng bộ khi có mạng lại.
 - **Đăng nhập** email/mật khẩu hoặc Google; giao diện **tiếng Anh + tiếng Việt**, light/dark mode.
@@ -29,7 +29,7 @@ Cần hai terminal: một chạy backend, một chạy app.
 ```bash
 # Terminal 1 — backend (từ thư mục FE_Flutter)
 cd ../BE_GoLang
-cp .env.example .env     # chỉ lần đầu; docker compose và backend bắt buộc có JWT_SECRET (>= 32 ký tự)
+cp .env.example .env     # tuỳ chọn, chỉ lần đầu; không có .env thì backend dùng cấu hình dev mặc định
 make db-up && make run   # API tại http://localhost:8080, chạy foreground
 
 # Terminal 2 — app (từ thư mục FE_Flutter)
